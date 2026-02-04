@@ -26,9 +26,9 @@
   background: linear-gradient(
     to right,
     transparent,
-    rgba(0, 255, 200, 0.3),
-    rgba(100, 200, 255, 0.3),
-    rgba(1090, 100, 255, 0.3),
+    rgba(124, 255, 103, 0.3),
+    rgba(177, 158, 239, 0.3),
+    rgba(82, 39, 255, 0.3),
     transparent
   );
   animation: aurora-animation 20s ease-in-out infinite;
@@ -51,8 +51,7 @@
   background: linear-gradient(
     to right,
     transparent,
-    rgba(100, 255, 150, 0.3),
-    rgba(1090, 100, 255, 0.3),
+    rgba(26, 6, 58, 0.3),
     transparent
   );
 }
