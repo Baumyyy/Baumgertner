@@ -1,0 +1,146 @@
+.projects-section {
+  min-height: 100vh;
+  padding: 6rem 4rem;
+  position: relative;
+  z-index: 1;
+}
+
+.projects-container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.projects-title {
+  font-size: clamp(3rem, 6vw, 4.5rem);
+  color: #ffffff;
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 0.05em;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.projects-subtitle {
+  font-size: 1.2rem;
+  color: #a0a0a0;
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 0.03em;
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2.5rem;
+}
+
+.project-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.project-card:hover {
+  transform: translateY(-10px);
+  border-color: #00ff88;
+  box-shadow: 0 20px 40px rgba(0, 255, 136, 0.2);
+}
+
+.project-image-placeholder {
+  width: 100%;
+  height: 250px;
+  background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 204, 112, 0.1));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.project-image-placeholder::before {
+  content: '';
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.1) 50%,
+    transparent 70%
+  );
+  animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%) translateY(-100%) rotate(45deg);
+  }
+  100% {
+    transform: translateX(100%) translateY(100%) rotate(45deg);
+  }
+}
+
+.coming-soon-badge {
+  font-size: 2rem;
+  color: #00ff88;
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 0.1em;
+  text-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+  z-index: 1;
+  position: relative;
+}
+
+.project-content {
+  padding: 2rem;
+}
+
+.project-title {
+  font-size: 1.8rem;
+  color: #ffffff;
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 0.05em;
+  margin-bottom: 1rem;
+}
+
+.project-description {
+  font-size: 1rem;
+  color: #a0a0a0;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.project-tags {
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.tag {
+  padding: 0.4rem 1rem;
+  background: rgba(0, 255, 136, 0.1);
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  border-radius: 20px;
+  color: #00ff88;
+  font-size: 0.9rem;
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 0.05em;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .projects-section {
+    padding: 4rem 2rem;
+  }
+
+  .projects-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .project-image-placeholder {
+    height: 200px;
+  }
+}
