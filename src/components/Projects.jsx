@@ -54,6 +54,12 @@ const Projects = () => {
             </div>
           ))}
         </div>
+        <div className="projects-github-link">
+        <a href="https://github.com/baumyyy" target="_blank" rel="noopener noreferrer" className="github-btn">
+         See More Projects on Git
+        <i className="fab fa-github"></i>
+        </a>
+        </div>
       </div>
     </section>
   );
