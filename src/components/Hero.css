@@ -55,7 +55,7 @@
   padding: 8rem 6rem 4rem 6rem;
   position: relative;
   z-index: 1;
-  max-width: 1600px;
+  max-width: 1800px;
 }
 
 .hero-main {
@@ -69,16 +69,16 @@
   flex: 0 0 auto;
   max-width: 600px;
 }
-
+/*Hi I'm AB*/
 .hero-greeting {
-  font-size: 1.3rem;
-  color: #b0b0b0;
-  margin-bottom: 1.5rem;
+  font-size: 1.25rem;
+  color: #c7c7c7;
+  margin-bottom: 0.02em;
   font-weight: 400;
   font-family: 'Bebas Neue', sans-serif;
   letter-spacing: 0.05em;
 }
-
+/*Junior SEPM*/
 .hero-title {
   font-size: clamp(3.5rem, 7vw, 6rem);
   font-weight: 400;
@@ -117,8 +117,8 @@
   transform: translateY(-3px);
 }
 
-/* Hero Right */
-.hero-right {
+/* Hero Middle/My Phrace */
+.hero-middle {
   flex: 0 0 auto;
   max-width: 550px;
   display: flex;
@@ -127,8 +127,8 @@
 }
 
 .hero-description {
-  font-size: 1.3rem;
-  color: #b0b0b0;
+  font-size: 2.5rem;
+  color: #c7c7c7;
   line-height: 1.8;
   font-family: 'Bebas Neue', sans-serif;
   font-weight: 400;

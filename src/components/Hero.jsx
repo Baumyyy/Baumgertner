@@ -34,11 +34,9 @@ const Hero = () => {
           <div className="hero-left">
             <p className="hero-greeting">Hi, I'm Anthony Baumgertner</p>
             <h1 className="hero-title">
-              Software<br />Developer
+              Junior<br />Software<br />Developer
             </h1>
-            <h2 className="hero-subtitle">
-              Project manager
-            </h2>
+            <p className="hero-subtitle">Project manager</p>
             
             <div className="social-links">
               <a href="https://github.com/baumyyy" target="_blank" rel="noopener noreferrer" className="social-link" aria-label="GitHub">
@@ -55,14 +53,13 @@ const Hero = () => {
 
           <div className="hero-right">
             <p className="hero-description">
-              Here will be my phrace soon
+              Here will be my phrase soon
             </p>
           </div>
-        </div> 
+        </div>
       </section>
     </>
   );
-}    
-
+};
 
 export default Hero;
