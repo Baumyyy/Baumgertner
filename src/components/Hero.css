@@ -19,7 +19,7 @@
 }
 
 .nav-link {
-  color: #a0a0a0;
+  color: #a0a0a0; /* Harmaa oletuksena */
   text-decoration: none;
   font-size: 1.1rem;
   transition: color 0.3s ease;
@@ -28,10 +28,10 @@
   gap: 0.5rem;
   font-family: 'Bebas Neue', sans-serif;
   letter-spacing: 0.05em;
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
+}
+
+.nav-link.active {
+  color: #ffffff; /* Valkoinen kun aktiivinen */
 }
 
 .nav-link:hover {
@@ -47,14 +47,11 @@
   height: 8px;
   background: #00ff88;
   border-radius: 50%;
-  opacity: 0;
-  transform: scale(0);
-  transition: all 0.3s ease;
+  display: none; /* Piilotettu oletuksena */
 }
 
 .nav-link.active .nav-dot {
-  opacity: 1;
-  transform: scale(1);
+  display: inline-block; /* Näkyy vain kun active */
 }
 
 /* Hero Section */

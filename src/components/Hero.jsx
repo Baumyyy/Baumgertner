@@ -5,32 +5,36 @@ const Hero = () => {
   const [activeSection, setActiveSection] = useState('home');
 
   useEffect(() => {
-    const sections = document.querySelectorAll('section[id]');
-    
-    const observerOptions = {
-      threshold: 0.6,
-      rootMargin: '-100px 0px -100px 0px'
-    };
+  const sections = document.querySelectorAll('section[id]');
+  console.log('Found sections:', sections.length, Array.from(sections).map(s => s.id));
+  
+  const observerOptions = {
+    threshold: 0.3,
+    rootMargin: '0px 0px -50% 0px'
+  };
 
-    const observerCallback = (entries) => {
-      console.log('Observer triggered, entries:', entries.length);
-      entries.forEach((entry) => {
-        console.log('Entry:', entry.target.id, 'isIntersecting:', entry.isIntersecting);
-        if (entry.isIntersecting) {
-          const id = entry.target.getAttribute('id');
-          console.log('Setting active section to:', id);
-          setActiveSection(id);
-        }
-      });
-    };
+  const observerCallback = (entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        const id = entry.target.getAttribute('id');
+        console.log('✅ Active section changed to:', id);
+        setActiveSection(id);
+      }
+    });
+  };
 
-    const observer = new IntersectionObserver(observerCallback, observerOptions);
-    sections.forEach((section) => observer.observe(section));
+  const observer = new IntersectionObserver(observerCallback, observerOptions);
+  
+  sections.forEach((section) => {
+    console.log('Observing section:', section.id);
+    observer.observe(section);
+  });
 
-    return () => {
-      sections.forEach((section) => observer.unobserve(section));
-    };
-  }, []);
+  return () => {
+    sections.forEach((section) => observer.unobserve(section));
+  };
+}, []);
+
 
 const handleClick = (e, targetId) => {
   e.preventDefault();
