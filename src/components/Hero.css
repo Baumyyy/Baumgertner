@@ -28,6 +28,10 @@
   gap: 0.5rem;
   font-family: 'Bebas Neue', sans-serif;
   letter-spacing: 0.05em;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
 }
 
 .nav-link:hover {
@@ -43,7 +47,14 @@
   height: 8px;
   background: #00ff88;
   border-radius: 50%;
-  display: inline-block;
+  opacity: 0;
+  transform: scale(0);
+  transition: all 0.3s ease;
+}
+
+.nav-link.active .nav-dot {
+  opacity: 1;
+  transform: scale(1);
 }
 
 /* Hero Section */

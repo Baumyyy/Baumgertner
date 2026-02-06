@@ -1,35 +1,88 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './Hero.css';
 
 const Hero = () => {
-  const scrollToProjects = () => {
-    document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' });
-  };
+  const [activeSection, setActiveSection] = useState('home');
 
-  const scrollToContact = () => {
-    document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
-  };
+  useEffect(() => {
+    const sections = document.querySelectorAll('section[id]');
+    
+    const observerOptions = {
+      threshold: 0.6,
+      rootMargin: '-100px 0px -100px 0px'
+    };
+
+    const observerCallback = (entries) => {
+      console.log('Observer triggered, entries:', entries.length);
+      entries.forEach((entry) => {
+        console.log('Entry:', entry.target.id, 'isIntersecting:', entry.isIntersecting);
+        if (entry.isIntersecting) {
+          const id = entry.target.getAttribute('id');
+          console.log('Setting active section to:', id);
+          setActiveSection(id);
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(observerCallback, observerOptions);
+    sections.forEach((section) => observer.observe(section));
+
+    return () => {
+      sections.forEach((section) => observer.unobserve(section));
+    };
+  }, []);
+
+const handleClick = (e, targetId) => {
+  e.preventDefault();
+  
+  if (targetId === 'home') {
+    // Scrollaa aurora-containeria
+    const container = document.querySelector('.aurora-container');
+    if (container) {
+      container.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  } else {
+    const element = document.getElementById(targetId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+};
 
   return (
     <>
       {/* Navigation */}
       <nav className="navbar">
         <div className="nav-links">
-          <a href="#home" className="nav-link active">
+          <a 
+            href="#home"
+            className={`nav-link ${activeSection === 'home' ? 'active' : ''}`}
+            onClick={(e) => handleClick(e, 'home')}
+          >
             <span className="nav-dot"></span>
             Home
           </a>
-          <a href="#projects" className="nav-link" onClick={(e) => { e.preventDefault(); scrollToProjects(); }}>
+          <a 
+            href="#projects"
+            className={`nav-link ${activeSection === 'projects' ? 'active' : ''}`}
+            onClick={(e) => handleClick(e, 'projects')}
+          >
+            <span className="nav-dot"></span>
             Projects
           </a>
-          <a href="#contact" className="nav-link" onClick={(e) => { e.preventDefault(); scrollToContact(); }}>
+          <a 
+            href="#contact"
+            className={`nav-link ${activeSection === 'contact' ? 'active' : ''}`}
+            onClick={(e) => handleClick(e, 'contact')}
+          >
+            <span className="nav-dot"></span>
             Contact
           </a>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="hero">
+      <section id="home" className="hero">
         <div className="hero-main">
           <div className="hero-left">
             <p className="hero-greeting">Hi, I'm Anthony Baumgertner</p>
