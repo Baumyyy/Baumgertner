@@ -1,57 +1,56 @@
 import React, { useState, useEffect } from 'react';
+import TextRotator from './TextRotator.jsx';
 import './Hero.css';
 
 const Hero = () => {
   const [activeSection, setActiveSection] = useState('home');
 
   useEffect(() => {
-  const sections = document.querySelectorAll('section[id]');
-  console.log('Found sections:', sections.length, Array.from(sections).map(s => s.id));
-  
-  const observerOptions = {
-    threshold: 0.3,
-    rootMargin: '0px 0px -50% 0px'
-  };
+    const sections = document.querySelectorAll('section[id]');
+    console.log('Found sections:', sections.length, Array.from(sections).map(s => s.id));
+    
+    const observerOptions = {
+      threshold: 0.3,
+      rootMargin: '0px 0px -50% 0px'
+    };
 
-  const observerCallback = (entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        const id = entry.target.getAttribute('id');
-        console.log('✅ Active section changed to:', id);
-        setActiveSection(id);
-      }
+    const observerCallback = (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const id = entry.target.getAttribute('id');
+          console.log('Active section changed to:', id);
+          setActiveSection(id);
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(observerCallback, observerOptions);
+    
+    sections.forEach((section) => {
+      console.log('Observing section:', section.id);
+      observer.observe(section);
     });
-  };
 
-  const observer = new IntersectionObserver(observerCallback, observerOptions);
-  
-  sections.forEach((section) => {
-    console.log('Observing section:', section.id);
-    observer.observe(section);
-  });
+    return () => {
+      sections.forEach((section) => observer.unobserve(section));
+    };
+  }, []);
 
-  return () => {
-    sections.forEach((section) => observer.unobserve(section));
-  };
-}, []);
-
-
-const handleClick = (e, targetId) => {
-  e.preventDefault();
-  
-  if (targetId === 'home') {
-    // Scrollaa aurora-containeria
-    const container = document.querySelector('.aurora-container');
-    if (container) {
-      container.scrollTo({ top: 0, behavior: 'smooth' });
+  const handleClick = (e, targetId) => {
+    e.preventDefault();
+    
+    if (targetId === 'home') {
+      const container = document.querySelector('.aurora-container');
+      if (container) {
+        container.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    } else {
+      const element = document.getElementById(targetId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     }
-  } else {
-    const element = document.getElementById(targetId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  }
-};
+  };
 
   return (
     <>
@@ -90,10 +89,7 @@ const handleClick = (e, targetId) => {
         <div className="hero-main">
           <div className="hero-left">
             <p className="hero-greeting">Hi, I'm Anthony Baumgertner</p>
-            <h1 className="hero-title">
-              Junior<br />Software<br />Developer
-            </h1>
-            <p className="hero-subtitle">Project manager</p>
+            <TextRotator />
             
             <div className="social-links">
               <a href="https://github.com/baumyyy" target="_blank" rel="noopener noreferrer" className="social-link" aria-label="GitHub">
