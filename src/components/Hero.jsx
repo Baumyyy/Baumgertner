@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import TextRotator from './TextRotator.jsx';
 import './Hero.css';
 
 const Hero = () => {
@@ -7,7 +6,6 @@ const Hero = () => {
 
   useEffect(() => {
     const sections = document.querySelectorAll('section[id]');
-    console.log('Found sections:', sections.length, Array.from(sections).map(s => s.id));
     
     const observerOptions = {
       threshold: 0.3,
@@ -18,7 +16,6 @@ const Hero = () => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           const id = entry.target.getAttribute('id');
-          console.log('Active section changed to:', id);
           setActiveSection(id);
         }
       });
@@ -27,7 +24,6 @@ const Hero = () => {
     const observer = new IntersectionObserver(observerCallback, observerOptions);
     
     sections.forEach((section) => {
-      console.log('Observing section:', section.id);
       observer.observe(section);
     });
 
@@ -88,14 +84,23 @@ const Hero = () => {
       <section id="home" className="hero">
         <div className="hero-main">
           <div className="hero-left">
-            <p className="hero-greeting">Hi, I'm Anthony Baumgertner</p>
-            <TextRotator />
+            <div className="availability-badge">
+              <span className="availability-dot"></span>
+              Available for new projects
+            </div>
+            
+            <h2 className="hero-greeting">Hello, I'm</h2>
+            <h1 className="hero-name">Anthony Baumgertner</h1>
+            
+            <p className="hero-roles">
+              Student Software Engineer • Project Manager • Beginner Frontend Developer
+            </p>
             
             <div className="social-links">
               <a href="https://github.com/baumyyy" target="_blank" rel="noopener noreferrer" className="social-link" aria-label="GitHub">
                 <i className="fab fa-github"></i>
               </a>
-              <a href="https://linkedin.com/in/yourusername" target="_blank" rel="noopener noreferrer" className="social-link" aria-label="LinkedIn">
+              <a href="https://linkedin.com/in/anthony-baumgertner" target="_blank" rel="noopener noreferrer" className="social-link" aria-label="LinkedIn">
                 <i className="fab fa-linkedin"></i>
               </a>
               <a href="https://instagram.com/baumgertnerr" target="_blank" rel="noopener noreferrer" className="social-link" aria-label="Instagram">
@@ -104,10 +109,11 @@ const Hero = () => {
             </div>
           </div>
 
+          {/* Placeholder kuvalle */}
           <div className="hero-right">
-            <p className="hero-description">
-              Here will be my phrase soon
-            </p>
+            <div className="hero-image-placeholder">
+              <span className="image-text">My photo here soon</span>
+            </div>
           </div>
         </div>
       </section>
