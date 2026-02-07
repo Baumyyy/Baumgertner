@@ -213,8 +213,6 @@
   );
 }
 
-
-
 .image-text {
   font-size: 1.2rem;
   color: #00ff88;
@@ -222,6 +220,50 @@
   letter-spacing: 0.1em;
   z-index: 1;
   position: relative;
+}
+
+.image-myname {
+  font-size: 1.22rem;
+  color: #cecbcb;
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 0.1em;
+  position: absolute;
+  bottom: 12rem;
+  left: 30%;
+  transform: translateX(-50%);
+}
+
+.my-age {
+  font-size: 1.1rem;
+  color: #cecbcb;
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 0.1em;
+  position: absolute;
+  bottom: 10.2rem;
+  left: 14%;
+  transform: translateX(-50%);
+}
+
+.experience {
+  font-size: 1.1rem;
+  color: #cecbcb;
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 0.02em;
+  position: absolute;
+  bottom: 7rem;
+  left: 37%;
+  transform: translateX(-50%);
+}
+
+.language {
+  font-size: 1.1rem;
+  color: #cecbcb;
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 0.02em;
+  position: absolute;
+  bottom: 5.2rem;
+  left: 35%;
+  transform: translateX(-50%);
 }
 
 /* Tämä päivittyy sit kuvaa varten*/

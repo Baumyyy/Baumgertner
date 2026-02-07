@@ -113,6 +113,10 @@ const Hero = () => {
           <div className="hero-right">
             <div className="hero-image-placeholder">
               <span className="image-text">My photo here soon</span>
+              <p className="image-myname">Anthony Baumgertner</p>
+              <p className="my-age">Age: 22</p>
+              <p className="experience">Experience: 1.5 years in Software Engineering and Project Management</p>
+              <p className="language">Languages: Finnish, Russian, English</p>
             </div>
           </div>
         </div>
