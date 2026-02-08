@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './Contact.css';
+import { useScrollAnimation } from '../hooks/useScrollAnimation';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -7,6 +8,8 @@ const Contact = () => {
     email: '',
     message: ''
   });
+
+  const [titleRef, titleVisible] = useScrollAnimation({ threshold: 0.3 });
 
   const handleChange = (e) => {
     setFormData({
@@ -27,7 +30,12 @@ const Contact = () => {
   return (
     <section id="contact" className="contact-section">
       <div className="contact-container">
-        <h2 className="contact-title">Get In Touch</h2>
+        <h2 
+          ref={titleRef}
+          className={`contact-title fade-in ${titleVisible ? 'visible' : ''}`}
+        >
+          Get In Touch
+        </h2>
         <p className="contact-subtitle">
           Have a project in mind? Let's work together!
         </p>
