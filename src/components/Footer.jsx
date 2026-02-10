@@ -38,10 +38,6 @@ const Footer = () => {
 
         <div className="footer-bottom">
           <p className="footer-copyright">© {currentYear} Anthony Baumgertner. All rights reserved.</p>
-          <div className="footer-availability">
-            <span className="footer-dot"></span>
-            Available for new projects
-          </div>
         </div>
       </div>
     </footer>

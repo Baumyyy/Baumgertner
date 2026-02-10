@@ -1,8 +1,8 @@
 .contact-section {
   min-height: 100vh;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: right;
+  justify-content: right;
   padding: 6rem 4rem;
   position: relative;
   z-index: 1;
