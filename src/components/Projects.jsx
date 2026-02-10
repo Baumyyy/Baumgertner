@@ -9,24 +9,24 @@ const Projects = () => {
   const projects = [
     {
       id: 1,
-      title: 'Project One',
-      description: 'Description of the project',
-      status: 'Coming Soon',
-      tags: ['React', 'Node.js', 'MongoDB']
+      title: 'Anthony.B Portfolio',
+      description: 'My personal portfolio website showcasing my projects and skills.',
+      status: 'Live',
+      tags: ['React', 'Node.js', 'CSS3', 'HTML5']
     },
     {
       id: 2,
-      title: 'Project Two',
-      description: 'Description of the project',
-      status: 'Coming Soon',
-      tags: ['JavaScript', 'CSS3', 'HTML5']
+      title: 'Customer Site Update',
+      description: 'Custom website update for a local business.',
+      status: 'Live',
+      tags: ['WordPress', 'CSS3', 'HTML5']
     },
     {
       id: 3,
-      title: 'Project Three',
-      description: 'Description of the project',
+      title: 'This could be your project',
+      description: 'Contact me to collaborate on exciting projects!',
       status: 'Coming Soon',
-      tags: ['React', 'Python', 'Git']
+      tags: []
     }
   ];
 
