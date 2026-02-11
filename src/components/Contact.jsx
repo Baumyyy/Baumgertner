@@ -72,22 +72,6 @@ const Contact = () => {
               </div>
             </div>
           </div>
-
-          {/* Social row */}
-          <div className="contact-socials">
-            <a href="https://github.com/baumyyy" target="_blank" rel="noopener noreferrer" className="contact-social-link">
-              <i className="fab fa-github"></i>
-              <span>GitHub</span>
-            </a>
-            <a href="https://linkedin.com/in/anthony-baumgertner" target="_blank" rel="noopener noreferrer" className="contact-social-link">
-              <i className="fab fa-linkedin"></i>
-              <span>LinkedIn</span>
-            </a>
-            <a href="https://instagram.com/baumgertnerr" target="_blank" rel="noopener noreferrer" className="contact-social-link">
-              <i className="fab fa-instagram"></i>
-              <span>Instagram</span>
-            </a>
-          </div>
         </div>
 
         {/* Right side - Form */}

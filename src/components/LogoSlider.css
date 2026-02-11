@@ -1,94 +1,72 @@
-.slider-title {
-  text-align: center;
-  font-size: 2.5rem;
-  color: #ffffff;
-  font-family: 'Bebas Neue', sans-serif;
-  letter-spacing: 0.05em;
-  margin-bottom: 2rem;
-}
-
-.logo-slider-container {
-  width: 100%;
-  overflow: hidden;
-  padding: 4rem 0;
+/* ===== SLIDER SECTION ===== */
+.slider-section {
+  padding: 5rem 0;
   position: relative;
   z-index: 1;
-}
-
-.logo-slider {
-  width: 100%;
   overflow: hidden;
-  position: relative;
 }
 
-.logo-slider::before,
-.logo-slider::after {
-  content: '';
+/* Header */
+.slider-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.slider-line {
+  width: 60px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.3));
+}
+
+.slider-line-right {
+  background: linear-gradient(90deg, rgba(0, 255, 136, 0.3), transparent);
+}
+
+.slider-label {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.25);
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+/* Wrapper */
+.slider-wrapper {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Fade edges */
+.slider-fade {
   position: absolute;
   top: 0;
+  bottom: 0;
   width: 200px;
-  height: 100%;
-  z-index: 2;
+  z-index: 10;
   pointer-events: none;
 }
 
-.logo-slider::before {
+.slider-fade-left {
   left: 0;
-  background: linear-gradient(to right, rgba(10, 22, 40, 1), transparent);
+  background: linear-gradient(90deg, #050812, transparent);
 }
 
-.logo-slider::after {
+.slider-fade-right {
   right: 0;
-  background: linear-gradient(to left, rgba(10, 22, 40, 1), transparent);
+  background: linear-gradient(90deg, transparent, #050812);
 }
 
-.logo-track {
+/* Track - infinite scroll */
+.slider-track {
   display: flex;
-  gap: 4rem;
-  animation: scroll 30s linear infinite;
   width: fit-content;
+  animation: sliderScroll 30s linear infinite;
 }
 
-.logo-item {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  min-width: 150px;
-  padding: 1rem;
-  transition: transform 0.3s ease;
-}
-
-.logo-item:hover {
-  transform: translateY(-5px);
-}
-
-.logo-item i {
-  font-size: 2.5rem;
-  color: #ffffff;
-  opacity: 0.8;
-  transition: all 0.3s ease;
-  min-width: 40px;
-}
-
-.logo-item:hover i {
-  opacity: 1;
-  color: #00ff88;
-}
-
-.logo-item span {
-  font-size: 1.1rem;
-  color: #a0a0a0;
-  font-family: 'Bebas Neue', sans-serif;
-  letter-spacing: 0.05em;
-  transition: color 0.3s ease;
-  white-space: nowrap;
-}
-
-.logo-item:hover span {
-  color: #ffffff;
-}
-
-@keyframes scroll {
+@keyframes sliderScroll {
   0% {
     transform: translateX(0);
   }
@@ -97,22 +75,78 @@
   }
 }
 
-/* Responsive */
+/* Row (duplicated for seamless loop) */
+.slider-row {
+  display: flex;
+  gap: 1.2rem;
+  padding-right: 1.2rem;
+  flex-shrink: 0;
+}
+
+/* Item */
+.slider-item {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.8rem 1.5rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  flex-shrink: 0;
+  cursor: default;
+  transition: all 0.3s ease;
+}
+
+.slider-item:hover {
+  background: rgba(0, 255, 136, 0.05);
+  border-color: rgba(0, 255, 136, 0.2);
+  transform: translateY(-2px);
+}
+
+.slider-item i {
+  font-size: 1.4rem;
+  color: #a0a0a0;
+  transition: color 0.3s ease;
+  width: 24px;
+  text-align: center;
+}
+
+.slider-item:hover i {
+  color: #00ff88;
+}
+
+.slider-item span {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.4);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  white-space: nowrap;
+  transition: color 0.3s ease;
+}
+
+.slider-item:hover span {
+  color: #00ff88;
+}
+
+/* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
-  .logo-track {
-    gap: 3rem;
+  .slider-section {
+    padding: 3rem 0;
   }
 
-  .logo-item {
-    min-width: 120px;
-    padding: 0.8rem;
+  .slider-fade {
+    width: 80px;
   }
 
-  .logo-item i {
-    font-size: 2rem;
+  .slider-item {
+    padding: 0.6rem 1.2rem;
+    gap: 0.6rem;
   }
 
-  .logo-item span {
-    font-size: 1rem;
+  .slider-item i {
+    font-size: 1.2rem;
+  }
+
+  .slider-item span {
+    font-size: 0.75rem;
   }
 }
