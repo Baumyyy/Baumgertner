@@ -121,3 +121,7 @@ body {
 .fade-in-delay-3 {
   transition-delay: 0.6s;
 }
+
+html, body {
+  overflow-x: hidden;
+}
