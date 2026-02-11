@@ -1,102 +1,112 @@
-import React from 'react';
-import { useScrollAnimation } from '../hooks/useScrollAnimation';
+import React, { useState } from 'react';
 import './WhatIDo.css';
 
-const WhatIDo = () => {
-  const [titleRef, titleVisible] = useScrollAnimation({ threshold: 0.3 });
-
-  const services = [
+const services = [
   {
-    id: 1,
-    icon: 'fas fa-code',
+    number: '01',
     title: 'Frontend Development',
-    description: 'Building responsive and interactive user interfaces with React, HTML, CSS, and JavaScript.',
-    link: null
+    description: 'Learning to build responsive web applications with React and modern JavaScript. Passionate about creating clean, user-friendly interfaces and improving every day.',
+    icon: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="16 18 22 12 16 6"/>
+        <polyline points="8 6 2 12 8 18"/>
+      </svg>
+    )
   },
   {
-    id: 2,
-    icon: 'fas fa-project-diagram',
+    number: '02',
     title: 'Project Management',
-    description: 'Leading projects from conception to deployment with agile methodologies and clear communication.',
-    link: null
+    description: 'Solid experience in leading teams, organizing workflows and driving projects from concept to completion. Skilled in agile methodologies, stakeholder communication and keeping cross-functional teams aligned.',
+    icon: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+      </svg>
+    )
   },
   {
-    id: 4,
-    icon: 'fas fa-graduation-cap',
+    number: '03',
     title: 'Continuous Learning',
-    description: 'Currently studying software engineering while actively building real-world projects and expanding my skill set.',
-    link: null
+    description: 'Currently studying Software Engineering and Project Management at Turku University of Applied Sciences. Deepening my skills through hands-on projects, coursework and real-world experience.',
+    icon: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+        <path d="M2 17l10 5 10-5"/>
+        <path d="M2 12l10 5 10-5"/>
+      </svg>
+    )
   },
-  {
-    id: 3,
-    icon: 'fab fa-linkedin',
-    title: 'Professional Network',
-    description: 'See more on LinkedIn to explore collaboration opportunities and stay updated on my professional journey.',
-    link: 'https://linkedin.com/in/anthony-baumgertner'
-  },
-  
+
 ];
 
-  return (
-    <section id="what-i-do" className="what-i-do-section">
-      <div className="what-i-do-container">
-        <h2 
-          ref={titleRef}
-          className={`section-title fade-in ${titleVisible ? 'visible' : ''}`}
-        >
-          What I Do
-        </h2>
-        <p className="section-subtitle">
-          Services & Expertise
-        </p>
+const WhatIDo = () => {
+  const [hoveredCard, setHoveredCard] = useState(null);
+
+return (
+    <section className="whatido">
+      <div className="whatido-content">
+        <div className="whatido-header">
+          <div className="section-tag">
+            <span className="tag-number">02</span>
+            <span className="tag-line"></span>
+            <span className="tag-label">Services</span>
+          </div>
+          <h2 className="whatido-title">
+            What I <span className="title-accent">Do</span>
+          </h2>
+          <p className="whatido-subtitle">
+            A mix of technical skills, leadership and a hunger to keep growing.
+          </p>
+        </div>
 
         <div className="services-grid">
-          {services.map((service, index) => (
-            <ServiceCard key={service.id} service={service} index={index} />
-          ))}
+          {services.map(function(service, index) {
+            return (
+              <div
+                key={index}
+                className={'service-card' + (hoveredCard === index ? ' hovered' : '') + (hoveredCard !== null && hoveredCard !== index ? ' dimmed' : '')}
+                onMouseEnter={function() { setHoveredCard(index); }}
+                onMouseLeave={function() { setHoveredCard(null); }}
+              >
+                <div className="card-top">
+                  <span className="card-number">{service.number}</span>
+                  <div className="card-icon">{service.icon}</div>
+                </div>
+                <h3 className="card-title">{service.title}</h3>
+                <p className="card-desc">{service.description}</p>
+                <div className="card-border-glow"></div>
+              </div>
+            );
+          })}
+
+          <div
+            className={'service-card journey-card' + (hoveredCard === 'journey' ? ' hovered' : '') + (hoveredCard !== null && hoveredCard !== 'journey' ? ' dimmed' : '')}
+            onMouseEnter={function() { setHoveredCard('journey'); }}
+            onMouseLeave={function() { setHoveredCard(null); }}
+            onClick={function() { window.open('https://linkedin.com/in/anthony-baumgertner', '_blank'); }}
+            style={{cursor: 'pointer'}}
+          >
+            <div className="card-top">
+              <span className="card-number">04</span>
+              <div className="card-icon card-icon-linkedin">
+                <i className="fab fa-linkedin"></i>
+              </div>
+            </div>
+            <h3 className="card-title">Professional Journey</h3>
+            <p className="card-desc">
+              Follow my career growth, projects and milestones. Lets connect and grow together in the tech industry.
+            </p>
+            <div className="journey-linkedin-btn">
+              <i className="fab fa-linkedin"></i>
+              <span>Connect on LinkedIn</span>
+            </div>
+            <div className="card-border-glow journey-glow-border"></div>
+          </div>
         </div>
+
       </div>
     </section>
   );
-};
-
-const ServiceCard = ({ service, index }) => {
-  const [cardRef, cardVisible] = useScrollAnimation({ threshold: 0.2 });
-
-  const CardContent = (
-    <>
-      <div className="service-icon">
-        <i className={service.icon}></i>
-      </div>
-      <h3 className="service-title">{service.title}</h3>
-      <p className="service-description">{service.description}</p>
-      {service.link && (
-        <div className="service-link">
-          <i className="fas fa-arrow-right"></i>
-          <span>See more</span>
-        </div>
-      )}
-    </>
-  );
-
-  return service.link ? (
-  <a
-    href={service.link}
-    target="_blank"
-    rel="noopener noreferrer"
-    ref={cardRef}
-    className={`service-card fade-in-up fade-in-delay-${(index % 4) + 1} ${cardVisible ? 'visible' : ''}`}
-  >
-    {CardContent}
-  </a>
-) : (
-  <div
-    ref={cardRef}
-    className={`service-card fade-in-up fade-in-delay-${(index % 4) + 1} ${cardVisible ? 'visible' : ''}`}
-  >
-    {CardContent}
-  </div>
-);
 };
 
 export default WhatIDo;
