@@ -1,15 +1,16 @@
-/* Navigation */
+/* ===== NAVIGATION ===== */
 .navbar {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 1000;
-  padding: 2rem 4rem;
+  padding: 1.8rem 4rem;
   display: flex;
   justify-content: flex-end;
-  background: rgba(10, 22, 40, 0.9);
-  backdrop-filter: blur(10px);
+  background: rgba(5, 10, 20, 0.8);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
 }
 
 .nav-links {
@@ -19,314 +20,538 @@
 }
 
 .nav-link {
-  color: #a0a0a0;
+  color: rgba(255, 255, 255, 0.35);
   text-decoration: none;
-  font-size: 1.1rem;
-  transition: color 0.3s ease;
+  font-size: 1rem;
+  transition: all 0.3s ease;
   display: flex;
   align-items: center;
   gap: 0.5rem;
   font-family: 'Bebas Neue', sans-serif;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
   background: none;
   border: none;
   padding: 0;
   cursor: pointer;
 }
 
-.nav-link:hover {
-  color: #ffffff;
-}
-
-.nav-link.active {
-  color: #ffffff;
-}
+.nav-link:hover { color: rgba(255, 255, 255, 0.7); }
+.nav-link.active { color: #ffffff; }
 
 .nav-dot {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   background: #00ff88;
   border-radius: 50%;
   display: none;
+  box-shadow: 0 0 10px rgba(0, 255, 136, 0.8);
 }
 
-.nav-link.active .nav-dot {
-  display: inline-block;
-}
+.nav-link.active .nav-dot { display: inline-block; }
 
-/* Hero Section */
+/* ===== HERO ===== */
 .hero {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 8rem 8rem 4rem 8rem;
+  padding: 7rem 6rem 3rem 6rem;
   position: relative;
   z-index: 1;
-  max-width: 1800px;
+  max-width: 1700px;
   margin: 0 auto;
+  overflow: hidden;
 }
 
+/* Floating particles */
+.hero-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: rgba(0, 255, 136, 0.4);
+  border-radius: 50%;
+  box-shadow: 0 0 6px rgba(0, 255, 136, 0.3);
+}
+
+.p1 { top: 15%; left: 10%; animation: floatUp 8s ease-in-out infinite; }
+.p2 { top: 60%; left: 85%; animation: floatUp 12s ease-in-out infinite 2s; }
+.p3 { top: 80%; left: 30%; animation: floatUp 10s ease-in-out infinite 4s; width: 3px; height: 3px; }
+.p4 { top: 25%; left: 70%; animation: floatUp 9s ease-in-out infinite 1s; width: 5px; height: 5px; }
+.p5 { top: 45%; left: 50%; animation: floatUp 11s ease-in-out infinite 3s; width: 2px; height: 2px; }
+.p6 { top: 70%; left: 15%; animation: floatUp 7s ease-in-out infinite 5s; }
+
+@keyframes floatUp {
+  0%, 100% { transform: translateY(0) translateX(0); opacity: 0.4; }
+  25% { transform: translateY(-30px) translateX(10px); opacity: 0.8; }
+  50% { transform: translateY(-60px) translateX(-5px); opacity: 0.3; }
+  75% { transform: translateY(-30px) translateX(15px); opacity: 0.7; }
+}
+
+/* Glow line */
+.hero-glow-line {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.15), transparent);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+/* Main layout */
 .hero-main {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 8rem;
+  gap: 4rem;
+  position: relative;
+  z-index: 1;
 }
 
+/* ===== LEFT ===== */
 .hero-left {
   flex: 1;
-  max-width: 700px;
+  max-width: 600px;
 }
 
-/* Availability Badge */
-.availability-badge {
-  display: inline-flex;
+.hero-intro {
+  display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.6rem 1.2rem;
-  background: rgba(0, 255, 136, 0.1);
-  border: 1px solid rgba(0, 255, 136, 0.3);
-  border-radius: 50px;
+  gap: 1rem;
   margin-bottom: 2rem;
-  font-size: 0.9rem;
-  color: #a8a8a8;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
-.availability-dot {
-  width: 8px;
-  height: 8px;
-  background: #00ff88;
-  border-radius: 50%;
-  animation: pulse 2s infinite;
+.intro-number {
+  font-size: 0.85rem;
+  color: #00ff88;
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 0.1em;
 }
 
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-    box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.7);
-  }
-  50% {
-    opacity: 0.8;
-    box-shadow: 0 0 0 8px rgba(0, 255, 136, 0);
-  }
+.intro-line {
+  width: 50px;
+  height: 1px;
+  background: rgba(0, 255, 136, 0.4);
 }
 
-/* Hero Greeting */
-.hero-greeting {
-  font-size: 2.2rem;
-  color: #a8a8a8;
-  margin-bottom: 0.6rem;
-  font-weight: 400;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+.intro-text {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.3);
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
 }
 
-/* Hero Name */
+/* Name */
 .hero-name {
-  font-size: clamp(2.5rem, 6vw, 7rem);
+  margin-bottom: 1.5rem;
+}
+
+.greeting-small {
+  display: block;
+  font-size: 1.3rem;
+  color: rgba(255, 255, 255, 0.4);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-weight: 300;
-  line-height: 0.97;
-  margin-bottom: 0.77rem;
-  background: linear-gradient(
-    200deg,
-    #00cc70 30%,
-    #00ff88 700%,
-    #009955 1000%
-  );
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  filter: drop-shadow(0 0 30px rgba(0, 255, 136, 0.4));
+  margin-bottom: 0.5rem;
+}
+
+.name-first {
+  display: block;
+  font-size: clamp(4rem, 8vw, 6.5rem);
+  font-weight: 700;
+  line-height: 1.05;
+  color: #ffffff;
   font-family: 'Bebas Neue', sans-serif;
   letter-spacing: 0.02em;
 }
 
-/* Hero Roles */
-.hero-roles {
-  font-size: 1.25rem;
-  color: #a8a8a8;
-  margin-bottom: 3rem;
-  line-height: 1.8;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+.name-last {
+  display: block;
+  font-size: clamp(4rem, 8vw, 6.5rem);
+  font-weight: 700;
+  line-height: 1.05;
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 0.02em;
+  background: linear-gradient(135deg, #00ff88, #00bb66);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 25px rgba(0, 255, 136, 0.25));
 }
 
-/* Social Links */
+/* Title bar */
+.hero-title-bar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+  flex-wrap: wrap;
+}
+
+.title-item {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.4);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  letter-spacing: 0.02em;
+}
+
+.title-divider {
+  width: 5px;
+  height: 5px;
+  background: rgba(0, 255, 136, 0.5);
+  border-radius: 50%;
+}
+
+/* Buttons */
+.hero-actions {
+  display: flex;
+  gap: 1.2rem;
+  margin-bottom: 3rem;
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 1rem 2.2rem;
+  background: #00ff88;
+  color: #0a1628;
+  border-radius: 6px;
+  text-decoration: none;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.05rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+  font-weight: 700;
+}
+
+.btn-primary:hover {
+  background: #00dd77;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 255, 136, 0.25);
+}
+
+.btn-arrow {
+  transition: transform 0.3s ease;
+}
+
+.btn-primary:hover .btn-arrow {
+  transform: translateX(4px);
+}
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  padding: 1rem 2.2rem;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  text-decoration: none;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.05rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+}
+
+.btn-ghost:hover {
+  border-color: rgba(0, 255, 136, 0.4);
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+
+/* Social - ISOMMAT */
 .social-links {
   display: flex;
-  gap: 1.5rem;
+  gap: 1.2rem;
 }
 
 .social-link {
-  width: 70px;
-  height: 70px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
+  width: 55px;
+  height: 55px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #ffffff;
-  font-size: 1.6rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 1.5rem;
   transition: all 0.3s ease;
   text-decoration: none;
 }
 
 .social-link:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: #00ff88;
+  background: rgba(0, 255, 136, 0.1);
+  border-color: rgba(0, 255, 136, 0.3);
+  color: #00ff88;
   transform: translateY(-3px);
 }
 
-/* Hero Right - kuvan Placeholder */
+/* ===== BADGE - ISOMPI ===== */
 .hero-right {
   flex: 0 0 auto;
-  max-width: 400px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.hero-image-placeholder {
-  width: 385px;
-  height: 540px;
-  border-radius: 20px;
-  background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 204, 112, 0.1));
-  border: 2px solid rgba(0, 255, 136, 0.3);
+.badge-wrapper {
+  position: relative;
+}
+
+/* V-lanyard */
+.badge-lanyard {
+  height: 50px;
+  display: flex;
+  justify-content: center;
+}
+
+.lanyard-v {
+  width: 70px;
+  height: 50px;
+  position: relative;
+}
+
+.lanyard-v::before,
+.lanyard-v::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  width: 3px;
+  height: 55px;
+  background: linear-gradient(180deg, rgba(0, 255, 136, 0.08), rgba(0, 255, 136, 0.4));
+  border-radius: 2px;
+}
+
+.lanyard-v::before {
+  left: 12px;
+  transform: rotate(-14deg);
+  transform-origin: top center;
+}
+
+.lanyard-v::after {
+  right: 12px;
+  transform: rotate(14deg);
+  transform-origin: top center;
+}
+
+/* Card - ISOMPI */
+.badge-card {
+  width: 380px;
+  background: linear-gradient(160deg, rgba(6, 20, 35, 0.98), rgba(10, 30, 45, 0.98));
+  border: 1px solid rgba(0, 255, 136, 0.15);
+  border-radius: 18px;
+  padding: 1.8rem;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(0, 255, 136, 0.06);
+  transition: all 0.4s ease;
+}
+
+.badge-card:hover {
+  border-color: rgba(0, 255, 136, 0.35);
+  transform: translateY(-3px);
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.6), 0 0 60px rgba(0, 255, 136, 0.12);
+}
+
+/* Corner accents */
+.badge-corner {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-color: rgba(0, 255, 136, 0.3);
+  border-style: solid;
+  border-width: 0;
+}
+
+.badge-corner-tl { top: 10px; left: 10px; border-top-width: 1px; border-left-width: 1px; }
+.badge-corner-tr { top: 10px; right: 10px; border-top-width: 1px; border-right-width: 1px; }
+.badge-corner-bl { bottom: 10px; left: 10px; border-bottom-width: 1px; border-left-width: 1px; }
+.badge-corner-br { bottom: 10px; right: 10px; border-bottom-width: 1px; border-right-width: 1px; }
+
+/* Shine */
+.badge-shine {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.03), transparent);
+  animation: badgeShine 6s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes badgeShine {
+  0% { left: -50%; }
+  40% { left: 100%; }
+  100% { left: 100%; }
+}
+
+/* Photo - ISOMPI */
+.badge-photo {
+  width: 100%;
+  height: 230px;
+  background: rgba(0, 255, 136, 0.03);
+  border: 1px solid rgba(0, 255, 136, 0.1);
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-bottom: 1.5rem;
   position: relative;
   overflow: hidden;
 }
 
-.hero-image-placeholder::before {
-  content: '';
+.photo-scanline {
   position: absolute;
+  top: -100%;
+  left: 0;
   width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    45deg,
-    transparent 40%,
-    rgba(0, 255, 136, 0.15) 50%,
-    transparent 60%
-  );
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.4), transparent);
+  animation: scanline 4s linear infinite;
 }
 
-.image-text {
-  font-size: 1.2rem;
-  color: #00ff88;
+@keyframes scanline {
+  0% { top: -5%; }
+  100% { top: 105%; }
+}
+
+.photo-text {
+  font-size: 0.9rem;
+  color: rgba(0, 255, 136, 0.3);
   font-family: 'Bebas Neue', sans-serif;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
   z-index: 1;
+}
+
+/* Content */
+.badge-content {
   position: relative;
-}
-
-.image-myname {
-  font-size: 1.22rem;
-  color: #cecbcb;
-  font-family: 'Bebas Neue', sans-serif;
-  letter-spacing: 0.1em;
-  position: absolute;
-  bottom: 12rem;
-  left: 30%;
-  transform: translateX(-50%);
-}
-
-.my-age {
-  font-size: 1.1rem;
-  color: #cecbcb;
-  font-family: 'Bebas Neue', sans-serif;
-  letter-spacing: 0.1em;
-  position: absolute;
-  bottom: 10.2rem;
-  left: 14%;
-  transform: translateX(-50%);
-}
-
-.experience {
-  font-size: 1.1rem;
-  color: #cecbcb;
-  font-family: 'Bebas Neue', sans-serif;
-  letter-spacing: 0.02em;
-  position: absolute;
-  bottom: 7rem;
-  left: 37%;
-  transform: translateX(-50%);
-}
-
-.language {
-  font-size: 1.1rem;
-  color: #cecbcb;
-  font-family: 'Bebas Neue', sans-serif;
-  letter-spacing: 0.02em;
-  position: absolute;
-  bottom: 5.2rem;
-  left: 35%;
-  transform: translateX(-50%);
-}
-
-/* Tämä päivittyy sit kuvaa varten*/
-.hero-image-placeholder img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 20px;
   z-index: 1;
-  position: relative;
 }
 
-/* Responsive */
+.badge-name {
+  font-size: 1.4rem;
+  color: #ffffff;
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 0.3rem;
+}
+
+.badge-role-text {
+  font-size: 0.85rem;
+  color: rgba(0, 255, 136, 0.6);
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 1.2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Stats - ISOMMAT */
+.badge-stats {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+
+.stat {
+  text-align: center;
+  flex: 1;
+}
+
+.stat-value {
+  display: block;
+  font-size: 1.8rem;
+  color: #ffffff;
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 0.05em;
+}
+
+.stat-label {
+  display: block;
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.3);
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-top: 0.2rem;
+}
+
+/* Footer */
+.badge-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.7rem;
+  background: rgba(0, 255, 136, 0.06);
+  border: 1px solid rgba(0, 255, 136, 0.15);
+  border-radius: 8px;
+  margin-top: 1.2rem;
+}
+
+.status-indicator {
+  width: 6px;
+  height: 6px;
+  background: #00ff88;
+  border-radius: 50%;
+  animation: statusBlink 2s ease-in-out infinite;
+  box-shadow: 0 0 8px rgba(0, 255, 136, 0.7);
+}
+
+@keyframes statusBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.status-text {
+  font-size: 0.75rem;
+  color: rgba(0, 255, 136, 0.7);
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* ===== RESPONSIVE ===== */
 @media (max-width: 1200px) {
-  .hero-main {
-    gap: 5rem;
-  }
+  .hero-main { gap: 3rem; }
+  .hero { padding: 7rem 4rem 3rem 4rem; }
+  .badge-card { width: 340px; }
+  .badge-photo { height: 200px; }
 }
 
 @media (max-width: 968px) {
-  .hero {
-    padding: 6rem 3rem 3rem 3rem;
-  }
-
-  .hero-main {
-    flex-direction: column;
-    gap: 3rem;
-  }
-  
-  .hero-right {
-    max-width: 100%;
-  }
-  
-  .hero-image-placeholder {
-    width: 280px;
-    height: 360px;
-  }
+  .hero { padding: 6rem 3rem 3rem 3rem; }
+  .hero-main { flex-direction: column; align-items: flex-start; gap: 3rem; }
+  .badge-card { width: 320px; }
+  .badge-photo { height: 180px; }
 }
 
 @media (max-width: 768px) {
-  .navbar {
-    padding: 1.5rem 2rem;
-  }
-
-  .nav-links {
-    gap: 1.5rem;
-  }
-
-  .hero {
-    padding: 6rem 2rem 2rem 2rem;
-  }
-
-  .hero-name {
-    font-size: clamp(2.5rem, 8vw, 4rem);
-  }
-
-  .hero-roles {
-    font-size: 1.1rem;
-  }
-
-  .social-link {
-    width: 50px;
-    height: 50px;
-    font-size: 1.4rem;
-  }
+  .navbar { padding: 1.2rem 2rem; }
+  .nav-links { gap: 1.5rem; }
+  .hero { padding: 5rem 1.5rem 2rem 1.5rem; }
+  .name-first, .name-last { font-size: clamp(2.5rem, 10vw, 4rem); }
+  .hero-actions { flex-direction: column; }
+  .badge-card { width: 280px; padding: 1.3rem; }
+  .badge-photo { height: 160px; }
+  .hero-title-bar { gap: 0.6rem; }
 }
