@@ -10,6 +10,7 @@ const technologies = [
   { icon: 'fab fa-npm', name: 'npm' },
   { icon: 'fab fa-git-alt', name: 'Git' },
   { icon: 'fab fa-github', name: 'GitHub' },
+  { icon: 'fas fa-bolt', name: 'Vite' },
 ];
 
 const LogoSlider = () => {
@@ -17,7 +18,7 @@ const LogoSlider = () => {
     <div className="slider-section">
       <div className="slider-header">
         <span className="slider-line"></span>
-        <span className="slider-label">Tech Stack</span>
+        <span className="slider-label">My Stack</span>
         <span className="slider-line slider-line-right"></span>
       </div>
 
@@ -40,6 +41,26 @@ const LogoSlider = () => {
             {technologies.map(function(tech, i) {
               return (
                 <div className="slider-item" key={'b' + i}>
+                  <i className={tech.icon}></i>
+                  <span>{tech.name}</span>
+                </div>
+              );
+            })}
+          </div>
+          <div className="slider-row">
+            {technologies.map(function(tech, i) {
+              return (
+                <div className="slider-item" key={'c' + i}>
+                  <i className={tech.icon}></i>
+                  <span>{tech.name}</span>
+                </div>
+              );
+            })}
+          </div>
+          <div className="slider-row">
+            {technologies.map(function(tech, i) {
+              return (
+                <div className="slider-item" key={'d' + i}>
                   <i className={tech.icon}></i>
                   <span>{tech.name}</span>
                 </div>
