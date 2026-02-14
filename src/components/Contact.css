@@ -33,7 +33,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 5rem;
-  align-items: center;
+  align-items: start;
 }
 
 /* ===== LEFT - INFO ===== */
@@ -109,7 +109,7 @@
   align-items: center;
   gap: 1rem;
   padding: 1rem 1.3rem;
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(124, 119, 119, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.09);
 }
 
@@ -162,7 +162,7 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.6rem 1.2rem;
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(124, 119, 119, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 8px;
   color: rgba(255, 255, 255, 0.4);
@@ -189,8 +189,12 @@
 }
 
 .form-card {
-  background: rgba(255, 255, 255, 0.045);
+  background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.4s ease;
+  margin-top: 4.35rem;
 }
 
 .form-card:hover {

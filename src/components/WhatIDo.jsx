@@ -43,7 +43,7 @@ const WhatIDo = () => {
   const [hoveredCard, setHoveredCard] = useState(null);
 
 return (
-    <section className="whatido">
+    <section id="whatido" className="whatido">
       <div className="whatido-content">
         <div className="whatido-header">
           <div className="section-tag">

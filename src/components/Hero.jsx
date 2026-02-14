@@ -6,11 +6,7 @@ const Hero = () => {
 
   useEffect(() => {
     const sections = document.querySelectorAll('section[id]');
-    
-    const observerOptions = {
-      threshold: 0.3,
-      rootMargin: '0px 0px -50% 0px'
-    };
+    const container = document.querySelector('.aurora-container');
 
     const observerCallback = (entries) => {
       entries.forEach((entry) => {
@@ -21,9 +17,17 @@ const Hero = () => {
       });
     };
 
-    const observer = new IntersectionObserver(observerCallback, observerOptions);
+    const observer = new IntersectionObserver(observerCallback, {
+      threshold: 0.3,
+      root: container,
+      rootMargin: '0px 0px -40% 0px'
+    });
+
     sections.forEach((section) => observer.observe(section));
-    return () => sections.forEach((section) => observer.unobserve(section));
+
+    return () => {
+      sections.forEach((section) => observer.unobserve(section));
+    };
   }, []);
 
   const handleClick = (e, targetId) => {
@@ -44,6 +48,9 @@ const Hero = () => {
           <a href="#home" className={`nav-link ${activeSection === 'home' ? 'active' : ''}`} onClick={(e) => handleClick(e, 'home')}>
             <span className="nav-dot"></span>Home
           </a>
+          <a href="#whatido" className={`nav-link ${activeSection === 'whatido' ? 'active' : ''}`} onClick={(e) => handleClick(e, 'whatido')}>
+            <span className="nav-dot"></span>What I Do
+          </a>
           <a href="#projects" className={`nav-link ${activeSection === 'projects' ? 'active' : ''}`} onClick={(e) => handleClick(e, 'projects')}>
             <span className="nav-dot"></span>Projects
           </a>
@@ -54,7 +61,6 @@ const Hero = () => {
       </nav>
 
       <section id="home" className="hero">
-        {/* Particles */}
         <div className="hero-particles">
           <div className="particle p1"></div>
           <div className="particle p2"></div>
@@ -64,7 +70,6 @@ const Hero = () => {
           <div className="particle p6"></div>
         </div>
 
-        {/* Glow line */}
         <div className="hero-glow-line"></div>
 
         <div className="hero-main">
@@ -100,9 +105,15 @@ const Hero = () => {
             </div>
 
             <div className="social-links">
-              <a href="https://github.com/baumyyy" target="_blank" rel="noopener noreferrer" className="social-link"><i className="fab fa-github"></i></a>
-              <a href="https://linkedin.com/in/anthony-baumgertner" target="_blank" rel="noopener noreferrer" className="social-link"><i className="fab fa-linkedin"></i></a>
-              <a href="https://instagram.com/baumgertnerr" target="_blank" rel="noopener noreferrer" className="social-link"><i className="fab fa-instagram"></i></a>
+              <a href="https://github.com/baumyyy" target="_blank" rel="noopener noreferrer" className="social-link">
+                <i className="fab fa-github"></i>
+              </a>
+              <a href="https://linkedin.com/in/anthony-baumgertner" target="_blank" rel="noopener noreferrer" className="social-link">
+                <i className="fab fa-linkedin"></i>
+              </a>
+              <a href="https://instagram.com/baumgertnerr" target="_blank" rel="noopener noreferrer" className="social-link">
+                <i className="fab fa-instagram"></i>
+              </a>
             </div>
           </div>
 
@@ -126,7 +137,7 @@ const Hero = () => {
                 <div className="badge-content">
                   <h3 className="badge-name">Anthony Baumgertner</h3>
                   <p className="badge-role-text">Software Engineer & Project Manager</p>
-                  
+
                   <div className="badge-stats">
                     <div className="stat">
                       <span className="stat-value">22</span>

@@ -17,7 +17,7 @@ const Contact = () => {
         {/* Left side - Info */}
         <div className="contact-info">
           <div className="section-tag">
-            <span className="tag-number">05</span>
+            <span className="tag-number">04</span>
             <span className="tag-line"></span>
             <span className="tag-label">Contact</span>
           </div>
