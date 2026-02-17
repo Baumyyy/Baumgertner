@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './Hero.css';
 
+
 const Hero = () => {
   const [activeSection, setActiveSection] = useState('home');
 
@@ -124,43 +125,60 @@ const Hero = () => {
               </div>
 
               <div className="badge-card">
-                <div className="badge-corner badge-corner-tl"></div>
-                <div className="badge-corner badge-corner-tr"></div>
-                <div className="badge-corner badge-corner-bl"></div>
-                <div className="badge-corner badge-corner-br"></div>
+  <div className="badge-corner badge-corner-tl"></div>
+  <div className="badge-corner badge-corner-tr"></div>
+  <div className="badge-corner badge-corner-bl"></div>
+  <div className="badge-corner badge-corner-br"></div>
 
-                <div className="badge-photo">
-                  <div className="photo-scanline"></div>
-                  <span className="photo-text">Photo</span>
-                </div>
+  <div className="badge-photo-wrapper">
+    <div className="badge-photo">
+      <img src="/Logos/IMG_4680.jpg" alt="Anthony Baumgertner" className="badge-photo-img" />
+    </div>
+    <div className="badge-photo-ring"></div>
+  </div>
 
-                <div className="badge-content">
-                  <h3 className="badge-name">Anthony Baumgertner</h3>
-                  <p className="badge-role-text">Software Engineer & Project Manager</p>
+  <div className="badge-content">
+    <h3 className="badge-name">Anthony Baumgertner</h3>
+    <p className="badge-role-text">Software Engineer & Project Manager</p>
 
-                  <div className="badge-stats">
-                    <div className="stat">
-                      <span className="stat-value">22</span>
-                      <span className="stat-label">Age</span>
-                    </div>
-                    <div className="stat">
-                      <span className="stat-value">1.5</span>
-                      <span className="stat-label">Years Exp</span>
-                    </div>
-                    <div className="stat">
-                      <span className="stat-value">3</span>
-                      <span className="stat-label">Languages</span>
-                    </div>
-                  </div>
-                </div>
+    <div className="badge-stats">
+      <div className="stat">
+        <span className="stat-value">22</span>
+        <span className="stat-label">Age</span>
+      </div>
+      <div className="stat">
+        <span className="stat-value">1.5</span>
+        <span className="stat-label">Years Exp</span>
+      </div>
+      <div className="stat">
+        <span className="stat-value">3</span>
+        <span className="stat-label">Languages</span>
+      </div>
+    </div>
 
-                <div className="badge-footer">
-                  <span className="status-indicator"></span>
-                  <span className="status-text">Available for projects</span>
-                </div>
+    <div className="badge-languages">
+  <span className="badge-lang">
+    <span className="lang-flag">🇫🇮</span>
+    <span>Finnish</span>
+  </span>
+  <span className="badge-lang">
+  <span className="lang-flag">🇺🇸</span>
+  <span>English</span>
+</span>
+  <span className="badge-lang">
+    <span className="lang-flag">🇷🇺</span>
+    <span>Russian</span>
+  </span>
+</div>
+  </div>
 
-                <div className="badge-shine"></div>
-              </div>
+  <div className="badge-footer">
+    <span className="status-indicator"></span>
+    <span className="status-text">Available for projects</span>
+  </div>
+
+  <div className="badge-shine"></div>
+</div>
             </div>
           </div>
         </div>

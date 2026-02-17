@@ -400,34 +400,69 @@
   100% { left: 100%; }
 }
 
-/* Photo - ISOMPI */
-.badge-photo {
-  width: 100%;
-  height: 230px;
-  background: rgba(0, 255, 136, 0.03);
-  border: 1px solid rgba(0, 255, 136, 0.1);
-  border-radius: 10px;
+/* Photo */
+.badge-photo-wrapper {
   display: flex;
-  align-items: center;
   justify-content: center;
-  margin-bottom: 1.5rem;
+  padding: 1.2rem 0 0.8rem 0;
   position: relative;
+}
+
+.badge-photo {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
   overflow: hidden;
+  position: relative;
+  z-index: 2;
+  border: 3px solid rgba(0, 255, 136, 0.25);
+  box-shadow: 0 0 25px rgba(0, 255, 136, 0.1);
+  animation: photoPulse 4s ease-in-out infinite;
 }
 
-.photo-scanline {
-  position: absolute;
-  top: -100%;
-  left: 0;
+@keyframes photoPulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(0, 255, 136, 0.08); border-color: rgba(0, 255, 136, 0.15); }
+  50% { box-shadow: 0 0 50px rgba(0, 255, 136, 0.35); border-color: rgba(0, 255, 136, 0.6); }
+}
+
+.badge-photo-img {
   width: 100%;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.4), transparent);
-  animation: scanline 4s linear infinite;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 25%;
+  display: block;
 }
 
-@keyframes scanline {
-  0% { top: -5%; }
-  100% { top: 105%; }
+.badge-photo-ring {
+  display: none;
+}
+
+/* Languages */
+.badge-languages {
+  display: flex;
+  justify-content: center;
+  gap: 1.2rem;
+  margin-top: 1rem;
+}
+
+.badge-lang {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.lang-flag {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.badge-lang span:last-child {
+  font-size: 0.55rem;
+  color: rgba(255, 255, 255, 0.3);
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 
 .photo-text {
