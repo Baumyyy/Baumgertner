@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import './WhatIDo.css';
+import { useScrollAnimation } from '../hooks/useScrollAnimation';
 
-const services = [
+var services = [
   {
     number: '01',
     title: 'Frontend Development',
@@ -35,17 +36,19 @@ const services = [
         <path d="M2 12l10 5 10-5"/>
       </svg>
     )
-  },
-
+  }
 ];
 
-const WhatIDo = () => {
-  const [hoveredCard, setHoveredCard] = useState(null);
+var WhatIDo = function() {
+  var hoveredCardState = useState(null);
+  var hoveredCard = hoveredCardState[0];
+  var setHoveredCard = hoveredCardState[1];
+  var sectionRef = useScrollAnimation();
 
-return (
-    <section id="whatido" className="whatido">
+  return (
+    <section id="whatido" className="whatido" ref={sectionRef}>
       <div className="whatido-content">
-        <div className="whatido-header">
+        <div className="whatido-header fade-in stagger-1">
           <div className="section-tag">
             <span className="tag-number">02</span>
             <span className="tag-line"></span>
@@ -59,7 +62,7 @@ return (
           </p>
         </div>
 
-        <div className="services-grid">
+        <div className="services-grid fade-in stagger-2">
           {services.map(function(service, index) {
             return (
               <div
@@ -103,7 +106,6 @@ return (
             <div className="card-border-glow journey-glow-border"></div>
           </div>
         </div>
-
       </div>
     </section>
   );

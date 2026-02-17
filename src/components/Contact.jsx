@@ -1,37 +1,43 @@
 import React, { useState } from 'react';
 import './Contact.css';
+import { useScrollAnimation } from '../hooks/useScrollAnimation';
 
-const Contact = () => {
-  const [focused, setFocused] = useState('');
-  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+var Contact = function() {
+  var focusedState = useState('');
+  var focused = focusedState[0];
+  var setFocused = focusedState[1];
+  var formDataState = useState({ name: '', email: '', message: '' });
+  var formData = formDataState[0];
+  var setFormData = formDataState[1];
+  var sectionRef = useScrollAnimation();
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  var handleChange = function(e) {
+    var newData = {};
+    newData[e.target.name] = e.target.value;
+    setFormData(Object.assign({}, formData, newData));
   };
 
   return (
-    <section id="contact" className="contact">
+    <section id="contact" className="contact" ref={sectionRef}>
       <div className="contact-bg-accent"></div>
 
       <div className="contact-content">
-        {/* Left side - Info */}
-        <div className="contact-info">
+        <div className="contact-info fade-in stagger-1">
           <div className="section-tag">
-            <span className="tag-number">04</span>
+            <span className="tag-number">03</span>
             <span className="tag-line"></span>
             <span className="tag-label">Contact</span>
           </div>
 
           <h2 className="contact-title">
-            Let's build<br />
+            Lets build<br />
             something <span className="title-accent">great</span>
           </h2>
 
           <p className="contact-desc">
-            Got a project or idea? I'm always open to discussing new opportunities and collaborations.
+            Got a project or idea? Im always open to discussing new opportunities and collaborations.
           </p>
 
-          {/* Contact cards */}
           <div className="info-cards">
             <div className="info-card">
               <div className="info-card-icon">
@@ -74,51 +80,50 @@ const Contact = () => {
           </div>
         </div>
 
-        {/* Right side - Form */}
-        <div className="contact-form-wrapper">
+        <div className="contact-form-wrapper fade-in stagger-2">
           <div className="form-card">
             <div className="form-card-header">
               <div className="form-card-dot"></div>
               <span className="form-card-title">New Message</span>
             </div>
 
-            <form className="contact-form" onSubmit={(e) => e.preventDefault()}>
-              <div className={`form-field ${focused === 'name' ? 'focused' : ''} ${formData.name ? 'has-value' : ''}`}>
+            <form className="contact-form" onSubmit={function(e) { e.preventDefault(); }}>
+              <div className={'form-field' + (focused === 'name' ? ' focused' : '') + (formData.name ? ' has-value' : '')}>
                 <label className="field-label">Name</label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   name="name"
-                  className="field-input" 
-                  onFocus={() => setFocused('name')}
-                  onBlur={() => setFocused('')}
+                  className="field-input"
+                  onFocus={function() { setFocused('name'); }}
+                  onBlur={function() { setFocused(''); }}
                   onChange={handleChange}
                   value={formData.name}
                 />
                 <div className="field-line"></div>
               </div>
 
-              <div className={`form-field ${focused === 'email' ? 'focused' : ''} ${formData.email ? 'has-value' : ''}`}>
+              <div className={'form-field' + (focused === 'email' ? ' focused' : '') + (formData.email ? ' has-value' : '')}>
                 <label className="field-label">Email</label>
-                <input 
+                <input
                   type="email"
-                  name="email" 
-                  className="field-input" 
-                  onFocus={() => setFocused('email')}
-                  onBlur={() => setFocused('')}
+                  name="email"
+                  className="field-input"
+                  onFocus={function() { setFocused('email'); }}
+                  onBlur={function() { setFocused(''); }}
                   onChange={handleChange}
                   value={formData.email}
                 />
                 <div className="field-line"></div>
               </div>
 
-              <div className={`form-field ${focused === 'message' ? 'focused' : ''} ${formData.message ? 'has-value' : ''}`}>
+              <div className={'form-field' + (focused === 'message' ? ' focused' : '') + (formData.message ? ' has-value' : '')}>
                 <label className="field-label">Message</label>
-                <textarea 
+                <textarea
                   name="message"
-                  className="field-input field-textarea" 
+                  className="field-input field-textarea"
                   rows="4"
-                  onFocus={() => setFocused('message')}
-                  onBlur={() => setFocused('')}
+                  onFocus={function() { setFocused('message'); }}
+                  onBlur={function() { setFocused(''); }}
                   onChange={handleChange}
                   value={formData.message}
                 ></textarea>

@@ -1,38 +1,42 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
-export const useScrollAnimation = (options = {}) => {
-  const elementRef = useRef(null);
-  const [isVisible, setIsVisible] = useState(false);
+export const useScrollAnimation = () => {
+  var ref = useRef(null);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          //This line for unobserving the element after it has become visible once.
-          if (options.once !== false) {
+  useEffect(function() {
+    var container = document.querySelector('.aurora-container');
+    
+    var observer = new IntersectionObserver(
+      function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
             observer.unobserve(entry.target);
           }
-        } else if (options.once === false) {
-          setIsVisible(false);
-        }
+        });
       },
       {
-        threshold: options.threshold || 0.1,
-        rootMargin: options.rootMargin || '0px'
+        threshold: 0.1,
+        root: container || null
       }
     );
 
-    if (elementRef.current) {
-      observer.observe(elementRef.current);
+    if (ref.current) {
+      var fadeElements = ref.current.querySelectorAll('.fade-in');
+      fadeElements.forEach(function(el) {
+        observer.observe(el);
+      });
     }
 
-    return () => {
-      if (elementRef.current) {
-        observer.unobserve(elementRef.current);
+    return function() {
+      if (ref.current) {
+        var fadeElements = ref.current.querySelectorAll('.fade-in');
+        fadeElements.forEach(function(el) {
+          observer.unobserve(el);
+        });
       }
     };
-  }, [options.threshold, options.rootMargin, options.once]);
+  }, []);
 
-  return [elementRef, isVisible];
+  return ref;
 };

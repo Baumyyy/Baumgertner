@@ -91,9 +91,9 @@
 }
 
 .service-card.dimmed {
-  opacity: 0.4;
-  filter: blur(1px);
+  filter: blur(1px) brightness(0.4);
 }
+
 
 /* Border glow */
 .card-border-glow {
