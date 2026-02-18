@@ -1,10 +1,20 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './Footer.css';
 import { useScrollAnimation } from '../hooks/useScrollAnimation';
+import { api } from '../api';
 
 var Footer = function() {
   var currentYear = new Date().getFullYear();
   var sectionRef = useScrollAnimation();
+  var availableState = useState(true);
+  var available = availableState[0];
+  var setAvailable = availableState[1];
+
+  useEffect(function() {
+    api.getAvailability().then(function(data) {
+      setAvailable(data.available);
+    }).catch(function() {});
+  }, []);
 
   var handleNavClick = function(e, targetId) {
     e.preventDefault();
@@ -67,13 +77,13 @@ var Footer = function() {
             </div>
 
             <div className="footer-links-col">
-              <h4 className="footer-links-title">Status</h4>
-              <div className="footer-status">
-                <span className="footer-status-dot"></span>
-                <span>Available for projects</span>
-              </div>
-              <p className="footer-status-detail">Open to freelance, collaboration and full-time opportunities</p>
+            <h4 className="footer-links-title">Status</h4>
+            <div className="footer-status">
+           <span className={'footer-status-dot' + (available ? '' : ' footer-status-busy')}></span>
+           <span>{available ? 'Available for projects' : 'Currently busy'}</span>
             </div>
+           <p className="footer-status-detail">{available ? 'Open to freelance, collaboration and full-time opportunities' : 'Not taking new projects at the moment'}</p>
+          </div>
           </div>
         </div>
 

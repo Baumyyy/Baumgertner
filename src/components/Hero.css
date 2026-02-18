@@ -530,17 +530,25 @@
   margin-top: 0.2rem;
 }
 
+
 /* Footer */
 .badge-footer {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.6rem;
-  padding: 0.7rem;
-  background: rgba(0, 255, 136, 0.06);
-  border: 1px solid rgba(0, 255, 136, 0.15);
-  border-radius: 8px;
   margin-top: 1.2rem;
+  padding: 0.8rem 1.2rem;
+  background: rgba(0, 255, 136, 0.04);
+  border: 1px solid rgba(0, 255, 136, 0.1);
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+.badge-footer.footer-busy {
+  background: rgba(255, 100, 100, 0.08);
+  border-color: rgba(255, 100, 100, 0.25);
+  box-shadow: 0 0 15px rgba(255, 100, 100, 0.08);
 }
 
 .status-indicator {
@@ -550,6 +558,26 @@
   border-radius: 50%;
   animation: statusBlink 2s ease-in-out infinite;
   box-shadow: 0 0 8px rgba(0, 255, 136, 0.7);
+}
+
+.status-indicator.status-busy {
+  width: 6px;
+  height: 6px;
+  background: #ff6464;
+  border-radius: 50%;
+  animation: statusBlink 2s ease-in-out infinite;
+  box-shadow: 0 0 8px rgba(255, 100, 100, 0.6);
+}
+
+@keyframes busyPulse {
+  0%, 100% { box-shadow: 0 0 8px rgba(255, 100, 100, 0.4); }
+  50% { box-shadow: 0 0 20px rgba(255, 100, 100, 0.9), 0 0 40px rgba(255, 100, 100, 0.4); }
+}
+
+
+/* Badge footer busy state */
+.badge-footer.footer-busy .status-text {
+  color: rgba(255, 100, 100, 0.8);
 }
 
 @keyframes statusBlink {
@@ -589,4 +617,122 @@
   .badge-card { width: 280px; padding: 1.3rem; }
   .badge-photo { height: 160px; }
   .hero-title-bar { gap: 0.6rem; }
+}
+
+/* ===== HERO LOAD ANIMATIONS ===== */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Navbar */
+.navbar {
+  opacity: 0;
+  animation: fadeInDown 0.8s ease forwards;
+  animation-delay: 1.2s;
+}
+
+/* Intro tag */
+.hero-intro {
+  opacity: 0;
+  animation: fadeInUp 0.8s ease forwards;
+  animation-delay: 0.2s;
+}
+
+/* Greeting */
+.greeting-small {
+  opacity: 0;
+  animation: fadeInUp 0.8s ease forwards;
+  animation-delay: 0.4s;
+  display: inline-block;
+}
+
+/* First name */
+.name-first {
+  opacity: 0;
+  animation: fadeInUp 0.8s ease forwards;
+  animation-delay: 0.6s;
+  display: block;
+}
+
+/* Last name */
+.name-last {
+  opacity: 0;
+  animation: fadeInUp 0.8s ease forwards;
+  animation-delay: 0.8s;
+  display: block;
+}
+
+/* Title bar */
+.hero-title-bar {
+  opacity: 0;
+  animation: fadeInUp 0.8s ease forwards;
+  animation-delay: 1s;
+}
+
+/* Buttons */
+.hero-actions {
+  opacity: 0;
+  animation: fadeInUp 0.8s ease forwards;
+  animation-delay: 1.2s;
+}
+
+/* Social links */
+.social-links {
+  opacity: 0;
+  animation: fadeInUp 0.8s ease forwards;
+  animation-delay: 1.4s;
+}
+
+/* Badge card */
+.badge-wrapper {
+  opacity: 0;
+  animation: fadeInRight 1s ease forwards;
+  animation-delay: 0.8s;
+}
+
+/* Lanyard drops in from top */
+.badge-lanyard {
+  opacity: 0;
+  animation: fadeInDown 0.6s ease forwards;
+  animation-delay: 0.6s;
 }

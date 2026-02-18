@@ -225,3 +225,27 @@
   }
   .footer-name { font-size: 1.5rem; }
 }
+
+.footer-status-dot.footer-status-busy {
+  background: #ff6464;
+  box-shadow: 0 0 8px rgba(255, 100, 100, 0.6);
+}
+
+.footer-status-busy + span {
+  color: rgba(255, 100, 100, 0.8);
+}
+
+.footer-status-dot.footer-status-busy {
+  background: #ff6464;
+  box-shadow: 0 0 10px rgba(255, 100, 100, 0.6);
+  animation: footerBusyPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes footerBusyPulse {
+  0%, 100% { box-shadow: 0 0 8px rgba(255, 100, 100, 0.4); transform: scale(1); }
+  50% { box-shadow: 0 0 20px rgba(255, 100, 100, 0.9), 0 0 40px rgba(255, 100, 100, 0.4); transform: scale(1.3); }
+}
+
+.footer-status-busy ~ span {
+  color: rgba(255, 100, 100, 0.8);
+}

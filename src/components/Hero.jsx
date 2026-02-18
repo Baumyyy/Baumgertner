@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import './Hero.css';
+import { api } from '../api';
 
 
 const Hero = () => {
   const [activeSection, setActiveSection] = useState('home');
+  const [available, setAvailable] = useState(true);
 
   useEffect(() => {
     const sections = document.querySelectorAll('section[id]');
@@ -29,6 +31,12 @@ const Hero = () => {
     return () => {
       sections.forEach((section) => observer.unobserve(section));
     };
+  }, []);
+
+  useEffect(() => {
+    api.getAvailability().then(function(data) {
+      setAvailable(data.available);
+    }).catch(function() {});
   }, []);
 
   const handleClick = (e, targetId) => {
@@ -172,10 +180,10 @@ const Hero = () => {
 </div>
   </div>
 
-  <div className="badge-footer">
-    <span className="status-indicator"></span>
-    <span className="status-text">Available for projects</span>
-  </div>
+ <div className={'badge-footer' + (available ? '' : ' footer-busy')}>
+  <span className={'status-indicator' + (available ? '' : ' status-busy')}></span>
+  <span className="status-text">{available ? 'Available for projects' : 'Currently busy'}</span>
+</div>
 
   <div className="badge-shine"></div>
 </div>
