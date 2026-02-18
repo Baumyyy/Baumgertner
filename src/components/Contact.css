@@ -388,3 +388,20 @@
   .contact-form { padding: 1.5rem; }
   .info-card { padding: 0.8rem 1rem; }
 }
+
+/* Success states */
+.form-card-dot.dot-success {
+  background: #00ff88;
+  box-shadow: 0 0 12px rgba(0, 255, 136, 0.8);
+}
+
+.form-send.send-success {
+  border-color: rgba(0, 255, 136, 0.5);
+  background: rgba(0, 255, 136, 0.1);
+}
+
+.form-send:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}

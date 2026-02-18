@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './Contact.css';
 import { useScrollAnimation } from '../hooks/useScrollAnimation';
+import { api } from '../api';
 
 var Contact = function() {
   var focusedState = useState('');
@@ -9,12 +10,34 @@ var Contact = function() {
   var formDataState = useState({ name: '', email: '', message: '' });
   var formData = formDataState[0];
   var setFormData = formDataState[1];
+  var sendingState = useState(false);
+  var sending = sendingState[0];
+  var setSending = sendingState[1];
+  var sentState = useState(false);
+  var sent = sentState[0];
+  var setSent = sentState[1];
   var sectionRef = useScrollAnimation();
 
   var handleChange = function(e) {
     var newData = {};
     newData[e.target.name] = e.target.value;
     setFormData(Object.assign({}, formData, newData));
+  };
+
+  var handleSubmit = function(e) {
+    e.preventDefault();
+    if (!formData.name || !formData.email || !formData.message) return;
+
+    setSending(true);
+    api.sendMessage(formData).then(function() {
+      setSending(false);
+      setSent(true);
+      setFormData({ name: '', email: '', message: '' });
+      setTimeout(function() { setSent(false); }, 4000);
+    }).catch(function() {
+      setSending(false);
+      alert('Failed to send message. Please try again.');
+    });
   };
 
   return (
@@ -78,16 +101,31 @@ var Contact = function() {
               </div>
             </div>
           </div>
+
+          <div className="contact-socials">
+            <div className="contact-social-link" onClick={function() { window.open('https://github.com/baumyyy', '_blank'); }} style={{cursor: 'pointer'}}>
+              <i className="fab fa-github"></i>
+              <span>GitHub</span>
+            </div>
+            <div className="contact-social-link" onClick={function() { window.open('https://linkedin.com/in/anthony-baumgertner', '_blank'); }} style={{cursor: 'pointer'}}>
+              <i className="fab fa-linkedin"></i>
+              <span>LinkedIn</span>
+            </div>
+            <div className="contact-social-link" onClick={function() { window.open('https://instagram.com/baumgertnerr', '_blank'); }} style={{cursor: 'pointer'}}>
+              <i className="fab fa-instagram"></i>
+              <span>Instagram</span>
+            </div>
+          </div>
         </div>
 
         <div className="contact-form-wrapper fade-in stagger-2">
           <div className="form-card">
             <div className="form-card-header">
-              <div className="form-card-dot"></div>
-              <span className="form-card-title">New Message</span>
+              <div className={'form-card-dot' + (sent ? ' dot-success' : '')}></div>
+              <span className="form-card-title">{sent ? 'Message Sent!' : 'New Message'}</span>
             </div>
 
-            <form className="contact-form" onSubmit={function(e) { e.preventDefault(); }}>
+            <form className="contact-form" onSubmit={handleSubmit}>
               <div className={'form-field' + (focused === 'name' ? ' focused' : '') + (formData.name ? ' has-value' : '')}>
                 <label className="field-label">Name</label>
                 <input
@@ -130,12 +168,18 @@ var Contact = function() {
                 <div className="field-line"></div>
               </div>
 
-              <button type="submit" className="form-send">
-                <span className="send-text">Send Message</span>
+              <button type="submit" className={'form-send' + (sent ? ' send-success' : '')} disabled={sending}>
+                <span className="send-text">{sending ? 'Sending...' : sent ? 'Sent!' : 'Send Message'}</span>
                 <span className="send-icon">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M22 2L11 13M22 2L15 22L11 13M22 2L2 9L11 13"/>
-                  </svg>
+                  {sent ? (
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M20 6L9 17l-5-5"/>
+                    </svg>
+                  ) : (
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M22 2L11 13M22 2L15 22L11 13M22 2L2 9L11 13"/>
+                    </svg>
+                  )}
                 </span>
               </button>
             </form>
