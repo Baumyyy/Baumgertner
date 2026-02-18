@@ -1,5 +1,6 @@
 var express = require('express');
 var cors = require('cors');
+var jwt = require('jsonwebtoken');
 var pool = require('./db');
 require('dotenv').config();
 
@@ -9,7 +10,33 @@ var PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
-// ===== PROFILE =====
+// ===== AUTH MIDDLEWARE =====
+var auth = function(req, res, next) {
+  var header = req.headers.authorization;
+  if (!header) return res.status(401).json({ error: 'No token' });
+
+  try {
+    var token = header.split(' ')[1];
+    var decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (err) {
+    res.status(401).json({ error: 'Invalid token' });
+  }
+};
+
+// ===== LOGIN =====
+app.post('/api/login', function(req, res) {
+  var { username, password } = req.body;
+  if (username === process.env.ADMIN_USERNAME && password === process.env.ADMIN_PASSWORD) {
+    var token = jwt.sign({ user: 'admin' }, process.env.JWT_SECRET, { expiresIn: '24h' });
+    res.json({ token: token });
+  } else {
+    res.status(401).json({ error: 'Wrong credentials' });
+  }
+});
+
+// ===== PROFILE (public) =====
 app.get('/api/profile', async function(req, res) {
   try {
     var result = await pool.query('SELECT * FROM profile LIMIT 1');
@@ -19,7 +46,8 @@ app.get('/api/profile', async function(req, res) {
   }
 });
 
-app.put('/api/profile', async function(req, res) {
+// ===== PROFILE (admin) =====
+app.put('/api/profile', auth, async function(req, res) {
   try {
     var { name, role, bio, email, location, timezone, available } = req.body;
     var result = await pool.query(
@@ -42,7 +70,7 @@ app.get('/api/availability', async function(req, res) {
   }
 });
 
-app.put('/api/availability', async function(req, res) {
+app.put('/api/availability', auth, async function(req, res) {
   try {
     var { available } = req.body;
     var result = await pool.query(
@@ -55,7 +83,7 @@ app.put('/api/availability', async function(req, res) {
   }
 });
 
-// ===== PROJECTS =====
+// ===== PROJECTS (public) =====
 app.get('/api/projects', async function(req, res) {
   try {
     var result = await pool.query('SELECT * FROM projects ORDER BY sort_order ASC');
@@ -65,7 +93,8 @@ app.get('/api/projects', async function(req, res) {
   }
 });
 
-app.post('/api/projects', async function(req, res) {
+// ===== PROJECTS (admin) =====
+app.post('/api/projects', auth, async function(req, res) {
   try {
     var { title, description, tags, status, link, image, sort_order } = req.body;
     var result = await pool.query(
@@ -78,7 +107,7 @@ app.post('/api/projects', async function(req, res) {
   }
 });
 
-app.put('/api/projects/:id', async function(req, res) {
+app.put('/api/projects/:id', auth, async function(req, res) {
   try {
     var { title, description, tags, status, link, image, sort_order } = req.body;
     var result = await pool.query(
@@ -91,7 +120,7 @@ app.put('/api/projects/:id', async function(req, res) {
   }
 });
 
-app.delete('/api/projects/:id', async function(req, res) {
+app.delete('/api/projects/:id', auth, async function(req, res) {
   try {
     await pool.query('DELETE FROM projects WHERE id=$1', [req.params.id]);
     res.json({ deleted: true });
@@ -100,16 +129,7 @@ app.delete('/api/projects/:id', async function(req, res) {
   }
 });
 
-// ===== MESSAGES =====
-app.get('/api/messages', async function(req, res) {
-  try {
-    var result = await pool.query('SELECT * FROM messages ORDER BY created_at DESC');
-    res.json(result.rows);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
+// ===== MESSAGES (public: send) =====
 app.post('/api/messages', async function(req, res) {
   try {
     var { name, email, message } = req.body;
@@ -126,7 +146,17 @@ app.post('/api/messages', async function(req, res) {
   }
 });
 
-app.put('/api/messages/:id/read', async function(req, res) {
+// ===== MESSAGES (admin) =====
+app.get('/api/messages', auth, async function(req, res) {
+  try {
+    var result = await pool.query('SELECT * FROM messages ORDER BY created_at DESC');
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.put('/api/messages/:id/read', auth, async function(req, res) {
   try {
     var result = await pool.query(
       'UPDATE messages SET read=true WHERE id=$1 RETURNING *',
@@ -138,10 +168,28 @@ app.put('/api/messages/:id/read', async function(req, res) {
   }
 });
 
-app.delete('/api/messages/:id', async function(req, res) {
+app.delete('/api/messages/:id', auth, async function(req, res) {
   try {
     await pool.query('DELETE FROM messages WHERE id=$1', [req.params.id]);
     res.json({ deleted: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ===== DASHBOARD STATS (admin) =====
+app.get('/api/admin/stats', auth, async function(req, res) {
+  try {
+    var projects = await pool.query('SELECT COUNT(*) FROM projects');
+    var messages = await pool.query('SELECT COUNT(*) FROM messages');
+    var unread = await pool.query('SELECT COUNT(*) FROM messages WHERE read=false');
+    var profile = await pool.query('SELECT available FROM profile LIMIT 1');
+    res.json({
+      totalProjects: parseInt(projects.rows[0].count),
+      totalMessages: parseInt(messages.rows[0].count),
+      unreadMessages: parseInt(unread.rows[0].count),
+      available: profile.rows[0] ? profile.rows[0].available : true
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

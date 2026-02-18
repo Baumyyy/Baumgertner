@@ -1,0 +1,411 @@
+/* ===== ADMIN LOGIN ===== */
+.admin-login {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0a0f1c;
+}
+
+.login-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 3rem;
+  width: 380px;
+  text-align: center;
+}
+
+.login-title {
+  font-size: 2rem;
+  color: #fff;
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.3rem;
+}
+
+.login-subtitle {
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 0.85rem;
+  margin-bottom: 2rem;
+}
+
+.login-input {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  outline: none;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.login-input:focus {
+  border-color: rgba(0, 255, 136, 0.4);
+}
+
+.login-btn {
+  width: 100%;
+  padding: 0.8rem;
+  background: rgba(0, 255, 136, 0.15);
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  border-radius: 8px;
+  color: #00ff88;
+  font-size: 0.9rem;
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.login-btn:hover {
+  background: rgba(0, 255, 136, 0.25);
+}
+
+/* ===== ADMIN LAYOUT ===== */
+.admin {
+  display: flex;
+  min-height: 100vh;
+  background: #0a0f1c;
+  color: #fff;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* Sidebar */
+.admin-sidebar {
+  width: 220px;
+  background: rgba(255, 255, 255, 0.02);
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 2rem 0;
+  flex-shrink: 0;
+}
+
+.admin-logo {
+  font-size: 1.4rem;
+  color: #00ff88;
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 0.1em;
+  padding: 0 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.admin-tab {
+  padding: 0.8rem 1.5rem;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.admin-tab:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.admin-tab.active {
+  color: #00ff88;
+  background: rgba(0, 255, 136, 0.05);
+  border-right: 2px solid #00ff88;
+}
+
+.admin-tab.logout {
+  margin-top: auto;
+  position: absolute;
+  bottom: 2rem;
+  color: rgba(255, 100, 100, 0.6);
+}
+
+.admin-tab.logout:hover {
+  color: #ff6464;
+}
+
+.tab-badge {
+  background: #00ff88;
+  color: #0a0f1c;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 10px;
+  margin-left: auto;
+}
+
+/* Main */
+.admin-main {
+  flex: 1;
+  padding: 2rem 3rem;
+  overflow-y: auto;
+}
+
+.admin-title {
+  font-size: 2rem;
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 0.04em;
+  margin-bottom: 2rem;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Stats */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.2rem;
+}
+
+.stat-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.stat-card.clickable {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.stat-card.available {
+  border-color: rgba(0, 255, 136, 0.2);
+}
+
+.stat-card.busy {
+  border-color: rgba(255, 100, 100, 0.2);
+}
+
+.stat-card-value {
+  display: block;
+  font-size: 2rem;
+  font-family: 'Bebas Neue', sans-serif;
+  color: #00ff88;
+  margin-bottom: 0.3rem;
+}
+
+.stat-card.busy .stat-card-value {
+  color: #ff6464;
+}
+
+.stat-card-label {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.35);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* Items list */
+.items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.item-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.3rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+}
+
+.item-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.item-title {
+  font-size: 0.95rem;
+  color: #fff;
+}
+
+.item-status {
+  font-size: 0.65rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+  text-transform: uppercase;
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 0.08em;
+}
+
+.status-live {
+  background: rgba(0, 255, 136, 0.1);
+  color: #00ff88;
+}
+
+.status-soon {
+  background: rgba(255, 200, 50, 0.1);
+  color: rgba(255, 200, 50, 0.8);
+}
+
+.item-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Buttons */
+.add-btn, .save-btn {
+  padding: 0.6rem 1.2rem;
+  background: rgba(0, 255, 136, 0.15);
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  border-radius: 8px;
+  color: #00ff88;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.add-btn:hover, .save-btn:hover {
+  background: rgba(0, 255, 136, 0.25);
+}
+
+.edit-btn {
+  padding: 0.4rem 0.8rem;
+  background: rgba(0, 150, 255, 0.1);
+  border: 1px solid rgba(0, 150, 255, 0.25);
+  border-radius: 6px;
+  color: rgba(0, 150, 255, 0.8);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.delete-btn {
+  padding: 0.4rem 0.8rem;
+  background: rgba(255, 100, 100, 0.1);
+  border: 1px solid rgba(255, 100, 100, 0.25);
+  border-radius: 6px;
+  color: rgba(255, 100, 100, 0.8);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.cancel-btn {
+  padding: 0.6rem 1.2rem;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+/* Edit form */
+.edit-form {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.edit-label {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.35);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: -0.5rem;
+}
+
+.edit-input {
+  padding: 0.7rem 1rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 0.9rem;
+  outline: none;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.edit-input:focus {
+  border-color: rgba(0, 255, 136, 0.4);
+}
+
+.edit-textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.edit-actions {
+  display: flex;
+  gap: 0.8rem;
+}
+
+/* Messages */
+.message-card {
+  padding: 1.2rem 1.5rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+}
+
+.message-card.unread {
+  border-left: 3px solid #00ff88;
+  background: rgba(0, 255, 136, 0.02);
+}
+
+.message-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.6rem;
+}
+
+.message-from {
+  font-weight: 600;
+  color: #fff;
+  font-size: 0.95rem;
+}
+
+.message-email {
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 0.8rem;
+}
+
+.message-date {
+  margin-left: auto;
+  color: rgba(255, 255, 255, 0.2);
+  font-size: 0.75rem;
+}
+
+.message-body {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.85rem;
+  line-height: 1.6;
+  margin-bottom: 0.8rem;
+}
+
+.message-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.read-btn {
+  padding: 0.4rem 0.8rem;
+  background: rgba(0, 255, 136, 0.1);
+  border: 1px solid rgba(0, 255, 136, 0.25);
+  border-radius: 6px;
+  color: #00ff88;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.empty-text {
+  color: rgba(255, 255, 255, 0.25);
+  text-align: center;
+  padding: 3rem;
+}
