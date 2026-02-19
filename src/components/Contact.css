@@ -374,19 +374,27 @@
 }
 
 @media (max-width: 968px) {
-  .contact { padding: 5rem 3rem; }
+  .contact { padding: 5rem 2rem; }
   .contact-content {
     grid-template-columns: 1fr;
-    gap: 3rem;
+    gap: 2rem;
   }
+  .form-card { margin-top: 0; }
 }
 
-@media (max-width: 768px) {
-  .contact { padding: 4rem 1.5rem; }
-  .contact-title { font-size: 2.5rem; }
-  .contact-socials { flex-wrap: wrap; }
-  .contact-form { padding: 1.5rem; }
+@media (max-width: 480px) {
+  .contact { padding: 3rem 1.2rem; }
+  .contact-title { font-size: 2.2rem; }
+  .contact-desc { font-size: 0.85rem; margin-bottom: 1.5rem; }
   .info-card { padding: 0.8rem 1rem; }
+  .info-card-icon { width: 36px; height: 36px; }
+  .info-card-value { font-size: 0.8rem; }
+  .info-card-label { font-size: 0.6rem; }
+  .info-cards { margin-bottom: 1.5rem; }
+  .contact-form { padding: 1.2rem; gap: 1.5rem; }
+  .form-send { padding: 0.85rem 1.5rem; font-size: 0.9rem; }
+  .contact-socials { flex-wrap: wrap; gap: 0.6rem; }
+  .contact-social-link { padding: 0.5rem 0.9rem; font-size: 0.75rem; }
 }
 
 /* Success states */

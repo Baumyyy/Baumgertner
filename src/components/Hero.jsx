@@ -6,6 +6,7 @@ import { api } from '../api';
 const Hero = () => {
   const [activeSection, setActiveSection] = useState('home');
   const [available, setAvailable] = useState(true);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     const sections = document.querySelectorAll('section[id]');
@@ -52,22 +53,27 @@ const Hero = () => {
 
   return (
     <>
-      <nav className="navbar">
-        <div className="nav-links">
-          <a href="#home" className={`nav-link ${activeSection === 'home' ? 'active' : ''}`} onClick={(e) => handleClick(e, 'home')}>
-            <span className="nav-dot"></span>Home
-          </a>
-          <a href="#whatido" className={`nav-link ${activeSection === 'whatido' ? 'active' : ''}`} onClick={(e) => handleClick(e, 'whatido')}>
-            <span className="nav-dot"></span>What I Do
-          </a>
-          <a href="#projects" className={`nav-link ${activeSection === 'projects' ? 'active' : ''}`} onClick={(e) => handleClick(e, 'projects')}>
-            <span className="nav-dot"></span>Projects
-          </a>
-          <a href="#contact" className={`nav-link ${activeSection === 'contact' ? 'active' : ''}`} onClick={(e) => handleClick(e, 'contact')}>
-            <span className="nav-dot"></span>Contact
-          </a>
-        </div>
-      </nav>
+      <nav className={'navbar' + (menuOpen ? ' menu-open' : '')}>
+  <div className="hamburger" onClick={function() { setMenuOpen(!menuOpen); }}>
+    <span className={'hamburger-line' + (menuOpen ? ' open' : '')}></span>
+    <span className={'hamburger-line' + (menuOpen ? ' open' : '')}></span>
+    <span className={'hamburger-line' + (menuOpen ? ' open' : '')}></span>
+  </div>
+  <div className={'nav-links' + (menuOpen ? ' nav-open' : '')}>
+    <a href="#home" className={`nav-link ${activeSection === 'home' ? 'active' : ''}`} onClick={(e) => { handleClick(e, 'home'); setMenuOpen(false); }}>
+      <span className="nav-dot"></span>Home
+    </a>
+    <a href="#whatido" className={`nav-link ${activeSection === 'whatido' ? 'active' : ''}`} onClick={(e) => { handleClick(e, 'whatido'); setMenuOpen(false); }}>
+      <span className="nav-dot"></span>What I Do
+    </a>
+    <a href="#projects" className={`nav-link ${activeSection === 'projects' ? 'active' : ''}`} onClick={(e) => { handleClick(e, 'projects'); setMenuOpen(false); }}>
+      <span className="nav-dot"></span>Projects
+    </a>
+    <a href="#contact" className={`nav-link ${activeSection === 'contact' ? 'active' : ''}`} onClick={(e) => { handleClick(e, 'contact'); setMenuOpen(false); }}>
+      <span className="nav-dot"></span>Contact
+    </a>
+  </div>
+</nav>
 
       <section id="home" className="hero">
         <div className="hero-particles">

@@ -322,17 +322,25 @@ a.project-card {
 }
 
 @media (max-width: 968px) {
-  .projects { padding: 5rem 3rem; }
+  .projects { padding: 5rem 2rem; }
   .projects-grid {
     grid-template-columns: 1fr;
     gap: 1.2rem;
   }
 }
 
-@media (max-width: 768px) {
-  .projects { padding: 4rem 1.5rem; }
-  .projects-title { font-size: 2.5rem; }
+@media (max-width: 480px) {
+  .projects { padding: 3rem 1.2rem; }
+  .projects-header { margin-bottom: 2rem; }
+  .projects-title { font-size: 2.2rem; }
+  .projects-subtitle { font-size: 0.85rem; }
   .project-preview { height: 160px; }
+  .preview-image-wrapper { height: 160px; }
+  .project-info { padding: 1.2rem; }
+  .project-name { font-size: 1.1rem; }
+  .project-desc { font-size: 0.78rem; }
+  .project-tag { font-size: 0.6rem; padding: 0.2rem 0.5rem; }
+  .projects-github-btn { font-size: 0.85rem; padding: 0.8rem 1.2rem; }
 }
 
 /* Project cover image */
@@ -353,4 +361,3 @@ a.project-card {
 .project-card:hover .preview-image {
   transform: scale(1.05);
 }
-

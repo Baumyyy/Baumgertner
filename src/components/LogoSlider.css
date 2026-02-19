@@ -129,24 +129,13 @@
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
-  .slider-section {
-    padding: 0.5rem 0 3rem 0;
-  }
-
-  .slider-fade {
-    width: 80px;
-  }
-
-  .slider-row {
-    gap: 3rem;
-    padding-right: 3rem;
-  }
-
-  .slider-item i {
-    font-size: 2.2rem;
-  }
-
-  .slider-item span {
-    font-size: 0.65rem;
-  }
+  .slider-section { padding: 0.5rem 0 2rem 0; }
+  .slider-header { margin-bottom: 1.5rem; gap: 1rem; }
+  .slider-label { font-size: 0.7rem; }
+  .slider-line { width: 40px; }
+  .slider-fade { width: 60px; }
+  .slider-row { gap: 2.5rem; padding-right: 2.5rem; }
+  .slider-item i { font-size: 2rem; }
+  .slider-item span { font-size: 0.6rem; }
+  .slider-wrapper { padding: 1rem 0; }
 }

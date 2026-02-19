@@ -598,30 +598,155 @@
   line-height: 1;
 }
 
+/* ===== HAMBURGER MENU ===== */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  z-index: 9999;
+  padding: 5px;
+  position: relative;
+}
+
+.hamburger-line {
+  width: 24px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 2px;
+  transition: all 0.3s ease;
+  transform-origin: center;
+}
+
+.hamburger-line.open:nth-child(1) {
+  transform: rotate(45deg) translateY(5px) translateX(5px);
+  background: #00ff88;
+}
+
+.hamburger-line.open:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger-line.open:nth-child(3) {
+  transform: rotate(-45deg) translateY(-5px) translateX(5px);
+  background: #00ff88;
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 1200px) {
   .hero-main { gap: 3rem; }
   .hero { padding: 7rem 4rem 3rem 4rem; }
   .badge-card { width: 340px; }
-  .badge-photo { height: 200px; }
 }
 
 @media (max-width: 968px) {
-  .hero { padding: 6rem 3rem 3rem 3rem; }
-  .hero-main { flex-direction: column; align-items: flex-start; gap: 3rem; }
+  .hero { padding: 6rem 2rem 2rem 2rem; }
+  .hero-main { 
+    flex-direction: column; 
+    align-items: center; 
+    gap: 2rem; 
+  }
+  .hero-left { 
+    max-width: 100%; 
+    text-align: center; 
+  }
+  .hero-intro { justify-content: center; }
+  .hero-title-bar { justify-content: center; }
+  .hero-actions { justify-content: center; }
+  .social-links { justify-content: center; }
   .badge-card { width: 320px; }
-  .badge-photo { height: 180px; }
-}
-
-@media (max-width: 768px) {
   .navbar { padding: 1.2rem 2rem; }
   .nav-links { gap: 1.5rem; }
-  .hero { padding: 5rem 1.5rem 2rem 1.5rem; }
-  .name-first, .name-last { font-size: clamp(2.5rem, 10vw, 4rem); }
-  .hero-actions { flex-direction: column; }
-  .badge-card { width: 280px; padding: 1.3rem; }
-  .badge-photo { height: 160px; }
-  .hero-title-bar { gap: 0.6rem; }
+}
+
+@media (max-width: 480px) {
+  .hero { padding: 5rem 1.2rem 2rem 1.2rem; min-height: auto; }
+  
+  /* Hamburger navbar */
+  .navbar { 
+    padding: 1rem 1.2rem; 
+    justify-content: flex-end;
+    z-index: 9998;
+    opacity: 1 !important;
+    animation: none !important;
+  }
+  .hamburger { 
+    display: flex;
+  }
+  .nav-links {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(5, 8, 18, 0.99);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2.5rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 9998;
+  }
+  .nav-links.nav-open {
+    opacity: 1;
+    pointer-events: all;
+  }
+  .nav-link { 
+    font-size: 1.5rem; 
+    letter-spacing: 0.15em;
+    color: rgba(255, 255, 255, 0.5);
+  }
+  .nav-link.active {
+    color: #00ff88;
+  }
+  .nav-dot { width: 8px; height: 8px; }
+
+  /* Hero content */
+  .name-first, .name-last { font-size: clamp(2.2rem, 12vw, 3.5rem); }
+  .greeting-small { font-size: 0.95rem; }
+  .hero-intro { margin-bottom: 1rem; }
+  .intro-number, .intro-text { font-size: 0.7rem; }
+  .intro-line { width: 30px; }
+  .hero-title-bar { 
+    flex-direction: column; 
+    gap: 0.2rem; 
+    margin-bottom: 1.5rem;
+  }
+  .title-divider { display: none; }
+  .title-item { font-size: 0.8rem; }
+  .hero-actions { 
+    flex-direction: column; 
+    width: 100%;
+    margin-bottom: 2rem;
+  }
+  .btn-primary, .btn-ghost { 
+    width: 100%; 
+    justify-content: center; 
+    padding: 0.85rem 1.5rem;
+    font-size: 0.95rem;
+  }
+  .social-links { gap: 0.8rem; }
+  .social-link { width: 44px; height: 44px; font-size: 1.1rem; }
+  .badge-card { 
+    width: 100%; 
+    max-width: 300px; 
+    padding: 1.2rem; 
+  }
+  .badge-photo { width: 120px; height: 120px; }
+  .badge-name { font-size: 1.1rem; }
+  .badge-role-text { font-size: 0.75rem; margin-bottom: 0.8rem; padding-bottom: 0.8rem; }
+  .stat-value { font-size: 1.4rem; }
+  .stat-label { font-size: 0.6rem; }
+  .badge-languages { gap: 0.8rem; margin-top: 0.8rem; }
+  .lang-flag { font-size: 1rem; }
+  .badge-footer { padding: 0.6rem 1rem; margin-top: 1rem; }
+  .status-text { font-size: 0.65rem; }
+  .hero-particles { display: none; }
+  .hero-glow-line { display: none; }
 }
 
 /* ===== HERO LOAD ANIMATIONS ===== */
