@@ -16,14 +16,17 @@ var Footer = function() {
     }).catch(function() {});
   }, []);
 
-  var handleNavClick = function(e, targetId) {
+var handleNavClick = function(e, targetId) {
     e.preventDefault();
+    var container = document.querySelector('.aurora-container');
     if (targetId === 'home') {
-      var container = document.querySelector('.aurora-container');
       if (container) container.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
       var element = document.getElementById(targetId);
-      if (element) element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (element && container) {
+        var elementTop = element.offsetTop - 60;
+        container.scrollTo({ top: elementTop, behavior: 'smooth' });
+      }
     }
   };
 

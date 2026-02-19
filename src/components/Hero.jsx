@@ -42,12 +42,18 @@ const Hero = () => {
 
   const handleClick = (e, targetId) => {
     e.preventDefault();
+    setMenuOpen(false);
+    
     if (targetId === 'home') {
       const container = document.querySelector('.aurora-container');
       if (container) container.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
       const element = document.getElementById(targetId);
-      if (element) element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const container = document.querySelector('.aurora-container');
+      if (element && container) {
+        const elementTop = element.offsetTop - 60;
+        container.scrollTo({ top: elementTop, behavior: 'smooth' });
+      }
     }
   };
 

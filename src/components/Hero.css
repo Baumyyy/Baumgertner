@@ -670,9 +670,11 @@
     opacity: 1 !important;
     animation: none !important;
   }
+  
   .hamburger { 
     display: flex;
   }
+
   .nav-links {
     position: fixed;
     top: 0;
@@ -690,19 +692,24 @@
     pointer-events: none;
     transition: opacity 0.3s ease;
     z-index: 9998;
+    transform: scale(1.136) !important;
   }
+
   .nav-links.nav-open {
     opacity: 1;
     pointer-events: all;
   }
+
   .nav-link { 
     font-size: 1.5rem; 
     letter-spacing: 0.15em;
     color: rgba(255, 255, 255, 0.5);
   }
+
   .nav-link.active {
     color: #00ff88;
   }
+
   .nav-dot { width: 8px; height: 8px; }
 
   /* Hero content */
@@ -711,13 +718,16 @@
   .hero-intro { margin-bottom: 1rem; }
   .intro-number, .intro-text { font-size: 0.7rem; }
   .intro-line { width: 30px; }
-  .hero-title-bar { 
-    flex-direction: column; 
-    gap: 0.2rem; 
+
+ .hero-title-bar { 
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.4rem; 
     margin-bottom: 1.5rem;
   }
-  .title-divider { display: none; }
-  .title-item { font-size: 0.8rem; }
+  .title-divider { display: block; }
+  .title-item { font-size: 0.7rem; }
+
   .hero-actions { 
     flex-direction: column; 
     width: 100%;
