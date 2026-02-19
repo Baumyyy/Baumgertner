@@ -554,6 +554,8 @@
 .status-indicator {
   width: 6px;
   height: 6px;
+  min-width: 6px;
+  min-height: 6px;
   background: #00ff88;
   border-radius: 50%;
   animation: statusBlink 2s ease-in-out infinite;
@@ -563,6 +565,8 @@
 .status-indicator.status-busy {
   width: 6px;
   height: 6px;
+  min-width: 6px;
+  min-height: 6px;
   background: #ff6464;
   border-radius: 50%;
   animation: statusBlink 2s ease-in-out infinite;
@@ -591,6 +595,7 @@
   font-family: 'Bebas Neue', sans-serif;
   letter-spacing: 0.12em;
   text-transform: uppercase;
+  line-height: 1;
 }
 
 /* ===== RESPONSIVE ===== */

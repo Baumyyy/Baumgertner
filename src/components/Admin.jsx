@@ -93,7 +93,7 @@ var Admin = function() {
     }
   };
 
-  var saveProject = function(e) {
+var saveProject = function(e) {
     e.preventDefault();
     var method = editProject.id ? 'PUT' : 'POST';
     var url = editProject.id ? API_URL + '/projects/' + editProject.id : API_URL + '/projects';
@@ -107,6 +107,22 @@ var Admin = function() {
     }).then(function() {
       setEditProject(null);
       loadAll();
+    });
+  };
+
+  var uploadImage = function(e) {
+    var file = e.target.files[0];
+    if (!file) return;
+    var formData = new FormData();
+    formData.append('image', file);
+    fetch(API_URL + '/upload', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + token },
+      body: formData
+    }).then(function(r) { return r.json(); }).then(function(data) {
+      if (data.url) {
+        setEditProject(Object.assign({}, editProject, { image: data.url }));
+      }
     });
   };
 
@@ -215,6 +231,13 @@ var Admin = function() {
                   <option value="In Progress">In Progress</option>
                 </select>
                 <input className="edit-input" placeholder="Link (optional)" value={editProject.link || ''} onChange={function(e) { setEditProject(Object.assign({}, editProject, { link: e.target.value })); }} />
+                <label className="edit-label">Cover Image</label>
+                <div className="image-upload-row">
+                  {editProject.image && (
+                    <img src={editProject.image} alt="Preview" className="image-preview" />
+                  )}
+                  <input type="file" accept="image/*" onChange={uploadImage} className="file-input" />
+                </div>
                 <input className="edit-input" type="number" placeholder="Sort order" value={editProject.sort_order || 0} onChange={function(e) { setEditProject(Object.assign({}, editProject, { sort_order: parseInt(e.target.value) })); }} />
                 <div className="edit-actions">
                   <button type="submit" className="save-btn">Save</button>

@@ -334,3 +334,23 @@ a.project-card {
   .projects-title { font-size: 2.5rem; }
   .project-preview { height: 160px; }
 }
+
+/* Project cover image */
+.preview-image-wrapper {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  border-radius: 12px 12px 0 0;
+}
+
+.preview-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.project-card:hover .preview-image {
+  transform: scale(1.05);
+}
+

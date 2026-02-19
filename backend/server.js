@@ -1,14 +1,36 @@
 var express = require('express');
 var cors = require('cors');
 var jwt = require('jsonwebtoken');
+var multer = require('multer');
+var path = require('path');
+var fs = require('fs');
 var pool = require('./db');
 require('dotenv').config();
+
+// Uploads folder
+var uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir);
+}
+
+var storage = multer.diskStorage({
+  destination: function(req, file, cb) {
+    cb(null, uploadsDir);
+  },
+  filename: function(req, file, cb) {
+    var ext = path.extname(file.originalname);
+    cb(null, 'project-' + Date.now() + ext);
+  }
+});
+
+var upload = multer({ storage: storage, limits: { fileSize: 5 * 1024 * 1024 } });
 
 var app = express();
 var PORT = process.env.PORT || 3001;
 
 app.use(cors());
 app.use(express.json());
+app.use('/uploads', express.static(uploadsDir));
 
 // ===== AUTH MIDDLEWARE =====
 var auth = function(req, res, next) {
@@ -193,6 +215,13 @@ app.get('/api/admin/stats', auth, async function(req, res) {
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
+});
+
+// ===== UPLOAD =====
+app.post('/api/upload', auth, upload.single('image'), function(req, res) {
+  if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+  var imageUrl = '/uploads/' + req.file.filename;
+  res.json({ url: imageUrl });
 });
 
 // ===== START =====

@@ -27,6 +27,7 @@ var Projects = function() {
   var renderProject = function(project, index) {
     var isComingSoon = project.status === 'Coming Soon';
     var hasLink = project.link !== null && project.link !== '';
+    var hasImage = project.image !== null && project.image !== '';
 
     return (
       <div
@@ -38,26 +39,32 @@ var Projects = function() {
         style={hasLink ? {cursor: 'pointer'} : {}}
       >
         <div className="project-preview">
-          <div className="preview-placeholder">
-            <div className="preview-dots">
-              <span className="preview-dot"></span>
-              <span className="preview-dot"></span>
-              <span className="preview-dot"></span>
+          {hasImage ? (
+            <div className="preview-image-wrapper">
+              <img src={project.image} alt={project.title} className="preview-image" />
             </div>
-            <div className="preview-content">
-              {isComingSoon ? (
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="10"/>
-                  <path d="M12 6v6l4 2"/>
-                </svg>
-              ) : (
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="16 18 22 12 16 6"/>
-                  <polyline points="8 6 2 12 8 18"/>
-                </svg>
-              )}
+          ) : (
+            <div className="preview-placeholder">
+              <div className="preview-dots">
+                <span className="preview-dot"></span>
+                <span className="preview-dot"></span>
+                <span className="preview-dot"></span>
+              </div>
+              <div className="preview-content">
+                {isComingSoon ? (
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M12 6v6l4 2"/>
+                  </svg>
+                ) : (
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="16 18 22 12 16 6"/>
+                    <polyline points="8 6 2 12 8 18"/>
+                  </svg>
+                )}
+              </div>
             </div>
-          </div>
+          )}
           <div className="project-status">
             <span className={'status-dot' + (isComingSoon ? ' status-dot-pending' : '')}></span>
             <span>{project.status}</span>

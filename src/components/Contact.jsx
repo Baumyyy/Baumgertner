@@ -101,21 +101,6 @@ var Contact = function() {
               </div>
             </div>
           </div>
-
-          <div className="contact-socials">
-            <div className="contact-social-link" onClick={function() { window.open('https://github.com/baumyyy', '_blank'); }} style={{cursor: 'pointer'}}>
-              <i className="fab fa-github"></i>
-              <span>GitHub</span>
-            </div>
-            <div className="contact-social-link" onClick={function() { window.open('https://linkedin.com/in/anthony-baumgertner', '_blank'); }} style={{cursor: 'pointer'}}>
-              <i className="fab fa-linkedin"></i>
-              <span>LinkedIn</span>
-            </div>
-            <div className="contact-social-link" onClick={function() { window.open('https://instagram.com/baumgertnerr', '_blank'); }} style={{cursor: 'pointer'}}>
-              <i className="fab fa-instagram"></i>
-              <span>Instagram</span>
-            </div>
-          </div>
         </div>
 
         <div className="contact-form-wrapper fade-in stagger-2">
