@@ -535,3 +535,11 @@
   border-color: rgba(0, 255, 136, 0.3);
   color: #00ff88;
 }
+
+.avatar-preview {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid rgba(0, 255, 136, 0.3);
+}

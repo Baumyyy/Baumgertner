@@ -42,9 +42,14 @@ const Hero = () => {
     return () => clearTimeout(timeout);
   }, []);
 
+ const [avatar, setAvatar] = useState('/Logos/IMG_4680.jpg');
+
   useEffect(() => {
     api.getAvailability().then(function(data) {
       setAvailable(data.available);
+    }).catch(function() {});
+    api.getProfile().then(function(data) {
+      if (data.avatar) setAvatar(data.avatar);
     }).catch(function() {});
   }, []);
 
@@ -163,7 +168,7 @@ const Hero = () => {
 
                 <div className="badge-photo-wrapper">
                   <div className="badge-photo">
-                    <img src="/Logos/IMG_4680.jpg" alt="Anthony Baumgertner" className="badge-photo-img" />
+                    <img src={avatar} alt="Anthony Baumgertner" className="badge-photo-img" />
                   </div>
                 </div>
 

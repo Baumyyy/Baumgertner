@@ -348,6 +348,28 @@ var Admin = function() {
           <div className="admin-section">
             <h1 className="admin-title">Profile</h1>
             <form className="edit-form" onSubmit={saveProfile}>
+                <label className="edit-label">Profile Photo</label>
+              <div className="image-upload-row">
+                {profile.avatar && (
+                  <img src={profile.avatar} alt="Avatar" className="avatar-preview" />
+                )}
+                <input type="file" accept="image/*" onChange={function(e) {
+                  var file = e.target.files[0];
+                  if (!file) return;
+                  var formData = new FormData();
+                  formData.append('image', file);
+                  fetch(API_URL + '/upload', {
+                    method: 'POST',
+                    headers: token ? { 'Authorization': 'Bearer ' + token } : {},
+                    credentials: 'include',
+                    body: formData
+                  }).then(function(r) { return r.json(); }).then(function(data) {
+                    if (data.url) {
+                      setProfile(Object.assign({}, profile, { avatar: data.url }));
+                    }
+                  });
+                }} className="file-input" />
+              </div>
               <label className="edit-label">Name</label>
               <input className="edit-input" value={profile.name || ''} onChange={function(e) { setProfile(Object.assign({}, profile, { name: e.target.value })); }} />
               <label className="edit-label">Role</label>

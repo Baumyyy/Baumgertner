@@ -43,13 +43,13 @@ app.use(helmet({
 // Rate limiting
 var apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 100,
+  max: 500,
   message: { error: 'Too many requests, try again later' }
 });
 
 var authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 10,
+  max: 30,
   message: { error: 'Too many login attempts, try again later' }
 });
 
@@ -167,10 +167,10 @@ app.get('/api/profile', async function(req, res) {
 // ===== PROFILE (admin) =====
 app.put('/api/profile', auth, async function(req, res) {
   try {
-    var { name, role, bio, email, location, timezone, available } = req.body;
+    var { name, role, bio, email, location, timezone, available, avatar } = req.body;
     var result = await pool.query(
-      'UPDATE profile SET name=$1, role=$2, bio=$3, email=$4, location=$5, timezone=$6, available=$7, updated_at=NOW() WHERE id=1 RETURNING *',
-      [name, role, bio, email, location, timezone, available]
+      'UPDATE profile SET name=$1, role=$2, bio=$3, email=$4, location=$5, timezone=$6, available=$7, avatar=$8, updated_at=NOW() WHERE id=1 RETURNING *',
+      [name, role, bio, email, location, timezone, available, avatar]
     );
     res.json(result.rows[0]);
   } catch (err) {
