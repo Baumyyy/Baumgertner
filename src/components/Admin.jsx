@@ -4,6 +4,9 @@ import './Admin.css';
 var API_URL = '/api';
 
 var Admin = function() {
+  var authState = useState(null);
+  var authStatus = authState[0];
+  var setAuthStatus = authState[1];
   var tokenState = useState(localStorage.getItem('admin_token') || '');
   var token = tokenState[0];
   var setToken = tokenState[1];
@@ -31,18 +34,44 @@ var Admin = function() {
   var editProjectState = useState(null);
   var editProject = editProjectState[0];
   var setEditProject = editProjectState[1];
+  var showBackupLogin = useState(false);
+  var showBackup = showBackupLogin[0];
+  var setShowBackup = showBackupLogin[1];
 
-  var headers = { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token };
-
-  // Check token on load
+  // Check GitHub auth on load
   useEffect(function() {
-    if (token) {
-      fetch(API_URL + '/admin/stats', { headers: headers })
-        .then(function(r) { return r.ok ? (setLoggedIn(true), r.json()) : Promise.reject(); })
-        .then(function(d) { setStats(d); })
-        .catch(function() { setToken(''); localStorage.removeItem('admin_token'); });
-    }
+    fetch(API_URL + '/auth/me', { credentials: 'include' })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.authenticated) {
+          setAuthStatus(data.user);
+          setLoggedIn(true);
+        } else if (token) {
+          // Try JWT fallback
+          fetch(API_URL + '/admin/stats', { headers: { 'Authorization': 'Bearer ' + token } })
+            .then(function(r) {
+              if (r.ok) {
+                setLoggedIn(true);
+                return r.json();
+              }
+              throw new Error('Invalid token');
+            })
+            .then(function(d) { setStats(d); })
+            .catch(function() { setToken(''); localStorage.removeItem('admin_token'); });
+        }
+      });
   }, []);
+
+  var getHeaders = function() {
+    var h = { 'Content-Type': 'application/json' };
+    if (token) h['Authorization'] = 'Bearer ' + token;
+    return h;
+  };
+
+  var fetchAuth = function(url, options) {
+    var opts = Object.assign({ credentials: 'include', headers: getHeaders() }, options || {});
+    return fetch(url, opts);
+  };
 
   // Load data when logged in
   useEffect(function() {
@@ -50,13 +79,13 @@ var Admin = function() {
   }, [loggedIn, tab]);
 
   var loadAll = function() {
-    fetch(API_URL + '/admin/stats', { headers: headers }).then(function(r) { return r.json(); }).then(setStats);
+    fetchAuth(API_URL + '/admin/stats').then(function(r) { return r.json(); }).then(setStats);
     fetch(API_URL + '/projects').then(function(r) { return r.json(); }).then(setProjects);
-    fetch(API_URL + '/messages', { headers: headers }).then(function(r) { return r.json(); }).then(setMessages);
+    fetchAuth(API_URL + '/messages').then(function(r) { return r.json(); }).then(setMessages);
     fetch(API_URL + '/profile').then(function(r) { return r.json(); }).then(setProfile);
   };
 
-  var handleLogin = function(e) {
+  var handleBackupLogin = function(e) {
     e.preventDefault();
     fetch(API_URL + '/login', {
       method: 'POST',
@@ -77,23 +106,25 @@ var Admin = function() {
     setToken('');
     localStorage.removeItem('admin_token');
     setLoggedIn(false);
+    setAuthStatus(null);
+    window.location.href = '/api/auth/logout';
   };
 
   var toggleAvailability = function() {
-    fetch(API_URL + '/availability', {
-      method: 'PUT', headers: headers,
+    fetchAuth(API_URL + '/availability', {
+      method: 'PUT',
       body: JSON.stringify({ available: !stats.available })
     }).then(function() { loadAll(); });
   };
 
   var deleteProject = function(id) {
     if (confirm('Delete this project?')) {
-      fetch(API_URL + '/projects/' + id, { method: 'DELETE', headers: headers })
+      fetchAuth(API_URL + '/projects/' + id, { method: 'DELETE' })
         .then(function() { loadAll(); });
     }
   };
 
-var saveProject = function(e) {
+  var saveProject = function(e) {
     e.preventDefault();
     var method = editProject.id ? 'PUT' : 'POST';
     var url = editProject.id ? API_URL + '/projects/' + editProject.id : API_URL + '/projects';
@@ -101,8 +132,8 @@ var saveProject = function(e) {
       ? '{' + editProject.tags + '}'
       : editProject.tags;
 
-    fetch(url, {
-      method: method, headers: headers,
+    fetchAuth(url, {
+      method: method,
       body: JSON.stringify(Object.assign({}, editProject, { tags: tagsArray }))
     }).then(function() {
       setEditProject(null);
@@ -117,7 +148,8 @@ var saveProject = function(e) {
     formData.append('image', file);
     fetch(API_URL + '/upload', {
       method: 'POST',
-      headers: { 'Authorization': 'Bearer ' + token },
+      headers: token ? { 'Authorization': 'Bearer ' + token } : {},
+      credentials: 'include',
       body: formData
     }).then(function(r) { return r.json(); }).then(function(data) {
       if (data.url) {
@@ -127,19 +159,19 @@ var saveProject = function(e) {
   };
 
   var markRead = function(id) {
-    fetch(API_URL + '/messages/' + id + '/read', { method: 'PUT', headers: headers })
+    fetchAuth(API_URL + '/messages/' + id + '/read', { method: 'PUT' })
       .then(function() { loadAll(); });
   };
 
   var deleteMessage = function(id) {
-    fetch(API_URL + '/messages/' + id, { method: 'DELETE', headers: headers })
+    fetchAuth(API_URL + '/messages/' + id, { method: 'DELETE' })
       .then(function() { loadAll(); });
   };
 
   var saveProfile = function(e) {
     e.preventDefault();
-    fetch(API_URL + '/profile', {
-      method: 'PUT', headers: headers,
+    fetchAuth(API_URL + '/profile', {
+      method: 'PUT',
       body: JSON.stringify(profile)
     }).then(function() { loadAll(); alert('Profile saved!'); });
   };
@@ -151,23 +183,39 @@ var saveProject = function(e) {
         <div className="login-card">
           <h1 className="login-title">Admin Panel</h1>
           <p className="login-subtitle">Portfolio Management</p>
-          <form onSubmit={handleLogin}>
-            <input
-              type="text"
-              placeholder="Username"
-              className="login-input"
-              value={loginForm.username}
-              onChange={function(e) { setLoginForm(Object.assign({}, loginForm, { username: e.target.value })); }}
-            />
-            <input
-              type="password"
-              placeholder="Password"
-              className="login-input"
-              value={loginForm.password}
-              onChange={function(e) { setLoginForm(Object.assign({}, loginForm, { password: e.target.value })); }}
-            />
-            <button type="submit" className="login-btn">Login</button>
-          </form>
+
+          <a href="/api/auth/github" className="github-login-btn">
+            <i className="fab fa-github"></i>
+            <span>Sign in with GitHub</span>
+          </a>
+
+          <div className="login-divider">
+            <span>or</span>
+          </div>
+
+          <div className="backup-toggle" onClick={function() { setShowBackup(!showBackup); }}>
+            {showBackup ? 'Hide' : 'Use'} password login
+          </div>
+
+          {showBackup && (
+            <form onSubmit={handleBackupLogin}>
+              <input
+                type="text"
+                placeholder="Username"
+                className="login-input"
+                value={loginForm.username}
+                onChange={function(e) { setLoginForm(Object.assign({}, loginForm, { username: e.target.value })); }}
+              />
+              <input
+                type="password"
+                placeholder="Password"
+                className="login-input"
+                value={loginForm.password}
+                onChange={function(e) { setLoginForm(Object.assign({}, loginForm, { password: e.target.value })); }}
+              />
+              <button type="submit" className="login-btn">Login</button>
+            </form>
+          )}
         </div>
       </div>
     );
@@ -177,7 +225,12 @@ var saveProject = function(e) {
   return (
     <div className="admin">
       <div className="admin-sidebar">
-        <h2 className="admin-logo">AB Admin</h2>
+        <div className="admin-user">
+          {authStatus && authStatus.avatar && (
+            <img src={authStatus.avatar} alt="" className="admin-avatar" />
+          )}
+          <h2 className="admin-logo">AB Admin</h2>
+        </div>
         <div className={'admin-tab' + (tab === 'dashboard' ? ' active' : '')} onClick={function() { setTab('dashboard'); }}>Dashboard</div>
         <div className={'admin-tab' + (tab === 'projects' ? ' active' : '')} onClick={function() { setTab('projects'); }}>Projects</div>
         <div className={'admin-tab' + (tab === 'messages' ? ' active' : '')} onClick={function() { setTab('messages'); }}>
@@ -192,6 +245,7 @@ var saveProject = function(e) {
         {tab === 'dashboard' && (
           <div className="admin-section">
             <h1 className="admin-title">Dashboard</h1>
+            {authStatus && <p className="welcome-text">Welcome, {authStatus.username}!</p>}
             <div className="stats-grid">
               <div className="stat-card">
                 <span className="stat-card-value">{stats.totalProjects || 0}</span>

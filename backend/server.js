@@ -1,11 +1,17 @@
 var express = require('express');
 var cors = require('cors');
 var jwt = require('jsonwebtoken');
+var passport = require('passport');
+var GitHubStrategy = require('passport-github2').Strategy;
+var session = require('express-session');
 var multer = require('multer');
 var path = require('path');
 var fs = require('fs');
 var pool = require('./db');
 require('dotenv').config();
+
+var app = express();
+var PORT = process.env.PORT || 3001;
 
 // Uploads folder
 var uploadsDir = path.join(__dirname, 'uploads');
@@ -25,18 +31,52 @@ var storage = multer.diskStorage({
 
 var upload = multer({ storage: storage, limits: { fileSize: 5 * 1024 * 1024 } });
 
-var app = express();
-var PORT = process.env.PORT || 3001;
-
-app.use(cors());
+// Middleware
+app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 app.use('/uploads', express.static(uploadsDir));
 
+// Session
+app.use(session({
+  secret: process.env.JWT_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  cookie: { maxAge: 24 * 60 * 60 * 1000 }
+}));
+
+// Passport
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.serializeUser(function(user, done) {
+  done(null, user);
+});
+
+passport.deserializeUser(function(user, done) {
+  done(null, user);
+});
+
+passport.use(new GitHubStrategy({
+  clientID: process.env.GITHUB_CLIENT_ID,
+  clientSecret: process.env.GITHUB_CLIENT_SECRET,
+  callbackURL: process.env.GITHUB_CALLBACK_URL || 'http://localhost:3001/api/auth/github/callback'
+}, function(accessToken, refreshToken, profile, done) {
+  if (profile.username === process.env.GITHUB_ALLOWED_USER) {
+    return done(null, { username: profile.username, avatar: profile.photos[0].value });
+  } else {
+    return done(null, false, { message: 'Not authorized' });
+  }
+}));
+
 // ===== AUTH MIDDLEWARE =====
 var auth = function(req, res, next) {
+  // Check session (GitHub OAuth)
+  if (req.isAuthenticated && req.isAuthenticated()) {
+    return next();
+  }
+  // Fallback to JWT
   var header = req.headers.authorization;
-  if (!header) return res.status(401).json({ error: 'No token' });
-
+  if (!header) return res.status(401).json({ error: 'Not authenticated' });
   try {
     var token = header.split(' ')[1];
     var decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -47,7 +87,31 @@ var auth = function(req, res, next) {
   }
 };
 
-// ===== LOGIN =====
+// ===== GITHUB AUTH ROUTES =====
+app.get('/api/auth/github', passport.authenticate('github', { scope: ['user:email'] }));
+
+app.get('/api/auth/github/callback',
+  passport.authenticate('github', { failureRedirect: '/admin?error=unauthorized' }),
+  function(req, res) {
+    res.redirect('http://localhost:5173/admin');
+  }
+);
+
+app.get('/api/auth/me', function(req, res) {
+  if (req.isAuthenticated && req.isAuthenticated()) {
+    res.json({ authenticated: true, user: req.user });
+  } else {
+    res.json({ authenticated: false });
+  }
+});
+
+app.get('/api/auth/logout', function(req, res) {
+  req.logout(function() {
+    res.redirect('http://localhost:5173/admin');
+  });
+});
+
+// ===== JWT LOGIN (backup) =====
 app.post('/api/login', function(req, res) {
   var { username, password } = req.body;
   if (username === process.env.ADMIN_USERNAME && password === process.env.ADMIN_PASSWORD) {
@@ -199,6 +263,13 @@ app.delete('/api/messages/:id', auth, async function(req, res) {
   }
 });
 
+// ===== UPLOAD =====
+app.post('/api/upload', auth, upload.single('image'), function(req, res) {
+  if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+  var imageUrl = '/uploads/' + req.file.filename;
+  res.json({ url: imageUrl });
+});
+
 // ===== DASHBOARD STATS (admin) =====
 app.get('/api/admin/stats', auth, async function(req, res) {
   try {
@@ -215,13 +286,6 @@ app.get('/api/admin/stats', auth, async function(req, res) {
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
-});
-
-// ===== UPLOAD =====
-app.post('/api/upload', auth, upload.single('image'), function(req, res) {
-  if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
-  var imageUrl = '/uploads/' + req.file.filename;
-  res.json({ url: imageUrl });
 });
 
 // ===== START =====

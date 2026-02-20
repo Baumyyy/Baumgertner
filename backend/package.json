@@ -16,8 +16,11 @@
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
+    "express-session": "^1.19.0",
     "jsonwebtoken": "^9.0.3",
     "multer": "^2.0.2",
+    "passport": "^0.7.0",
+    "passport-github2": "^0.1.12",
     "pg": "^8.18.0"
   },
   "devDependencies": {
