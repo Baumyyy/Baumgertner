@@ -30,10 +30,10 @@ var fi = {
   whatido_s2_title: 'Projektinhallinta',
   whatido_s2_desc: 'Vahva kokemus tiimien johtamisesta, työnkulkujen organisoinnista ja projektien viemisestä ideasta valmiiksi. Osaamisalueina ketterät menetelmät ja sidosryhmäviestintä.',
   whatido_s3_title: 'Jatkuva oppiminen',
-  whatido_s3_desc: 'Opiskelen tällä hetkellä ohjelmistotekniikkaa ja projektinhallintaa Turun ammattikorkeakoulussa. Syventän osaamistani käytännön projekteilla ja kurssitöillä.',
+  whatido_s3_desc: 'Opiskelen tällä hetkellä (Software Engineering & Project Management) Turun ammattikorkeakoulussa. Syvennän osaamistani käytännön projektien, kurssien ja kokemusten avulla.',
   whatido_journey: 'Ammatillinen polku',
-  whatido_journey_desc: 'Seuraa uraani, projektejani ja virstanpylväitäni. Verkostoitutaan ja kasvetaan yhdessä tech-alalla.',
-  whatido_connect: 'Yhdistä LinkedInissä',
+  whatido_journey_desc: 'Seuraa uraani ja projektejani. Verkoistoidutaan ja kasvetaan yhdessä tech-alalla.',
+  whatido_connect: 'Näe lisää LinkedInissä',
 
   // Projects
   projects_tag: 'Portfolio',

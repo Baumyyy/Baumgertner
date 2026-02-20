@@ -31,10 +31,42 @@ var storage = multer.diskStorage({
 
 var upload = multer({ storage: storage, limits: { fileSize: 5 * 1024 * 1024 } });
 
+// Security
+var helmet = require('helmet');
+var rateLimit = require('express-rate-limit');
+
+app.use(helmet({
+  contentSecurityPolicy: false,
+  crossOriginEmbedderPolicy: false
+}));
+
+// Rate limiting
+var apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: { error: 'Too many requests, try again later' }
+});
+
+var authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  message: { error: 'Too many login attempts, try again later' }
+});
+
+var messageLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 5,
+  message: { error: 'Too many messages, try again later' }
+});
+
 // Middleware
-app.use(cors({ origin: true, credentials: true }));
-app.use(express.json());
+app.use(cors({
+  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  credentials: true
+}));
+app.use(express.json({ limit: '1mb' }));
 app.use('/uploads', express.static(uploadsDir));
+app.use('/api', apiLimiter);
 
 // Session
 app.use(session({
@@ -88,7 +120,7 @@ var auth = function(req, res, next) {
 };
 
 // ===== GITHUB AUTH ROUTES =====
-app.get('/api/auth/github', passport.authenticate('github', { scope: ['user:email'] }));
+app.get('/api/auth/github', authLimiter, passport.authenticate('github', { scope: ['user:email'] }));
 
 app.get('/api/auth/github/callback',
   passport.authenticate('github', { failureRedirect: '/admin?error=unauthorized' }),
@@ -112,7 +144,7 @@ app.get('/api/auth/logout', function(req, res) {
 });
 
 // ===== JWT LOGIN (backup) =====
-app.post('/api/login', function(req, res) {
+app.post('/api/login', authLimiter, function(req, res) {
   var { username, password } = req.body;
   if (username === process.env.ADMIN_USERNAME && password === process.env.ADMIN_PASSWORD) {
     var token = jwt.sign({ user: 'admin' }, process.env.JWT_SECRET, { expiresIn: '24h' });
@@ -216,7 +248,7 @@ app.delete('/api/projects/:id', auth, async function(req, res) {
 });
 
 // ===== MESSAGES (public: send) =====
-app.post('/api/messages', async function(req, res) {
+app.post('/api/messages', messageLimiter, async function(req, res) {
   try {
     var { name, email, message } = req.body;
     if (!name || !email || !message) {
