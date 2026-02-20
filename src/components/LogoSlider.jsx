@@ -1,72 +1,53 @@
 import React from 'react';
 import './LogoSlider.css';
+import { useLang } from '../LanguageContext';
 
-const technologies = [
-  { icon: 'fab fa-react', name: 'React' },
-  { icon: 'fab fa-html5', name: 'HTML5' },
-  { icon: 'fab fa-css3-alt', name: 'CSS3' },
-  { icon: 'fab fa-node-js', name: 'Node.js' },
-  { icon: 'fab fa-js-square', name: 'JavaScript' },
-  { icon: 'fab fa-npm', name: 'npm' },
-  { icon: 'fab fa-git-alt', name: 'Git' },
-  { icon: 'fab fa-github', name: 'GitHub' },
-  { icon: 'fas fa-bolt', name: 'Vite' },
+var techs = [
+  { name: 'React', icon: 'fab fa-react' },
+  { name: 'HTML5', icon: 'fab fa-html5' },
+  { name: 'CSS3', icon: 'fab fa-css3-alt' },
+  { name: 'Node.js', icon: 'fab fa-node-js' },
+  { name: 'JavaScript', icon: 'fab fa-js-square' },
+  { name: 'npm', icon: 'fab fa-npm' },
+  { name: 'Git', icon: 'fab fa-git-alt' },
+  { name: 'GitHub', icon: 'fab fa-github' },
+  { name: 'Vite', icon: 'fas fa-bolt' }
 ];
 
-const LogoSlider = () => {
+var LogoSlider = function() {
+  var { t } = useLang();
+
+  var renderRow = function() {
+    return (
+      <div className="slider-row">
+        {techs.map(function(tech, i) {
+          return (
+            <div className="slider-item" key={i}>
+              <i className={tech.icon}></i>
+              <span>{tech.name}</span>
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
+
   return (
     <div className="slider-section">
       <div className="slider-header">
-        <span className="slider-line"></span>
-        <span className="slider-label">My Stack</span>
-        <span className="slider-line slider-line-right"></span>
+        <div className="slider-line"></div>
+        <span className="slider-label">{t.slider_label}</span>
+        <div className="slider-line slider-line-right"></div>
       </div>
 
       <div className="slider-wrapper">
         <div className="slider-fade slider-fade-left"></div>
         <div className="slider-fade slider-fade-right"></div>
-
         <div className="slider-track">
-          <div className="slider-row">
-            {technologies.map(function(tech, i) {
-              return (
-                <div className="slider-item" key={'a' + i}>
-                  <i className={tech.icon}></i>
-                  <span>{tech.name}</span>
-                </div>
-              );
-            })}
-          </div>
-          <div className="slider-row">
-            {technologies.map(function(tech, i) {
-              return (
-                <div className="slider-item" key={'b' + i}>
-                  <i className={tech.icon}></i>
-                  <span>{tech.name}</span>
-                </div>
-              );
-            })}
-          </div>
-          <div className="slider-row">
-            {technologies.map(function(tech, i) {
-              return (
-                <div className="slider-item" key={'c' + i}>
-                  <i className={tech.icon}></i>
-                  <span>{tech.name}</span>
-                </div>
-              );
-            })}
-          </div>
-          <div className="slider-row">
-            {technologies.map(function(tech, i) {
-              return (
-                <div className="slider-item" key={'d' + i}>
-                  <i className={tech.icon}></i>
-                  <span>{tech.name}</span>
-                </div>
-              );
-            })}
-          </div>
+          {renderRow()}
+          {renderRow()}
+          {renderRow()}
+          {renderRow()}
         </div>
       </div>
     </div>

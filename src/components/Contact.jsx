@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './Contact.css';
 import { useScrollAnimation } from '../hooks/useScrollAnimation';
 import { api } from '../api';
+import { useLang } from '../LanguageContext';
 
 var Contact = function() {
   var focusedState = useState('');
@@ -17,6 +18,7 @@ var Contact = function() {
   var sent = sentState[0];
   var setSent = sentState[1];
   var sectionRef = useScrollAnimation();
+  var { t } = useLang();
 
   var handleChange = function(e) {
     var newData = {};
@@ -49,17 +51,15 @@ var Contact = function() {
           <div className="section-tag">
             <span className="tag-number">03</span>
             <span className="tag-line"></span>
-            <span className="tag-label">Contact</span>
+            <span className="tag-label">{t.contact_tag}</span>
           </div>
 
           <h2 className="contact-title">
-            Lets build<br />
-            something <span className="title-accent">great</span>
+            {t.contact_title1}<br />
+            {t.contact_title2} <span className="title-accent">{t.contact_title3}</span>
           </h2>
 
-          <p className="contact-desc">
-            Got a project or idea? Im always open to discussing new opportunities and collaborations.
-          </p>
+          <p className="contact-desc">{t.contact_desc}</p>
 
           <div className="info-cards">
             <div className="info-card">
@@ -70,7 +70,7 @@ var Contact = function() {
                 </svg>
               </div>
               <div className="info-card-content">
-                <span className="info-card-label">Email</span>
+                <span className="info-card-label">{t.contact_email}</span>
                 <span className="info-card-value">baumgertnerr@outlook.com</span>
               </div>
             </div>
@@ -83,7 +83,7 @@ var Contact = function() {
                 </svg>
               </div>
               <div className="info-card-content">
-                <span className="info-card-label">Location</span>
+                <span className="info-card-label">{t.contact_location}</span>
                 <span className="info-card-value">Turku, Finland</span>
               </div>
             </div>
@@ -96,7 +96,7 @@ var Contact = function() {
                 </svg>
               </div>
               <div className="info-card-content">
-                <span className="info-card-label">Timezone</span>
+                <span className="info-card-label">{t.contact_timezone}</span>
                 <span className="info-card-value">EET (UTC +2)</span>
               </div>
             </div>
@@ -107,12 +107,12 @@ var Contact = function() {
           <div className="form-card">
             <div className="form-card-header">
               <div className={'form-card-dot' + (sent ? ' dot-success' : '')}></div>
-              <span className="form-card-title">{sent ? 'Message Sent!' : 'New Message'}</span>
+              <span className="form-card-title">{sent ? t.contact_message_sent : t.contact_new_message}</span>
             </div>
 
             <form className="contact-form" onSubmit={handleSubmit}>
               <div className={'form-field' + (focused === 'name' ? ' focused' : '') + (formData.name ? ' has-value' : '')}>
-                <label className="field-label">Name</label>
+                <label className="field-label">{t.contact_name}</label>
                 <input
                   type="text"
                   name="name"
@@ -126,7 +126,7 @@ var Contact = function() {
               </div>
 
               <div className={'form-field' + (focused === 'email' ? ' focused' : '') + (formData.email ? ' has-value' : '')}>
-                <label className="field-label">Email</label>
+                <label className="field-label">{t.contact_email_field}</label>
                 <input
                   type="email"
                   name="email"
@@ -140,7 +140,7 @@ var Contact = function() {
               </div>
 
               <div className={'form-field' + (focused === 'message' ? ' focused' : '') + (formData.message ? ' has-value' : '')}>
-                <label className="field-label">Message</label>
+                <label className="field-label">{t.contact_message}</label>
                 <textarea
                   name="message"
                   className="field-input field-textarea"
@@ -154,7 +154,7 @@ var Contact = function() {
               </div>
 
               <button type="submit" className={'form-send' + (sent ? ' send-success' : '')} disabled={sending}>
-                <span className="send-text">{sending ? 'Sending...' : sent ? 'Sent!' : 'Send Message'}</span>
+                <span className="send-text">{sending ? t.contact_sending : sent ? t.contact_sent : t.contact_send}</span>
                 <span className="send-icon">
                   {sent ? (
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

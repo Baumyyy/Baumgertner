@@ -1,0 +1,81 @@
+var fi = {
+  // Nav
+  nav_home: 'Etusivu',
+  nav_whatido: 'Osaamiseni',
+  nav_projects: 'Projektit',
+  nav_contact: 'Yhteystiedot',
+
+  // Hero
+  hero_intro: 'Esittely',
+  hero_greeting: 'Hei, olen',
+ hero_title1: 'Ohjelmisto-opiskelija',
+  hero_title2: 'Projektipäällikkö',
+  hero_title3: 'Frontend-kehittäjä',
+  hero_explore: 'Katso työni',
+  hero_contact: 'Ota yhteyttä',
+  hero_role: 'Ohjelmistokehittäjä & Projekti Päälikkö',
+  hero_age: 'Ikä',
+  hero_exp: 'Vuotta kok.',
+  hero_langs: 'Kielet',
+  hero_available: 'Vapaa projekteille',
+  hero_busy: 'Kiireinen tällä hetkellä',
+
+  // WhatIDo
+  whatido_tag: 'Palvelut',
+  whatido_title1: 'Mitä',
+  whatido_title2: 'Teen',
+  whatido_subtitle: 'Yhdistelmä teknistä osaamista, johtajuutta ja halua kehittyä jatkuvasti.',
+  whatido_s1_title: 'Frontend-kehitys',
+  whatido_s1_desc: 'Opin rakentamaan responsiivisia verkkosovelluksia Reactilla ja modernilla JavaScriptillä. Intohimona luoda selkeitä ja käyttäjäystävällisiä käyttöliittymiä.',
+  whatido_s2_title: 'Projektinhallinta',
+  whatido_s2_desc: 'Vahva kokemus tiimien johtamisesta, työnkulkujen organisoinnista ja projektien viemisestä ideasta valmiiksi. Osaamisalueina ketterät menetelmät ja sidosryhmäviestintä.',
+  whatido_s3_title: 'Jatkuva oppiminen',
+  whatido_s3_desc: 'Opiskelen tällä hetkellä ohjelmistotekniikkaa ja projektinhallintaa Turun ammattikorkeakoulussa. Syventän osaamistani käytännön projekteilla ja kurssitöillä.',
+  whatido_journey: 'Ammatillinen polku',
+  whatido_journey_desc: 'Seuraa uraani, projektejani ja virstanpylväitäni. Verkostoitutaan ja kasvetaan yhdessä tech-alalla.',
+  whatido_connect: 'Yhdistä LinkedInissä',
+
+  // Projects
+  projects_tag: 'Portfolio',
+  projects_title1: 'Minun',
+  projects_title2: 'Projektit',
+  projects_subtitle: 'Katso mitä olen työstänyt',
+  projects_view: 'Katso projekti',
+  projects_github: 'Lisää GitHubissa',
+  projects_loading: 'Ladataan projekteja...',
+
+  // Contact
+  contact_tag: 'Yhteystiedot',
+  contact_title1: 'Rakennetaan',
+  contact_title2: 'yhdessä jotain',
+  contact_title3: 'hienoa',
+  contact_desc: 'Onko sinulla projekti tai idea? Olen aina avoin uusille mahdollisuuksille ja yhteistyölle.',
+  contact_email: 'Sähköposti',
+  contact_location: 'Sijainti',
+  contact_timezone: 'Aikavyöhyke',
+  contact_name: 'Nimi',
+  contact_email_field: 'Sähköposti',
+  contact_message: 'Viesti',
+  contact_send: 'Lähetä viesti',
+  contact_sending: 'Lähetetään...',
+  contact_sent: 'Lähetetty!',
+  contact_new_message: 'Uusi viesti',
+  contact_message_sent: 'Viesti lähetetty!',
+
+  // Footer
+  footer_tagline: 'Rakennan digitaalisia kokemuksia intohimolla ja tarkkuudella',
+  footer_navigate: 'Navigoi',
+  footer_connect: 'Yhdistä',
+  footer_status: 'Tila',
+  footer_available: 'Vapaa projekteille',
+  footer_busy: 'Kiireinen tällä hetkellä',
+  footer_available_desc: 'Avoin freelance-, yhteistyö- ja kokoaikaisille mahdollisuuksille',
+  footer_busy_desc: 'En ota uusia projekteja tällä hetkellä',
+  footer_credit: 'Suunniteltu ja rakennettu',
+  footer_credit2: 'Suomessa',
+
+  // Slider
+  slider_label: 'Teknologiani'
+};
+
+export default fi;

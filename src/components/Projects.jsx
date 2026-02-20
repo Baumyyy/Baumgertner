@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './Projects.css';
 import { useScrollAnimation } from '../hooks/useScrollAnimation';
 import { api } from '../api';
+import { useLang } from '../LanguageContext';
 
 var Projects = function() {
   var state = useState(null);
@@ -14,6 +15,7 @@ var Projects = function() {
   var loading = loadingState[0];
   var setLoading = loadingState[1];
   var sectionRef = useScrollAnimation();
+  var { t } = useLang();
 
   useEffect(function() {
     api.getProjects().then(function(data) {
@@ -82,7 +84,7 @@ var Projects = function() {
           )}
           {hasLink && (
             <div className="project-link-row">
-              <span>View Project</span>
+              <span>{t.projects_view}</span>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M7 17L17 7M17 7H7M17 7V17"/>
               </svg>
@@ -101,17 +103,17 @@ var Projects = function() {
           <div className="section-tag">
             <span className="tag-number">02</span>
             <span className="tag-line"></span>
-            <span className="tag-label">Portfolio</span>
+            <span className="tag-label">{t.projects_tag}</span>
           </div>
           <h2 className="projects-title">
-            My <span className="title-accent">Projects</span>
+            {t.projects_title1} <span className="title-accent">{t.projects_title2}</span>
           </h2>
-          <p className="projects-subtitle">Check out what I have been working on</p>
+          <p className="projects-subtitle">{t.projects_subtitle}</p>
         </div>
 
         <div className="projects-grid fade-in stagger-2">
           {loading ? (
-            <p style={{color: 'rgba(255,255,255,0.3)', gridColumn: '1/-1', textAlign: 'center'}}>Loading projects...</p>
+            <p style={{color: 'rgba(255,255,255,0.3)', gridColumn: '1/-1', textAlign: 'center'}}>{t.projects_loading}</p>
           ) : (
             projects.map(function(project, index) {
               return renderProject(project, index);
@@ -126,7 +128,7 @@ var Projects = function() {
             style={{cursor: 'pointer'}}
           >
             <i className="fab fa-github"></i>
-            <span>See More on GitHub</span>
+            <span>{t.projects_github}</span>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M5 12H19M19 12L12 5M19 12L12 19"/>
             </svg>
