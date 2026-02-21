@@ -11,6 +11,7 @@ var pool = require('./db');
 require('dotenv').config();
 
 var app = express();
+app.set('trust proxy', 1);
 var PORT = process.env.PORT || 3001;
 
 // Uploads folder
