@@ -44,6 +44,12 @@ var en = {
   projects_github: 'See More on GitHub',
   projects_loading: 'Loading projects...',
 
+  // Testimonials
+  testimonials_tag: 'Testimonials',
+  testimonials_title1: 'What People',
+  testimonials_title2: 'Say',
+  testimonials_subtitle: 'Feedback from people I have worked with',
+  
   // Contact
   contact_tag: 'Contact',
   contact_title1: 'Lets build',

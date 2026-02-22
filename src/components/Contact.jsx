@@ -49,7 +49,7 @@ var Contact = function() {
       <div className="contact-content">
         <div className="contact-info fade-in stagger-1">
           <div className="section-tag">
-            <span className="tag-number">03</span>
+            <span className="tag-number">05</span>
             <span className="tag-line"></span>
             <span className="tag-label">{t.contact_tag}</span>
           </div>

@@ -44,6 +44,13 @@ var fi = {
   projects_github: 'Lisää GitHubissa',
   projects_loading: 'Ladataan projekteja...',
 
+  //Testimonials
+
+  testimonials_tag: 'Suositukset',
+  testimonials_title1: 'Mitä ihmiset',
+  testimonials_title2: 'sanovat',
+  testimonials_subtitle: 'Palautetta ihmisiltä joiden kanssa olen työskennellyt',
+
   // Contact
   contact_tag: 'Yhteystiedot',
   contact_title1: 'Rakennetaan',

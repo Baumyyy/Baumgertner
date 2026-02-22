@@ -37,6 +37,12 @@ var Admin = function() {
   var showBackupLogin = useState(false);
   var showBackup = showBackupLogin[0];
   var setShowBackup = showBackupLogin[1];
+  var testimonialsState = useState([]);
+  var adminTestimonials = testimonialsState[0];
+  var setAdminTestimonials = testimonialsState[1];
+  var editTestimonialState = useState(null);
+  var editTestimonial = editTestimonialState[0];
+  var setEditTestimonial = editTestimonialState[1];
 
   // Check GitHub auth on load
   useEffect(function() {
@@ -47,7 +53,6 @@ var Admin = function() {
           setAuthStatus(data.user);
           setLoggedIn(true);
         } else if (token) {
-          // Try JWT fallback
           fetch(API_URL + '/admin/stats', { headers: { 'Authorization': 'Bearer ' + token } })
             .then(function(r) {
               if (r.ok) {
@@ -73,7 +78,6 @@ var Admin = function() {
     return fetch(url, opts);
   };
 
-  // Load data when logged in
   useEffect(function() {
     if (loggedIn) loadAll();
   }, [loggedIn, tab]);
@@ -83,6 +87,7 @@ var Admin = function() {
     fetch(API_URL + '/projects').then(function(r) { return r.json(); }).then(setProjects);
     fetchAuth(API_URL + '/messages').then(function(r) { return r.json(); }).then(setMessages);
     fetch(API_URL + '/profile').then(function(r) { return r.json(); }).then(setProfile);
+    fetchAuth(API_URL + '/admin/testimonials').then(function(r) { return r.json(); }).then(setAdminTestimonials);
   };
 
   var handleBackupLogin = function(e) {
@@ -233,6 +238,7 @@ var Admin = function() {
         </div>
         <div className={'admin-tab' + (tab === 'dashboard' ? ' active' : '')} onClick={function() { setTab('dashboard'); }}>Dashboard</div>
         <div className={'admin-tab' + (tab === 'projects' ? ' active' : '')} onClick={function() { setTab('projects'); }}>Projects</div>
+        <div className={'admin-tab' + (tab === 'testimonials' ? ' active' : '')} onClick={function() { setTab('testimonials'); }}>Testimonials</div>
         <div className={'admin-tab' + (tab === 'messages' ? ' active' : '')} onClick={function() { setTab('messages'); }}>
           Messages
           {stats.unreadMessages > 0 && <span className="tab-badge">{stats.unreadMessages}</span>}
@@ -271,7 +277,7 @@ var Admin = function() {
           <div className="admin-section">
             <div className="section-header">
               <h1 className="admin-title">Projects</h1>
-              <button className="add-btn" onClick={function() { setEditProject({ title: '', description: '', tags: '', status: 'Live', link: '', sort_order: 0 }); }}>+ Add Project</button>
+              <button className="add-btn" onClick={function() { setEditProject({ title: '', description: '', tags: '', status: 'Live', link: '', image: '', sort_order: 0 }); }}>+ Add Project</button>
             </div>
 
             {editProject && (
@@ -319,6 +325,82 @@ var Admin = function() {
           </div>
         )}
 
+        {tab === 'testimonials' && (
+          <div className="admin-section">
+            <div className="section-header">
+              <h1 className="admin-title">Testimonials</h1>
+              <button className="add-btn" onClick={function() { setEditTestimonial({ name: '', role: '', company: '', message: '', avatar: '', rating: 5, visible: true, sort_order: 0 }); }}>+ Add</button>
+            </div>
+
+            {editTestimonial && (
+              <form className="edit-form" onSubmit={function(e) {
+                e.preventDefault();
+                var method = editTestimonial.id ? 'PUT' : 'POST';
+                var url = editTestimonial.id ? API_URL + '/testimonials/' + editTestimonial.id : API_URL + '/testimonials';
+                fetchAuth(url, { method: method, body: JSON.stringify(editTestimonial) })
+                  .then(function() { setEditTestimonial(null); loadAll(); });
+              }}>
+                <input className="edit-input" placeholder="Name" value={editTestimonial.name || ''} onChange={function(e) { setEditTestimonial(Object.assign({}, editTestimonial, { name: e.target.value })); }} />
+                <input className="edit-input" placeholder="Role" value={editTestimonial.role || ''} onChange={function(e) { setEditTestimonial(Object.assign({}, editTestimonial, { role: e.target.value })); }} />
+                <input className="edit-input" placeholder="Company" value={editTestimonial.company || ''} onChange={function(e) { setEditTestimonial(Object.assign({}, editTestimonial, { company: e.target.value })); }} />
+                <textarea className="edit-input edit-textarea" placeholder="Message" value={editTestimonial.message || ''} onChange={function(e) { setEditTestimonial(Object.assign({}, editTestimonial, { message: e.target.value })); }} />
+                <label className="edit-label">Avatar</label>
+                <div className="image-upload-row">
+                  {editTestimonial.avatar && <img src={editTestimonial.avatar} alt="Avatar" className="avatar-preview" />}
+                  <input type="file" accept="image/*" onChange={function(e) {
+                    var file = e.target.files[0];
+                    if (!file) return;
+                    var formData = new FormData();
+                    formData.append('image', file);
+                    fetch(API_URL + '/upload', {
+                      method: 'POST',
+                      headers: token ? { 'Authorization': 'Bearer ' + token } : {},
+                      credentials: 'include',
+                      body: formData
+                    }).then(function(r) { return r.json(); }).then(function(data) {
+                      if (data.url) setEditTestimonial(Object.assign({}, editTestimonial, { avatar: data.url }));
+                    });
+                  }} className="file-input" />
+                </div>
+                <select className="edit-input" value={editTestimonial.rating || 5} onChange={function(e) { setEditTestimonial(Object.assign({}, editTestimonial, { rating: parseInt(e.target.value) })); }}>
+                  <option value="5">★★★★★</option>
+                  <option value="4">★★★★</option>
+                  <option value="3">★★★</option>
+                </select>
+                <label className="edit-label">
+                  <input type="checkbox" checked={editTestimonial.visible !== false} onChange={function(e) { setEditTestimonial(Object.assign({}, editTestimonial, { visible: e.target.checked })); }} /> Visible
+                </label>
+                <input className="edit-input" type="number" placeholder="Sort order" value={editTestimonial.sort_order || 0} onChange={function(e) { setEditTestimonial(Object.assign({}, editTestimonial, { sort_order: parseInt(e.target.value) })); }} />
+                <div className="edit-actions">
+                  <button type="submit" className="save-btn">Save</button>
+                  <button type="button" className="cancel-btn" onClick={function() { setEditTestimonial(null); }}>Cancel</button>
+                </div>
+              </form>
+            )}
+
+            <div className="items-list">
+              {adminTestimonials.map(function(t) {
+                return (
+                  <div className="item-row" key={t.id}>
+                    <div className="item-info">
+                      <span className="item-title">{t.name} - {t.company || 'No company'}</span>
+                      <span className={'item-status ' + (t.visible ? 'status-live' : 'status-soon')}>{t.visible ? 'Visible' : 'Hidden'}</span>
+                    </div>
+                    <div className="item-actions">
+                      <button className="edit-btn" onClick={function() { setEditTestimonial(Object.assign({}, t)); }}>Edit</button>
+                      <button className="delete-btn" onClick={function() {
+                        if (confirm('Delete this testimonial?')) {
+                          fetchAuth(API_URL + '/testimonials/' + t.id, { method: 'DELETE' }).then(function() { loadAll(); });
+                        }
+                      }}>Delete</button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
         {tab === 'messages' && (
           <div className="admin-section">
             <h1 className="admin-title">Messages</h1>
@@ -348,7 +430,7 @@ var Admin = function() {
           <div className="admin-section">
             <h1 className="admin-title">Profile</h1>
             <form className="edit-form" onSubmit={saveProfile}>
-                <label className="edit-label">Profile Photo</label>
+              <label className="edit-label">Profile Photo</label>
               <div className="image-upload-row">
                 {profile.avatar && (
                   <img src={profile.avatar} alt="Avatar" className="avatar-preview" />

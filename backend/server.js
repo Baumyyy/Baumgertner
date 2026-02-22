@@ -296,6 +296,61 @@ app.delete('/api/messages/:id', auth, async function(req, res) {
   }
 });
 
+// ===== TESTIMONIALS (public) =====
+app.get('/api/testimonials', async function(req, res) {
+  try {
+    var result = await pool.query('SELECT * FROM testimonials WHERE visible=true ORDER BY sort_order ASC');
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ===== TESTIMONIALS (admin) =====
+app.get('/api/admin/testimonials', auth, async function(req, res) {
+  try {
+    var result = await pool.query('SELECT * FROM testimonials ORDER BY sort_order ASC');
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/testimonials', auth, async function(req, res) {
+  try {
+    var { name, role, company, message, avatar, rating, visible, sort_order } = req.body;
+    var result = await pool.query(
+      'INSERT INTO testimonials (name, role, company, message, avatar, rating, visible, sort_order) VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *',
+      [name, role, company, message, avatar, rating || 5, visible !== false, sort_order || 0]
+    );
+    res.json(result.rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.put('/api/testimonials/:id', auth, async function(req, res) {
+  try {
+    var { name, role, company, message, avatar, rating, visible, sort_order } = req.body;
+    var result = await pool.query(
+      'UPDATE testimonials SET name=$1, role=$2, company=$3, message=$4, avatar=$5, rating=$6, visible=$7, sort_order=$8 WHERE id=$9 RETURNING *',
+      [name, role, company, message, avatar, rating, visible, sort_order, req.params.id]
+    );
+    res.json(result.rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.delete('/api/testimonials/:id', auth, async function(req, res) {
+  try {
+    await pool.query('DELETE FROM testimonials WHERE id=$1', [req.params.id]);
+    res.json({ deleted: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // ===== UPLOAD =====
 app.post('/api/upload', auth, upload.single('image'), function(req, res) {
   if (!req.file) return res.status(400).json({ error: 'No file uploaded' });

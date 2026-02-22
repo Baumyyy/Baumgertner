@@ -5,6 +5,7 @@ import AuroraBackground from './components/AuroraBackground';
 import Hero from './components/Hero';
 import LogoSlider from './components/LogoSlider';
 import Projects from './components/Projects';
+import Testimonials from './components/Testimonials.jsx';
 import Contact from './components/Contact';
 import WhatIDo from './components/WhatIDo';
 import Footer from './components/Footer';
@@ -29,6 +30,7 @@ function App() {
               <WhatIDo />
               <LogoSlider />
               <Projects />
+              <Testimonials/>
               <Contact />
               <Footer />
             </AuroraBackground>

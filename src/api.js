@@ -23,5 +23,9 @@ export var api = {
       body: JSON.stringify(data)
     });
     return res.json();
-  }
+  },
+
+  getTestimonials: function() {
+  return fetch('/api/testimonials').then(function(r) { return r.json(); });
+},
 };
