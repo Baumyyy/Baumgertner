@@ -116,7 +116,7 @@ var Testimonials = function() {
                     <div className="testimonial-author">
                       <div className="testimonial-avatar">
                         {item.avatar ? (
-                          <img src={item.avatar} alt={item.name} />
+                          <img src={item.avatar} alt={item.name} loading="lazy" />
                         ) : (
                           <span className="avatar-initials">{item.name.split(' ').map(function(n) { return n[0]; }).join('')}</span>
                         )}

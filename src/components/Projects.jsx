@@ -43,7 +43,7 @@ var Projects = function() {
         <div className="project-preview">
           {hasImage ? (
             <div className="preview-image-wrapper">
-              <img src={project.image} alt={project.title} className="preview-image" />
+              <img src={project.image} alt={project.title} className="preview-image" loading="lazy" />
             </div>
           ) : (
             <div className="preview-placeholder">

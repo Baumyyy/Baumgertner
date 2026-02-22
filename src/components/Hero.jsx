@@ -168,7 +168,7 @@ const Hero = () => {
 
                 <div className="badge-photo-wrapper">
                   <div className="badge-photo">
-                    <img src={avatar} alt="Anthony Baumgertner" className="badge-photo-img" />
+                    <img src={avatar} alt="Anthony Baumgertner" className="badge-photo-img" loading="eager" />
                   </div>
                 </div>
 

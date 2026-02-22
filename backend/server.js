@@ -369,10 +369,25 @@ app.delete('/api/testimonials/:id', auth, async function(req, res) {
 });
 
 // ===== UPLOAD =====
-app.post('/api/upload', auth, upload.single('image'), function(req, res) {
+var sharp = require('sharp');
+
+app.post('/api/upload', auth, upload.single('image'), async function(req, res) {
   if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
-  var imageUrl = '/uploads/' + req.file.filename;
-  res.json({ url: imageUrl });
+  try {
+    var filename = 'project-' + Date.now() + '.webp';
+    var outputPath = path.join(uploadsDir, filename);
+    await sharp(req.file.path)
+      .resize(1200, 800, { fit: 'inside', withoutEnlargement: true })
+      .webp({ quality: 80 })
+      .toFile(outputPath);
+    // Delete original
+    fs.unlinkSync(req.file.path);
+    var imageUrl = '/uploads/' + filename;
+    res.json({ url: imageUrl });
+  } catch (err) {
+    var imageUrl = '/uploads/' + req.file.filename;
+    res.json({ url: imageUrl });
+  }
 });
 
 // ===== DASHBOARD STATS (admin) =====
