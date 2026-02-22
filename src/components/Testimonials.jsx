@@ -112,7 +112,7 @@ var Testimonials = function() {
       <div className="testimonials-content">
         <div className="testimonials-header">
           <div className="section-tag">
-            <span className="tag-number">03</span>
+            <span className="tag-number">04</span>
             <span className="tag-line"></span>
             <span className="tag-label">{t.testimonials_tag || 'Testimonials'}</span>
           </div>

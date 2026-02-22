@@ -11,8 +11,19 @@ var techs = [
   { name: 'npm', icon: 'fab fa-npm' },
   { name: 'Git', icon: 'fab fa-git-alt' },
   { name: 'GitHub', icon: 'fab fa-github' },
-  { name: 'Vite', icon: 'fas fa-bolt' }
+  { name: 'Vite', icon: 'fas fa-bolt' },
+  { name: 'PostgreSQL', icon: null, svg: true },
+  { name: 'Docker', icon: 'fab fa-docker' },
+  { name: 'Express', icon: 'fas fa-server' },
+  { name: 'Nginx', icon: 'fas fa-shield-alt' },
+  { name: 'Linux', icon: 'fab fa-linux' }
 ];
+
+var PostgresIcon = function() {
+  return (
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-plain.svg" alt="PostgreSQL" className="slider-svg-icon" />
+  );
+};
 
 var LogoSlider = function() {
   var { t } = useLang();
@@ -23,7 +34,7 @@ var LogoSlider = function() {
         {techs.map(function(tech, i) {
           return (
             <div className="slider-item" key={i}>
-              <i className={tech.icon}></i>
+              {tech.svg ? <PostgresIcon /> : <i className={tech.icon}></i>}
               <span>{tech.name}</span>
             </div>
           );

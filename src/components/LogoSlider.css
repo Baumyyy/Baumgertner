@@ -127,6 +127,17 @@
   color: rgba(0, 255, 136, 0.7);
 }
 
+.slider-svg-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  filter: brightness(0) invert(0.7);
+  transition: all 0.3s ease;
+}
+
+.slider-item:hover .slider-svg-icon {
+  filter: invert(62%) sepia(92%) saturate(431%) hue-rotate(95deg) brightness(103%) contrast(105%) drop-shadow(0 0 8px rgba(0, 255, 136, 0.5));
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
   .slider-section { padding: 0.5rem 0 2rem 0; }

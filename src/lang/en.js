@@ -1,8 +1,9 @@
 var en = {
   // Nav
   nav_home: 'Home',
-  nav_whatido: 'What I Do',
+  nav_whatido: 'Skills',
   nav_projects: 'Projects',
+  nav_testimonials: 'Testimonials',
   nav_contact: 'Contact',
 
   // Hero
@@ -21,9 +22,9 @@ var en = {
   hero_busy: 'Currently busy',
 
   // WhatIDo
-  whatido_tag: 'Services',
-  whatido_title1: 'What I',
-  whatido_title2: 'Do',
+  whatido_tag: 'Skills',
+  whatido_title1: 'My',
+  whatido_title2: 'Skills',
   whatido_subtitle: 'A mix of technical skills, leadership and a hunger to keep growing.',
   whatido_s1_title: 'Frontend Development',
   whatido_s1_desc: 'Learning to build responsive web applications with React and modern JavaScript. Passionate about creating clean, user-friendly interfaces and improving every day.',
@@ -98,7 +99,7 @@ testimonials_leave: 'Leave a Testimonial',
   //Error 404
   notfound_text: 'The page you are looking for does not exist or has been moved.',
   notfound_home: 'Back to Home',
-  
+
 };
 
 export default en;

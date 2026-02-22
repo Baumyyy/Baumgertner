@@ -212,9 +212,13 @@
   .footer-glow { margin-bottom: 2rem; }
   .footer-name { font-size: 1.3rem; }
   .footer-tagline { font-size: 0.8rem; }
-  .footer-links-grid {
-    flex-direction: column;
+  .footer-links-grid { 
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 1.5rem;
+  }
+  .footer-links-col:last-child {
+    grid-column: 1 / -1;
   }
   .footer-links-title { font-size: 0.7rem; }
   .footer-link { font-size: 0.8rem; }

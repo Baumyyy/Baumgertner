@@ -1,8 +1,9 @@
 var fi = {
   // Nav
   nav_home: 'Etusivu',
-  nav_whatido: 'Osaamiseni',
+  nav_whatido: 'Taidot',
   nav_projects: 'Projektit',
+  nav_testimonials: 'Suositukset',
   nav_contact: 'Yhteystiedot',
 
   // Hero
@@ -21,9 +22,9 @@ var fi = {
   hero_busy: 'Kiireinen tällä hetkellä',
 
   // WhatIDo
-  whatido_tag: 'Palvelut',
-  whatido_title1: 'Mitä',
-  whatido_title2: 'Teen',
+  whatido_tag: 'Taidot',
+  whatido_title1: 'Minun',
+  whatido_title2: 'Taidot',
   whatido_subtitle: 'Yhdistelmä teknistä osaamista, johtajuutta ja halua kehittyä jatkuvasti.',
   whatido_s1_title: 'Frontend-kehitys',
   whatido_s1_desc: 'Opin rakentamaan responsiivisia verkkosovelluksia Reactilla ja modernilla JavaScriptillä. Intohimona luoda selkeitä ja käyttäjäystävällisiä käyttöliittymiä.',
@@ -99,7 +100,7 @@ var fi = {
   //Error 404
   notfound_text: 'Sivua jota etsit ei löydy tai se on siirretty.',
   notfound_home: 'Takaisin etusivulle',
-  
+
 };
 
 export default fi;
