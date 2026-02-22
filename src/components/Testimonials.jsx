@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './Testimonials.css';
 import { api } from '../api';
 import { useLang } from '../LanguageContext';
@@ -24,11 +24,37 @@ var Testimonials = function() {
   var setSending = sendingState[1];
   var { t } = useLang();
 
+  // Swipe
+  var touchStart = useRef(null);
+  var touchEnd = useRef(null);
+
+  var handleTouchStart = function(e) {
+    touchStart.current = e.targetTouches[0].clientX;
+    touchEnd.current = null;
+  };
+
+  var handleTouchMove = function(e) {
+    touchEnd.current = e.targetTouches[0].clientX;
+  };
+
+  var handleTouchEnd = function() {
+    if (!touchStart.current || !touchEnd.current) return;
+    var distance = touchStart.current - touchEnd.current;
+    if (Math.abs(distance) > 50) {
+      if (distance > 0) {
+        setActive(function(prev) { return (prev + 1) % testimonials.length; });
+      } else {
+        setActive(function(prev) { return (prev - 1 + testimonials.length) % testimonials.length; });
+      }
+    }
+    touchStart.current = null;
+    touchEnd.current = null;
+  };
+
   useEffect(function() {
     api.getTestimonials().then(function(data) {
-      console.log('Testimonials loaded:', data);
       if (Array.isArray(data)) setTestimonials(data);
-    }).catch(function(err) { console.log('Testimonials error:', err); });
+    }).catch(function() {});
   }, []);
 
   useEffect(function() {
@@ -97,7 +123,12 @@ var Testimonials = function() {
         </div>
 
         {testimonials.length > 0 && (
-          <div className="testimonials-slider">
+          <div
+            className="testimonials-slider"
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
             <div className="testimonial-cards-wrapper">
               {testimonials.map(function(item, index) {
                 var isActive = index === active;
