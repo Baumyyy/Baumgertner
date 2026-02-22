@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import NotFound from './components/NotFound';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { LanguageProvider } from './LanguageContext';
 import AuroraBackground from './components/AuroraBackground';
@@ -24,17 +25,18 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/admin" element={<Admin />} />
-          <Route path="*" element={
+          <Route path="/" element={
             <AuroraBackground>
               <Hero />
               <WhatIDo />
               <LogoSlider />
               <Projects />
-              <Testimonials/>
+              <Testimonials />
               <Contact />
               <Footer />
             </AuroraBackground>
           } />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
     </LanguageProvider>

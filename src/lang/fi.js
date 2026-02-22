@@ -94,7 +94,12 @@ var fi = {
   footer_credit2: 'Suomessa',
 
   // Slider
-  slider_label: 'Teknologiani'
+  slider_label: 'Teknologiani',
+
+  //Error 404
+  notfound_text: 'Sivua jota etsit ei löydy tai se on siirretty.',
+  notfound_home: 'Takaisin etusivulle',
+  
 };
 
 export default fi;

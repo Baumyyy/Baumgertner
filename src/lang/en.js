@@ -93,7 +93,12 @@ testimonials_leave: 'Leave a Testimonial',
   footer_credit2: 'in Finland',
 
   // Slider
-  slider_label: 'My Stack'
+  slider_label: 'My Stack',
+
+  //Error 404
+  notfound_text: 'The page you are looking for does not exist or has been moved.',
+  notfound_home: 'Back to Home',
+  
 };
 
 export default en;
