@@ -49,7 +49,19 @@ var en = {
   testimonials_title1: 'What People',
   testimonials_title2: 'Say',
   testimonials_subtitle: 'Feedback from people I have worked with',
-  
+
+  //Testimonials submit
+testimonials_leave: 'Leave a Testimonial',
+  testimonials_thanks: 'Thank You!',
+  testimonials_review: 'Your testimonial will be reviewed and published soon!',
+  testimonials_form_name: 'Name',
+  testimonials_form_role: 'Role',
+  testimonials_form_company: 'Company',
+  testimonials_form_message: 'Your Feedback',
+  testimonials_form_rating: 'Rating',
+  testimonials_sending: 'Sending...',
+  testimonials_submit: 'Submit Testimonial',
+
   // Contact
   contact_tag: 'Contact',
   contact_title1: 'Lets build',

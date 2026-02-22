@@ -51,6 +51,18 @@ var fi = {
   testimonials_title2: 'sanovat',
   testimonials_subtitle: 'Palautetta ihmisiltä joiden kanssa olen työskennellyt',
 
+  //Testimonials submit
+  testimonials_leave: 'Jätä suositus',
+  testimonials_thanks: 'Kiitos!',
+  testimonials_review: 'Suosituksesi tarkistetaan ja julkaistaan pian!',
+  testimonials_form_name: 'Nimi',
+  testimonials_form_role: 'Rooli',
+  testimonials_form_company: 'Yritys',
+  testimonials_form_message: 'Palautteesi',
+  testimonials_form_rating: 'Arvosana',
+  testimonials_sending: 'Lähetetään...',
+  testimonials_submit: 'Lähetä suositus',
+
   // Contact
   contact_tag: 'Yhteystiedot',
   contact_title1: 'Rakennetaan',

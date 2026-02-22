@@ -306,6 +306,23 @@ app.get('/api/testimonials', async function(req, res) {
   }
 });
 
+app.post('/api/testimonials/submit', messageLimiter, async function(req, res) {
+  try {
+    var { name, role, company, message, rating } = req.body;
+    if (!name || !message) {
+      return res.status(400).json({ error: 'Name and message are required' });
+    }
+    var result = await pool.query(
+      'INSERT INTO testimonials (name, role, company, message, rating, visible, sort_order) VALUES ($1,$2,$3,$4,$5,false,0) RETURNING *',
+      [name, role || '', company || '', message, rating || 5]
+    );
+    res.json({ success: true, message: 'Thank you! Your testimonial will be reviewed.' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
 // ===== TESTIMONIALS (admin) =====
 app.get('/api/admin/testimonials', auth, async function(req, res) {
   try {
