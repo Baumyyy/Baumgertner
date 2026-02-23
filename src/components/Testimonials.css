@@ -403,3 +403,23 @@
   .testimonial-modal { padding: 1.5rem; }
   .tform-row { grid-template-columns: 1fr; }
 }
+
+.tform-photo-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.tform-photo-preview {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid rgba(0, 255, 136, 0.3);
+}
+
+.tform-uploading {
+  font-size: 0.75rem;
+  color: rgba(0, 255, 136, 0.5);
+}

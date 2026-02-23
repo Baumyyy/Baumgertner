@@ -13,7 +13,7 @@ var Testimonials = function() {
   var showFormState = useState(false);
   var showForm = showFormState[0];
   var setShowForm = showFormState[1];
-  var formState = useState({ name: '', role: '', company: '', message: '', rating: 5 });
+  var formState = useState({ name: '', role: '', company: '', message: '', rating: 5, avatar: '' });
   var form = formState[0];
   var setForm = formState[1];
   var submittedState = useState(false);
@@ -22,6 +22,9 @@ var Testimonials = function() {
   var sendingState = useState(false);
   var sending = sendingState[0];
   var setSending = sendingState[1];
+  var uploadingState = useState(false);
+  var uploading = uploadingState[0];
+  var setUploading = uploadingState[1];
   var { t } = useLang();
 
   // Swipe
@@ -65,6 +68,21 @@ var Testimonials = function() {
     return function() { clearInterval(interval); };
   }, [testimonials]);
 
+  var handlePhotoUpload = function(e) {
+    var file = e.target.files[0];
+    if (!file) return;
+    setUploading(true);
+    var formData = new FormData();
+    formData.append('image', file);
+    fetch('/api/upload-public', {
+      method: 'POST',
+      body: formData
+    }).then(function(r) { return r.json(); }).then(function(data) {
+      setUploading(false);
+      if (data.url) setForm(Object.assign({}, form, { avatar: data.url }));
+    }).catch(function() { setUploading(false); });
+  };
+
   var handleSubmit = function(e) {
     e.preventDefault();
     if (!form.name || !form.message) return;
@@ -76,7 +94,7 @@ var Testimonials = function() {
     }).then(function(r) { return r.json(); }).then(function() {
       setSending(false);
       setSubmitted(true);
-      setForm({ name: '', role: '', company: '', message: '', rating: 5 });
+      setForm({ name: '', role: '', company: '', message: '', rating: 5, avatar: '' });
       setTimeout(function() { setSubmitted(false); setShowForm(false); }, 3000);
     }).catch(function() { setSending(false); });
   };
@@ -220,6 +238,14 @@ var Testimonials = function() {
                   </div>
                 </div>
                 <div className="tform-field">
+                  <label>{t.testimonials_form_photo || 'Profile Photo (optional)'}</label>
+                  <div className="tform-photo-row">
+                    {form.avatar && <img src={form.avatar} alt="" className="tform-photo-preview" />}
+                    <input type="file" accept="image/*" className="file-input" onChange={handlePhotoUpload} />
+                    {uploading && <span className="tform-uploading">Uploading...</span>}
+                  </div>
+                </div>
+                <div className="tform-field">
                   <label>{t.testimonials_form_message || 'Your Feedback'} *</label>
                   <textarea rows="4" value={form.message} onChange={function(e) { setForm(Object.assign({}, form, { message: e.target.value })); }} required></textarea>
                 </div>
@@ -227,7 +253,7 @@ var Testimonials = function() {
                   <label>{t.testimonials_form_rating || 'Rating'}</label>
                   <div className="rating-select">{renderRatingSelect()}</div>
                 </div>
-                <button type="submit" className="tform-submit" disabled={sending}>
+                <button type="submit" className="tform-submit" disabled={sending || uploading}>
                   {sending ? (t.testimonials_sending || 'Sending...') : (t.testimonials_submit || 'Submit Testimonial')}
                 </button>
               </form>

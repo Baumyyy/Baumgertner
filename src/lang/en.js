@@ -62,6 +62,7 @@ testimonials_leave: 'Leave a Testimonial',
   testimonials_form_rating: 'Rating',
   testimonials_sending: 'Sending...',
   testimonials_submit: 'Submit Testimonial',
+  testimonials_form_photo: 'Profile Photo (optional)',
 
   // Contact
   contact_tag: 'Contact',

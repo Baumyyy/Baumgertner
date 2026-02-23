@@ -8,6 +8,7 @@ var multer = require('multer');
 var path = require('path');
 var fs = require('fs');
 var pool = require('./db');
+var sharp = require('sharp');
 require('dotenv').config();
 
 var app = express();
@@ -103,11 +104,9 @@ passport.use(new GitHubStrategy({
 
 // ===== AUTH MIDDLEWARE =====
 var auth = function(req, res, next) {
-  // Check session (GitHub OAuth)
   if (req.isAuthenticated && req.isAuthenticated()) {
     return next();
   }
-  // Fallback to JWT
   var header = req.headers.authorization;
   if (!header) return res.status(401).json({ error: 'Not authenticated' });
   try {
@@ -308,20 +307,19 @@ app.get('/api/testimonials', async function(req, res) {
 
 app.post('/api/testimonials/submit', messageLimiter, async function(req, res) {
   try {
-    var { name, role, company, message, rating } = req.body;
+    var { name, role, company, message, rating, avatar } = req.body;
     if (!name || !message) {
       return res.status(400).json({ error: 'Name and message are required' });
     }
     var result = await pool.query(
-      'INSERT INTO testimonials (name, role, company, message, rating, visible, sort_order) VALUES ($1,$2,$3,$4,$5,false,0) RETURNING *',
-      [name, role || '', company || '', message, rating || 5]
+      'INSERT INTO testimonials (name, role, company, message, rating, avatar, visible, sort_order) VALUES ($1,$2,$3,$4,$5,$6,false,0) RETURNING *',
+      [name, role || '', company || '', message, rating || 5, avatar || null]
     );
     res.json({ success: true, message: 'Thank you! Your testimonial will be reviewed.' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
-
 
 // ===== TESTIMONIALS (admin) =====
 app.get('/api/admin/testimonials', auth, async function(req, res) {
@@ -368,9 +366,25 @@ app.delete('/api/testimonials/:id', auth, async function(req, res) {
   }
 });
 
-// ===== UPLOAD =====
-var sharp = require('sharp');
+// ===== PUBLIC UPLOAD (testimonial avatars) =====
+app.post('/api/upload-public', messageLimiter, upload.single('image'), async function(req, res) {
+  if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+  try {
+    var filename = 'avatar-' + Date.now() + '.webp';
+    var outputPath = path.join(uploadsDir, filename);
+    await sharp(req.file.path)
+      .resize(200, 200, { fit: 'cover' })
+      .webp({ quality: 75 })
+      .toFile(outputPath);
+    fs.unlinkSync(req.file.path);
+    res.json({ url: '/uploads/' + filename });
+  } catch (err) {
+    var imageUrl = '/uploads/' + req.file.filename;
+    res.json({ url: imageUrl });
+  }
+});
 
+// ===== UPLOAD (admin) =====
 app.post('/api/upload', auth, upload.single('image'), async function(req, res) {
   if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
   try {
@@ -380,7 +394,6 @@ app.post('/api/upload', auth, upload.single('image'), async function(req, res) {
       .resize(1200, 800, { fit: 'inside', withoutEnlargement: true })
       .webp({ quality: 80 })
       .toFile(outputPath);
-    // Delete original
     fs.unlinkSync(req.file.path);
     var imageUrl = '/uploads/' + filename;
     res.json({ url: imageUrl });

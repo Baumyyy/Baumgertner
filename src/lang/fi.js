@@ -63,6 +63,7 @@ var fi = {
   testimonials_form_rating: 'Arvosana',
   testimonials_sending: 'Lähetetään...',
   testimonials_submit: 'Lähetä suositus',
+  testimonials_form_photo: 'Profiilikuva (valinnainen)',
 
   // Contact
   contact_tag: 'Yhteystiedot',
