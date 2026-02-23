@@ -43,6 +43,9 @@ var Admin = function() {
   var editTestimonialState = useState(null);
   var editTestimonial = editTestimonialState[0];
   var setEditTestimonial = editTestimonialState[1];
+  var sidebarState = useState(false);
+  var sidebarOpen = sidebarState[0];
+  var setSidebarOpen = sidebarState[1];
 
   // Check GitHub auth on load
   useEffect(function() {
@@ -229,21 +232,27 @@ var Admin = function() {
   // ===== ADMIN PANEL =====
   return (
     <div className="admin">
-      <div className="admin-sidebar">
+      <div className={'sidebar-overlay' + (sidebarOpen ? ' overlay-visible' : '')} onClick={function() { setSidebarOpen(false); }}></div>
+
+      <div className="mobile-menu-btn" onClick={function() { setSidebarOpen(!sidebarOpen); }}>
+        {sidebarOpen ? '✕' : '☰'}
+      </div>
+
+      <div className={'admin-sidebar' + (sidebarOpen ? ' sidebar-open' : '')}>
         <div className="admin-user">
           {authStatus && authStatus.avatar && (
             <img src={authStatus.avatar} alt="" className="admin-avatar" />
           )}
           <h2 className="admin-logo">AB Admin</h2>
         </div>
-        <div className={'admin-tab' + (tab === 'dashboard' ? ' active' : '')} onClick={function() { setTab('dashboard'); }}>Dashboard</div>
-        <div className={'admin-tab' + (tab === 'projects' ? ' active' : '')} onClick={function() { setTab('projects'); }}>Projects</div>
-        <div className={'admin-tab' + (tab === 'testimonials' ? ' active' : '')} onClick={function() { setTab('testimonials'); }}>Testimonials</div>
-        <div className={'admin-tab' + (tab === 'messages' ? ' active' : '')} onClick={function() { setTab('messages'); }}>
+        <div className={'admin-tab' + (tab === 'dashboard' ? ' active' : '')} onClick={function() { setTab('dashboard'); setSidebarOpen(false); }}>Dashboard</div>
+        <div className={'admin-tab' + (tab === 'projects' ? ' active' : '')} onClick={function() { setTab('projects'); setSidebarOpen(false); }}>Projects</div>
+        <div className={'admin-tab' + (tab === 'testimonials' ? ' active' : '')} onClick={function() { setTab('testimonials'); setSidebarOpen(false); }}>Testimonials</div>
+        <div className={'admin-tab' + (tab === 'messages' ? ' active' : '')} onClick={function() { setTab('messages'); setSidebarOpen(false); }}>
           Messages
           {stats.unreadMessages > 0 && <span className="tab-badge">{stats.unreadMessages}</span>}
         </div>
-        <div className={'admin-tab' + (tab === 'profile' ? ' active' : '')} onClick={function() { setTab('profile'); }}>Profile</div>
+        <div className={'admin-tab' + (tab === 'profile' ? ' active' : '')} onClick={function() { setTab('profile'); setSidebarOpen(false); }}>Profile</div>
         <div className="admin-tab logout" onClick={handleLogout}>Logout</div>
       </div>
 
