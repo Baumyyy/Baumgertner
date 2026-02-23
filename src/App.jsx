@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import CustomCursor from './components/CustomCursor.jsx';
 import NotFound from './components/NotFound';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { LanguageProvider } from './LanguageContext';
@@ -21,6 +22,7 @@ function App() {
 
   return (
     <LanguageProvider>
+      <CustomCursor />
       {loading && <LoadingScreen onFinished={function() { setLoading(false); }} />}
       <BrowserRouter>
         <Routes>

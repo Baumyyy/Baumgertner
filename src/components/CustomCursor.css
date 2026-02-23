@@ -1,0 +1,19 @@
+.cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 8px;
+  height: 8px;
+  border: 1.5px solid rgba(0, 255, 136, 0.5);
+  border-radius: 50%;
+  background: transparent;
+  pointer-events: none;
+  z-index: 99999;
+  transform: translate(-50%, -50%);
+}
+
+@media (max-width: 768px) {
+  .cursor-ring {
+    display: none;
+  }
+}
