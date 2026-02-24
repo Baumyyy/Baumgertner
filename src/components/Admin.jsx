@@ -3,6 +3,34 @@ import './Admin.css';
 
 var API_URL = '/api';
 
+// Simple bar chart component
+var MiniChart = function(props) {
+  var data = props.data || [];
+  var label = props.label || '';
+  if (data.length === 0) return null;
+
+  var max = Math.max.apply(null, data.map(function(d) { return parseInt(d.count); }));
+  if (max === 0) max = 1;
+
+  return (
+    <div className="mini-chart">
+      <span className="mini-chart-label">{label}</span>
+      <div className="mini-chart-bars">
+        {data.map(function(d, i) {
+          var height = (parseInt(d.count) / max) * 100;
+          var dateStr = new Date(d.date).toLocaleDateString('en', { day: 'numeric', month: 'short' });
+          return (
+            <div className="mini-chart-bar-wrapper" key={i} title={dateStr + ': ' + d.count}>
+              <div className="mini-chart-bar" style={{ height: height + '%' }}></div>
+              <span className="mini-chart-date">{dateStr}</span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
 var Admin = function() {
   var authState = useState(null);
   var authStatus = authState[0];
@@ -19,6 +47,9 @@ var Admin = function() {
   var statsState = useState({});
   var stats = statsState[0];
   var setStats = statsState[1];
+  var analyticsState = useState({ messagesPerDay: [], testimonialsByStatus: [] });
+  var analytics = analyticsState[0];
+  var setAnalytics = analyticsState[1];
   var projectsState = useState([]);
   var projects = projectsState[0];
   var setProjects = projectsState[1];
@@ -47,7 +78,6 @@ var Admin = function() {
   var sidebarOpen = sidebarState[0];
   var setSidebarOpen = sidebarState[1];
 
-  // Check GitHub auth on load
   useEffect(function() {
     fetch(API_URL + '/auth/me', { credentials: 'include' })
       .then(function(r) { return r.json(); })
@@ -87,6 +117,7 @@ var Admin = function() {
 
   var loadAll = function() {
     fetchAuth(API_URL + '/admin/stats').then(function(r) { return r.json(); }).then(setStats);
+    fetchAuth(API_URL + '/admin/analytics').then(function(r) { return r.json(); }).then(setAnalytics);
     fetch(API_URL + '/projects').then(function(r) { return r.json(); }).then(setProjects);
     fetchAuth(API_URL + '/messages').then(function(r) { return r.json(); }).then(setMessages);
     fetch(API_URL + '/profile').then(function(r) { return r.json(); }).then(setProfile);
@@ -184,7 +215,6 @@ var Admin = function() {
     }).then(function() { loadAll(); alert('Profile saved!'); });
   };
 
-  // ===== LOGIN SCREEN =====
   if (!loggedIn) {
     return (
       <div className="admin-login">
@@ -207,20 +237,8 @@ var Admin = function() {
 
           {showBackup && (
             <form onSubmit={handleBackupLogin}>
-              <input
-                type="text"
-                placeholder="Username"
-                className="login-input"
-                value={loginForm.username}
-                onChange={function(e) { setLoginForm(Object.assign({}, loginForm, { username: e.target.value })); }}
-              />
-              <input
-                type="password"
-                placeholder="Password"
-                className="login-input"
-                value={loginForm.password}
-                onChange={function(e) { setLoginForm(Object.assign({}, loginForm, { password: e.target.value })); }}
-              />
+              <input type="text" placeholder="Username" className="login-input" value={loginForm.username} onChange={function(e) { setLoginForm(Object.assign({}, loginForm, { username: e.target.value })); }} />
+              <input type="password" placeholder="Password" className="login-input" value={loginForm.password} onChange={function(e) { setLoginForm(Object.assign({}, loginForm, { password: e.target.value })); }} />
               <button type="submit" className="login-btn">Login</button>
             </form>
           )}
@@ -229,7 +247,6 @@ var Admin = function() {
     );
   }
 
-  // ===== ADMIN PANEL =====
   return (
     <div className="admin">
       <div className={'sidebar-overlay' + (sidebarOpen ? ' overlay-visible' : '')} onClick={function() { setSidebarOpen(false); }}></div>
@@ -240,14 +257,15 @@ var Admin = function() {
 
       <div className={'admin-sidebar' + (sidebarOpen ? ' sidebar-open' : '')}>
         <div className="admin-user">
-          {authStatus && authStatus.avatar && (
-            <img src={authStatus.avatar} alt="" className="admin-avatar" />
-          )}
+          {authStatus && authStatus.avatar && <img src={authStatus.avatar} alt="" className="admin-avatar" />}
           <h2 className="admin-logo">AB Admin</h2>
         </div>
         <div className={'admin-tab' + (tab === 'dashboard' ? ' active' : '')} onClick={function() { setTab('dashboard'); setSidebarOpen(false); }}>Dashboard</div>
         <div className={'admin-tab' + (tab === 'projects' ? ' active' : '')} onClick={function() { setTab('projects'); setSidebarOpen(false); }}>Projects</div>
-        <div className={'admin-tab' + (tab === 'testimonials' ? ' active' : '')} onClick={function() { setTab('testimonials'); setSidebarOpen(false); }}>Testimonials</div>
+        <div className={'admin-tab' + (tab === 'testimonials' ? ' active' : '')} onClick={function() { setTab('testimonials'); setSidebarOpen(false); }}>
+          Testimonials
+          {stats.pendingTestimonials > 0 && <span className="tab-badge">{stats.pendingTestimonials}</span>}
+        </div>
         <div className={'admin-tab' + (tab === 'messages' ? ' active' : '')} onClick={function() { setTab('messages'); setSidebarOpen(false); }}>
           Messages
           {stats.unreadMessages > 0 && <span className="tab-badge">{stats.unreadMessages}</span>}
@@ -279,6 +297,58 @@ var Admin = function() {
                 <span className="stat-card-label">Click to toggle</span>
               </div>
             </div>
+
+            <div className="dashboard-charts">
+              <div className="chart-card">
+                <h3 className="chart-title">Messages (Last 30 Days)</h3>
+                {analytics.messagesPerDay && analytics.messagesPerDay.length > 0 ? (
+                  <MiniChart data={analytics.messagesPerDay} />
+                ) : (
+                  <p className="chart-empty">No message data yet</p>
+                )}
+              </div>
+              <div className="chart-card">
+                <h3 className="chart-title">Overview</h3>
+                <div className="overview-stats">
+                  <div className="overview-row">
+                    <span className="overview-label">Total Testimonials</span>
+                    <span className="overview-value">{stats.totalTestimonials || 0}</span>
+                  </div>
+                  <div className="overview-row">
+                    <span className="overview-label">Pending Review</span>
+                    <span className="overview-value overview-pending">{stats.pendingTestimonials || 0}</span>
+                  </div>
+                  <div className="overview-row">
+                    <span className="overview-label">Total Projects</span>
+                    <span className="overview-value">{stats.totalProjects || 0}</span>
+                  </div>
+                  <div className="overview-row">
+                    <span className="overview-label">Unread Messages</span>
+                    <span className="overview-value overview-unread">{stats.unreadMessages || 0}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {messages.length > 0 && (
+              <div className="recent-section">
+                <h3 className="chart-title">Recent Messages</h3>
+                <div className="items-list">
+                  {messages.slice(0, 3).map(function(m) {
+                    return (
+                      <div className={'message-card' + (m.read ? '' : ' unread')} key={m.id}>
+                        <div className="message-header">
+                          <span className="message-from">{m.name}</span>
+                          <span className="message-email">{m.email}</span>
+                          <span className="message-date">{new Date(m.created_at).toLocaleDateString()}</span>
+                        </div>
+                        <p className="message-body">{m.message.substring(0, 100)}{m.message.length > 100 ? '...' : ''}</p>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -302,9 +372,7 @@ var Admin = function() {
                 <input className="edit-input" placeholder="Link (optional)" value={editProject.link || ''} onChange={function(e) { setEditProject(Object.assign({}, editProject, { link: e.target.value })); }} />
                 <label className="edit-label">Cover Image</label>
                 <div className="image-upload-row">
-                  {editProject.image && (
-                    <img src={editProject.image} alt="Preview" className="image-preview" />
-                  )}
+                  {editProject.image && <img src={editProject.image} alt="Preview" className="image-preview" />}
                   <input type="file" accept="image/*" onChange={uploadImage} className="file-input" />
                 </div>
                 <input className="edit-input" type="number" placeholder="Sort order" value={editProject.sort_order || 0} onChange={function(e) { setEditProject(Object.assign({}, editProject, { sort_order: parseInt(e.target.value) })); }} />
@@ -441,9 +509,7 @@ var Admin = function() {
             <form className="edit-form" onSubmit={saveProfile}>
               <label className="edit-label">Profile Photo</label>
               <div className="image-upload-row">
-                {profile.avatar && (
-                  <img src={profile.avatar} alt="Avatar" className="avatar-preview" />
-                )}
+                {profile.avatar && <img src={profile.avatar} alt="Avatar" className="avatar-preview" />}
                 <input type="file" accept="image/*" onChange={function(e) {
                   var file = e.target.files[0];
                   if (!file) return;
@@ -455,9 +521,7 @@ var Admin = function() {
                     credentials: 'include',
                     body: formData
                   }).then(function(r) { return r.json(); }).then(function(data) {
-                    if (data.url) {
-                      setProfile(Object.assign({}, profile, { avatar: data.url }));
-                    }
+                    if (data.url) setProfile(Object.assign({}, profile, { avatar: data.url }));
                   });
                 }} className="file-input" />
               </div>

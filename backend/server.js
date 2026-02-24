@@ -9,10 +9,11 @@ var path = require('path');
 var fs = require('fs');
 var pool = require('./db');
 var sharp = require('sharp');
+var { Resend } = require('resend');
+var compression = require('compression');
 require('dotenv').config();
 
 var app = express();
-var compression = require('compression');
 app.use(compression());
 app.set('trust proxy', 1);
 var PORT = process.env.PORT || 3001;
@@ -35,6 +36,22 @@ var storage = multer.diskStorage({
 
 var upload = multer({ storage: storage, limits: { fileSize: 5 * 1024 * 1024 } });
 
+// Email helper
+var sendNotification = async function(subject, html) {
+  if (!process.env.RESEND_API_KEY || !process.env.NOTIFICATION_EMAIL) return;
+  try {
+    var resend = new Resend(process.env.RESEND_API_KEY);
+    await resend.emails.send({
+      from: 'Portfolio <onboarding@resend.dev>',
+      to: process.env.NOTIFICATION_EMAIL,
+      subject: subject,
+      html: html
+    });
+  } catch (err) {
+    console.log('Email failed:', err.message);
+  }
+};
+
 // Security
 var helmet = require('helmet');
 var rateLimit = require('express-rate-limit');
@@ -44,7 +61,6 @@ app.use(helmet({
   crossOriginEmbedderPolicy: false
 }));
 
-// Rate limiting
 var apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 500,
@@ -260,6 +276,16 @@ app.post('/api/messages', messageLimiter, async function(req, res) {
       'INSERT INTO messages (name, email, message) VALUES ($1,$2,$3) RETURNING *',
       [name, email, message]
     );
+
+    sendNotification(
+      'New message from ' + name,
+      '<h3>New Contact Message</h3>' +
+      '<p><strong>From:</strong> ' + name + '</p>' +
+      '<p><strong>Email:</strong> ' + email + '</p>' +
+      '<p><strong>Message:</strong></p>' +
+      '<p>' + message + '</p>'
+    );
+
     res.json(result.rows[0]);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -317,6 +343,18 @@ app.post('/api/testimonials/submit', messageLimiter, async function(req, res) {
       'INSERT INTO testimonials (name, role, company, message, rating, avatar, visible, sort_order) VALUES ($1,$2,$3,$4,$5,$6,false,0) RETURNING *',
       [name, role || '', company || '', message, rating || 5, avatar || null]
     );
+
+    sendNotification(
+      'New testimonial from ' + name,
+      '<h3>New Testimonial</h3>' +
+      '<p><strong>From:</strong> ' + name + '</p>' +
+      '<p><strong>Role:</strong> ' + (role || 'N/A') + '</p>' +
+      '<p><strong>Company:</strong> ' + (company || 'N/A') + '</p>' +
+      '<p><strong>Rating:</strong> ' + (rating || 5) + '/5</p>' +
+      '<p><strong>Message:</strong></p>' +
+      '<p>' + message + '</p>'
+    );
+
     res.json({ success: true, message: 'Thank you! Your testimonial will be reviewed.' });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -412,11 +450,33 @@ app.get('/api/admin/stats', auth, async function(req, res) {
     var messages = await pool.query('SELECT COUNT(*) FROM messages');
     var unread = await pool.query('SELECT COUNT(*) FROM messages WHERE read=false');
     var profile = await pool.query('SELECT available FROM profile LIMIT 1');
+    var testimonials = await pool.query('SELECT COUNT(*) FROM testimonials');
+    var pendingTestimonials = await pool.query('SELECT COUNT(*) FROM testimonials WHERE visible=false');
     res.json({
       totalProjects: parseInt(projects.rows[0].count),
       totalMessages: parseInt(messages.rows[0].count),
       unreadMessages: parseInt(unread.rows[0].count),
+      totalTestimonials: parseInt(testimonials.rows[0].count),
+      pendingTestimonials: parseInt(pendingTestimonials.rows[0].count),
       available: profile.rows[0] ? profile.rows[0].available : true
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ===== DASHBOARD ANALYTICS =====
+app.get('/api/admin/analytics', auth, async function(req, res) {
+  try {
+    var messagesPerDay = await pool.query(
+      "SELECT DATE(created_at) as date, COUNT(*) as count FROM messages WHERE created_at > NOW() - INTERVAL '30 days' GROUP BY DATE(created_at) ORDER BY date ASC"
+    );
+    var testimonialsByStatus = await pool.query(
+      "SELECT visible, COUNT(*) as count FROM testimonials GROUP BY visible"
+    );
+    res.json({
+      messagesPerDay: messagesPerDay.rows,
+      testimonialsByStatus: testimonialsByStatus.rows
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
