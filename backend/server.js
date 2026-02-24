@@ -12,6 +12,8 @@ var sharp = require('sharp');
 require('dotenv').config();
 
 var app = express();
+var compression = require('compression');
+app.use(compression());
 app.set('trust proxy', 1);
 var PORT = process.env.PORT || 3001;
 

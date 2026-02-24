@@ -135,7 +135,7 @@
 }
 
 .slider-item:hover .slider-svg-icon {
-  filter: invert(62%) sepia(92%) saturate(431%) hue-rotate(95deg) brightness(103%) contrast(105%) drop-shadow(0 0 8px rgba(0, 255, 136, 0.5));
+  filter: invert(62%) sepia(92%) saturate(431%) hue-rotate(95deg) brightness(103%) contrast(105%) drop-shadow(0 0 8px rgba(0, 255, 136, 0.7));
 }
 
 /* ===== RESPONSIVE ===== */
