@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import CustomCursor from './components/CustomCursor.jsx';
 import NotFound from './components/NotFound';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
@@ -19,6 +19,15 @@ function App() {
   var loadingState = useState(true);
   var loading = loadingState[0];
   var setLoading = loadingState[1];
+
+  // Track page view
+  useEffect(function() {
+    fetch('/api/pageview', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ page: window.location.pathname })
+    }).catch(function() {});
+  }, []);
 
   return (
     <LanguageProvider>

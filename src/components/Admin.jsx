@@ -3,10 +3,8 @@ import './Admin.css';
 
 var API_URL = '/api';
 
-// Simple bar chart component
 var MiniChart = function(props) {
   var data = props.data || [];
-  var label = props.label || '';
   if (data.length === 0) return null;
 
   var max = Math.max.apply(null, data.map(function(d) { return parseInt(d.count); }));
@@ -14,7 +12,6 @@ var MiniChart = function(props) {
 
   return (
     <div className="mini-chart">
-      <span className="mini-chart-label">{label}</span>
       <div className="mini-chart-bars">
         {data.map(function(d, i) {
           var height = (parseInt(d.count) / max) * 100;
@@ -50,6 +47,9 @@ var Admin = function() {
   var analyticsState = useState({ messagesPerDay: [], testimonialsByStatus: [] });
   var analytics = analyticsState[0];
   var setAnalytics = analyticsState[1];
+  var pageviewsState = useState({ today: 0, week: 0, month: 0, total: 0, perDay: [], topPages: [] });
+  var pageviews = pageviewsState[0];
+  var setPageviews = pageviewsState[1];
   var projectsState = useState([]);
   var projects = projectsState[0];
   var setProjects = projectsState[1];
@@ -118,6 +118,7 @@ var Admin = function() {
   var loadAll = function() {
     fetchAuth(API_URL + '/admin/stats').then(function(r) { return r.json(); }).then(setStats);
     fetchAuth(API_URL + '/admin/analytics').then(function(r) { return r.json(); }).then(setAnalytics);
+    fetchAuth(API_URL + '/admin/pageviews').then(function(r) { return r.json(); }).then(setPageviews);
     fetch(API_URL + '/projects').then(function(r) { return r.json(); }).then(setProjects);
     fetchAuth(API_URL + '/messages').then(function(r) { return r.json(); }).then(setMessages);
     fetch(API_URL + '/profile').then(function(r) { return r.json(); }).then(setProfile);
@@ -279,6 +280,7 @@ var Admin = function() {
           <div className="admin-section">
             <h1 className="admin-title">Dashboard</h1>
             {authStatus && <p className="welcome-text">Welcome, {authStatus.username}!</p>}
+
             <div className="stats-grid">
               <div className="stat-card">
                 <span className="stat-card-value">{stats.totalProjects || 0}</span>
@@ -298,7 +300,34 @@ var Admin = function() {
               </div>
             </div>
 
+            <div className="stats-grid">
+              <div className="stat-card">
+                <span className="stat-card-value">{pageviews.today}</span>
+                <span className="stat-card-label">Views Today</span>
+              </div>
+              <div className="stat-card">
+                <span className="stat-card-value">{pageviews.week}</span>
+                <span className="stat-card-label">This Week</span>
+              </div>
+              <div className="stat-card">
+                <span className="stat-card-value">{pageviews.month}</span>
+                <span className="stat-card-label">This Month</span>
+              </div>
+              <div className="stat-card">
+                <span className="stat-card-value">{pageviews.total}</span>
+                <span className="stat-card-label">Total Views</span>
+              </div>
+            </div>
+
             <div className="dashboard-charts">
+              <div className="chart-card">
+                <h3 className="chart-title">Visitors (Last 30 Days)</h3>
+                {pageviews.perDay && pageviews.perDay.length > 0 ? (
+                  <MiniChart data={pageviews.perDay} />
+                ) : (
+                  <p className="chart-empty">No visitor data yet</p>
+                )}
+              </div>
               <div className="chart-card">
                 <h3 className="chart-title">Messages (Last 30 Days)</h3>
                 {analytics.messagesPerDay && analytics.messagesPerDay.length > 0 ? (
@@ -307,6 +336,9 @@ var Admin = function() {
                   <p className="chart-empty">No message data yet</p>
                 )}
               </div>
+            </div>
+
+            <div className="dashboard-charts" style={{marginTop: '1rem'}}>
               <div className="chart-card">
                 <h3 className="chart-title">Overview</h3>
                 <div className="overview-stats">
@@ -327,6 +359,23 @@ var Admin = function() {
                     <span className="overview-value overview-unread">{stats.unreadMessages || 0}</span>
                   </div>
                 </div>
+              </div>
+              <div className="chart-card">
+                <h3 className="chart-title">Top Pages</h3>
+                {pageviews.topPages && pageviews.topPages.length > 0 ? (
+                  <div className="overview-stats">
+                    {pageviews.topPages.map(function(p, i) {
+                      return (
+                        <div className="overview-row" key={i}>
+                          <span className="overview-label">{p.page}</span>
+                          <span className="overview-value">{p.count}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <p className="chart-empty">No page data yet</p>
+                )}
               </div>
             </div>
 

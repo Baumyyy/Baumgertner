@@ -483,6 +483,53 @@ app.get('/api/admin/analytics', auth, async function(req, res) {
   }
 });
 
+// ===== ANALYTICS =====
+app.post('/api/pageview', async function(req, res) {
+  try {
+    var { page } = req.body;
+    var userAgent = req.headers['user-agent'] || '';
+    var referrer = req.headers['referer'] || '';
+    await pool.query(
+      'INSERT INTO page_views (page, referrer, user_agent) VALUES ($1,$2,$3)',
+      [page || '/', referrer, userAgent]
+    );
+    res.json({ ok: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/admin/pageviews', auth, async function(req, res) {
+  try {
+    var today = await pool.query(
+      "SELECT COUNT(*) FROM page_views WHERE created_at > NOW() - INTERVAL '1 day'"
+    );
+    var week = await pool.query(
+      "SELECT COUNT(*) FROM page_views WHERE created_at > NOW() - INTERVAL '7 days'"
+    );
+    var month = await pool.query(
+      "SELECT COUNT(*) FROM page_views WHERE created_at > NOW() - INTERVAL '30 days'"
+    );
+    var total = await pool.query('SELECT COUNT(*) FROM page_views');
+    var perDay = await pool.query(
+      "SELECT DATE(created_at) as date, COUNT(*) as count FROM page_views WHERE created_at > NOW() - INTERVAL '30 days' GROUP BY DATE(created_at) ORDER BY date ASC"
+    );
+    var topPages = await pool.query(
+      "SELECT page, COUNT(*) as count FROM page_views WHERE created_at > NOW() - INTERVAL '30 days' GROUP BY page ORDER BY count DESC LIMIT 5"
+    );
+    res.json({
+      today: parseInt(today.rows[0].count),
+      week: parseInt(week.rows[0].count),
+      month: parseInt(month.rows[0].count),
+      total: parseInt(total.rows[0].count),
+      perDay: perDay.rows,
+      topPages: topPages.rows
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // ===== START =====
 app.listen(PORT, function() {
   console.log('Portfolio API running on http://localhost:' + PORT);
