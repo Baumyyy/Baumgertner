@@ -1,4 +1,3 @@
-/* ===== PROJECTS SECTION ===== */
 .projects {
   padding: 8rem 6rem;
   max-width: 1500px;
@@ -7,42 +6,13 @@
   z-index: 1;
 }
 
-.projects-content {
-  position: relative;
-}
+.projects-content { position: relative; }
+.projects-header { margin-bottom: 4rem; }
 
-/* Header */
-.projects-header {
-  margin-bottom: 4rem;
-}
-
-.projects .section-tag {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-}
-
-.projects .tag-number {
-  font-size: 0.8rem;
-  color: #00ff88;
-  font-family: 'Bebas Neue', sans-serif;
-  letter-spacing: 0.1em;
-}
-
-.projects .tag-line {
-  width: 50px;
-  height: 1px;
-  background: rgba(0, 255, 136, 0.4);
-}
-
-.projects .tag-label {
-  font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.3);
-  font-family: 'Bebas Neue', sans-serif;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-}
+.projects .section-tag { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
+.projects .tag-number { font-size: 0.75rem; color: #00ff88; font-family: 'Inter', sans-serif; font-weight: 600; letter-spacing: 0.1em; }
+.projects .tag-line { width: 50px; height: 1px; background: rgba(0, 255, 136, 0.3); }
+.projects .tag-label { font-size: 0.75rem; color: rgba(255, 255, 255, 0.25); font-family: 'Inter', sans-serif; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; }
 
 .projects-title {
   font-size: clamp(2.8rem, 5vw, 4.5rem);
@@ -62,102 +32,78 @@
 }
 
 .projects-subtitle {
-  font-size: 1rem;
-  color: rgba(255, 255, 255, 0.35);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.3);
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
 }
 
-/* ===== PROJECTS GRID ===== */
 .projects-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1.5rem;
+  gap: 1.2rem;
   margin-bottom: 3rem;
 }
 
-/* ===== PROJECT CARD ===== */
 .project-card {
   position: relative;
-  background: rgba(124, 119, 119, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.09);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 20px;
+  overflow: hidden;
+  transition: all 0.4s ease;
 }
 
-a.project-card {
-  cursor: pointer;
-}
+a.project-card { cursor: pointer; text-decoration: none; }
 
 .project-card:hover {
-  border-color: rgba(0, 255, 136, 0.2);
+  border-color: rgba(0, 255, 136, 0.15);
   background: rgba(0, 255, 136, 0.02);
   transform: translateY(-6px);
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
 }
 
-.project-card.dimmed {
-  filter: blur(1px) brightness(0.4);
-}
+.project-card.dimmed { filter: blur(1px) brightness(0.4); }
 
-
-/* Border glow */
 .project-border-glow {
   position: absolute;
   top: -1px;
-  left: 0;
+  left: 20px;
   width: 0;
   height: 2px;
   background: linear-gradient(90deg, #00ff88, #00bb66);
   transition: width 0.5s ease;
   border-radius: 2px;
   box-shadow: 0 0 15px rgba(0, 255, 136, 0.4);
+  z-index: 2;
 }
 
-.project-card:hover .project-border-glow {
-  width: 100%;
-}
+.project-card:hover .project-border-glow { width: calc(100% - 40px); }
 
-/* Coming soon card */
-.project-card.coming-soon {
-  border-style: dashed;
-  border-color: rgba(255, 255, 255, 0.08);
-}
+.project-card.coming-soon { border-style: dashed; border-color: rgba(255, 255, 255, 0.06); }
+.project-card.coming-soon:hover { border-color: rgba(0, 255, 136, 0.1); border-style: dashed; }
 
-.project-card.coming-soon:hover {
-  border-color: rgba(0, 255, 136, 0.15);
-  border-style: dashed;
-}
-
-/* ===== PREVIEW ===== */
 .project-preview {
   position: relative;
   height: 200px;
-  background: linear-gradient(160deg, rgba(0, 255, 136, 0.03), rgba(0, 100, 200, 0.03));
+  background: linear-gradient(160deg, rgba(0, 255, 136, 0.02), rgba(0, 50, 100, 0.02));
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
   overflow: hidden;
 }
 
-.preview-placeholder {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
+.preview-placeholder { width: 100%; height: 100%; display: flex; flex-direction: column; }
 
-
-/* Preview content */
 .preview-content {
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: rgba(0, 255, 136, 0.15);
+  color: rgba(0, 255, 136, 0.1);
   transition: color 0.3s ease;
 }
 
-.project-card:hover .preview-content {
-  color: rgba(0, 255, 136, 0.3);
-}
+.project-card:hover .preview-content { color: rgba(0, 255, 136, 0.25); }
 
-/* Status badge */
 .project-status {
   position: absolute;
   top: 14px;
@@ -166,13 +112,14 @@ a.project-card {
   align-items: center;
   gap: 0.4rem;
   padding: 0.3rem 0.8rem;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(10px);
-  border-radius: 20px;
-  font-size: 0.65rem;
+  border-radius: 50px;
+  font-size: 0.6rem;
   color: #00ff88;
-  font-family: 'Bebas Neue', sans-serif;
-  letter-spacing: 0.1em;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
@@ -185,24 +132,13 @@ a.project-card {
   animation: statusPulse 2s ease-in-out infinite;
 }
 
-.status-dot-pending {
-  background: rgba(255, 200, 50, 0.7);
-  box-shadow: 0 0 8px rgba(255, 200, 50, 0.5);
-}
+.status-dot-pending { background: rgba(255, 200, 50, 0.7); box-shadow: 0 0 8px rgba(255, 200, 50, 0.5); }
 
-@keyframes statusPulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
-}
+@keyframes statusPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 
-.coming-soon .project-status {
-  color: rgba(255, 200, 50, 0.7);
-}
+.coming-soon .project-status { color: rgba(255, 200, 50, 0.7); }
 
-/* ===== PROJECT INFO ===== */
-.project-info {
-  padding: 1.5rem;
-}
+.project-info { padding: 1.5rem; }
 
 .project-name {
   font-size: 1.3rem;
@@ -211,153 +147,98 @@ a.project-card {
   letter-spacing: 0.04em;
   text-transform: uppercase;
   margin-bottom: 0.5rem;
-  transition: color 0.3s ease;
 }
 
 .project-desc {
   font-size: 0.82rem;
-  color: rgba(255, 255, 255, 0.35);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: rgba(255, 255, 255, 0.3);
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
   line-height: 1.6;
   margin-bottom: 1.2rem;
 }
 
-/* Tags */
-.project-tags {
-  display: flex;
-  gap: 0.4rem;
-  flex-wrap: wrap;
-  margin-bottom: 1rem;
-}
+.project-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 1rem; }
 
 .project-tag {
   padding: 0.25rem 0.7rem;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 20px;
+  border-radius: 50px;
   font-size: 0.65rem;
-  color: rgba(255, 255, 255, 0.35);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: rgba(255, 255, 255, 0.3);
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
   transition: all 0.3s ease;
 }
 
 .project-card:hover .project-tag {
   border-color: rgba(0, 255, 136, 0.15);
-  color: rgba(0, 255, 136, 0.74);
+  color: rgba(0, 255, 136, 0.7);
   background: rgba(0, 255, 136, 0.04);
 }
 
-/* View project link */
 .project-link-row {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   font-size: 0.8rem;
-  color: rgba(0, 255, 136, 0.5);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: rgba(0, 255, 136, 0.4);
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
   transition: all 0.3s ease;
 }
 
-.project-link-row svg {
-  transition: transform 0.3s ease;
-  opacity: 0;
-}
+.project-link-row svg { transition: transform 0.3s ease; opacity: 0; }
+.project-card:hover .project-link-row { color: #00ff88; }
+.project-card:hover .project-link-row svg { opacity: 1; transform: translate(3px, -3px); }
 
-.project-card:hover .project-link-row {
-  color: #00ff88;
-}
-
-.project-card:hover .project-link-row svg {
-  opacity: 1;
-  transform: translate(3px, -3px);
-}
-
-/* ===== GITHUB CTA ===== */
-.projects-cta {
-  display: flex;
-  justify-content: center;
-}
+.projects-cta { display: flex; justify-content: center; }
 
 .projects-github-btn {
   display: inline-flex;
   align-items: center;
   gap: 0.8rem;
-  padding: 1rem 1.35rem;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 10px;
-  color: rgba(255, 255, 255, 0.5);
-  font-size: 1rem;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  padding: 1rem 1.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 50px;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.9rem;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
   text-decoration: none;
   transition: all 0.3s ease;
 }
 
-.projects-github-btn i {
-  font-size: 1.3rem;
-}
-
-.projects-github-btn svg {
-  opacity: 0;
-  transition: all 0.3s ease;
-  transform: translateX(-5px);
-}
+.projects-github-btn i { font-size: 1.3rem; }
+.projects-github-btn svg { opacity: 0; transition: all 0.3s ease; transform: translateX(-5px); }
 
 .projects-github-btn:hover {
-  border-color: rgba(0, 255, 136, 0.3);
+  border-color: rgba(0, 255, 136, 0.25);
   color: #00ff88;
-  background: rgba(0, 255, 136, 0.05);
+  background: rgba(0, 255, 136, 0.04);
   transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
-.projects-github-btn:hover svg {
-  opacity: 1;
-  transform: translateX(0);
-}
+.projects-github-btn:hover svg { opacity: 1; transform: translateX(0); }
 
-/* ===== RESPONSIVE ===== */
-@media (max-width: 1200px) {
-  .projects { padding: 6rem 4rem; }
-}
+.preview-image-wrapper { width: 100%; height: 200px; overflow: hidden; }
+.preview-image { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+.project-card:hover .preview-image { transform: scale(1.05); }
 
-@media (max-width: 968px) {
-  .projects { padding: 5rem 2rem; }
-  .projects-grid {
-    grid-template-columns: 1fr;
-    gap: 1.2rem;
-  }
-}
+@media (max-width: 1200px) { .projects { padding: 6rem 4rem; } }
+@media (max-width: 968px) { .projects { padding: 5rem 2rem; } .projects-grid { grid-template-columns: 1fr; gap: 1rem; } }
 
 @media (max-width: 480px) {
   .projects { padding: 3rem 1.2rem; }
   .projects-header { margin-bottom: 2rem; }
   .projects-title { font-size: 2.2rem; }
-  .projects-subtitle { font-size: 0.85rem; }
   .project-preview { height: 160px; }
   .preview-image-wrapper { height: 160px; }
   .project-info { padding: 1.2rem; }
   .project-name { font-size: 1.1rem; }
   .project-desc { font-size: 0.78rem; }
   .project-tag { font-size: 0.6rem; padding: 0.2rem 0.5rem; }
-  .projects-github-btn { font-size: 0.85rem; padding: 0.8rem 1.2rem; }
-}
-
-/* Project cover image */
-.preview-image-wrapper {
-  width: 100%;
-  height: 200px;
-  overflow: hidden;
-  border-radius: 12px 12px 0 0;
-}
-
-.preview-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.5s ease;
-}
-
-.project-card:hover .preview-image {
-  transform: scale(1.05);
+  .project-card { border-radius: 16px; }
 }
