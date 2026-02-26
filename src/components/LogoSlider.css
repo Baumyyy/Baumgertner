@@ -1,152 +1,101 @@
-/* ===== SLIDER SECTION ===== */
 .slider-section {
-  padding: 1rem 0 4rem 0;
+  padding: 3rem 2rem;
   position: relative;
-  z-index: 2;
-  overflow: hidden;
+  z-index: 1;
 }
 
-/* Header */
 .slider-header {
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 1.5rem;
-  margin-bottom: 2.5rem;
+  justify-content: center;
+  margin-bottom: 1.9rem;
 }
 
 .slider-line {
-  width: 60px;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.3));
+  width: 60px;
+  background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.2));
 }
 
 .slider-line-right {
-  background: linear-gradient(90deg, rgba(0, 255, 136, 0.3), transparent);
+  background: linear-gradient(90deg, rgba(0, 255, 136, 0.2), transparent);
 }
 
 .slider-label {
-  font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.25);
-  font-family: 'Bebas Neue', sans-serif;
-  letter-spacing: 0.2em;
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.2);
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
 }
 
-/* Wrapper */
 .slider-wrapper {
   position: relative;
   overflow: hidden;
-  padding: 1.5rem 0;
+  width: 100%;
 }
 
-/* Fade edges */
 .slider-fade {
   position: absolute;
   top: 0;
-  bottom: 0;
-  width: 200px;
-  z-index: 10;
+  width: 150px;
+  height: 100%;
+  z-index: 2;
   pointer-events: none;
 }
 
-.slider-fade-left {
-  left: 0;
-  background: linear-gradient(90deg, #050812, transparent);
-}
+.slider-fade-left { left: 0; background: linear-gradient(90deg, #000000, transparent); }
+.slider-fade-right { right: 0; background: linear-gradient(270deg, #000000, transparent); }
 
-.slider-fade-right {
-  right: 0;
-  background: linear-gradient(90deg, transparent, #050812);
-}
-
-/* Track */
 .slider-track {
   display: flex;
-  width: fit-content;
-  animation: sliderScroll 40s linear infinite;
+  animation: sliderScroll 60s linear infinite;
+  width: max-content;
 }
 
 @keyframes sliderScroll {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-25%);
-  }
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
 
-/* Row */
 .slider-row {
   display: flex;
-  gap: 4rem;
-  padding-right: 4rem;
-  flex-shrink: 0;
-  align-items: center;
+  gap: 3.5rem;
+  padding: 0 1.75rem;
 }
 
-/* Item */
 .slider-item {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 0.6rem;
-  flex-shrink: 0;
-  cursor: default;
-  transition: all 0.3s ease;
-  position: relative;
-  z-index: 2;
-}
-
-.slider-item:hover {
-  transform: translateY(-4px);
-}
-
-.slider-item i {
-  font-size: 2.8rem;
-  color: #a0a0a0;
-  transition: all 0.3s ease;
-}
-
-.slider-item:hover i {
-  color: #00ff88;
-  filter: drop-shadow(0 0 15px rgba(0, 255, 136, 0.4));
-}
-
-.slider-item span {
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.2);
-  font-family: 'Bebas Neue', sans-serif;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  gap: 0.8rem;
+  color: rgba(255, 255, 255, 0.25);
+  font-size: 1rem;
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
   white-space: nowrap;
   transition: color 0.3s ease;
 }
 
-.slider-item:hover span {
-  color: rgba(0, 255, 136, 0.7);
-}
+
+.slider-item:hover { color: rgba(0, 255, 136, 0.6); }
+
+.slider-item i { font-size: 1.9rem; }
 
 .slider-svg-icon {
-  width: 2.5rem;
-  height: 2.5rem;
-  filter: brightness(0) invert(0.7);
-  transition: all 0.3s ease;
+  width: 29px;
+  height: 29px;
+  opacity: 0.3;
+  filter: grayscale(100%) brightness(2);
+  transition: opacity 0.3s ease;  
 }
 
-.slider-item:hover .slider-svg-icon {
-  filter: invert(62%) sepia(92%) saturate(431%) hue-rotate(95deg) brightness(103%) contrast(105%) drop-shadow(0 0 8px rgba(0, 255, 136, 0.7));
-}
+.slider-item:hover .slider-svg-icon { opacity: 0.6; }
 
-/* ===== RESPONSIVE ===== */
-@media (max-width: 768px) {
-  .slider-section { padding: 0.5rem 0 2rem 0; }
-  .slider-header { margin-bottom: 1.5rem; gap: 1rem; }
-  .slider-label { font-size: 0.7rem; }
-  .slider-line { width: 40px; }
-  .slider-fade { width: 60px; }
-  .slider-row { gap: 2.5rem; padding-right: 2.5rem; }
-  .slider-item i { font-size: 2rem; }
-  .slider-item span { font-size: 0.6rem; }
-  .slider-wrapper { padding: 1rem 0; }
+@media (max-width: 480px) {
+  .slider-section { padding: 2rem 0; }
+  .slider-row { gap: 2rem; }
+  .slider-item { font-size: 0.75rem; }
+  .slider-fade { width: 80px; }
 }

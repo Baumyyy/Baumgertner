@@ -2,40 +2,28 @@
   position: fixed;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
-  background: #050a14;
+  width: 100vw;
+  height: 100vh;
+  background: #000000;
+  z-index: 99999;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 99999;
-  transition: opacity 0.6s ease, transform 0.6s ease;
+  transition: opacity 0.6s ease;
 }
 
 .loading-screen.loading-fade {
   opacity: 0;
-  transform: scale(1.05);
+  pointer-events: none;
 }
 
 .loading-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2rem;
-  z-index: 1;
+  text-align: center;
+  z-index: 2;
 }
 
-/* Logo */
 .loading-logo {
-  display: flex;
-  align-items: center;
-  gap: 0.2rem;
-  animation: logoFloat 2s ease-in-out infinite;
-}
-
-@keyframes logoFloat {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
+  margin-bottom: 2rem;
 }
 
 .loading-name-first {
@@ -48,61 +36,57 @@
 .loading-name-last {
   font-size: 4rem;
   font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 0.05em;
   background: linear-gradient(135deg, #00ff88, #00bb66);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  letter-spacing: 0.05em;
 }
 
-/* Progress bar */
 .loading-bar-wrapper {
   display: flex;
   align-items: center;
   gap: 1rem;
-  width: 250px;
+  margin-bottom: 1.5rem;
 }
 
 .loading-bar {
-  flex: 1;
-  height: 3px;
+  width: 200px;
+  height: 2px;
   background: rgba(255, 255, 255, 0.06);
-  border-radius: 3px;
+  border-radius: 2px;
   overflow: hidden;
 }
 
 .loading-bar-fill {
   height: 100%;
   background: linear-gradient(90deg, #00ff88, #00bb66);
-  border-radius: 3px;
+  border-radius: 2px;
   transition: width 0.15s ease;
-  box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+  box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
 }
 
 .loading-percent {
   font-size: 0.7rem;
-  color: rgba(0, 255, 136, 0.6);
-  font-family: 'Bebas Neue', sans-serif;
+  color: rgba(0, 255, 136, 0.5);
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
   letter-spacing: 0.1em;
   min-width: 35px;
-  text-align: right;
 }
 
-/* Status text */
 .loading-text {
   font-size: 0.75rem;
   color: rgba(255, 255, 255, 0.2);
-  font-family: 'Bebas Neue', sans-serif;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.1em;
 }
 
-/* Particles */
 .loading-particles {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  overflow: hidden;
 }
 
 .loading-particle {
@@ -113,18 +97,17 @@
   border-radius: 50%;
 }
 
-.lp1 { top: 20%; left: 15%; animation: lpFloat 4s ease-in-out infinite; }
-.lp2 { top: 70%; left: 80%; animation: lpFloat 5s ease-in-out infinite 1s; }
-.lp3 { top: 40%; left: 60%; animation: lpFloat 3.5s ease-in-out infinite 0.5s; width: 2px; height: 2px; }
-.lp4 { top: 80%; left: 30%; animation: lpFloat 4.5s ease-in-out infinite 2s; }
+.lp1 { top: 20%; left: 15%; animation: loadFloat 6s ease-in-out infinite; }
+.lp2 { top: 70%; left: 80%; animation: loadFloat 8s ease-in-out infinite 1s; }
+.lp3 { top: 40%; left: 60%; animation: loadFloat 7s ease-in-out infinite 2s; width: 2px; height: 2px; }
+.lp4 { top: 85%; left: 25%; animation: loadFloat 9s ease-in-out infinite 3s; }
 
-@keyframes lpFloat {
-  0%, 100% { transform: translateY(0) translateX(0); opacity: 0.3; }
-  50% { transform: translateY(-20px) translateX(10px); opacity: 0.8; }
+@keyframes loadFloat {
+  0%, 100% { transform: translateY(0); opacity: 0.3; }
+  50% { transform: translateY(-20px); opacity: 0.6; }
 }
 
-/* Mobile */
 @media (max-width: 480px) {
   .loading-name-first, .loading-name-last { font-size: 3rem; }
-  .loading-bar-wrapper { width: 200px; }
+  .loading-bar { width: 150px; }
 }

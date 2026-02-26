@@ -16,7 +16,6 @@ var techs = [
   { name: 'Docker', icon: 'fab fa-docker' },
   { name: 'Express', icon: 'fas fa-server' },
   { name: 'Nginx', icon: 'fas fa-shield-alt' },
-  { name: 'Linux', icon: 'fab fa-linux' }
 ];
 
 var PostgresIcon = function() {
