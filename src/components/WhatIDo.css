@@ -7,7 +7,6 @@
 }
 
 .whatido-content { position: relative; }
-
 .whatido-header { margin-bottom: 4rem; }
 
 .whatido .section-tag {
@@ -15,6 +14,8 @@
   align-items: center;
   gap: 1rem;
   margin-bottom: 1.5rem;
+  opacity: 0;
+  animation: fadeInUp 0.8s ease forwards;
 }
 
 .whatido .tag-number {
@@ -48,13 +49,16 @@
   text-transform: uppercase;
   line-height: 1.05;
   margin-bottom: 0.8rem;
+  opacity: 0;
+  animation: fadeInUp 0.8s ease forwards 0.1s;
 }
 
 .whatido-title .title-accent {
-  background: linear-gradient(135deg, #00ff88, #00bb66);
+  background: linear-gradient(135deg, #ffffff 30%, #00ff88 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  filter: drop-shadow(0 0 30px rgba(0, 255, 136, 0.15));
 }
 
 .whatido-subtitle {
@@ -63,32 +67,53 @@
   font-family: 'Inter', sans-serif;
   font-weight: 300;
   max-width: 480px;
+  opacity: 0;
+  animation: fadeInUp 0.8s ease forwards 0.2s;
 }
 
 .services-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1.2rem;
+  opacity: 0;
+  animation: fadeInUp 0.8s ease forwards 0.3s;
 }
 
 .service-card {
   position: relative;
   padding: 2rem;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 20px;
-  transition: all 0.4s ease;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  overflow: hidden;
 }
 
+.service-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(0, 255, 136, 0.04), transparent 40%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  border-radius: 20px;
+}
+
+.service-card:hover::before { opacity: 1; }
+
 .service-card:hover {
-  border-color: rgba(0, 255, 136, 0.15);
-  background: rgba(0, 255, 136, 0.03);
-  transform: translateY(-4px);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+  border-color: rgba(0, 255, 136, 0.12);
+  transform: translateY(-6px);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4), 0 0 30px rgba(0, 255, 136, 0.03);
 }
 
 .service-card.dimmed {
   filter: blur(1px) brightness(0.4);
+  transform: scale(0.98);
 }
 
 .card-border-glow {
@@ -104,9 +129,7 @@
   box-shadow: 0 0 15px rgba(0, 255, 136, 0.4);
 }
 
-.service-card:hover .card-border-glow {
-  width: calc(100% - 40px);
-}
+.service-card:hover .card-border-glow { width: calc(100% - 40px); }
 
 .card-top {
   display: flex;
@@ -117,16 +140,14 @@
 
 .card-number {
   font-size: 0.7rem;
-  color: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.08);
   font-family: 'Inter', sans-serif;
   font-weight: 600;
   letter-spacing: 0.1em;
   transition: color 0.3s ease;
 }
 
-.service-card:hover .card-number {
-  color: rgba(0, 255, 136, 0.3);
-}
+.service-card:hover .card-number { color: rgba(0, 255, 136, 0.3); }
 
 .card-icon {
   width: 48px;
@@ -134,10 +155,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 255, 136, 0.06);
-  border: 1px solid rgba(0, 255, 136, 0.1);
+  background: rgba(0, 255, 136, 0.05);
+  border: 1px solid rgba(0, 255, 136, 0.08);
   border-radius: 14px;
-  color: rgba(0, 255, 136, 0.6);
+  color: rgba(0, 255, 136, 0.5);
   transition: all 0.4s ease;
 }
 
@@ -145,7 +166,8 @@
   background: rgba(0, 255, 136, 0.1);
   border-color: rgba(0, 255, 136, 0.25);
   color: #00ff88;
-  box-shadow: 0 0 20px rgba(0, 255, 136, 0.15);
+  box-shadow: 0 0 25px rgba(0, 255, 136, 0.15);
+  transform: scale(1.05);
 }
 
 .card-title {
@@ -155,6 +177,14 @@
   letter-spacing: 0.04em;
   text-transform: uppercase;
   margin-bottom: 0.6rem;
+  transition: all 0.3s ease;
+}
+
+.service-card:hover .card-title {
+  background: linear-gradient(135deg, #ffffff 30%, #00ff88 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .card-desc {
@@ -168,26 +198,31 @@
 .service-card.journey-card { cursor: pointer; }
 
 .service-card.journey-card:hover {
-  border-color: rgba(0, 119, 181, 0.2);
-  background: rgba(0, 119, 181, 0.03);
+  border-color: rgba(0, 119, 181, 0.15);
+  background: rgba(0, 119, 181, 0.02);
 }
 
-.service-card.journey-card:hover .card-number {
-  color: rgba(0, 119, 181, 0.5);
+.service-card.journey-card:hover .card-number { color: rgba(0, 119, 181, 0.5); }
+
+.service-card.journey-card:hover .card-title {
+  background: linear-gradient(135deg, #ffffff 30%, #00a0dc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .card-icon-linkedin {
-  background: rgba(0, 119, 181, 0.1) !important;
-  border-color: rgba(0, 119, 181, 0.2) !important;
-  color: rgba(0, 160, 220, 0.8) !important;
+  background: rgba(0, 119, 181, 0.08) !important;
+  border-color: rgba(0, 119, 181, 0.15) !important;
+  color: rgba(0, 160, 220, 0.7) !important;
   font-size: 1.2rem;
 }
 
 .service-card.journey-card:hover .card-icon-linkedin {
-  background: rgba(0, 119, 181, 0.18) !important;
-  border-color: rgba(0, 119, 181, 0.4) !important;
+  background: rgba(0, 119, 181, 0.15) !important;
+  border-color: rgba(0, 119, 181, 0.35) !important;
   color: #00a0dc !important;
-  box-shadow: 0 0 20px rgba(0, 119, 181, 0.2);
+  box-shadow: 0 0 25px rgba(0, 119, 181, 0.2);
 }
 
 .journey-glow-border {
@@ -200,10 +235,10 @@
   align-items: center;
   gap: 0.6rem;
   padding: 0.6rem 1.2rem;
-  background: rgba(0, 119, 181, 0.1);
-  border: 1px solid rgba(0, 119, 181, 0.2);
+  background: rgba(0, 119, 181, 0.08);
+  border: 1px solid rgba(0, 119, 181, 0.15);
   border-radius: 50px;
-  color: rgba(0, 160, 220, 0.7);
+  color: rgba(0, 160, 220, 0.6);
   font-size: 0.8rem;
   font-family: 'Inter', sans-serif;
   margin-top: 1rem;
@@ -213,9 +248,14 @@
 .journey-linkedin-btn i { font-size: 1.1rem; }
 
 .service-card.journey-card:hover .journey-linkedin-btn {
-  background: rgba(0, 119, 181, 0.18);
-  border-color: rgba(0, 119, 181, 0.4);
+  background: rgba(0, 119, 181, 0.15);
+  border-color: rgba(0, 119, 181, 0.35);
   color: #00a0dc;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(25px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @media (max-width: 1200px) { .whatido { padding: 6rem 4rem; } }

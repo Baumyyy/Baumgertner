@@ -96,5 +96,5 @@
 }
 
 .aurora-container::-webkit-scrollbar-thumb:hover {
-  background: rgb(26, 243, 142);
+  background: rgba(26, 243, 142, 0.25);
 }

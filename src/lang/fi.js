@@ -8,12 +8,11 @@ var fi = {
 
   // Hero
   hero_welcome: 'Welcome to',
-  hero_tagline: 'Ohjelmisto Kehittäjä · Projekti Päälikkö · Suomesta',
   hero_intro: 'Esittely',
   hero_greeting: 'Hei, olen',
  hero_title1: 'Ohjelmisto-opiskelija',
   hero_title2: 'Projektipäällikkö',
-  hero_title3: 'Frontend-kehittäjä',
+  hero_title3: 'Suomesta',
   hero_explore: 'Katso työni',
   hero_contact: 'Ota yhteyttä',
   hero_role: 'Ohjelmistokehittäjä & Projekti Päälikkö',

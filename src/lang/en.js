@@ -8,12 +8,11 @@ var en = {
 
   // Hero
   hero_welcome: 'Welcome to',
-  hero_tagline: 'Sorfware Engineer · Project Manager · Based in Finland',
   hero_intro: 'Introduction',
   hero_greeting: "Hello, I'm",
   hero_title1: 'Student Software Engineer',
   hero_title2: 'Project Manager',
-  hero_title3: 'Beginner Frontend Dev',
+  hero_title3: 'Based in Finland',
   hero_explore: 'Explore Work',
   hero_contact: 'Contact Me',
   hero_role: 'Software Engineer & Project Manager',
