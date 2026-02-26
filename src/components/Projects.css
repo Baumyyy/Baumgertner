@@ -18,6 +18,7 @@
 .projects .tag-label { font-size: 0.75rem; color: rgba(255, 255, 255, 0.25); font-family: 'Inter', sans-serif; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; }
 
 .projects-title {
+  text-align: center;
   font-size: clamp(2.8rem, 5vw, 4.5rem);
   color: #ffffff;
   font-family: 'Bebas Neue', sans-serif;
@@ -38,6 +39,7 @@
 }
 
 .projects-subtitle {
+  text-align: center;
   font-size: 0.95rem;
   color: rgba(255, 255, 255, 0.3);
   font-family: 'Inter', sans-serif;

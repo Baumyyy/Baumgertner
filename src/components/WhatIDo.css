@@ -42,6 +42,7 @@
 }
 
 .whatido-title {
+  text-align: center;
   font-size: clamp(2.8rem, 5vw, 4.5rem);
   color: #ffffff;
   font-family: 'Bebas Neue', sans-serif;
@@ -62,11 +63,11 @@
 }
 
 .whatido-subtitle {
+  text-align: center;
   font-size: 0.95rem;
   color: rgba(255, 255, 255, 0.3);
   font-family: 'Inter', sans-serif;
   font-weight: 300;
-  max-width: 480px;
   opacity: 0;
   animation: fadeInUp 0.8s ease forwards 0.2s;
 }
