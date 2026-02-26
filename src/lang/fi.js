@@ -7,6 +7,8 @@ var fi = {
   nav_contact: 'Yhteystiedot',
 
   // Hero
+  hero_welcome: 'Tervetuloa',
+  hero_tagline: 'Ohjelmisto Kehittäjä · Projekti Päälikkö · Suomesta',
   hero_intro: 'Esittely',
   hero_greeting: 'Hei, olen',
  hero_title1: 'Ohjelmisto-opiskelija',

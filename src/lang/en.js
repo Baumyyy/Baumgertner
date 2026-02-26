@@ -7,6 +7,8 @@ var en = {
   nav_contact: 'Contact',
 
   // Hero
+  hero_welcome: 'Welcome to',
+  hero_tagline: 'Sorfware Engineer · Project Manager · Based in Finland',
   hero_intro: 'Introduction',
   hero_greeting: "Hello, I'm",
   hero_title1: 'Student Software Engineer',
