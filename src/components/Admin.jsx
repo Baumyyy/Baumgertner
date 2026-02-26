@@ -278,58 +278,103 @@ var Admin = function() {
       <div className="admin-main">
         {tab === 'dashboard' && (
           <div className="admin-section">
-            <h1 className="admin-title">Dashboard</h1>
-            {authStatus && <p className="welcome-text">Welcome, {authStatus.username}!</p>}
-
-            <div className="stats-grid">
-              <div className="stat-card">
-                <span className="stat-card-value">{stats.totalProjects || 0}</span>
-                <span className="stat-card-label">Projects</span>
+            <div className="dash-header">
+              <div>
+                <h1 className="admin-title">Dashboard</h1>
+                {authStatus && <p className="welcome-text">Welcome back, {authStatus.username} 👋</p>}
               </div>
-              <div className="stat-card">
-                <span className="stat-card-value">{stats.totalMessages || 0}</span>
-                <span className="stat-card-label">Messages</span>
-              </div>
-              <div className="stat-card">
-                <span className="stat-card-value">{stats.unreadMessages || 0}</span>
-                <span className="stat-card-label">Unread</span>
-              </div>
-              <div className={'stat-card clickable ' + (stats.available ? 'available' : 'busy')} onClick={toggleAvailability}>
-                <span className="stat-card-value">{stats.available ? 'Available' : 'Busy'}</span>
-                <span className="stat-card-label">Click to toggle</span>
+              <div className={'dash-status-pill' + (stats.available ? '' : ' pill-busy')} onClick={toggleAvailability}>
+                <span className={'dash-status-dot' + (stats.available ? '' : ' dot-busy')}></span>
+                <span>{stats.available ? 'Available for work' : 'Currently busy'}</span>
               </div>
             </div>
 
-            <div className="stats-grid">
-              <div className="stat-card">
-                <span className="stat-card-value">{pageviews.today}</span>
-                <span className="stat-card-label">Views Today</span>
+            <div className="dash-kpi-grid">
+              <div className="dash-kpi">
+                <div className="kpi-icon kpi-views">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                </div>
+                <div className="kpi-data">
+                  <span className="kpi-value">{pageviews.today}</span>
+                  <span className="kpi-label">Views Today</span>
+                </div>
+                <div className="kpi-trend kpi-trend-up">
+                  <span>This week: {pageviews.week}</span>
+                </div>
               </div>
-              <div className="stat-card">
-                <span className="stat-card-value">{pageviews.week}</span>
-                <span className="stat-card-label">This Week</span>
+
+              <div className="dash-kpi">
+                <div className="kpi-icon kpi-messages">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                </div>
+                <div className="kpi-data">
+                  <span className="kpi-value">{stats.totalMessages || 0}</span>
+                  <span className="kpi-label">Total Messages</span>
+                </div>
+                <div className="kpi-trend">
+                  <span className={stats.unreadMessages > 0 ? 'kpi-alert' : ''}>{stats.unreadMessages || 0} unread</span>
+                </div>
               </div>
-              <div className="stat-card">
-                <span className="stat-card-value">{pageviews.month}</span>
-                <span className="stat-card-label">This Month</span>
+
+              <div className="dash-kpi">
+                <div className="kpi-icon kpi-projects">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+                </div>
+                <div className="kpi-data">
+                  <span className="kpi-value">{stats.totalProjects || 0}</span>
+                  <span className="kpi-label">Projects</span>
+                </div>
+                <div className="kpi-trend">
+                  <span>{pageviews.total} total views</span>
+                </div>
               </div>
-              <div className="stat-card">
-                <span className="stat-card-value">{pageviews.total}</span>
-                <span className="stat-card-label">Total Views</span>
+
+              <div className="dash-kpi">
+                <div className="kpi-icon kpi-testimonials">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                </div>
+                <div className="kpi-data">
+                  <span className="kpi-value">{stats.totalTestimonials || 0}</span>
+                  <span className="kpi-label">Testimonials</span>
+                </div>
+                <div className="kpi-trend">
+                  <span className={stats.pendingTestimonials > 0 ? 'kpi-alert' : ''}>{stats.pendingTestimonials || 0} pending</span>
+                </div>
               </div>
             </div>
 
-            <div className="dashboard-charts">
-              <div className="chart-card">
-                <h3 className="chart-title">Visitors (Last 30 Days)</h3>
+            <div className="dash-charts-row">
+              <div className="dash-chart-card dash-chart-wide">
+                <div className="dash-chart-header">
+                  <h3 className="dash-chart-title">Visitor Traffic</h3>
+                  <span className="dash-chart-period">Last 30 days</span>
+                </div>
+                <div className="dash-chart-stats-row">
+                  <div className="dash-chart-stat">
+                    <span className="dcs-value">{pageviews.month}</span>
+                    <span className="dcs-label">This month</span>
+                  </div>
+                  <div className="dash-chart-stat">
+                    <span className="dcs-value">{pageviews.week}</span>
+                    <span className="dcs-label">This week</span>
+                  </div>
+                  <div className="dash-chart-stat">
+                    <span className="dcs-value">{pageviews.today}</span>
+                    <span className="dcs-label">Today</span>
+                  </div>
+                </div>
                 {pageviews.perDay && pageviews.perDay.length > 0 ? (
                   <MiniChart data={pageviews.perDay} />
                 ) : (
                   <p className="chart-empty">No visitor data yet</p>
                 )}
               </div>
-              <div className="chart-card">
-                <h3 className="chart-title">Messages (Last 30 Days)</h3>
+
+              <div className="dash-chart-card">
+                <div className="dash-chart-header">
+                  <h3 className="dash-chart-title">Messages</h3>
+                  <span className="dash-chart-period">Last 30 days</span>
+                </div>
                 {analytics.messagesPerDay && analytics.messagesPerDay.length > 0 ? (
                   <MiniChart data={analytics.messagesPerDay} />
                 ) : (
@@ -338,37 +383,23 @@ var Admin = function() {
               </div>
             </div>
 
-            <div className="dashboard-charts" style={{marginTop: '1rem'}}>
-              <div className="chart-card">
-                <h3 className="chart-title">Overview</h3>
-                <div className="overview-stats">
-                  <div className="overview-row">
-                    <span className="overview-label">Total Testimonials</span>
-                    <span className="overview-value">{stats.totalTestimonials || 0}</span>
-                  </div>
-                  <div className="overview-row">
-                    <span className="overview-label">Pending Review</span>
-                    <span className="overview-value overview-pending">{stats.pendingTestimonials || 0}</span>
-                  </div>
-                  <div className="overview-row">
-                    <span className="overview-label">Total Projects</span>
-                    <span className="overview-value">{stats.totalProjects || 0}</span>
-                  </div>
-                  <div className="overview-row">
-                    <span className="overview-label">Unread Messages</span>
-                    <span className="overview-value overview-unread">{stats.unreadMessages || 0}</span>
-                  </div>
-                </div>
-              </div>
-              <div className="chart-card">
-                <h3 className="chart-title">Top Pages</h3>
+            <div className="dash-bottom-grid">
+              <div className="dash-card">
+                <h3 className="dash-card-title">Top Pages</h3>
                 {pageviews.topPages && pageviews.topPages.length > 0 ? (
-                  <div className="overview-stats">
+                  <div className="dash-page-list">
                     {pageviews.topPages.map(function(p, i) {
+                      var maxCount = pageviews.topPages[0] ? parseInt(pageviews.topPages[0].count) : 1;
+                      var percent = (parseInt(p.count) / maxCount) * 100;
                       return (
-                        <div className="overview-row" key={i}>
-                          <span className="overview-label">{p.page}</span>
-                          <span className="overview-value">{p.count}</span>
+                        <div className="dash-page-item" key={i}>
+                          <div className="dash-page-info">
+                            <span className="dash-page-name">{p.page}</span>
+                            <span className="dash-page-count">{p.count} views</span>
+                          </div>
+                          <div className="dash-page-bar-bg">
+                            <div className="dash-page-bar-fill" style={{width: percent + '%'}}></div>
+                          </div>
                         </div>
                       );
                     })}
@@ -377,11 +408,52 @@ var Admin = function() {
                   <p className="chart-empty">No page data yet</p>
                 )}
               </div>
+
+              <div className="dash-card">
+                <h3 className="dash-card-title">Quick Overview</h3>
+                <div className="dash-overview-list">
+                  <div className="dash-overview-item">
+                    <div className="doi-left">
+                      <span className="doi-dot doi-green"></span>
+                      <span className="doi-label">Total Views</span>
+                    </div>
+                    <span className="doi-value">{pageviews.total}</span>
+                  </div>
+                  <div className="dash-overview-item">
+                    <div className="doi-left">
+                      <span className="doi-dot doi-green"></span>
+                      <span className="doi-label">Projects Live</span>
+                    </div>
+                    <span className="doi-value">{stats.totalProjects || 0}</span>
+                  </div>
+                  <div className="dash-overview-item">
+                    <div className="doi-left">
+                      <span className="doi-dot doi-yellow"></span>
+                      <span className="doi-label">Pending Reviews</span>
+                    </div>
+                    <span className="doi-value doi-val-yellow">{stats.pendingTestimonials || 0}</span>
+                  </div>
+                  <div className="dash-overview-item">
+                    <div className="doi-left">
+                      <span className="doi-dot doi-blue"></span>
+                      <span className="doi-label">Unread Messages</span>
+                    </div>
+                    <span className="doi-value doi-val-blue">{stats.unreadMessages || 0}</span>
+                  </div>
+                  <div className="dash-overview-item">
+                    <div className="doi-left">
+                      <span className="doi-dot doi-green"></span>
+                      <span className="doi-label">Testimonials</span>
+                    </div>
+                    <span className="doi-value">{stats.totalTestimonials || 0}</span>
+                  </div>
+                </div>
+              </div>
             </div>
 
             {messages.length > 0 && (
-              <div className="recent-section">
-                <h3 className="chart-title">Recent Messages</h3>
+              <div className="dash-recent">
+                <h3 className="dash-card-title">Recent Messages</h3>
                 <div className="items-list">
                   {messages.slice(0, 3).map(function(m) {
                     return (
