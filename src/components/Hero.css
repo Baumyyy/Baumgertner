@@ -357,8 +357,36 @@
   opacity: 0;
   animation: fadeInUp 0.8s ease forwards;
   animation-delay: 1.4s;
+  position: relative;
+  margin-bottom: 3.5rem;
 }
 
+.social-links::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -70px;
+  width: 18px;
+  height: 18px;
+  border-right: 2px solid #00ff88;
+  border-bottom: 2px solid #00ff88;
+  transform: translateX(-50%) rotate(45deg);
+  filter: drop-shadow(0 0 8px rgba(0, 255, 136, 0.6));
+  opacity: 0.9;
+  animation: floatUpDown 2s ease-in-out infinite;
+}
+
+@keyframes floatUpDown {
+  0% {
+    bottom: -50px;
+  }
+  50% {
+    bottom: -60px;
+  }
+  100% {
+    bottom: -50px;
+  }
+}
 .social-link {
   width: 40px;
   height: 40px;
