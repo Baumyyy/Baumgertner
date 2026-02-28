@@ -259,6 +259,15 @@
 .form-send.send-success { border-color: rgba(0, 255, 136, 0.4); background: rgba(0, 255, 136, 0.06); }
 .form-send:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
+.field-error-msg {
+  font-size: 0.72rem;
+  color: rgba(255, 90, 90, 0.75);
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  margin: -0.8rem 0 0 0;
+  letter-spacing: 0.02em;
+}
+
 @keyframes fadeInUp { from { opacity: 0; transform: translateY(25px); } to { opacity: 1; transform: translateY(0); } }
 
 @media (max-width: 1200px) { .contact { padding: 6rem 4rem; } .contact-content { gap: 3rem; } }

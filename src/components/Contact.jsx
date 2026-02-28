@@ -17,6 +17,9 @@ var Contact = function() {
   var sentState = useState(false);
   var sent = sentState[0];
   var setSent = sentState[1];
+  var formErrorState = useState('');
+  var formError = formErrorState[0];
+  var setFormError = formErrorState[1];
   var sectionRef = useScrollAnimation();
   var { t } = useLang();
 
@@ -24,13 +27,21 @@ var Contact = function() {
     var newData = {};
     newData[e.target.name] = e.target.value;
     setFormData(Object.assign({}, formData, newData));
+    if (formError) setFormError('');
   };
 
   var handleSubmit = function(e) {
     e.preventDefault();
-    if (!formData.name || !formData.email || !formData.message) return;
+    if (!formData.name || !formData.email || !formData.message) {
+      setFormError('required');
+      return;
+    }
     var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) return;
+    if (!emailRegex.test(formData.email)) {
+      setFormError('email');
+      return;
+    }
+    setFormError('');
 
     setSending(true);
     api.sendMessage(formData).then(function() {
@@ -154,6 +165,9 @@ var Contact = function() {
                 ></textarea>
                 <div className="field-line"></div>
               </div>
+
+              {formError === 'required' && <p className="field-error-msg">Please fill in all fields.</p>}
+              {formError === 'email' && <p className="field-error-msg">Please enter a valid email address.</p>}
 
               <button type="submit" className={'form-send' + (sent ? ' send-success' : '')} disabled={sending}>
                 <span className="send-text">{sending ? t.contact_sending : sent ? t.contact_sent : t.contact_send}</span>

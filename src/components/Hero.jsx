@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './Hero.css';
 import { api } from '../api';
 import { useLang } from '../LanguageContext';
@@ -9,6 +9,7 @@ const Hero = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const { lang, t, toggleLang } = useLang();
   const [avatar, setAvatar] = useState('/IMG_4680.jpg');
+  const navRef = useRef(null);
 
   useEffect(() => {
     const checkSections = () => {
@@ -36,6 +37,16 @@ const Hero = () => {
   }, []);
 
   useEffect(() => {
+    const handleOutsideClick = (e) => {
+      if (menuOpen && navRef.current && !navRef.current.contains(e.target)) {
+        setMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => document.removeEventListener('mousedown', handleOutsideClick);
+  }, [menuOpen]);
+
+  useEffect(() => {
     api.getAvailability().then(function(data) {
       setAvailable(data.available);
     }).catch(function() {});
@@ -61,15 +72,15 @@ const Hero = () => {
 
   return (
     <>
-      <nav className={'navbar' + (menuOpen ? ' menu-open' : '')}>
+      <nav className={'navbar' + (menuOpen ? ' menu-open' : '')} ref={navRef}>
         <a href="#" className="nav-logo" onClick={function(e) { handleClick(e, 'home'); }}>
           <img src="/logo.png" alt="Baumgertner" className="nav-logo-img" />
         </a>
-        <div className="hamburger" onClick={function() { setMenuOpen(!menuOpen); }}>
+        <button className="hamburger" onClick={function() { setMenuOpen(!menuOpen); }} aria-label={menuOpen ? 'Close menu' : 'Open menu'} aria-expanded={menuOpen}>
           <span className={'hamburger-line' + (menuOpen ? ' open' : '')}></span>
           <span className={'hamburger-line' + (menuOpen ? ' open' : '')}></span>
           <span className={'hamburger-line' + (menuOpen ? ' open' : '')}></span>
-        </div>
+        </button>
         <div className={'nav-links' + (menuOpen ? ' nav-open' : '')}>
           <a href="#home" className={`nav-link ${activeSection === 'home' ? 'active' : ''}`} onClick={(e) => { handleClick(e, 'home'); setMenuOpen(false); }}>
             <span className="nav-dot"></span>{t.nav_home}

@@ -1,8 +1,10 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './AuroraBackground.css';
 
 const AuroraBackground = ({ children }) => {
   const canvasRef = useRef(null);
+  const containerRef = useRef(null);
+  const [showScrollTop, setShowScrollTop] = useState(false);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -97,6 +99,14 @@ const AuroraBackground = ({ children }) => {
     };
   }, []);
 
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    const onScroll = () => setShowScrollTop(container.scrollTop > 400);
+    container.addEventListener('scroll', onScroll);
+    return () => container.removeEventListener('scroll', onScroll);
+  }, []);
+
   return (
     <>
       <div className="bg-layer" aria-hidden="true">
@@ -105,9 +115,16 @@ const AuroraBackground = ({ children }) => {
         <div className="bg-orb bg-orb-3" />
         <canvas ref={canvasRef} className="bg-canvas" />
       </div>
-      <div className="aurora-container">
+      <div className="aurora-container" ref={containerRef}>
         {children}
       </div>
+      <button
+        className={'scroll-top-btn' + (showScrollTop ? ' visible' : '')}
+        onClick={() => containerRef.current.scrollTo({ top: 0, behavior: 'smooth' })}
+        aria-label="Scroll to top"
+      >
+        <i className="fas fa-chevron-up"></i>
+      </button>
     </>
   );
 };
