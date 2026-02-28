@@ -86,6 +86,7 @@ var fi = {
   contact_message_sent: 'Viesti lähetetty!',
   contact_error_required: 'Täytä kaikki kentät.',
   contact_error_email: 'Syötä kelvollinen sähköpostiosoite.',
+  contact_error_send: 'Viestin lähetys epäonnistui. Yritä uudelleen.',
 
   // Footer
   footer_tagline: 'Rakennan digitaalisia kokemuksia intohimolla ja tarkkuudella',

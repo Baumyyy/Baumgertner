@@ -13,7 +13,17 @@ var CustomCursor = function() {
       target.current.x = e.clientX;
       target.current.y = e.clientY;
     };
+
+    var handleMouseOver = function(e) {
+      if (e.target.closest('a, button, [role="button"]')) {
+        ringRef.current && ringRef.current.classList.add('cursor-hover');
+      } else {
+        ringRef.current && ringRef.current.classList.remove('cursor-hover');
+      }
+    };
+
     window.addEventListener('mousemove', handleMouse);
+    window.addEventListener('mouseover', handleMouseOver);
 
     var animate = function() {
       pos.current.x += (target.current.x - pos.current.x) * 0.15;
@@ -32,6 +42,7 @@ var CustomCursor = function() {
     return function() {
       cancelAnimationFrame(animationId);
       window.removeEventListener('mousemove', handleMouse);
+      window.removeEventListener('mouseover', handleMouseOver);
     };
   }, []);
 

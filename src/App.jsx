@@ -31,6 +31,7 @@ function App() {
 
   return (
     <LanguageProvider>
+      <a href="#home" className="skip-link">Skip to main content</a>
       <CustomCursor />
       {loading && <LoadingScreen onFinished={function() { setLoading(false); }} />}
       <BrowserRouter>

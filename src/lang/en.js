@@ -85,6 +85,7 @@ testimonials_leave: 'Leave a Testimonial',
   contact_message_sent: 'Message Sent!',
   contact_error_required: 'Please fill in all fields.',
   contact_error_email: 'Please enter a valid email address.',
+  contact_error_send: 'Failed to send message. Please try again.',
 
   // Footer
   footer_tagline: 'Building digital experiences with passion and precision',

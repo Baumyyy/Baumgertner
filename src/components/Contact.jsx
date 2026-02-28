@@ -51,7 +51,7 @@ var Contact = function() {
       setTimeout(function() { setSent(false); }, 4000);
     }).catch(function() {
       setSending(false);
-      alert('Failed to send message. Please try again.');
+      setFormError('send');
     });
   };
 
@@ -168,6 +168,7 @@ var Contact = function() {
 
               {formError === 'required' && <p className="field-error-msg">{t.contact_error_required}</p>}
               {formError === 'email' && <p className="field-error-msg">{t.contact_error_email}</p>}
+              {formError === 'send' && <p className="field-error-msg">{t.contact_error_send}</p>}
 
               <button type="submit" className={'form-send' + (sent ? ' send-success' : '')} disabled={sending}>
                 <span className="send-text">{sending ? t.contact_sending : sent ? t.contact_sent : t.contact_send}</span>
