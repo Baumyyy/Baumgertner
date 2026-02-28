@@ -29,6 +29,8 @@ var Contact = function() {
   var handleSubmit = function(e) {
     e.preventDefault();
     if (!formData.name || !formData.email || !formData.message) return;
+    var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) return;
 
     setSending(true);
     api.sendMessage(formData).then(function() {

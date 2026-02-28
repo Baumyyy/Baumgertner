@@ -8,7 +8,7 @@ const Hero = () => {
   const [available, setAvailable] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
   const { lang, t, toggleLang } = useLang();
-  const [avatar, setAvatar] = useState('/Logos/IMG_4680.jpg');
+  const [avatar, setAvatar] = useState('/IMG_4680.jpg');
 
   useEffect(() => {
     const checkSections = () => {

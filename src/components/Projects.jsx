@@ -14,6 +14,9 @@ var Projects = function() {
   var loadingState = useState(true);
   var loading = loadingState[0];
   var setLoading = loadingState[1];
+  var errorState = useState(false);
+  var loadError = errorState[0];
+  var setLoadError = errorState[1];
   var sectionRef = useScrollAnimation();
   var { t } = useLang();
 
@@ -23,8 +26,9 @@ var Projects = function() {
       setLoading(false);
     }).catch(function() {
       setLoading(false);
+      setLoadError(true);
     });
-  }, []);
+  }, [setProjects, setLoading, setLoadError]);
 
   var renderProject = function(project, index) {
     var isComingSoon = project.status === 'Coming Soon';
@@ -37,7 +41,7 @@ var Projects = function() {
         className={'project-card' + (hoveredCard === index ? ' hovered' : '') + (hoveredCard !== null && hoveredCard !== index ? ' dimmed' : '') + (isComingSoon ? ' coming-soon' : '')}
         onMouseEnter={function() { setHoveredCard(index); }}
         onMouseLeave={function() { setHoveredCard(null); }}
-        onClick={hasLink ? function() { window.open(project.link, '_blank'); } : undefined}
+        onClick={hasLink ? function() { window.open(project.link, '_blank', 'noopener,noreferrer'); } : undefined}
         style={hasLink ? {cursor: 'pointer'} : {}}
       >
         <div className="project-preview">
@@ -114,6 +118,8 @@ var Projects = function() {
         <div className="projects-grid fade-in stagger-2">
           {loading ? (
             <p style={{color: 'rgba(255,255,255,0.3)', gridColumn: '1/-1', textAlign: 'center'}}>{t.projects_loading}</p>
+          ) : loadError ? (
+            <p style={{color: 'rgba(255,100,100,0.6)', gridColumn: '1/-1', textAlign: 'center'}}>Failed to load projects.</p>
           ) : (
             projects.map(function(project, index) {
               return renderProject(project, index);
@@ -124,7 +130,7 @@ var Projects = function() {
         <div className="projects-cta fade-in stagger-3">
           <div
             className="projects-github-btn"
-            onClick={function() { window.open('https://github.com/baumyyy', '_blank'); }}
+            onClick={function() { window.open('https://github.com/baumyyy', '_blank', 'noopener,noreferrer'); }}
             style={{cursor: 'pointer'}}
           >
             <i className="fab fa-github"></i>
