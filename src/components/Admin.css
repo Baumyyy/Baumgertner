@@ -1063,6 +1063,14 @@
 .doi-val-yellow { color: rgba(255, 200, 50, 0.8); }
 .doi-val-blue { color: rgba(0, 150, 255, 0.8); }
 
+
+/*Logo*/
+.admin-logo-img {
+  height: 28px;
+  width: auto;
+  object-fit: contain;
+}
+
 /* Recent */
 .dash-recent { margin-top: 1.5rem; }
 

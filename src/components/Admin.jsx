@@ -258,8 +258,8 @@ var Admin = function() {
 
       <div className={'admin-sidebar' + (sidebarOpen ? ' sidebar-open' : '')}>
         <div className="admin-user">
+          <img src="/logo.png" alt="Baumgertner" className="admin-logo-img" />
           {authStatus && authStatus.avatar && <img src={authStatus.avatar} alt="" className="admin-avatar" />}
-          <h2 className="admin-logo">AB Admin</h2>
         </div>
         <div className={'admin-tab' + (tab === 'dashboard' ? ' active' : '')} onClick={function() { setTab('dashboard'); setSidebarOpen(false); }}>Dashboard</div>
         <div className={'admin-tab' + (tab === 'projects' ? ' active' : '')} onClick={function() { setTab('projects'); setSidebarOpen(false); }}>Projects</div>

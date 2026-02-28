@@ -39,7 +39,10 @@ var Footer = function() {
       <div className="footer-content">
         <div className="footer-top fade-in stagger-1">
           <div className="footer-brand">
-            <h2 className="footer-name">Anthony<span className="footer-name-accent"> Baumgertner</span></h2>
+            <div className="footer-brand-row">
+              <img src="/logo.png" alt="Baumgertner" className="footer-logo-img" />
+              <h2 className="footer-name"><span className="footer-name-accent"> Baumgertner</span></h2>
+            </div>
             <p className="footer-tagline">{t.footer_tagline}</p>
             <div className="footer-location">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

@@ -5,6 +5,7 @@
   position: relative;
   z-index: 1;
   overflow: hidden;
+  isolation: isolate;
 }
 
 .contact-bg-accent {

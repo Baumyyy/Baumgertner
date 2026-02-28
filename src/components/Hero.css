@@ -52,6 +52,27 @@
 
 .nav-link.active .nav-dot { display: inline-block; }
 
+.nav-logo {
+  text-decoration: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.nav-logo-img {
+  height: 33px;
+  width: auto;
+  object-fit: contain;
+  filter: brightness(1.1);
+  transition: all 0.3s ease;
+  mix-blend-mode: screen;
+}
+
+.nav-logo:hover .nav-logo-img {
+  filter: brightness(1.3) drop-shadow(0 0 8px rgba(0, 255, 136, 0.3));
+}
+
 /* ===== HERO ===== */
 .hero {
   min-height: 100vh;
@@ -63,6 +84,7 @@
   position: relative;
   z-index: 1;
   overflow: hidden;
+  isolation: isolate;
 }
 
 .hero-center {

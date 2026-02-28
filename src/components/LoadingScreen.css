@@ -26,21 +26,16 @@
   margin-bottom: 2rem;
 }
 
-.loading-name-first {
-  font-size: 4rem;
-  font-family: 'Bebas Neue', sans-serif;
-  color: #ffffff;
-  letter-spacing: 0.05em;
+.loading-logo-img {
+  height: 200px;
+  width: auto;
+  object-fit: contain;
+  animation: loadingLogoPulse 2s ease-in-out infinite;
 }
 
-.loading-name-last {
-  font-size: 4rem;
-  font-family: 'Bebas Neue', sans-serif;
-  letter-spacing: 0.05em;
-  background: linear-gradient(135deg, #00ff88, #00bb66);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+@keyframes loadingLogoPulse {
+  0%, 100% { opacity: 0.8; filter: brightness(1); }
+  50% { opacity: 1; filter: brightness(1.2) drop-shadow(0 0 15px rgba(0, 255, 136, 0.3)); }
 }
 
 .loading-bar-wrapper {
@@ -108,6 +103,6 @@
 }
 
 @media (max-width: 480px) {
-  .loading-name-first, .loading-name-last { font-size: 3rem; }
+  .loading-logo-img { height: 45px; }
   .loading-bar { width: 150px; }
-}
+} 

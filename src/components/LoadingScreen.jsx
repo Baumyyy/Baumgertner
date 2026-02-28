@@ -30,8 +30,7 @@ var LoadingScreen = function({ onFinished }) {
     <div className={'loading-screen' + (fading ? ' loading-fade' : '')}>
       <div className="loading-content">
         <div className="loading-logo">
-          <span className="loading-name-first">A</span>
-          <span className="loading-name-last">B</span>
+          <img src="/logo.png" alt="Baumgertner" className="loading-logo-img" />
         </div>
         <div className="loading-bar-wrapper">
           <div className="loading-bar">

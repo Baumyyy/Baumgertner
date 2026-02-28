@@ -2,6 +2,7 @@
   padding: 6rem 4rem;
   position: relative;
   overflow: visible;
+  isolation: isolate;
 }
 
 .testimonials-content { max-width: 1200px; margin: 0 auto; }

@@ -2,6 +2,7 @@
   position: relative;
   padding: 0 6rem;
   overflow: hidden;
+  isolation: isolate;
 }
 
 .footer-glow {
@@ -16,20 +17,35 @@
 .footer-top { display: flex; justify-content: space-between; gap: 4rem; margin-bottom: 3rem; }
 .footer-brand { flex: 0 0 auto; max-width: 350px; }
 
+.footer-brand-row {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 0.8rem;
+}
+
+.footer-logo-img {
+  height: 36px;
+  width: auto;
+  object-fit: contain;
+  mix-blend-mode: screen;
+}
+
 .footer-name {
   font-size: 1.8rem;
   color: #ffffff;
   font-family: 'Bebas Neue', sans-serif;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  margin-bottom: 0.8rem;
+  margin-bottom: 0;
 }
 
 .footer-name-accent {
-  background: linear-gradient(135deg, #00ff88, #00bb66);
+  background: linear-gradient(135deg, #ffffff 30%, #00ff88 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  filter: drop-shadow(0 0 20px rgba(0, 255, 136, 0.15));
 }
 
 .footer-tagline {

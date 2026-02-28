@@ -62,6 +62,9 @@ const Hero = () => {
   return (
     <>
       <nav className={'navbar' + (menuOpen ? ' menu-open' : '')}>
+        <a href="#" className="nav-logo" onClick={function(e) { handleClick(e, 'home'); }}>
+          <img src="/logo.png" alt="Baumgertner" className="nav-logo-img" />
+        </a>
         <div className="hamburger" onClick={function() { setMenuOpen(!menuOpen); }}>
           <span className={'hamburger-line' + (menuOpen ? ' open' : '')}></span>
           <span className={'hamburger-line' + (menuOpen ? ' open' : '')}></span>
