@@ -93,6 +93,7 @@
   width: fit-content;
 }
 
+.footer-link:visited { color: rgba(255, 255, 255, 0.4); }
 .footer-link:hover { color: #00ff88; transform: translateX(3px); }
 .footer-link svg { opacity: 0; transition: all 0.3s ease; transform: translateX(-4px); }
 .footer-link:hover svg { opacity: 1; transform: translateX(0); }

@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /baumi-dashboard
+
+Sitemap: https://baumgertner.fi/sitemap.xml

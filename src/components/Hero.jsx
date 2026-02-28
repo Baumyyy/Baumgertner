@@ -166,7 +166,7 @@ const Hero = () => {
             <a href="https://linkedin.com/in/anthony-baumgertner" target="_blank" rel="noopener noreferrer" className="social-link">
               <i className="fab fa-linkedin"></i>
             </a>
-            <a href="https://instagram.com/baumgertnerr" target="_blank" rel="noopener noreferrer" className="social-link">
+            <a href="https://www.instagram.com/baumgertnerr/" target="_blank" rel="noopener noreferrer" className="social-link">
               <i className="fab fa-instagram"></i>
             </a>
           </div>
