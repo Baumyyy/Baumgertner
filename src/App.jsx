@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import CustomCursor from './components/CustomCursor.jsx';
 import NotFound from './components/NotFound';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
@@ -35,7 +35,7 @@ function App() {
       {loading && <LoadingScreen onFinished={function() { setLoading(false); }} />}
       <BrowserRouter>
         <Routes>
-          <Route path="/admin" element={<Admin />} />
+          <Route path="/baumi-dashboard" element={<Admin />} />
           <Route path="/" element={
             <AuroraBackground>
               <Hero />
