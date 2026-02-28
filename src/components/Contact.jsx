@@ -166,8 +166,8 @@ var Contact = function() {
                 <div className="field-line"></div>
               </div>
 
-              {formError === 'required' && <p className="field-error-msg">Please fill in all fields.</p>}
-              {formError === 'email' && <p className="field-error-msg">Please enter a valid email address.</p>}
+              {formError === 'required' && <p className="field-error-msg">{t.contact_error_required}</p>}
+              {formError === 'email' && <p className="field-error-msg">{t.contact_error_email}</p>}
 
               <button type="submit" className={'form-send' + (sent ? ' send-success' : '')} disabled={sending}>
                 <span className="send-text">{sending ? t.contact_sending : sent ? t.contact_sent : t.contact_send}</span>

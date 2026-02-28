@@ -10,8 +10,8 @@ var fi = {
   hero_welcome: 'Welcome to',
   hero_intro: 'Esittely',
   hero_greeting: 'Hei, olen',
- hero_title1: 'Ohjelmisto-opiskelija',
-  hero_title2: 'Projektipäällikkö',
+ hero_title1: 'Projektipäällikkö',
+  hero_title2: 'Ohjelmisto-opiskelija',
   hero_title3: 'Suomesta',
   hero_explore: 'Katso työni',
   hero_contact: 'Ota yhteyttä',
@@ -45,6 +45,7 @@ var fi = {
   projects_view: 'Katso projekti',
   projects_github: 'Lisää GitHubissa',
   projects_loading: 'Ladataan projekteja...',
+  projects_error_load: 'Projektien lataaminen epäonnistui.',
 
   //Testimonials
 
@@ -83,6 +84,8 @@ var fi = {
   contact_sent: 'Lähetetty!',
   contact_new_message: 'Uusi viesti',
   contact_message_sent: 'Viesti lähetetty!',
+  contact_error_required: 'Täytä kaikki kentät.',
+  contact_error_email: 'Syötä kelvollinen sähköpostiosoite.',
 
   // Footer
   footer_tagline: 'Rakennan digitaalisia kokemuksia intohimolla ja tarkkuudella',

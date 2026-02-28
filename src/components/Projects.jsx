@@ -119,7 +119,7 @@ var Projects = function() {
           {loading ? (
             <p style={{color: 'rgba(255,255,255,0.3)', gridColumn: '1/-1', textAlign: 'center'}}>{t.projects_loading}</p>
           ) : loadError ? (
-            <p style={{color: 'rgba(255,100,100,0.6)', gridColumn: '1/-1', textAlign: 'center'}}>Failed to load projects.</p>
+            <p style={{color: 'rgba(255,100,100,0.6)', gridColumn: '1/-1', textAlign: 'center'}}>{t.projects_error_load}</p>
           ) : (
             projects.map(function(project, index) {
               return renderProject(project, index);

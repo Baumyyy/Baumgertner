@@ -1,26 +1,26 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import CustomCursor from './components/CustomCursor.jsx';
-import NotFound from './components/NotFound';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { LanguageProvider } from './LanguageContext';
 import AuroraBackground from './components/AuroraBackground';
 import Hero from './components/Hero';
-import LogoSlider from './components/LogoSlider';
-import Projects from './components/Projects';
-import Testimonials from './components/Testimonials.jsx';
-import Contact from './components/Contact';
-import WhatIDo from './components/WhatIDo';
-import Footer from './components/Footer';
-import Admin from './components/Admin';
 import LoadingScreen from './components/LoadingScreen.jsx';
 import './App.css';
+
+const WhatIDo      = lazy(() => import('./components/WhatIDo'));
+const LogoSlider   = lazy(() => import('./components/LogoSlider'));
+const Projects     = lazy(() => import('./components/Projects'));
+const Testimonials = lazy(() => import('./components/Testimonials.jsx'));
+const Contact      = lazy(() => import('./components/Contact'));
+const Footer       = lazy(() => import('./components/Footer'));
+const Admin        = lazy(() => import('./components/Admin'));
+const NotFound     = lazy(() => import('./components/NotFound'));
 
 function App() {
   var loadingState = useState(true);
   var loading = loadingState[0];
   var setLoading = loadingState[1];
 
-  // Track page view
   useEffect(function() {
     fetch('/api/pageview', {
       method: 'POST',
@@ -34,21 +34,23 @@ function App() {
       <CustomCursor />
       {loading && <LoadingScreen onFinished={function() { setLoading(false); }} />}
       <BrowserRouter>
-        <Routes>
-          <Route path="/baumi-dashboard" element={<Admin />} />
-          <Route path="/" element={
-            <AuroraBackground>
-              <Hero />
-              <WhatIDo />
-              <LogoSlider />
-              <Projects />
-              <Testimonials />
-              <Contact />
-              <Footer />
-            </AuroraBackground>
-          } />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <Suspense fallback={null}>
+          <Routes>
+            <Route path="/baumi-dashboard" element={<Admin />} />
+            <Route path="/" element={
+              <AuroraBackground>
+                <Hero />
+                <WhatIDo />
+                <LogoSlider />
+                <Projects />
+                <Testimonials />
+                <Contact />
+                <Footer />
+              </AuroraBackground>
+            } />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Suspense>
       </BrowserRouter>
     </LanguageProvider>
   );

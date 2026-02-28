@@ -10,8 +10,8 @@ var en = {
   hero_welcome: 'Welcome to',
   hero_intro: 'Introduction',
   hero_greeting: "Hello, I'm",
-  hero_title1: 'Student Software Engineer',
-  hero_title2: 'Project Manager',
+  hero_title1: 'Project Manager',
+  hero_title2: 'Student Software Engineer',
   hero_title3: 'Based in Finland',
   hero_explore: 'Explore Work',
   hero_contact: 'Contact Me',
@@ -45,6 +45,7 @@ var en = {
   projects_view: 'View Project',
   projects_github: 'See More on GitHub',
   projects_loading: 'Loading projects...',
+  projects_error_load: 'Failed to load projects.',
 
   // Testimonials
   testimonials_tag: 'Testimonials',
@@ -82,6 +83,8 @@ testimonials_leave: 'Leave a Testimonial',
   contact_sent: 'Sent!',
   contact_new_message: 'New Message',
   contact_message_sent: 'Message Sent!',
+  contact_error_required: 'Please fill in all fields.',
+  contact_error_email: 'Please enter a valid email address.',
 
   // Footer
   footer_tagline: 'Building digital experiences with passion and precision',
