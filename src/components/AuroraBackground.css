@@ -17,7 +17,7 @@
 .bg-orb-1 {
   width: 950px;
   height: 950px;
-  background: radial-gradient(circle, rgba(0, 255, 136, 0.38) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(0, 255, 136, 0.35) 0%, transparent 70%);
   top: -320px;
   left: -200px;
   animation: orbFloat1 32s ease-in-out infinite;
@@ -26,7 +26,7 @@
 .bg-orb-2 {
   width: 680px;
   height: 680px;
-  background: radial-gradient(circle, rgba(0, 210, 110, 0.28) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(0, 210, 110, 0.25) 0%, transparent 70%);
   top: 20%;
   right: -200px;
   animation: orbFloat2 40s ease-in-out infinite;
@@ -35,7 +35,7 @@
 .bg-orb-3 {
   width: 620px;
   height: 620px;
-  background: radial-gradient(circle, rgba(0, 180, 90, 0.22) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(0, 180, 90, 0.20) 0%, transparent 70%);
   bottom: 5%;
   left: 25%;
   animation: orbFloat3 26s ease-in-out infinite;
@@ -59,26 +59,11 @@
   50%        { transform: translate(-120px,-100px) scale(1.20); }
 }
 
-.bg-star {
+.bg-canvas {
   position: absolute;
-  height: 1.5px;
-  background: linear-gradient(90deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.3) 60%, transparent 100%);
-  border-radius: 2px;
-  opacity: 0;
-}
-
-.bg-star-1 { --rot: -35deg; width: 140px; top: 10%; left:  5%; animation: shootStar 10s linear  0.0s infinite; }
-.bg-star-2 { --rot: -30deg; width: 100px; top: 22%; left: -5%; animation: shootStar  8s linear  4.0s infinite; }
-.bg-star-3 { --rot: -35deg; width: 160px; top:  8%; left: 60%; animation: shootStar 12s linear  7.0s infinite; }
-.bg-star-4 { --rot: -25deg; width: 120px; top: 45%; left: 30%; animation: shootStar  9s linear  2.0s infinite; }
-.bg-star-5 { --rot: -40deg; width:  90px; top: 65%; left: 70%; animation: shootStar 11s linear  5.5s infinite; }
-.bg-star-6 { --rot: -30deg; width: 130px; top: 35%; left: -8%; animation: shootStar  7s linear  9.0s infinite; }
-
-@keyframes shootStar {
-  0%   { opacity: 0;   transform: rotate(var(--rot)) translateX(0);     }
-  4%   { opacity: 0.9;                                                   }
-  18%  { opacity: 0;   transform: rotate(var(--rot)) translateX(90vw);  }
-  100% { opacity: 0;   transform: rotate(var(--rot)) translateX(90vw);  }
+  inset: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .aurora-container {
@@ -89,6 +74,30 @@
   overflow-y: auto;
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 768px) {
+  .bg-orb-1 {
+    width: 420px;
+    height: 420px;
+    background: radial-gradient(circle, rgba(0, 255, 136, 0.14) 0%, transparent 70%);
+    top: -120px;
+    left: -100px;
+  }
+  .bg-orb-2 {
+    width: 320px;
+    height: 320px;
+    background: radial-gradient(circle, rgba(0, 210, 110, 0.10) 0%, transparent 70%);
+    top: 40%;
+    right: -80px;
+  }
+  .bg-orb-3 {
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(0, 180, 90, 0.08) 0%, transparent 70%);
+    bottom: 10%;
+    left: 15%;
+  }
 }
 
 .aurora-container::-webkit-scrollbar       { width: 5px; }
