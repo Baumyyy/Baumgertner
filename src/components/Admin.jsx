@@ -641,6 +641,7 @@ var Admin = function() {
                     </div>
                     <p className="message-body">{m.message}</p>
                     <div className="message-actions">
+                      <a className="reply-btn" href={'mailto:' + m.email + '?subject=Re: Your message&body=Hi ' + encodeURIComponent(m.name) + ','}>Reply</a>
                       {!m.read && <button className="read-btn" onClick={function() { markRead(m.id); }}>Mark Read</button>}
                       <button className="delete-btn" onClick={function() { deleteMessage(m.id); }}>Delete</button>
                     </div>

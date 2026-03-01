@@ -78,3 +78,62 @@ body {
     zoom: 0.88;
   }
 }
+
+/* ===== FOCUS STYLES ===== */
+:focus-visible {
+  outline: 2px solid rgba(0, 255, 136, 0.7);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+/* ===== ERROR BOUNDARY ===== */
+.error-boundary-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: #000;
+  color: #fff;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  padding: 2rem;
+}
+
+.error-boundary-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  text-align: center;
+  max-width: 400px;
+}
+
+.error-boundary-icon {
+  font-size: 2.5rem;
+  color: #00ff88;
+}
+
+.error-boundary-title {
+  font-size: 1.5rem;
+  color: #fff;
+}
+
+.error-boundary-msg {
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.6;
+}
+
+.error-boundary-btn {
+  margin-top: 0.5rem;
+  background: rgba(0, 255, 136, 0.1);
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  color: #00ff88;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s ease;
+}
+
+.error-boundary-btn:hover {
+  background: rgba(0, 255, 136, 0.2);
+}

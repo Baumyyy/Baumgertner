@@ -42,7 +42,7 @@ var sendNotification = async function(subject, html) {
   try {
     var resend = new Resend(process.env.RESEND_API_KEY);
     await resend.emails.send({
-      from: 'Portfolio <onboarding@resend.dev>',
+      from: process.env.RESEND_FROM || 'Portfolio <onboarding@resend.dev>',
       to: process.env.NOTIFICATION_EMAIL,
       subject: subject,
       html: html
@@ -140,10 +140,12 @@ var auth = function(req, res, next) {
 // ===== GITHUB AUTH ROUTES =====
 app.get('/api/auth/github', authLimiter, passport.authenticate('github', { scope: ['user:email'] }));
 
+var FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
+
 app.get('/api/auth/github/callback',
-  passport.authenticate('github', { failureRedirect: '/admin?error=unauthorized' }),
+  passport.authenticate('github', { failureRedirect: FRONTEND_URL + '/baumi-dashboard?error=unauthorized' }),
   function(req, res) {
-    res.redirect('http://localhost:5173/admin');
+    res.redirect(FRONTEND_URL + '/baumi-dashboard');
   }
 );
 
@@ -157,7 +159,7 @@ app.get('/api/auth/me', function(req, res) {
 
 app.get('/api/auth/logout', function(req, res) {
   req.logout(function() {
-    res.redirect('http://localhost:5173/admin');
+    res.redirect(FRONTEND_URL + '/baumi-dashboard');
   });
 });
 

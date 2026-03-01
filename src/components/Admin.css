@@ -687,6 +687,24 @@
   gap: 0.5rem;
 }
 
+.reply-btn {
+  padding: 0.4rem 0.9rem;
+  background: rgba(100, 160, 255, 0.08);
+  border: 1px solid rgba(100, 160, 255, 0.2);
+  border-radius: 8px;
+  color: rgba(100, 160, 255, 0.9);
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+
+.reply-btn:hover {
+  background: rgba(100, 160, 255, 0.15);
+}
+
 .read-btn {
   padding: 0.4rem 0.9rem;
   background: rgba(0, 255, 136, 0.08);

@@ -18,8 +18,7 @@ var Footer = function() {
     }).catch(function() {});
   }, []);
 
-  var handleNavClick = function(e, targetId) {
-    e.preventDefault();
+  var scrollTo = function(targetId) {
     var container = document.querySelector('.aurora-container');
     if (targetId === 'home') {
       if (container) container.scrollTo({ top: 0, behavior: 'smooth' });
@@ -56,10 +55,10 @@ var Footer = function() {
           <div className="footer-links-grid">
             <div className="footer-links-col">
               <h4 className="footer-links-title">{t.footer_navigate}</h4>
-              <div className="footer-link" onClick={function(e) { handleNavClick(e, 'home'); }} style={{cursor: 'pointer'}}>{t.nav_home}</div>
-              <div className="footer-link" onClick={function(e) { handleNavClick(e, 'whatido'); }} style={{cursor: 'pointer'}}>{t.nav_whatido}</div>
-              <div className="footer-link" onClick={function(e) { handleNavClick(e, 'projects'); }} style={{cursor: 'pointer'}}>{t.nav_projects}</div>
-              <div className="footer-link" onClick={function(e) { handleNavClick(e, 'contact'); }} style={{cursor: 'pointer'}}>{t.nav_contact}</div>
+              <button className="footer-link footer-nav-btn" onClick={function() { scrollTo('home'); }}>{t.nav_home}</button>
+              <button className="footer-link footer-nav-btn" onClick={function() { scrollTo('whatido'); }}>{t.nav_whatido}</button>
+              <button className="footer-link footer-nav-btn" onClick={function() { scrollTo('projects'); }}>{t.nav_projects}</button>
+              <button className="footer-link footer-nav-btn" onClick={function() { scrollTo('contact'); }}>{t.nav_contact}</button>
             </div>
 
             <div className="footer-links-col">

@@ -5,6 +5,7 @@ import { LanguageProvider } from './LanguageContext';
 import AuroraBackground from './components/AuroraBackground';
 import Hero from './components/Hero';
 import LoadingScreen from './components/LoadingScreen.jsx';
+import ErrorBoundary from './components/ErrorBoundary.jsx';
 import './App.css';
 
 const WhatIDo      = lazy(() => import('./components/WhatIDo'));
@@ -35,23 +36,25 @@ function App() {
       <CustomCursor />
       {loading && <LoadingScreen onFinished={function() { setLoading(false); }} />}
       <BrowserRouter>
-        <Suspense fallback={null}>
-          <Routes>
-            <Route path="/baumi-dashboard" element={<Admin />} />
-            <Route path="/" element={
-              <AuroraBackground>
-                <Hero />
-                <WhatIDo />
-                <LogoSlider />
-                <Projects />
-                <Testimonials />
-                <Contact />
-                <Footer />
-              </AuroraBackground>
-            } />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Suspense>
+        <ErrorBoundary>
+          <Suspense fallback={null}>
+            <Routes>
+              <Route path="/baumi-dashboard" element={<Admin />} />
+              <Route path="/" element={
+                <AuroraBackground>
+                  <Hero />
+                  <WhatIDo />
+                  <LogoSlider />
+                  <Projects />
+                  <Testimonials />
+                  <Contact />
+                  <Footer />
+                </AuroraBackground>
+              } />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Suspense>
+        </ErrorBoundary>
       </BrowserRouter>
     </LanguageProvider>
   );
