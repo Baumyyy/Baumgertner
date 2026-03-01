@@ -10,14 +10,6 @@
   pointer-events: none;
   z-index: 99999;
   transform: translate(-50%, -50%);
-  transition: width 0.2s ease, height 0.2s ease, border-color 0.2s ease, background 0.2s ease;
-}
-
-.cursor-ring.cursor-hover {
-  width: 36px;
-  height: 36px;
-  border-color: rgba(0, 255, 136, 0.8);
-  background: rgba(0, 255, 136, 0.08);
 }
 
 @media (max-width: 768px) {

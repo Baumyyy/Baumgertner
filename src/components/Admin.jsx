@@ -77,6 +77,18 @@ var Admin = function() {
   var sidebarState = useState(false);
   var sidebarOpen = sidebarState[0];
   var setSidebarOpen = sidebarState[1];
+  var loginErrorState = useState('');
+  var loginError = loginErrorState[0];
+  var setLoginError = loginErrorState[1];
+  var profileSavedState = useState(false);
+  var profileSaved = profileSavedState[0];
+  var setProfileSaved = profileSavedState[1];
+  var confirmDeleteProjectState = useState(null);
+  var confirmDeleteProjectId = confirmDeleteProjectState[0];
+  var setConfirmDeleteProjectId = confirmDeleteProjectState[1];
+  var confirmDeleteTestimonialState = useState(null);
+  var confirmDeleteTestimonialId = confirmDeleteTestimonialState[0];
+  var setConfirmDeleteTestimonialId = confirmDeleteTestimonialState[1];
 
   useEffect(function() {
     fetch(API_URL + '/auth/me', { credentials: 'include' })
@@ -137,7 +149,7 @@ var Admin = function() {
         localStorage.setItem('admin_token', data.token);
         setLoggedIn(true);
       } else {
-        alert('Wrong credentials');
+        setLoginError('Wrong credentials');
       }
     });
   };
@@ -158,10 +170,12 @@ var Admin = function() {
   };
 
   var deleteProject = function(id) {
-    if (confirm('Delete this project?')) {
-      fetchAuth(API_URL + '/projects/' + id, { method: 'DELETE' })
-        .then(function() { loadAll(); });
-    }
+    setConfirmDeleteProjectId(id);
+  };
+
+  var executeDeleteProject = function(id) {
+    fetchAuth(API_URL + '/projects/' + id, { method: 'DELETE' })
+      .then(function() { setConfirmDeleteProjectId(null); loadAll(); });
   };
 
   var saveProject = function(e) {
@@ -213,7 +227,7 @@ var Admin = function() {
     fetchAuth(API_URL + '/profile', {
       method: 'PUT',
       body: JSON.stringify(profile)
-    }).then(function() { loadAll(); alert('Profile saved!'); });
+    }).then(function() { loadAll(); setProfileSaved(true); setTimeout(function() { setProfileSaved(false); }, 3000); });
   };
 
   if (!loggedIn) {
@@ -232,14 +246,15 @@ var Admin = function() {
             <span>or</span>
           </div>
 
-          <div className="backup-toggle" onClick={function() { setShowBackup(!showBackup); }}>
+          <button className="backup-toggle" onClick={function() { setShowBackup(!showBackup); setLoginError(''); }}>
             {showBackup ? 'Hide' : 'Use'} password login
-          </div>
+          </button>
 
           {showBackup && (
             <form onSubmit={handleBackupLogin}>
-              <input type="text" placeholder="Username" className="login-input" value={loginForm.username} onChange={function(e) { setLoginForm(Object.assign({}, loginForm, { username: e.target.value })); }} />
-              <input type="password" placeholder="Password" className="login-input" value={loginForm.password} onChange={function(e) { setLoginForm(Object.assign({}, loginForm, { password: e.target.value })); }} />
+              <input type="text" placeholder="Username" className="login-input" value={loginForm.username} onChange={function(e) { setLoginForm(Object.assign({}, loginForm, { username: e.target.value })); setLoginError(''); }} />
+              <input type="password" placeholder="Password" className="login-input" value={loginForm.password} onChange={function(e) { setLoginForm(Object.assign({}, loginForm, { password: e.target.value })); setLoginError(''); }} />
+              {loginError && <p className="login-error">{loginError}</p>}
               <button type="submit" className="login-btn">Login</button>
             </form>
           )}
@@ -252,27 +267,27 @@ var Admin = function() {
     <div className="admin">
       <div className={'sidebar-overlay' + (sidebarOpen ? ' overlay-visible' : '')} onClick={function() { setSidebarOpen(false); }}></div>
 
-      <div className="mobile-menu-btn" onClick={function() { setSidebarOpen(!sidebarOpen); }}>
+      <button className="mobile-menu-btn" onClick={function() { setSidebarOpen(!sidebarOpen); }} aria-label={sidebarOpen ? 'Close menu' : 'Open menu'}>
         {sidebarOpen ? '✕' : '☰'}
-      </div>
+      </button>
 
       <div className={'admin-sidebar' + (sidebarOpen ? ' sidebar-open' : '')}>
         <div className="admin-user">
           <img src="/logo.png" alt="Baumgertner" className="admin-logo-img" />
           {authStatus && authStatus.avatar && <img src={authStatus.avatar} alt="" className="admin-avatar" />}
         </div>
-        <div className={'admin-tab' + (tab === 'dashboard' ? ' active' : '')} onClick={function() { setTab('dashboard'); setSidebarOpen(false); }}>Dashboard</div>
-        <div className={'admin-tab' + (tab === 'projects' ? ' active' : '')} onClick={function() { setTab('projects'); setSidebarOpen(false); }}>Projects</div>
-        <div className={'admin-tab' + (tab === 'testimonials' ? ' active' : '')} onClick={function() { setTab('testimonials'); setSidebarOpen(false); }}>
+        <button className={'admin-tab' + (tab === 'dashboard' ? ' active' : '')} onClick={function() { setTab('dashboard'); setSidebarOpen(false); }}>Dashboard</button>
+        <button className={'admin-tab' + (tab === 'projects' ? ' active' : '')} onClick={function() { setTab('projects'); setSidebarOpen(false); }}>Projects</button>
+        <button className={'admin-tab' + (tab === 'testimonials' ? ' active' : '')} onClick={function() { setTab('testimonials'); setSidebarOpen(false); }}>
           Testimonials
           {stats.pendingTestimonials > 0 && <span className="tab-badge">{stats.pendingTestimonials}</span>}
-        </div>
-        <div className={'admin-tab' + (tab === 'messages' ? ' active' : '')} onClick={function() { setTab('messages'); setSidebarOpen(false); }}>
+        </button>
+        <button className={'admin-tab' + (tab === 'messages' ? ' active' : '')} onClick={function() { setTab('messages'); setSidebarOpen(false); }}>
           Messages
           {stats.unreadMessages > 0 && <span className="tab-badge">{stats.unreadMessages}</span>}
-        </div>
-        <div className={'admin-tab' + (tab === 'profile' ? ' active' : '')} onClick={function() { setTab('profile'); setSidebarOpen(false); }}>Profile</div>
-        <div className="admin-tab logout" onClick={handleLogout}>Logout</div>
+        </button>
+        <button className={'admin-tab' + (tab === 'profile' ? ' active' : '')} onClick={function() { setTab('profile'); setSidebarOpen(false); }}>Profile</button>
+        <button className="admin-tab logout" onClick={handleLogout}>Logout</button>
       </div>
 
       <div className="admin-main">
@@ -283,10 +298,10 @@ var Admin = function() {
                 <h1 className="admin-title">Dashboard</h1>
                 {authStatus && <p className="welcome-text">Welcome back, {authStatus.username} 👋</p>}
               </div>
-              <div className={'dash-status-pill' + (stats.available ? '' : ' pill-busy')} onClick={toggleAvailability}>
+              <button className={'dash-status-pill' + (stats.available ? '' : ' pill-busy')} onClick={toggleAvailability}>
                 <span className={'dash-status-dot' + (stats.available ? '' : ' dot-busy')}></span>
                 <span>{stats.available ? 'Available for work' : 'Currently busy'}</span>
-              </div>
+              </button>
             </div>
 
             <div className="dash-kpi-grid">
@@ -512,10 +527,18 @@ var Admin = function() {
                       <span className="item-title">{p.title}</span>
                       <span className={'item-status ' + (p.status === 'Live' ? 'status-live' : 'status-soon')}>{p.status}</span>
                     </div>
-                    <div className="item-actions">
-                      <button className="edit-btn" onClick={function() { setEditProject(Object.assign({}, p, { tags: Array.isArray(p.tags) ? p.tags.join(',') : '' })); }}>Edit</button>
-                      <button className="delete-btn" onClick={function() { deleteProject(p.id); }}>Delete</button>
-                    </div>
+                    {confirmDeleteProjectId === p.id ? (
+                      <div className="confirm-inline">
+                        <span className="confirm-text">Delete?</span>
+                        <button className="confirm-yes" onClick={function() { executeDeleteProject(p.id); }}>Yes</button>
+                        <button className="confirm-no" onClick={function() { setConfirmDeleteProjectId(null); }}>No</button>
+                      </div>
+                    ) : (
+                      <div className="item-actions">
+                        <button className="edit-btn" onClick={function() { setEditProject(Object.assign({}, p, { tags: Array.isArray(p.tags) ? p.tags.join(',') : '' })); }}>Edit</button>
+                        <button className="delete-btn" onClick={function() { deleteProject(p.id); }}>Delete</button>
+                      </div>
+                    )}
                   </div>
                 );
               })}
@@ -584,14 +607,18 @@ var Admin = function() {
                       <span className="item-title">{t.name} - {t.company || 'No company'}</span>
                       <span className={'item-status ' + (t.visible ? 'status-live' : 'status-soon')}>{t.visible ? 'Visible' : 'Hidden'}</span>
                     </div>
-                    <div className="item-actions">
-                      <button className="edit-btn" onClick={function() { setEditTestimonial(Object.assign({}, t)); }}>Edit</button>
-                      <button className="delete-btn" onClick={function() {
-                        if (confirm('Delete this testimonial?')) {
-                          fetchAuth(API_URL + '/testimonials/' + t.id, { method: 'DELETE' }).then(function() { loadAll(); });
-                        }
-                      }}>Delete</button>
-                    </div>
+                    {confirmDeleteTestimonialId === t.id ? (
+                      <div className="confirm-inline">
+                        <span className="confirm-text">Delete?</span>
+                        <button className="confirm-yes" onClick={function() { fetchAuth(API_URL + '/testimonials/' + t.id, { method: 'DELETE' }).then(function() { setConfirmDeleteTestimonialId(null); loadAll(); }); }}>Yes</button>
+                        <button className="confirm-no" onClick={function() { setConfirmDeleteTestimonialId(null); }}>No</button>
+                      </div>
+                    ) : (
+                      <div className="item-actions">
+                        <button className="edit-btn" onClick={function() { setEditTestimonial(Object.assign({}, t)); }}>Edit</button>
+                        <button className="delete-btn" onClick={function() { setConfirmDeleteTestimonialId(t.id); }}>Delete</button>
+                      </div>
+                    )}
                   </div>
                 );
               })}
@@ -658,6 +685,7 @@ var Admin = function() {
               <input className="edit-input" value={profile.location || ''} onChange={function(e) { setProfile(Object.assign({}, profile, { location: e.target.value })); }} />
               <label className="edit-label">Timezone</label>
               <input className="edit-input" value={profile.timezone || ''} onChange={function(e) { setProfile(Object.assign({}, profile, { timezone: e.target.value })); }} />
+              {profileSaved && <p className="profile-saved-msg">Profile saved!</p>}
               <button type="submit" className="save-btn">Save Profile</button>
             </form>
           </div>

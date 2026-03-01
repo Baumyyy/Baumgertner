@@ -1,3 +1,99 @@
+/* ===== BUTTON RESETS ===== */
+.admin-tab,
+.mobile-menu-btn,
+.backup-toggle,
+.dash-status-pill {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.admin-tab {
+  background: none;
+  border: none;
+  outline: none;
+  width: 100%;
+  text-align: left;
+}
+
+.dash-status-pill {
+  background: rgba(0, 255, 136, 0.06);
+  border: 1px solid rgba(0, 255, 136, 0.15);
+}
+
+.backup-toggle {
+  background: none;
+  border: none;
+  outline: none;
+}
+
+/* ===== LOGIN ERROR ===== */
+.login-error {
+  color: rgba(255, 100, 100, 0.85);
+  font-size: 0.8rem;
+  text-align: center;
+  margin-bottom: 0.5rem;
+  background: rgba(255, 100, 100, 0.06);
+  border: 1px solid rgba(255, 100, 100, 0.15);
+  border-radius: 8px;
+  padding: 0.5rem;
+}
+
+/* ===== PROFILE SAVED ===== */
+.profile-saved-msg {
+  color: #00ff88;
+  font-size: 0.85rem;
+  background: rgba(0, 255, 136, 0.07);
+  border: 1px solid rgba(0, 255, 136, 0.2);
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
+  text-align: center;
+}
+
+/* ===== INLINE CONFIRM ===== */
+.confirm-inline {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.confirm-text {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.confirm-yes {
+  padding: 0.35rem 0.8rem;
+  background: rgba(255, 100, 100, 0.12);
+  border: 1px solid rgba(255, 100, 100, 0.25);
+  border-radius: 7px;
+  color: rgba(255, 100, 100, 0.85);
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.confirm-yes:hover {
+  background: rgba(255, 100, 100, 0.22);
+}
+
+.confirm-no {
+  padding: 0.35rem 0.8rem;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 7px;
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.confirm-no:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.6);
+}
+
 /* ===== ADMIN LOGIN ===== */
 .admin-login {
   min-height: 100vh;
