@@ -273,7 +273,6 @@ var Admin = function() {
 
       <div className={'admin-sidebar' + (sidebarOpen ? ' sidebar-open' : '')}>
         <div className="admin-user">
-          <img src="/logo.png" alt="Baumgertner" className="admin-logo-img" />
           {authStatus && authStatus.avatar && <img src={authStatus.avatar} alt="" className="admin-avatar" />}
         </div>
         <button className={'admin-tab' + (tab === 'dashboard' ? ' active' : '')} onClick={function() { setTab('dashboard'); setSidebarOpen(false); }}>Dashboard</button>

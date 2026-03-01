@@ -39,8 +39,7 @@ var Footer = function() {
         <div className="footer-top fade-in stagger-1">
           <div className="footer-brand">
             <div className="footer-brand-row">
-              <img src="/logo.png" alt="Baumgertner" className="footer-logo-img" />
-              <h2 className="footer-name"><span className="footer-name-accent"> Baumgertner</span></h2>
+              <h2 className="footer-name"><span className="footer-name-accent">Baumgertner</span></h2>
             </div>
             <p className="footer-tagline">{t.footer_tagline}</p>
             <div className="footer-location">

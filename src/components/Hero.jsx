@@ -7,6 +7,7 @@ const Hero = () => {
   const [activeSection, setActiveSection] = useState('home');
   const [available, setAvailable] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const { lang, t, toggleLang } = useLang();
   const [avatar, setAvatar] = useState('/IMG_4680.jpg');
   const navRef = useRef(null);
@@ -19,6 +20,7 @@ const Hero = () => {
       const handleScroll = () => {
         const scrollTop = container.scrollTop;
         const windowHeight = container.clientHeight;
+        setScrolled(scrollTop > 60);
         let current = 'home';
         sections.forEach((section) => {
           const sectionTop = section.offsetTop - windowHeight * 0.4;
@@ -72,9 +74,9 @@ const Hero = () => {
 
   return (
     <>
-      <nav className={'navbar' + (menuOpen ? ' menu-open' : '')} ref={navRef}>
+      <nav className={'navbar' + (scrolled ? ' scrolled' : '') + (menuOpen ? ' menu-open' : '')} ref={navRef}>
         <a href="#" className="nav-logo" onClick={function(e) { handleClick(e, 'home'); }}>
-          <img src="/logo.png" alt="Baumgertner" className="nav-logo-img" />
+          <span className="nav-logo-text">BAUMGERTNER</span>
         </a>
         <button className="hamburger" onClick={function() { setMenuOpen(!menuOpen); }} aria-label={menuOpen ? 'Close menu' : 'Open menu'} aria-expanded={menuOpen}>
           <span className={'hamburger-line' + (menuOpen ? ' open' : '')}></span>
@@ -99,7 +101,6 @@ const Hero = () => {
           </a>
         </div>
         <div className="lang-toggle" onClick={toggleLang}>
-          <span className="lang-flag-btn">{lang === 'en' ? '🇫🇮' : '🇺🇸'}</span>
           <span>{lang === 'en' ? 'FI' : 'EN'}</span>
         </div>
       </nav>
