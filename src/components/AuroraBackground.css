@@ -17,7 +17,7 @@
 .bg-orb-1 {
   width: 950px;
   height: 950px;
-  background: radial-gradient(circle, rgba(0, 255, 136, 0.35) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(0, 255, 136, 0.18) 0%, transparent 70%);
   top: -320px;
   left: -200px;
   animation: orbFloat1 32s ease-in-out infinite;
@@ -26,7 +26,7 @@
 .bg-orb-2 {
   width: 680px;
   height: 680px;
-  background: radial-gradient(circle, rgba(0, 210, 110, 0.25) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(0, 210, 110, 0.13) 0%, transparent 70%);
   top: 20%;
   right: -200px;
   animation: orbFloat2 40s ease-in-out infinite;
@@ -35,7 +35,7 @@
 .bg-orb-3 {
   width: 620px;
   height: 620px;
-  background: radial-gradient(circle, rgba(0, 180, 90, 0.20) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(0, 180, 90, 0.10) 0%, transparent 70%);
   bottom: 5%;
   left: 25%;
   animation: orbFloat3 26s ease-in-out infinite;
@@ -80,21 +80,21 @@
   .bg-orb-1 {
     width: 420px;
     height: 420px;
-    background: radial-gradient(circle, rgba(0, 255, 136, 0.14) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(0, 255, 136, 0.07) 0%, transparent 70%);
     top: -120px;
     left: -100px;
   }
   .bg-orb-2 {
     width: 320px;
     height: 320px;
-    background: radial-gradient(circle, rgba(0, 210, 110, 0.10) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(0, 210, 110, 0.05) 0%, transparent 70%);
     top: 40%;
     right: -80px;
   }
   .bg-orb-3 {
     width: 300px;
     height: 300px;
-    background: radial-gradient(circle, rgba(0, 180, 90, 0.08) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(0, 180, 90, 0.04) 0%, transparent 70%);
     bottom: 10%;
     left: 15%;
   }
