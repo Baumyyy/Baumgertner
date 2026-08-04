@@ -168,6 +168,15 @@
 
 .footer-heart { color: #00ff88; display: inline; }
 
+.footer-privacy-link {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.25);
+}
+
+.footer-privacy-link:hover {
+  color: #00ff88;
+}
+
 .footer-status-dot.footer-status-busy {
   background: #ff6464;
   box-shadow: 0 0 10px rgba(255, 100, 100, 0.6);

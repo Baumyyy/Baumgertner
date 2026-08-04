@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import './Testimonials.css';
 import { api } from '../api';
 import { useLang } from '../LanguageContext';
@@ -253,6 +254,9 @@ var Testimonials = function() {
                   <label>{t.testimonials_form_rating || 'Rating'}</label>
                   <div className="rating-select">{renderRatingSelect()}</div>
                 </div>
+                <p className="tform-privacy-notice">
+                  {t.privacy_notice_pre} <Link to="/privacy">{t.privacy_link_inline}</Link>{t.privacy_notice_post}
+                </p>
                 <button type="submit" className="tform-submit" disabled={sending || uploading}>
                   {sending ? (t.testimonials_sending || 'Sending...') : (t.testimonials_submit || 'Submit Testimonial')}
                 </button>

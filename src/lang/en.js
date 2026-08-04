@@ -86,6 +86,9 @@ testimonials_leave: 'Leave a Testimonial',
   contact_error_required: 'Please fill in all fields.',
   contact_error_email: 'Please enter a valid email address.',
   contact_error_send: 'Failed to send message. Please try again.',
+  privacy_notice_pre: 'Your data will be processed as described in our',
+  privacy_notice_post: '.',
+  privacy_link_inline: 'Privacy Policy',
 
   // Footer
   footer_tagline: 'Building digital experiences with passion and precision',
@@ -98,6 +101,7 @@ testimonials_leave: 'Leave a Testimonial',
   footer_busy_desc: 'Not taking new projects at the moment',
   footer_credit: 'Designed and built with',
   footer_credit2: 'in Finland',
+  footer_privacy: 'Privacy Policy',
 
   // Slider
   slider_label: 'My Stack',

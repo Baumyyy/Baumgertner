@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import './Contact.css';
 import { useScrollAnimation } from '../hooks/useScrollAnimation';
 import { api } from '../api';
@@ -172,6 +173,10 @@ var Contact = function() {
               {formError === 'required' && <p className="field-error-msg">{t.contact_error_required}</p>}
               {formError === 'email' && <p className="field-error-msg">{t.contact_error_email}</p>}
               {formError === 'send' && <p className="field-error-msg">{t.contact_error_send}</p>}
+
+              <p className="form-privacy-notice">
+                {t.privacy_notice_pre} <Link to="/privacy">{t.privacy_link_inline}</Link>{t.privacy_notice_post}
+              </p>
 
               <button type="submit" className={'form-send' + (sent ? ' send-success' : '')} disabled={sending}>
                 <span className="send-text">{sending ? t.contact_sending : sent ? t.contact_sent : t.contact_send}</span>

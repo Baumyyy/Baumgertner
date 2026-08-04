@@ -1,0 +1,84 @@
+.privacy-page {
+  min-height: 100vh;
+  background: #050a14;
+  padding: 4rem 1.5rem 6rem;
+  display: flex;
+  justify-content: center;
+}
+
+.privacy-content {
+  width: 100%;
+  max-width: 720px;
+}
+
+.privacy-back {
+  display: inline-block;
+  color: rgba(0, 255, 136, 0.7);
+  text-decoration: none;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  margin-bottom: 2.5rem;
+  transition: color 0.2s ease;
+}
+
+.privacy-back:hover {
+  color: #00ff88;
+}
+
+.privacy-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2.5rem, 7vw, 4rem);
+  letter-spacing: 0.04em;
+  background: linear-gradient(135deg, #ffffff 30%, #00ff88 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0 0 0.5rem;
+}
+
+.privacy-updated {
+  color: rgba(255, 255, 255, 0.35);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  margin: 0 0 2rem;
+}
+
+.privacy-intro {
+  color: rgba(255, 255, 255, 0.6);
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  line-height: 1.7;
+  margin: 0 0 3rem;
+}
+
+.privacy-section {
+  margin-bottom: 2.2rem;
+  padding-bottom: 2.2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.privacy-section:last-child {
+  border-bottom: none;
+}
+
+.privacy-heading {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.4rem;
+  letter-spacing: 0.05em;
+  color: #00ff88;
+  margin: 0 0 1rem;
+}
+
+.privacy-paragraph {
+  color: rgba(255, 255, 255, 0.55);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  margin: 0 0 0.9rem;
+}
+
+.privacy-paragraph:last-child {
+  margin-bottom: 0;
+}

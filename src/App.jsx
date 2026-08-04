@@ -16,6 +16,7 @@ const Contact      = lazy(() => import('./components/Contact'));
 const Footer       = lazy(() => import('./components/Footer'));
 const Admin        = lazy(() => import('./components/Admin'));
 const NotFound     = lazy(() => import('./components/NotFound'));
+const PrivacyPolicy = lazy(() => import('./components/PrivacyPolicy'));
 
 function App() {
   var loadingState = useState(true);
@@ -40,6 +41,7 @@ function App() {
           <Suspense fallback={null}>
             <Routes>
               <Route path="/baumi-dashboard" element={<Admin />} />
+              <Route path="/privacy" element={<PrivacyPolicy />} />
               <Route path="/" element={
                 <AuroraBackground>
                   <Hero />

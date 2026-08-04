@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import './Footer.css';
 import { useScrollAnimation } from '../hooks/useScrollAnimation';
 import { api } from '../api';
@@ -95,6 +96,7 @@ var Footer = function() {
             <span className="footer-heart"> &#9829; </span>
             {t.footer_credit2}
           </p>
+          <Link to="/privacy" className="footer-link footer-privacy-link">{t.footer_privacy}</Link>
         </div>
       </div>
     </footer>

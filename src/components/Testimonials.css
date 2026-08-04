@@ -246,6 +246,23 @@
 .rating-star.rating-active { color: #00ff88; filter: drop-shadow(0 0 4px rgba(0, 255, 136, 0.3)); }
 .rating-star:hover { transform: scale(1.2); }
 
+.tform-privacy-notice {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.3);
+  font-family: 'Inter', sans-serif;
+  line-height: 1.5;
+  margin: -0.4rem 0 0 0;
+}
+
+.tform-privacy-notice a {
+  color: rgba(0, 255, 136, 0.6);
+  text-decoration: underline;
+}
+
+.tform-privacy-notice a:hover {
+  color: #00ff88;
+}
+
 .tform-submit {
   padding: 0.85rem;
   background: rgba(0, 255, 136, 0.08);

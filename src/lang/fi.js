@@ -87,6 +87,9 @@ var fi = {
   contact_error_required: 'Täytä kaikki kentät.',
   contact_error_email: 'Syötä kelvollinen sähköpostiosoite.',
   contact_error_send: 'Viestin lähetys epäonnistui. Yritä uudelleen.',
+  privacy_notice_pre: 'Tietosi käsitellään',
+  privacy_notice_post: ' mukaisesti.',
+  privacy_link_inline: 'tietosuojaselosteen',
 
   // Footer
   footer_tagline: 'Rakennan digitaalisia kokemuksia intohimolla ja tarkkuudella',
@@ -99,6 +102,7 @@ var fi = {
   footer_busy_desc: 'En ota uusia projekteja tällä hetkellä',
   footer_credit: 'Suunniteltu ja rakennettu',
   footer_credit2: 'Suomessa',
+  footer_privacy: 'Tietosuojaseloste',
 
   // Slider
   slider_label: 'Teknologiani',

@@ -7,6 +7,7 @@ var session = require('express-session');
 var multer = require('multer');
 var path = require('path');
 var fs = require('fs');
+var crypto = require('crypto');
 var pool = require('./db');
 var sharp = require('sharp');
 var { Resend } = require('resend');
@@ -198,9 +199,17 @@ app.get('/api/auth/logout', function(req, res) {
 });
 
 // ===== JWT LOGIN (backup) =====
+var timingSafeStringEqual = function(a, b) {
+  var bufA = crypto.createHash('sha256').update(String(a == null ? '' : a)).digest();
+  var bufB = crypto.createHash('sha256').update(String(b == null ? '' : b)).digest();
+  return crypto.timingSafeEqual(bufA, bufB);
+};
+
 app.post('/api/login', authLimiter, function(req, res) {
   var { username, password } = req.body;
-  if (username === process.env.ADMIN_USERNAME && password === process.env.ADMIN_PASSWORD) {
+  var validUser = timingSafeStringEqual(username, process.env.ADMIN_USERNAME);
+  var validPass = timingSafeStringEqual(password, process.env.ADMIN_PASSWORD);
+  if (validUser && validPass) {
     var token = jwt.sign({ user: 'admin' }, process.env.JWT_SECRET, { expiresIn: '24h' });
     res.json({ token: token });
   } else {
