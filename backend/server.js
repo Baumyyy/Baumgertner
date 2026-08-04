@@ -34,9 +34,29 @@ var storage = multer.diskStorage({
   }
 });
 
-var upload = multer({ storage: storage, limits: { fileSize: 5 * 1024 * 1024 } });
+var ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+
+var upload = multer({
+  storage: storage,
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: function(req, file, cb) {
+    if (ALLOWED_IMAGE_TYPES.indexOf(file.mimetype) === -1) {
+      return cb(new Error('Only image files are allowed'));
+    }
+    cb(null, true);
+  }
+});
 
 // Email helper
+var escapeHtml = function(str) {
+  return String(str == null ? '' : str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+};
+
 var sendNotification = async function(subject, html) {
   if (!process.env.RESEND_API_KEY || !process.env.NOTIFICATION_EMAIL) return;
   try {
@@ -57,7 +77,16 @@ var helmet = require('helmet');
 var rateLimit = require('express-rate-limit');
 
 app.use(helmet({
-  contentSecurityPolicy: false,
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ["'self'", 'data:'],
+      objectSrc: ["'none'"],
+      frameAncestors: ["'self'"]
+    }
+  },
   crossOriginEmbedderPolicy: false
 }));
 
@@ -90,10 +119,15 @@ app.use('/api', apiLimiter);
 
 // Session
 app.use(session({
-  secret: process.env.JWT_SECRET,
+  secret: process.env.SESSION_SECRET || process.env.JWT_SECRET,
   resave: false,
   saveUninitialized: false,
-  cookie: { maxAge: 24 * 60 * 60 * 1000 }
+  cookie: {
+    maxAge: 24 * 60 * 60 * 1000,
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax'
+  }
 }));
 
 // Passport
@@ -280,12 +314,12 @@ app.post('/api/messages', messageLimiter, async function(req, res) {
     );
 
     sendNotification(
-      'New message from ' + name,
+      'New message from ' + escapeHtml(name),
       '<h3>New Contact Message</h3>' +
-      '<p><strong>From:</strong> ' + name + '</p>' +
-      '<p><strong>Email:</strong> ' + email + '</p>' +
+      '<p><strong>From:</strong> ' + escapeHtml(name) + '</p>' +
+      '<p><strong>Email:</strong> ' + escapeHtml(email) + '</p>' +
       '<p><strong>Message:</strong></p>' +
-      '<p>' + message + '</p>'
+      '<p>' + escapeHtml(message) + '</p>'
     );
 
     res.json(result.rows[0]);
@@ -347,14 +381,14 @@ app.post('/api/testimonials/submit', messageLimiter, async function(req, res) {
     );
 
     sendNotification(
-      'New testimonial from ' + name,
+      'New testimonial from ' + escapeHtml(name),
       '<h3>New Testimonial</h3>' +
-      '<p><strong>From:</strong> ' + name + '</p>' +
-      '<p><strong>Role:</strong> ' + (role || 'N/A') + '</p>' +
-      '<p><strong>Company:</strong> ' + (company || 'N/A') + '</p>' +
-      '<p><strong>Rating:</strong> ' + (rating || 5) + '/5</p>' +
+      '<p><strong>From:</strong> ' + escapeHtml(name) + '</p>' +
+      '<p><strong>Role:</strong> ' + escapeHtml(role || 'N/A') + '</p>' +
+      '<p><strong>Company:</strong> ' + escapeHtml(company || 'N/A') + '</p>' +
+      '<p><strong>Rating:</strong> ' + escapeHtml(rating || 5) + '/5</p>' +
       '<p><strong>Message:</strong></p>' +
-      '<p>' + message + '</p>'
+      '<p>' + escapeHtml(message) + '</p>'
     );
 
     res.json({ success: true, message: 'Thank you! Your testimonial will be reviewed.' });
@@ -418,11 +452,11 @@ app.post('/api/upload-public', messageLimiter, upload.single('image'), async fun
       .resize(200, 200, { fit: 'cover' })
       .webp({ quality: 75 })
       .toFile(outputPath);
-    fs.unlinkSync(req.file.path);
+    fs.unlink(req.file.path, function() {});
     res.json({ url: '/uploads/' + filename });
   } catch (err) {
-    var imageUrl = '/uploads/' + req.file.filename;
-    res.json({ url: imageUrl });
+    fs.unlink(req.file.path, function() {});
+    res.status(400).json({ error: 'Invalid image file' });
   }
 });
 
@@ -436,12 +470,11 @@ app.post('/api/upload', auth, upload.single('image'), async function(req, res) {
       .resize(1200, 800, { fit: 'inside', withoutEnlargement: true })
       .webp({ quality: 80 })
       .toFile(outputPath);
-    fs.unlinkSync(req.file.path);
-    var imageUrl = '/uploads/' + filename;
-    res.json({ url: imageUrl });
+    fs.unlink(req.file.path, function() {});
+    res.json({ url: '/uploads/' + filename });
   } catch (err) {
-    var imageUrl = '/uploads/' + req.file.filename;
-    res.json({ url: imageUrl });
+    fs.unlink(req.file.path, function() {});
+    res.status(400).json({ error: 'Invalid image file' });
   }
 });
 
@@ -530,6 +563,14 @@ app.get('/api/admin/pageviews', auth, async function(req, res) {
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
+});
+
+// ===== ERROR HANDLING (e.g. multer file-type/size rejections) =====
+app.use(function(err, req, res, next) {
+  if (err) {
+    return res.status(400).json({ error: err.message || 'Request error' });
+  }
+  next();
 });
 
 // ===== START =====
