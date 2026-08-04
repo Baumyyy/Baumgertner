@@ -125,8 +125,9 @@ var Contact = function() {
 
             <form className="contact-form" onSubmit={handleSubmit}>
               <div className={'form-field' + (focused === 'name' ? ' focused' : '') + (formData.name ? ' has-value' : '')}>
-                <label className="field-label">{t.contact_name}</label>
+                <label className="field-label" htmlFor="contact-name">{t.contact_name}</label>
                 <input
+                  id="contact-name"
                   type="text"
                   name="name"
                   className="field-input"
@@ -139,8 +140,9 @@ var Contact = function() {
               </div>
 
               <div className={'form-field' + (focused === 'email' ? ' focused' : '') + (formData.email ? ' has-value' : '')}>
-                <label className="field-label">{t.contact_email_field}</label>
+                <label className="field-label" htmlFor="contact-email">{t.contact_email_field}</label>
                 <input
+                  id="contact-email"
                   type="email"
                   name="email"
                   className="field-input"
@@ -153,8 +155,9 @@ var Contact = function() {
               </div>
 
               <div className={'form-field' + (focused === 'message' ? ' focused' : '') + (formData.message ? ' has-value' : '')}>
-                <label className="field-label">{t.contact_message}</label>
+                <label className="field-label" htmlFor="contact-message">{t.contact_message}</label>
                 <textarea
+                  id="contact-message"
                   name="message"
                   className="field-input field-textarea"
                   rows="4"

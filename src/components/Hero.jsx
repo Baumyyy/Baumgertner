@@ -9,7 +9,7 @@ const Hero = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { lang, t, toggleLang } = useLang();
-  const [avatar, setAvatar] = useState('/IMG_4680.jpg');
+  const [avatar, setAvatar] = useState('/avatar.jpg');
   const navRef = useRef(null);
 
   useEffect(() => {

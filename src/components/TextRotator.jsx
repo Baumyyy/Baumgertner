@@ -5,8 +5,7 @@ const TextRotator = () => {
   const roles = [
     'Student Software Engineer',
     'Project Manager',
-    'Beginner Frontend Developer',
-    
+    'Developer',
   ];
 
   const [currentIndex, setCurrentIndex] = useState(0);
