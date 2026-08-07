@@ -582,6 +582,17 @@ app.use(function(err, req, res, next) {
   next();
 });
 
+// ===== ANALYTICS RETENTION =====
+// Pageview logs are anonymous (no IP, no cookie) but are still purged after
+// 12 months to respect GDPR's storage limitation principle.
+var PAGEVIEW_RETENTION_INTERVAL = 24 * 60 * 60 * 1000;
+function cleanupOldPageviews() {
+  pool.query("DELETE FROM page_views WHERE created_at < NOW() - INTERVAL '12 months'")
+    .catch(function(err) { console.error('Pageview cleanup failed:', err.message); });
+}
+cleanupOldPageviews();
+setInterval(cleanupOldPageviews, PAGEVIEW_RETENTION_INTERVAL);
+
 // ===== START =====
 app.listen(PORT, function() {
   console.log('Portfolio API running on http://localhost:' + PORT);

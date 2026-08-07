@@ -42,7 +42,8 @@ var content = {
       {
         heading: 'Data retention',
         body: [
-          'Messages and testimonials are kept until deleted by the site owner. You can request deletion at any time (see contact details below).'
+          'Messages and testimonials are kept until deleted by the site owner. You can request deletion at any time (see contact details below).',
+          'Pageview analytics rows are automatically deleted after 12 months.'
         ]
       },
       {
@@ -98,7 +99,8 @@ var content = {
       {
         heading: 'Tietojen säilytys',
         body: [
-          'Viestit ja suosittelut säilytetään kunnes ylläpitäjä poistaa ne. Voit pyytää tietojesi poistoa milloin tahansa (yhteystiedot alla).'
+          'Viestit ja suosittelut säilytetään kunnes ylläpitäjä poistaa ne. Voit pyytää tietojesi poistoa milloin tahansa (yhteystiedot alla).',
+          'Sivukäyntitilastojen rivit poistetaan automaattisesti 12 kuukauden jälkeen.'
         ]
       },
       {
