@@ -3,7 +3,30 @@ import './Hero.css';
 import { api } from '../api';
 import { useLang } from '../LanguageContext';
 
-const Hero = () => {
+const prefersReducedMotion = () => typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+const useCountUp = (target, duration, delay, decimals, start) => {
+  const [value, setValue] = useState(() => (prefersReducedMotion() ? target : 0));
+
+  useEffect(() => {
+    if (!start || prefersReducedMotion()) return;
+    let raf;
+    let startTs;
+    const step = (timestamp) => {
+      if (!startTs) startTs = timestamp;
+      const progress = Math.min((timestamp - startTs) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setValue(Number((eased * target).toFixed(decimals)));
+      if (progress < 1) raf = requestAnimationFrame(step);
+    };
+    const timeout = setTimeout(() => { raf = requestAnimationFrame(step); }, delay);
+    return () => { clearTimeout(timeout); if (raf) cancelAnimationFrame(raf); };
+  }, [target, duration, delay, decimals, start]);
+
+  return value;
+};
+
+const Hero = ({ ready }) => {
   const [activeSection, setActiveSection] = useState('home');
   const [available, setAvailable] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -11,6 +34,8 @@ const Hero = () => {
   const { lang, t, toggleLang } = useLang();
   const [avatar, setAvatar] = useState('/avatar.jpg');
   const navRef = useRef(null);
+  const ageValue = useCountUp(22, 1400, 1800, 0, ready);
+  const expValue = useCountUp(1.5, 1400, 1800, 1, ready);
 
   useEffect(() => {
     const checkSections = () => {
@@ -106,15 +131,15 @@ const Hero = () => {
       </nav>
 
       <section id="home" className="hero">
-        <div className="hero-center">
+        <div className={'hero-center' + (ready ? ' hero-ready' : '')}>
           <div className="hero-welcome">{t.hero_welcome || 'Welcome to'}</div>
           <h1 className="hero-big-name">BAUMGERTNER</h1>
           <div className="hero-tagline">
-            <span>{t.hero_title1}</span>
-            <span className="tagline-dot"></span>
-            <span>{t.hero_title2}</span>
-            <span className="tagline-dot"></span>
-            <span>{t.hero_title3}</span>
+            <span className="tagline-word tw1">{t.hero_title1}</span>
+            <span className="tagline-dot d1"></span>
+            <span className="tagline-word tw2">{t.hero_title2}</span>
+            <span className="tagline-dot d2"></span>
+            <span className="tagline-word tw3">{t.hero_title3}</span>
           </div>
 
           <div className="hero-actions">
@@ -148,12 +173,12 @@ const Hero = () => {
 
           <div className="hero-stats-row">
             <div className="hero-stat">
-              <span className="hero-stat-value">22</span>
+              <span className="hero-stat-value">{ageValue}</span>
               <span className="hero-stat-label">{t.hero_age}</span>
             </div>
             <div className="hero-stat-divider"></div>
             <div className="hero-stat">
-              <span className="hero-stat-value">1.5+</span>
+              <span className="hero-stat-value">{expValue}+</span>
               <span className="hero-stat-label">{t.hero_exp}</span>
             </div>
             <div className="hero-stat-divider"></div>

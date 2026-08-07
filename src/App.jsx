@@ -44,7 +44,7 @@ function App() {
               <Route path="/privacy" element={<PrivacyPolicy />} />
               <Route path="/" element={
                 <AuroraBackground>
-                  <Hero />
+                  <Hero ready={!loading} />
                   <WhatIDo />
                   <LogoSlider />
                   <Projects />
