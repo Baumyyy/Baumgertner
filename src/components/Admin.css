@@ -274,13 +274,6 @@
   object-fit: cover;
 }
 
-.admin-logo {
-  font-size: 1.3rem;
-  color: #00ff88;
-  font-family: 'Bebas Neue', sans-serif;
-  letter-spacing: 0.1em;
-}
-
 .admin-tab {
   padding: 0.75rem 1.5rem;
   color: rgba(255, 255, 255, 0.4);
@@ -1177,13 +1170,6 @@
 .doi-val-yellow { color: rgba(255, 200, 50, 0.8); }
 .doi-val-blue { color: rgba(0, 150, 255, 0.8); }
 
-
-/*Logo*/
-.admin-logo-img {
-  height: 28px;
-  width: auto;
-  object-fit: contain;
-}
 
 /* Recent */
 .dash-recent { margin-top: 1.5rem; }

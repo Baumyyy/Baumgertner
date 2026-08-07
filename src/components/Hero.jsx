@@ -130,7 +130,10 @@ const Hero = () => {
           <div className="hero-badge-row">
             <div className="hero-mini-card">
               <div className="mini-card-photo">
-                <img src={avatar} alt="Anthony Baumgertner" loading="eager" />
+                <picture>
+                  {avatar === '/avatar.jpg' && <source srcSet="/avatar.webp" type="image/webp" />}
+                  <img src={avatar} alt="Anthony Baumgertner" loading="eager" />
+                </picture>
               </div>
               <div className="mini-card-info">
                 <span className="mini-card-name">Anthony Baumgertner</span>
