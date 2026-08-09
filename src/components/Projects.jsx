@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './Projects.css';
 import { useScrollAnimation } from '../hooks/useScrollAnimation';
 import { api } from '../api';
@@ -17,7 +17,11 @@ var Projects = function() {
   var errorState = useState(false);
   var loadError = errorState[0];
   var setLoadError = errorState[1];
+  var activeSlideState = useState(0);
+  var activeSlide = activeSlideState[0];
+  var setActiveSlide = activeSlideState[1];
   var sectionRef = useScrollAnimation();
+  var gridRef = useRef(null);
   var { t } = useLang();
 
   useEffect(function() {
@@ -29,6 +33,41 @@ var Projects = function() {
       setLoadError(true);
     });
   }, [setProjects, setLoading, setLoadError]);
+
+  useEffect(function() {
+    var grid = gridRef.current;
+    if (!grid || projects.length === 0) return;
+    var raf = null;
+    var handleScroll = function() {
+      if (raf) return;
+      raf = requestAnimationFrame(function() {
+        raf = null;
+        var cards = grid.children;
+        if (!cards.length) return;
+        var center = grid.scrollLeft + grid.clientWidth / 2;
+        var closest = 0;
+        var minDist = Infinity;
+        for (var i = 0; i < cards.length; i++) {
+          var cardCenter = cards[i].offsetLeft + cards[i].clientWidth / 2;
+          var dist = Math.abs(cardCenter - center);
+          if (dist < minDist) { minDist = dist; closest = i; }
+        }
+        setActiveSlide(closest);
+      });
+    };
+    grid.addEventListener('scroll', handleScroll, { passive: true });
+    return function() {
+      grid.removeEventListener('scroll', handleScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, [projects.length]);
+
+  var scrollToSlide = function(index) {
+    var grid = gridRef.current;
+    if (!grid || !grid.children[index]) return;
+    var card = grid.children[index];
+    grid.scrollTo({ left: card.offsetLeft - (grid.clientWidth - card.clientWidth) / 2, behavior: 'smooth' });
+  };
 
   var renderProject = function(project, index) {
     var isComingSoon = project.status === 'Coming Soon';
@@ -115,7 +154,7 @@ var Projects = function() {
           <p className="projects-subtitle">{t.projects_subtitle}</p>
         </div>
 
-        <div className="projects-grid fade-in stagger-2">
+        <div className="projects-grid fade-in stagger-2" ref={gridRef}>
           {loading ? (
             <p style={{color: 'rgba(255,255,255,0.3)', gridColumn: '1/-1', textAlign: 'center'}}>{t.projects_loading}</p>
           ) : loadError ? (
@@ -126,6 +165,24 @@ var Projects = function() {
             })
           )}
         </div>
+
+        {!loading && !loadError && projects.length > 1 && (
+          <div className="projects-slider-dots" role="tablist" aria-label="Projects">
+            {projects.map(function(project, index) {
+              return (
+                <button
+                  key={project.id || index}
+                  type="button"
+                  className={'slider-dot' + (index === activeSlide ? ' active' : '')}
+                  onClick={function() { scrollToSlide(index); }}
+                  aria-label={'Go to project ' + (index + 1)}
+                  aria-selected={index === activeSlide}
+                  role="tab"
+                />
+              );
+            })}
+          </div>
+        )}
 
         <div className="projects-cta fade-in stagger-3">
           <div
