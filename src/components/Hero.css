@@ -427,6 +427,11 @@
   white-space: nowrap;
 }
 
+.hero-stat-langs {
+  font-size: 1.1rem;
+  letter-spacing: 0.06em;
+}
+
 .hero-stat-label {
   display: block;
   font-size: 0.58rem;
@@ -718,4 +723,5 @@
 
   .hero-stats-row { gap: 0; }
   .hero-stat-value { font-size: 1.6rem; }
+  .hero-stat-langs { font-size: 0.85rem; letter-spacing: 0.03em; }
 }

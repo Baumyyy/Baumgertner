@@ -183,7 +183,7 @@ const Hero = ({ ready }) => {
             </div>
             <div className="hero-stat-divider"></div>
             <div className="hero-stat">
-              <span className="hero-stat-value">🇫🇮 🇺🇸 🇷🇺</span>
+              <span className="hero-stat-value hero-stat-langs">FI · EN · RU</span>
               <span className="hero-stat-label">{t.hero_langs}</span>
             </div>
           </div>
