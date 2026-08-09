@@ -73,12 +73,6 @@ body {
 }
 
 
-@media (max-width: 480px) {
-  .aurora-container {
-    zoom: 0.88;
-  }
-}
-
 /* ===== FOCUS STYLES ===== */
 :focus-visible {
   outline: 2px solid rgba(0, 255, 136, 0.7);

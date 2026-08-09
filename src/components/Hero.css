@@ -6,6 +6,7 @@
   right: 0;
   z-index: 1000;
   padding: 1.1rem 4rem;
+  padding-top: calc(1.1rem + env(safe-area-inset-top));
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -18,6 +19,7 @@
 
 .navbar.scrolled {
   padding: 0.65rem 4rem;
+  padding-top: calc(0.65rem + env(safe-area-inset-top));
   background: rgba(0, 0, 0, 0.82);
   backdrop-filter: blur(32px);
   -webkit-backdrop-filter: blur(32px);
@@ -638,8 +640,8 @@
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 968px) {
-  .navbar { padding: 1rem 2rem; }
-  .navbar.scrolled { padding: 0.6rem 2rem; }
+  .navbar { padding: 1rem 2rem; padding-top: calc(1rem + env(safe-area-inset-top)); }
+  .navbar.scrolled { padding: 0.6rem 2rem; padding-top: calc(0.6rem + env(safe-area-inset-top)); }
   .hero-big-name { font-size: clamp(3rem, 10vw, 6rem); }
   .hero { padding: 5.5rem 2rem 3rem 2rem; }
 }
@@ -649,12 +651,13 @@
 
   .navbar {
     padding: 1rem 1.2rem;
+    padding-top: calc(1rem + env(safe-area-inset-top));
     z-index: 9998;
     opacity: 1 !important;
     animation: none !important;
   }
 
-  .navbar.scrolled { padding: 0.6rem 1.2rem; }
+  .navbar.scrolled { padding: 0.6rem 1.2rem; padding-top: calc(0.6rem + env(safe-area-inset-top)); }
 
   .hamburger { display: flex; order: 3; }
 
