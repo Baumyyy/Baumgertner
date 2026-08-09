@@ -99,8 +99,6 @@ testimonials_leave: 'Leave a Testimonial',
   footer_busy: 'Currently busy',
   footer_available_desc: 'Open to freelance, collaboration and full-time opportunities',
   footer_busy_desc: 'Not taking new projects at the moment',
-  footer_credit: 'Designed and built with',
-  footer_credit2: 'in Finland',
   footer_privacy: 'Privacy Policy',
 
   // Slider

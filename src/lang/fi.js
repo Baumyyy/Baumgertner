@@ -28,7 +28,7 @@ var fi = {
   whatido_title2: 'Taidot',
   whatido_subtitle: 'Yhdistelmä teknistä osaamista, johtajuutta ja halua kehittyä jatkuvasti.',
   whatido_s1_title: 'Kehittäjä',
-  whatido_s1_desc: 'Rakennan verkkosovelluksia ideasta valmiiksi tuotteeksi. Painotan siistiä, hyvin rakennettua koodia ja kehityn hieman lisää jokaisen projektin myötä.',
+  whatido_s1_desc: 'Rakennan verkkosovelluksia ideasta valmiiksi tuotteeksi. Painotan siistiä, hyvin rakennettua koodia ja kehityn jokaisen projektin myötä.',
   whatido_s2_title: 'Projektinhallinta',
   whatido_s2_desc: 'Vahva kokemus tiimien johtamisesta, työnkulkujen organisoinnista ja projektien viemisestä ideasta valmiiksi. Osaamisalueina ketterät menetelmät ja sidosryhmäviestintä.',
   whatido_s3_title: 'Jatkuva oppiminen',
@@ -100,8 +100,6 @@ var fi = {
   footer_busy: 'Kiireinen tällä hetkellä',
   footer_available_desc: 'Avoin freelance-, yhteistyö- ja kokoaikaisille mahdollisuuksille',
   footer_busy_desc: 'En ota uusia projekteja tällä hetkellä',
-  footer_credit: 'Suunniteltu ja rakennettu',
-  footer_credit2: 'Suomessa',
   footer_privacy: 'Tietosuojaseloste',
 
   // Slider

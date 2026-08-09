@@ -164,9 +164,34 @@
   font-size: 0.75rem;
   color: rgba(255, 255, 255, 0.2);
   font-family: 'Inter', sans-serif;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
 }
 
-.footer-heart { color: #00ff88; display: inline; }
+.footer-heart {
+  color: #00ff88;
+  font-size: 0.85em;
+}
+
+.footer-signature {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  font-weight: 600;
+  background-image: linear-gradient(135deg, #ffffff 20%, #00ff88 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  transition: filter 0.25s ease;
+}
+
+.footer-signature:hover {
+  filter: brightness(1.3) drop-shadow(0 0 6px rgba(0, 255, 136, 0.5));
+}
 
 .footer-privacy-link {
   font-size: 0.75rem;

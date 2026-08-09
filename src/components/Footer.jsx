@@ -92,9 +92,11 @@ var Footer = function() {
 
         <div className="footer-bottom fade-in stagger-2">
           <p className="footer-copyright">&copy; {currentYear} Anthony Baumgertner</p>
-          <p className="footer-credit">{t.footer_credit}
-            <span className="footer-heart"> &#9829; </span>
-            {t.footer_credit2}
+          <p className="footer-credit">
+            Built with
+            <i className="fas fa-heart footer-heart" aria-hidden="true"></i>
+            by
+            <button className="footer-signature" onClick={function() { scrollTo('home'); }}>&lt;Baumgertner/&gt;</button>
           </p>
           <Link to="/privacy" className="footer-link footer-privacy-link">{t.footer_privacy}</Link>
         </div>
