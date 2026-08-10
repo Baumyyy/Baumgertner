@@ -35,6 +35,8 @@ const AuroraBackground = ({ children }) => {
       y:  Math.random() * window.innerHeight,
       vx: (Math.random() - 0.5) * 0.1,
       vy: (Math.random() - 0.5) * 0.1,
+      driftVx: (Math.random() - 0.5) * 0.35,
+      driftVy: (Math.random() - 0.5) * 0.35,
       r:  0.8 + Math.random() * 1.4,
     }));
 
@@ -54,8 +56,8 @@ const AuroraBackground = ({ children }) => {
 
         p.vx *= 0.992;
         p.vy *= 0.992;
-        p.x  += p.vx;
-        p.y  += p.vy;
+        p.x  += p.vx + p.driftVx;
+        p.y  += p.vy + p.driftVy;
 
         if (p.x < 0) p.x = canvas.width;
         if (p.x > canvas.width)  p.x = 0;

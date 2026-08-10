@@ -34,6 +34,7 @@ const Hero = ({ ready }) => {
   const { lang, t, toggleLang } = useLang();
   const [avatar, setAvatar] = useState('/avatar.jpg');
   const navRef = useRef(null);
+  const progressBarRef = useRef(null);
   const ageValue = useCountUp(22, 1400, 1800, 0, ready);
   const expValue = useCountUp(1.5, 1400, 1800, 1, ready);
 
@@ -61,6 +62,22 @@ const Hero = ({ ready }) => {
     };
     const timeout = setTimeout(checkSections, 100);
     return () => clearTimeout(timeout);
+  }, []);
+
+  useEffect(() => {
+    const container = document.querySelector('.aurora-container');
+    if (!container) return;
+    let rafId;
+    const updateProgressBar = () => {
+      const scrollable = container.scrollHeight - container.clientHeight;
+      const progress = scrollable > 0 ? Math.min(1, container.scrollTop / scrollable) : 0;
+      if (progressBarRef.current) {
+        progressBarRef.current.style.transform = 'scaleX(' + progress + ')';
+      }
+      rafId = requestAnimationFrame(updateProgressBar);
+    };
+    rafId = requestAnimationFrame(updateProgressBar);
+    return () => cancelAnimationFrame(rafId);
   }, []);
 
   useEffect(() => {
@@ -100,6 +117,7 @@ const Hero = ({ ready }) => {
   return (
     <>
       <nav className={'navbar' + (scrolled ? ' scrolled' : '') + (menuOpen ? ' menu-open' : '')} ref={navRef}>
+        <div className="nav-progress-bar" ref={progressBarRef}></div>
         <a href="#" className="nav-logo" onClick={function(e) { handleClick(e, 'home'); }}>
           <span className="nav-logo-text">&lt;Baumgertner/&gt;</span>
         </a>
