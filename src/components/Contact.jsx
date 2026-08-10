@@ -9,7 +9,7 @@ var Contact = function() {
   var focusedState = useState('');
   var focused = focusedState[0];
   var setFocused = focusedState[1];
-  var formDataState = useState({ name: '', email: '', message: '' });
+  var formDataState = useState({ name: '', email: '', message: '', website: '' });
   var formData = formDataState[0];
   var setFormData = formDataState[1];
   var sendingState = useState(false);
@@ -48,7 +48,7 @@ var Contact = function() {
     api.sendMessage(formData).then(function() {
       setSending(false);
       setSent(true);
-      setFormData({ name: '', email: '', message: '' });
+      setFormData({ name: '', email: '', message: '', website: '' });
       setTimeout(function() { setSent(false); }, 4000);
     }).catch(function() {
       setSending(false);
@@ -125,6 +125,19 @@ var Contact = function() {
             </div>
 
             <form className="contact-form" onSubmit={handleSubmit}>
+              <div className="honeypot-field" aria-hidden="true">
+                <label htmlFor="contact-website">Website</label>
+                <input
+                  id="contact-website"
+                  type="text"
+                  name="website"
+                  tabIndex="-1"
+                  autoComplete="off"
+                  value={formData.website}
+                  onChange={handleChange}
+                />
+              </div>
+
               <div className={'form-field' + (focused === 'name' ? ' focused' : '') + (formData.name ? ' has-value' : '')}>
                 <label className="field-label" htmlFor="contact-name">{t.contact_name}</label>
                 <input

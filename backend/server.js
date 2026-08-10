@@ -8,6 +8,7 @@ var multer = require('multer');
 var path = require('path');
 var fs = require('fs');
 var crypto = require('crypto');
+var bcrypt = require('bcryptjs');
 var pool = require('./db');
 var sharp = require('sharp');
 var { Resend } = require('resend');
@@ -47,6 +48,12 @@ var upload = multer({
     cb(null, true);
   }
 });
+
+// Input validation helpers
+var EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+var isValidLength = function(str, max) {
+  return typeof str === 'string' && str.length > 0 && str.length <= max;
+};
 
 // Email helper
 var escapeHtml = function(str) {
@@ -205,10 +212,13 @@ var timingSafeStringEqual = function(a, b) {
   return crypto.timingSafeEqual(bufA, bufB);
 };
 
-app.post('/api/login', authLimiter, function(req, res) {
+app.post('/api/login', authLimiter, async function(req, res) {
   var { username, password } = req.body;
   var validUser = timingSafeStringEqual(username, process.env.ADMIN_USERNAME);
-  var validPass = timingSafeStringEqual(password, process.env.ADMIN_PASSWORD);
+  var validPass = false;
+  if (process.env.ADMIN_PASSWORD_HASH && password) {
+    validPass = await bcrypt.compare(password, process.env.ADMIN_PASSWORD_HASH);
+  }
   if (validUser && validPass) {
     var token = jwt.sign({ user: 'admin' }, process.env.JWT_SECRET, { expiresIn: '24h' });
     res.json({ token: token });
@@ -313,9 +323,18 @@ app.delete('/api/projects/:id', auth, async function(req, res) {
 // ===== MESSAGES (public: send) =====
 app.post('/api/messages', messageLimiter, async function(req, res) {
   try {
-    var { name, email, message } = req.body;
+    var { name, email, message, website } = req.body;
+    if (website) {
+      return res.json({ id: 0, name: name, email: email, message: message });
+    }
     if (!name || !email || !message) {
       return res.status(400).json({ error: 'Name, email and message are required' });
+    }
+    if (!isValidLength(name, 100) || !isValidLength(email, 254) || !isValidLength(message, 5000)) {
+      return res.status(400).json({ error: 'One or more fields exceed the maximum length' });
+    }
+    if (!EMAIL_REGEX.test(email)) {
+      return res.status(400).json({ error: 'Please enter a valid email address' });
     }
     var result = await pool.query(
       'INSERT INTO messages (name, email, message) VALUES ($1,$2,$3) RETURNING *',
@@ -380,13 +399,25 @@ app.get('/api/testimonials', async function(req, res) {
 
 app.post('/api/testimonials/submit', messageLimiter, async function(req, res) {
   try {
-    var { name, role, company, message, rating, avatar } = req.body;
+    var { name, role, company, message, rating, avatar, website } = req.body;
+    if (website) {
+      return res.json({ success: true, message: 'Thank you! Your testimonial will be reviewed.' });
+    }
     if (!name || !message) {
       return res.status(400).json({ error: 'Name and message are required' });
     }
+    if (!isValidLength(name, 100) || !isValidLength(message, 2000) ||
+        (role && !isValidLength(role, 100)) || (company && !isValidLength(company, 100)) ||
+        (avatar && !isValidLength(avatar, 500))) {
+      return res.status(400).json({ error: 'One or more fields exceed the maximum length' });
+    }
+    var ratingNum = rating === undefined ? 5 : parseInt(rating, 10);
+    if (isNaN(ratingNum) || ratingNum < 1 || ratingNum > 5) {
+      return res.status(400).json({ error: 'Rating must be between 1 and 5' });
+    }
     var result = await pool.query(
       'INSERT INTO testimonials (name, role, company, message, rating, avatar, visible, sort_order) VALUES ($1,$2,$3,$4,$5,$6,false,0) RETURNING *',
-      [name, role || '', company || '', message, rating || 5, avatar || null]
+      [name, role || '', company || '', message, ratingNum, avatar || null]
     );
 
     sendNotification(
@@ -395,7 +426,7 @@ app.post('/api/testimonials/submit', messageLimiter, async function(req, res) {
       '<p><strong>From:</strong> ' + escapeHtml(name) + '</p>' +
       '<p><strong>Role:</strong> ' + escapeHtml(role || 'N/A') + '</p>' +
       '<p><strong>Company:</strong> ' + escapeHtml(company || 'N/A') + '</p>' +
-      '<p><strong>Rating:</strong> ' + escapeHtml(rating || 5) + '/5</p>' +
+      '<p><strong>Rating:</strong> ' + ratingNum + '/5</p>' +
       '<p><strong>Message:</strong></p>' +
       '<p>' + escapeHtml(message) + '</p>'
     );

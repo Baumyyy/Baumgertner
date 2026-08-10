@@ -15,7 +15,7 @@ var Testimonials = function() {
   var showFormState = useState(false);
   var showForm = showFormState[0];
   var setShowForm = showFormState[1];
-  var formState = useState({ name: '', role: '', company: '', message: '', rating: 5, avatar: '' });
+  var formState = useState({ name: '', role: '', company: '', message: '', rating: 5, avatar: '', website: '' });
   var form = formState[0];
   var setForm = formState[1];
   var submittedState = useState(false);
@@ -103,7 +103,7 @@ var Testimonials = function() {
     }).then(function(r) { return r.json(); }).then(function() {
       setSending(false);
       setSubmitted(true);
-      setForm({ name: '', role: '', company: '', message: '', rating: 5, avatar: '' });
+      setForm({ name: '', role: '', company: '', message: '', rating: 5, avatar: '', website: '' });
       setTimeout(function() { setSubmitted(false); setShowForm(false); }, 3000);
     }).catch(function() { setSending(false); });
   };
@@ -232,6 +232,17 @@ var Testimonials = function() {
               </div>
             ) : (
               <form className="testimonial-form" onSubmit={handleSubmit}>
+                <div className="honeypot-field" aria-hidden="true">
+                  <label htmlFor="testimonial-website">Website</label>
+                  <input
+                    id="testimonial-website"
+                    type="text"
+                    tabIndex="-1"
+                    autoComplete="off"
+                    value={form.website}
+                    onChange={function(e) { setForm(Object.assign({}, form, { website: e.target.value })); }}
+                  />
+                </div>
                 <div className="tform-field">
                   <label>{t.testimonials_form_name || 'Name'} *</label>
                   <input type="text" value={form.name} onChange={function(e) { setForm(Object.assign({}, form, { name: e.target.value })); }} required />
