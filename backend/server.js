@@ -84,6 +84,8 @@ var sendNotification = async function(subject, html) {
 var helmet = require('helmet');
 var rateLimit = require('express-rate-limit');
 
+app.disable('x-powered-by');
+
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
@@ -97,6 +99,11 @@ app.use(helmet({
   },
   crossOriginEmbedderPolicy: false
 }));
+
+app.use(function(req, res, next) {
+  res.setHeader('Permissions-Policy', 'geolocation=(), camera=(), microphone=(), payment=(), usb=(), interest-cohort=()');
+  next();
+});
 
 var apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -114,6 +121,12 @@ var messageLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,
   max: 5,
   message: { error: 'Too many messages, try again later' }
+});
+
+var pageviewLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 30,
+  message: { error: 'Too many requests, try again later' }
 });
 
 // Middleware
@@ -233,7 +246,8 @@ app.get('/api/profile', async function(req, res) {
     var result = await pool.query('SELECT * FROM profile LIMIT 1');
     res.json(result.rows[0] || {});
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ error: 'Something went wrong. Please try again later.' });
   }
 });
 
@@ -247,7 +261,8 @@ app.put('/api/profile', auth, async function(req, res) {
     );
     res.json(result.rows[0]);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ error: 'Something went wrong. Please try again later.' });
   }
 });
 
@@ -257,7 +272,8 @@ app.get('/api/availability', async function(req, res) {
     var result = await pool.query('SELECT available FROM profile LIMIT 1');
     res.json(result.rows[0] || { available: true });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ error: 'Something went wrong. Please try again later.' });
   }
 });
 
@@ -270,7 +286,8 @@ app.put('/api/availability', auth, async function(req, res) {
     );
     res.json(result.rows[0]);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ error: 'Something went wrong. Please try again later.' });
   }
 });
 
@@ -280,7 +297,8 @@ app.get('/api/projects', async function(req, res) {
     var result = await pool.query('SELECT * FROM projects ORDER BY sort_order ASC');
     res.json(result.rows);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ error: 'Something went wrong. Please try again later.' });
   }
 });
 
@@ -294,7 +312,8 @@ app.post('/api/projects', auth, async function(req, res) {
     );
     res.json(result.rows[0]);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ error: 'Something went wrong. Please try again later.' });
   }
 });
 
@@ -307,7 +326,8 @@ app.put('/api/projects/:id', auth, async function(req, res) {
     );
     res.json(result.rows[0]);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ error: 'Something went wrong. Please try again later.' });
   }
 });
 
@@ -316,7 +336,8 @@ app.delete('/api/projects/:id', auth, async function(req, res) {
     await pool.query('DELETE FROM projects WHERE id=$1', [req.params.id]);
     res.json({ deleted: true });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ error: 'Something went wrong. Please try again later.' });
   }
 });
 
@@ -352,7 +373,8 @@ app.post('/api/messages', messageLimiter, async function(req, res) {
 
     res.json(result.rows[0]);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ error: 'Something went wrong. Please try again later.' });
   }
 });
 
@@ -362,7 +384,8 @@ app.get('/api/messages', auth, async function(req, res) {
     var result = await pool.query('SELECT * FROM messages ORDER BY created_at DESC');
     res.json(result.rows);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ error: 'Something went wrong. Please try again later.' });
   }
 });
 
@@ -374,7 +397,8 @@ app.put('/api/messages/:id/read', auth, async function(req, res) {
     );
     res.json(result.rows[0]);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ error: 'Something went wrong. Please try again later.' });
   }
 });
 
@@ -383,7 +407,8 @@ app.delete('/api/messages/:id', auth, async function(req, res) {
     await pool.query('DELETE FROM messages WHERE id=$1', [req.params.id]);
     res.json({ deleted: true });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ error: 'Something went wrong. Please try again later.' });
   }
 });
 
@@ -393,7 +418,8 @@ app.get('/api/testimonials', async function(req, res) {
     var result = await pool.query('SELECT * FROM testimonials WHERE visible=true ORDER BY sort_order ASC');
     res.json(result.rows);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ error: 'Something went wrong. Please try again later.' });
   }
 });
 
@@ -433,7 +459,8 @@ app.post('/api/testimonials/submit', messageLimiter, async function(req, res) {
 
     res.json({ success: true, message: 'Thank you! Your testimonial will be reviewed.' });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ error: 'Something went wrong. Please try again later.' });
   }
 });
 
@@ -443,7 +470,8 @@ app.get('/api/admin/testimonials', auth, async function(req, res) {
     var result = await pool.query('SELECT * FROM testimonials ORDER BY sort_order ASC');
     res.json(result.rows);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ error: 'Something went wrong. Please try again later.' });
   }
 });
 
@@ -456,7 +484,8 @@ app.post('/api/testimonials', auth, async function(req, res) {
     );
     res.json(result.rows[0]);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ error: 'Something went wrong. Please try again later.' });
   }
 });
 
@@ -469,7 +498,8 @@ app.put('/api/testimonials/:id', auth, async function(req, res) {
     );
     res.json(result.rows[0]);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ error: 'Something went wrong. Please try again later.' });
   }
 });
 
@@ -478,7 +508,8 @@ app.delete('/api/testimonials/:id', auth, async function(req, res) {
     await pool.query('DELETE FROM testimonials WHERE id=$1', [req.params.id]);
     res.json({ deleted: true });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ error: 'Something went wrong. Please try again later.' });
   }
 });
 
@@ -536,7 +567,8 @@ app.get('/api/admin/stats', auth, async function(req, res) {
       available: profile.rows[0] ? profile.rows[0].available : true
     });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ error: 'Something went wrong. Please try again later.' });
   }
 });
 
@@ -554,12 +586,13 @@ app.get('/api/admin/analytics', auth, async function(req, res) {
       testimonialsByStatus: testimonialsByStatus.rows
     });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ error: 'Something went wrong. Please try again later.' });
   }
 });
 
 // ===== ANALYTICS =====
-app.post('/api/pageview', async function(req, res) {
+app.post('/api/pageview', pageviewLimiter, async function(req, res) {
   try {
     var { page } = req.body;
     var userAgent = req.headers['user-agent'] || '';
@@ -570,7 +603,8 @@ app.post('/api/pageview', async function(req, res) {
     );
     res.json({ ok: true });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ error: 'Something went wrong. Please try again later.' });
   }
 });
 
@@ -601,7 +635,8 @@ app.get('/api/admin/pageviews', auth, async function(req, res) {
       topPages: topPages.rows
     });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ error: 'Something went wrong. Please try again later.' });
   }
 });
 
