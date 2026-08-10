@@ -84,14 +84,17 @@
 
 .nav-logo-text {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.35rem;
-  letter-spacing: 0.06em;
-  color: rgba(255, 255, 255, 0.85);
-  transition: color 0.3s ease;
+  font-size: 1.5rem;
+  letter-spacing: 0.02em;
+  background: linear-gradient(135deg, #ffffff 20%, #00ff88 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  transition: filter 0.3s ease;
 }
 
 .nav-logo:hover .nav-logo-text {
-  color: #00ff88;
+  filter: brightness(1.3) drop-shadow(0 0 6px rgba(0, 255, 136, 0.5));
 }
 
 /* ===== HERO ===== */
@@ -139,9 +142,9 @@
 
 /* Big name */
 .hero-big-name {
-  font-size: clamp(3.5rem, 11vw, 8rem);
+  font-size: clamp(2.8rem, 9vw, 6.4rem);
   font-family: 'Bebas Neue', sans-serif;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
   line-height: 1;
   margin-bottom: 0.7rem;
   background: linear-gradient(135deg, #ffffff 30%, #00ff88 100%);
@@ -652,7 +655,7 @@
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
   }
-  .hero-big-name { font-size: clamp(3rem, 10vw, 6rem); }
+  .hero-big-name { font-size: clamp(2.6rem, 8.5vw, 4.8rem); }
   .hero { padding: 5.5rem 2rem 3rem 2rem; }
 }
 
@@ -668,6 +671,8 @@
   }
 
   .navbar.scrolled { padding: 0.6rem 1.2rem; padding-top: calc(0.6rem + env(safe-area-inset-top)); }
+
+  .nav-logo-text { font-size: 1.15rem; }
 
   .hamburger { display: flex; order: 3; }
 

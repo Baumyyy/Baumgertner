@@ -101,7 +101,7 @@ const Hero = ({ ready }) => {
     <>
       <nav className={'navbar' + (scrolled ? ' scrolled' : '') + (menuOpen ? ' menu-open' : '')} ref={navRef}>
         <a href="#" className="nav-logo" onClick={function(e) { handleClick(e, 'home'); }}>
-          <span className="nav-logo-text">BAUMGERTNER</span>
+          <span className="nav-logo-text">&lt;Baumgertner/&gt;</span>
         </a>
         <button className="hamburger" onClick={function() { setMenuOpen(!menuOpen); }} aria-label={menuOpen ? 'Close menu' : 'Open menu'} aria-expanded={menuOpen}>
           <span className={'hamburger-line' + (menuOpen ? ' open' : '')}></span>
@@ -133,7 +133,7 @@ const Hero = ({ ready }) => {
       <section id="home" className="hero">
         <div className={'hero-center' + (ready ? ' hero-ready' : '')}>
           <div className="hero-welcome">{t.hero_welcome || 'Welcome to'}</div>
-          <h1 className="hero-big-name">BAUMGERTNER</h1>
+          <h1 className="hero-big-name">&lt;Baumgertner/&gt;</h1>
           <div className="hero-tagline">
             <span className="tagline-word tw1">{t.hero_title1}</span>
             <span className="tagline-dot d1"></span>
