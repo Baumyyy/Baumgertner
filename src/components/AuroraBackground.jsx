@@ -89,6 +89,15 @@ const AuroraBackground = ({ children }) => {
       animationId = requestAnimationFrame(animate);
     };
 
+    const onVisibilityChange = () => {
+      if (document.hidden) {
+        cancelAnimationFrame(animationId);
+      } else {
+        animate();
+      }
+    };
+    document.addEventListener('visibilitychange', onVisibilityChange);
+
     animate();
 
     return () => {
@@ -96,6 +105,7 @@ const AuroraBackground = ({ children }) => {
       window.removeEventListener('resize',     resize);
       window.removeEventListener('mousemove',  onMouseMove);
       window.removeEventListener('mouseleave', onMouseLeave);
+      document.removeEventListener('visibilitychange', onVisibilityChange);
     };
   }, []);
 

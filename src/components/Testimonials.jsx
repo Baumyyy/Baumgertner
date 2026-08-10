@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
 import './Testimonials.css';
 import { api } from '../api';
@@ -54,6 +55,13 @@ var Testimonials = function() {
     touchStart.current = null;
     touchEnd.current = null;
   };
+
+  useEffect(function() {
+    var container = document.querySelector('.aurora-container');
+    if (!container) return;
+    if (showForm) container.classList.add('scroll-locked');
+    return function() { container.classList.remove('scroll-locked'); };
+  }, [showForm]);
 
   useEffect(function() {
     api.getTestimonials().then(function(data) {
@@ -209,7 +217,7 @@ var Testimonials = function() {
         </div>
       </div>
 
-      {showForm && (
+      {showForm && createPortal(
         <div className="testimonial-modal-overlay" onClick={function(e) { if (e.target === e.currentTarget) setShowForm(false); }}>
           <div className="testimonial-modal">
             <div className="modal-header">
@@ -263,7 +271,8 @@ var Testimonials = function() {
               </form>
             )}
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </section>
   );

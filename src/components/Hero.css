@@ -640,8 +640,18 @@
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 968px) {
-  .navbar { padding: 1rem 2rem; padding-top: calc(1rem + env(safe-area-inset-top)); }
-  .navbar.scrolled { padding: 0.6rem 2rem; padding-top: calc(0.6rem + env(safe-area-inset-top)); }
+  .navbar {
+    padding: 1rem 2rem;
+    padding-top: calc(1rem + env(safe-area-inset-top));
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+  .navbar.scrolled {
+    padding: 0.6rem 2rem;
+    padding-top: calc(0.6rem + env(safe-area-inset-top));
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
   .hero-big-name { font-size: clamp(3rem, 10vw, 6rem); }
   .hero { padding: 5.5rem 2rem 3rem 2rem; }
 }

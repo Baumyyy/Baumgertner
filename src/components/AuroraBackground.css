@@ -74,10 +74,17 @@
   height: 100dvh;
   overflow-y: auto;
   scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
+}
+
+.aurora-container.scroll-locked {
+  overflow: hidden;
+  touch-action: none;
 }
 
 @media (max-width: 768px) {
+  .bg-orb {
+    filter: blur(45px);
+  }
   .bg-orb-1 {
     width: 420px;
     height: 420px;
