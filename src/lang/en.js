@@ -72,6 +72,7 @@ testimonials_leave: 'Leave a Testimonial',
   contact_title2: 'something',
   contact_title3: 'great',
   contact_desc: 'Got a project or idea? Im always open to discussing new opportunities and collaborations.',
+  contact_response_time: 'Usually responds within 24 hours',
   contact_email: 'Email',
   contact_location: 'Location',
   contact_timezone: 'Timezone',
@@ -101,8 +102,6 @@ testimonials_leave: 'Leave a Testimonial',
   footer_busy_desc: 'Not taking new projects at the moment',
   footer_privacy: 'Privacy Policy',
 
-  // Slider
-  slider_label: 'My Stack',
 
   //Error 404
   notfound_text: 'The page you are looking for does not exist or has been moved.',

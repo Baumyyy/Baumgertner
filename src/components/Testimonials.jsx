@@ -260,7 +260,7 @@ var Testimonials = function() {
                 <div className="tform-field">
                   <label>{t.testimonials_form_photo || 'Profile Photo (optional)'}</label>
                   <div className="tform-photo-row">
-                    {form.avatar && <img src={form.avatar} alt="" className="tform-photo-preview" />}
+                    {form.avatar && <img src={form.avatar} alt="Profile photo preview" className="tform-photo-preview" />}
                     <input type="file" accept="image/*" className="file-input" onChange={handlePhotoUpload} />
                     {uploading && <span className="tform-uploading">Uploading...</span>}
                   </div>

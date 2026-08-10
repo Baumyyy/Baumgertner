@@ -75,6 +75,14 @@ var Contact = function() {
 
           <p className="contact-desc">{t.contact_desc}</p>
 
+          <div className="response-time-badge">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M12 6v6l4 2"/>
+            </svg>
+            <span>{t.contact_response_time}</span>
+          </div>
+
           <div className="info-cards">
             <div className="info-card">
               <div className="info-card-icon">

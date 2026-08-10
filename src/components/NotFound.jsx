@@ -1,8 +1,12 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { useLang } from '../LanguageContext';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 var NotFound = function() {
   var { t } = useLang();
+
+  usePageMeta('Page Not Found | Anthony Baumgertner', 'The page you are looking for does not exist or has been moved.');
 
   return (
     <div style={{
@@ -30,7 +34,7 @@ var NotFound = function() {
         fontSize: '1.1rem',
         maxWidth: '400px'
       }}>{t.notfound_text || 'The page you are looking for does not exist or has been moved.'}</p>
-      <a href="/" style={{
+      <Link to="/" style={{
         padding: '0.8rem 2rem',
         background: 'rgba(0,255,136,0.15)',
         border: '1px solid rgba(0,255,136,0.3)',
@@ -41,7 +45,7 @@ var NotFound = function() {
         letterSpacing: '0.1em',
         fontSize: '1rem',
         transition: 'all 0.3s ease'
-      }}>{t.notfound_home || 'Back to Home'}</a>
+      }}>{t.notfound_home || 'Back to Home'}</Link>
     </div>
   );
 };

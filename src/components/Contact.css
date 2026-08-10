@@ -73,9 +73,26 @@
   font-weight: 300;
   line-height: 1.7;
   max-width: 420px;
-  margin-bottom: 2.5rem;
+  margin-bottom: 1.2rem;
   opacity: 0;
   animation: fadeInUp 0.8s ease forwards 0.2s;
+}
+
+.response-time-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.9rem;
+  margin-bottom: 2.5rem;
+  background: rgba(0, 255, 136, 0.06);
+  border: 1px solid rgba(0, 255, 136, 0.15);
+  border-radius: 20px;
+  color: #00ff88;
+  font-size: 0.75rem;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  opacity: 0;
+  animation: fadeInUp 0.8s ease forwards 0.3s;
 }
 
 .info-cards { display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 2.5rem; opacity: 0; animation: fadeInUp 0.8s ease forwards 0.3s; }

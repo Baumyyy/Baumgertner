@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './PrivacyPolicy.css';
 import { useLang } from '../LanguageContext';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 var content = {
   en: {
@@ -123,6 +124,11 @@ var content = {
 var PrivacyPolicy = function() {
   var { lang } = useLang();
   var c = content[lang] || content.en;
+
+  usePageMeta(
+    'Privacy Policy | Anthony Baumgertner',
+    'Privacy policy for baumgertner.fi - what personal data is collected, why, and your GDPR rights.'
+  );
 
   return (
     <div className="privacy-page">

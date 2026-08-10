@@ -9,7 +9,6 @@ import ErrorBoundary from './components/ErrorBoundary.jsx';
 import './App.css';
 
 const WhatIDo      = lazy(() => import('./components/WhatIDo'));
-const LogoSlider   = lazy(() => import('./components/LogoSlider'));
 const Projects     = lazy(() => import('./components/Projects'));
 const Testimonials = lazy(() => import('./components/Testimonials.jsx'));
 const Contact      = lazy(() => import('./components/Contact'));
@@ -46,7 +45,6 @@ function App() {
                 <AuroraBackground>
                   <Hero ready={!loading} />
                   <WhatIDo />
-                  <LogoSlider />
                   <Projects />
                   <Testimonials />
                   <Contact />

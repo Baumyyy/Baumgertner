@@ -73,6 +73,7 @@ var fi = {
   contact_title2: 'yhdessä jotain',
   contact_title3: 'hienoa',
   contact_desc: 'Onko sinulla projekti tai idea? Olen aina avoin uusille mahdollisuuksille ja yhteistyölle.',
+  contact_response_time: 'Vastaan yleensä 24 tunnin sisällä',
   contact_email: 'Sähköposti',
   contact_location: 'Sijainti',
   contact_timezone: 'Aikavyöhyke',
@@ -102,8 +103,6 @@ var fi = {
   footer_busy_desc: 'En ota uusia projekteja tällä hetkellä',
   footer_privacy: 'Tietosuojaseloste',
 
-  // Slider
-  slider_label: 'Teknologiani',
 
   //Error 404
   notfound_text: 'Sivua jota etsit ei löydy tai se on siirretty.',

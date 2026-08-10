@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './Admin.css';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 var API_URL = '/api';
 
@@ -29,6 +30,8 @@ var MiniChart = function(props) {
 };
 
 var Admin = function() {
+  usePageMeta('Admin | Anthony Baumgertner', 'Admin dashboard.');
+
   var authState = useState(null);
   var authStatus = authState[0];
   var setAuthStatus = authState[1];
@@ -123,10 +126,6 @@ var Admin = function() {
     return fetch(url, opts);
   };
 
-  useEffect(function() {
-    if (loggedIn) loadAll();
-  }, [loggedIn, tab]);
-
   var loadAll = function() {
     fetchAuth(API_URL + '/admin/stats').then(function(r) { return r.json(); }).then(setStats);
     fetchAuth(API_URL + '/admin/analytics').then(function(r) { return r.json(); }).then(setAnalytics);
@@ -136,6 +135,10 @@ var Admin = function() {
     fetch(API_URL + '/profile').then(function(r) { return r.json(); }).then(setProfile);
     fetchAuth(API_URL + '/admin/testimonials').then(function(r) { return r.json(); }).then(setAdminTestimonials);
   };
+
+  useEffect(function() {
+    if (loggedIn) loadAll();
+  }, [loggedIn, tab]);
 
   var handleBackupLogin = function(e) {
     e.preventDefault();
