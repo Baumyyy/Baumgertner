@@ -98,7 +98,10 @@ var Footer = function() {
             by
             <button className="footer-signature" onClick={function() { scrollTo('home'); }}>&lt;Baumgertner/&gt;</button>
           </p>
-          <Link to="/privacy" className="footer-link footer-privacy-link">{t.footer_privacy}</Link>
+          <div className="footer-legal-links">
+            <Link to="/privacy" className="footer-link footer-privacy-link">{t.footer_privacy}</Link>
+            <Link to="/terms" className="footer-link footer-privacy-link">{t.footer_terms}</Link>
+          </div>
         </div>
       </div>
     </footer>

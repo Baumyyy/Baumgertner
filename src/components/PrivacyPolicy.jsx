@@ -7,8 +7,8 @@ import { usePageMeta } from '../hooks/usePageMeta';
 var content = {
   en: {
     title: 'Privacy Policy',
-    updated: 'Last updated: 4 August 2026',
-    intro: 'This page explains what personal data this website (baumgertner.fi) collects, why, and what rights you have. This site is run by Anthony Baumgertner as a personal portfolio.',
+    updated: 'Last updated: 10 August 2026',
+    intro: 'This page explains what personal data this website (baumgertner.fi) collects, why, and what rights you have. The data controller for the personal data described here is Anthony Baumgertner, who runs this site as a personal portfolio.',
     sections: [
       {
         heading: 'What data is collected',
@@ -19,11 +19,11 @@ var content = {
         ]
       },
       {
-        heading: 'Why this data is processed',
+        heading: 'Why this data is processed, and on what legal basis',
         body: [
-          'To respond to messages sent through the contact form.',
-          'To review and, if approved, publish testimonials.',
-          'To understand overall site traffic (which pages are visited) in aggregate.'
+          'To respond to messages sent through the contact form. Legal basis: legitimate interest (responding to inquiries addressed to us).',
+          'To review and, if approved, publish testimonials. Legal basis: your consent, given at the moment you submit the testimonial.',
+          'To understand overall site traffic (which pages are visited) in aggregate. Legal basis: legitimate interest (maintaining and improving the site).'
         ]
       },
       {
@@ -32,6 +32,12 @@ var content = {
           'Resend — used to deliver email notifications when a contact message or testimonial is submitted.',
           'A PostgreSQL database host — used to store the data listed above.',
           'GitHub — used only for the site owner’s own admin login (OAuth), not for visitor tracking.'
+        ]
+      },
+      {
+        heading: 'International data transfers',
+        body: [
+          'Resend and the database host may process data outside the EU/EEA (for example in the United States). Where this happens, the transfer is safeguarded under the EU-US Data Privacy Framework and/or the European Commission\'s Standard Contractual Clauses.'
         ]
       },
       {
@@ -48,9 +54,24 @@ var content = {
         ]
       },
       {
+        heading: 'How we protect your data',
+        body: [
+          'We use security measures including hashed passwords, rate limiting on our systems, and a database access role restricted to only what the site needs to function. HTTPS encryption will be enabled once the site is deployed to its own domain.',
+          'No security measure is perfect, but we take reasonable steps to keep your data safe.'
+        ]
+      },
+      {
         heading: 'Your rights',
         body: [
-          'Under GDPR you have the right to access, correct or request deletion of your personal data. To exercise any of these rights, contact the email address below.'
+          'Right of access — you can ask what personal data we hold about you.',
+          'Right to rectification — you can ask us to correct inaccurate or incomplete data.',
+          'Right to erasure — you can ask us to delete your data, for example if you withdraw consent for a testimonial or the data is no longer needed.',
+          'Right to restrict processing — you can ask us to limit how your data is used while a dispute about it is resolved.',
+          'Right to object — you can object to processing based on legitimate interest.',
+          'Right to withdraw consent — where processing is based on consent (testimonials), you can withdraw it at any time; this does not affect processing carried out before the withdrawal.',
+          'Right to data portability — you can ask to receive the data you provided to us in a machine-readable format.',
+          'To exercise any of these rights, contact the email address below.',
+          'You also have the right to lodge a complaint with the Office of the Data Protection Ombudsman (tietosuoja.fi) if you believe your data has been processed unlawfully.'
         ]
       },
       {
@@ -64,8 +85,8 @@ var content = {
   },
   fi: {
     title: 'Tietosuojaseloste',
-    updated: 'Päivitetty viimeksi: 4.8.2026',
-    intro: 'Tämä sivu kertoo, mitä henkilötietoja tämä verkkosivusto (baumgertner.fi) kerää, miksi, ja mitä oikeuksia sinulla on. Sivustoa ylläpitää Anthony Baumgertner henkilökohtaisena portfoliona.',
+    updated: 'Päivitetty viimeksi: 10.8.2026',
+    intro: 'Tämä sivu kertoo, mitä henkilötietoja tämä verkkosivusto (baumgertner.fi) kerää, miksi, ja mitä oikeuksia sinulla on. Näiden henkilötietojen rekisterinpitäjä on Anthony Baumgertner, joka ylläpitää sivustoa henkilökohtaisena portfoliona.',
     sections: [
       {
         heading: 'Mitä tietoja kerätään',
@@ -76,11 +97,11 @@ var content = {
         ]
       },
       {
-        heading: 'Miksi tietoja käsitellään',
+        heading: 'Miksi tietoja käsitellään, ja millä oikeusperusteella',
         body: [
-          'Vastataksemme yhteydenottolomakkeen kautta lähetettyihin viesteihin.',
-          'Tarkistaaksemme ja hyväksytyt suosittelut julkaistaksemme.',
-          'Ymmärtääksemme sivuston kokonaiskävijämäärää (mitä sivuja käytetään) koostetusti.'
+          'Vastataksemme yhteydenottolomakkeen kautta lähetettyihin viesteihin. Oikeusperuste: oikeutettu etu (meille osoitettuihin yhteydenottoihin vastaaminen).',
+          'Tarkistaaksemme ja hyväksytyt suosittelut julkaistaksemme. Oikeusperuste: suostumuksesi, jonka annat lähettäessäsi suosittelun.',
+          'Ymmärtääksemme sivuston kokonaiskävijämäärää (mitä sivuja käytetään) koostetusti. Oikeusperuste: oikeutettu etu (sivuston ylläpito ja kehittäminen).'
         ]
       },
       {
@@ -89,6 +110,12 @@ var content = {
           'Resend — käytetään sähköposti-ilmoitusten lähettämiseen kun yhteydenotto tai suosittelu lähetetään.',
           'PostgreSQL-tietokannan hosting-palveluntarjoaja — käytetään yllä lueteltujen tietojen tallentamiseen.',
           'GitHub — käytetään vain sivuston ylläpitäjän omaan admin-kirjautumiseen (OAuth), ei kävijöiden seurantaan.'
+        ]
+      },
+      {
+        heading: 'Kansainväliset tiedonsiirrot',
+        body: [
+          'Resend ja tietokannan hosting-palveluntarjoaja saattavat käsitellä tietoja EU/ETA-alueen ulkopuolella (esimerkiksi Yhdysvalloissa). Tällöin siirto on suojattu EU:n ja Yhdysvaltojen tietosuojakehyksellä (Data Privacy Framework) ja/tai Euroopan komission vakiosopimuslausekkeilla (Standard Contractual Clauses).'
         ]
       },
       {
@@ -105,9 +132,24 @@ var content = {
         ]
       },
       {
+        heading: 'Miten suojaamme tietojasi',
+        body: [
+          'Käytämme turvatoimia kuten salasanojen hashays, järjestelmiemme pyyntörajoitukset (rate limiting) ja tietokantakäyttöoikeus joka on rajattu vain siihen mitä sivusto tarvitsee toimiakseen. HTTPS-salaus otetaan käyttöön kun sivusto julkaistaan omalla domainillaan.',
+          'Mikään turvatoimi ei ole täydellinen, mutta pyrimme kohtuullisin keinoin pitämään tietosi turvassa.'
+        ]
+      },
+      {
         heading: 'Oikeutesi',
         body: [
-          'GDPR:n mukaan sinulla on oikeus tarkastaa, oikaista tai pyytää poistamaan henkilötietosi. Käyttääksesi näitä oikeuksia, ota yhteyttä alla olevaan sähköpostiosoitteeseen.'
+          'Oikeus saada pääsy tietoihin — voit kysyä mitä henkilötietoja meillä on sinusta.',
+          'Oikeus tietojen oikaisuun — voit pyytää korjaamaan virheelliset tai puutteelliset tiedot.',
+          'Oikeus tietojen poistoon — voit pyytää tietojesi poistoa, esimerkiksi jos peruutat suostumuksesi suosittelun osalta tai tietoja ei enää tarvita.',
+          'Oikeus käsittelyn rajoittamiseen — voit pyytää rajoittamaan tietojesi käyttöä kiistan selvittämisen ajaksi.',
+          'Oikeus vastustaa käsittelyä — voit vastustaa oikeutettuun etuun perustuvaa käsittelyä.',
+          'Oikeus peruuttaa suostumus — kun käsittely perustuu suostumukseen (suosittelut), voit peruuttaa sen milloin tahansa; tämä ei vaikuta ennen peruutusta tehtyyn käsittelyyn.',
+          'Oikeus siirtää tiedot järjestelmästä toiseen — voit pyytää saada meille antamasi tiedot koneluettavassa muodossa.',
+          'Käyttääksesi näitä oikeuksia, ota yhteyttä alla olevaan sähköpostiosoitteeseen.',
+          'Sinulla on myös oikeus tehdä valitus Tietosuojavaltuutetun toimistolle (tietosuoja.fi), jos katsot että tietojasi on käsitelty lainvastaisesti.'
         ]
       },
       {

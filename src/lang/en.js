@@ -90,6 +90,10 @@ testimonials_leave: 'Leave a Testimonial',
   privacy_notice_pre: 'Your data will be processed as described in our',
   privacy_notice_post: '.',
   privacy_link_inline: 'Privacy Policy',
+  terms_link_inline: 'Terms of Use',
+  testimonial_notice_pre: 'By submitting, you agree this content may be published on the site, in line with our',
+  testimonial_notice_mid: 'and',
+  testimonial_notice_post: '.',
 
   // Footer
   footer_tagline: 'Building digital experiences with passion and precision',
@@ -101,6 +105,7 @@ testimonials_leave: 'Leave a Testimonial',
   footer_available_desc: 'Open to freelance, collaboration and full-time opportunities',
   footer_busy_desc: 'Not taking new projects at the moment',
   footer_privacy: 'Privacy Policy',
+  footer_terms: 'Terms of Use',
 
 
   //Error 404

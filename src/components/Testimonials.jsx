@@ -274,7 +274,7 @@ var Testimonials = function() {
                   <div className="rating-select">{renderRatingSelect()}</div>
                 </div>
                 <p className="tform-privacy-notice">
-                  {t.privacy_notice_pre} <Link to="/privacy">{t.privacy_link_inline}</Link>{t.privacy_notice_post}
+                  {t.testimonial_notice_pre} <Link to="/terms">{t.terms_link_inline}</Link> {t.testimonial_notice_mid} <Link to="/privacy">{t.privacy_link_inline}</Link>{t.testimonial_notice_post}
                 </p>
                 <button type="submit" className="tform-submit" disabled={sending || uploading}>
                   {sending ? (t.testimonials_sending || 'Sending...') : (t.testimonials_submit || 'Submit Testimonial')}

@@ -91,6 +91,10 @@ var fi = {
   privacy_notice_pre: 'Tietosi käsitellään',
   privacy_notice_post: ' mukaisesti.',
   privacy_link_inline: 'tietosuojaselosteen',
+  terms_link_inline: 'käyttöehtojemme',
+  testimonial_notice_pre: 'Lähettämällä hyväksyt, että sisältö voidaan julkaista sivustolla',
+  testimonial_notice_mid: 'ja',
+  testimonial_notice_post: ' mukaisesti.',
 
   // Footer
   footer_tagline: 'Rakennan digitaalisia kokemuksia intohimolla ja tarkkuudella',
@@ -102,6 +106,7 @@ var fi = {
   footer_available_desc: 'Avoin freelance-, yhteistyö- ja kokoaikaisille mahdollisuuksille',
   footer_busy_desc: 'En ota uusia projekteja tällä hetkellä',
   footer_privacy: 'Tietosuojaseloste',
+  footer_terms: 'Käyttöehdot',
 
 
   //Error 404

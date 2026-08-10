@@ -193,6 +193,13 @@
   filter: brightness(1.3) drop-shadow(0 0 6px rgba(0, 255, 136, 0.5));
 }
 
+.footer-legal-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
 .footer-privacy-link {
   font-size: 0.75rem;
   color: rgba(255, 255, 255, 0.25);

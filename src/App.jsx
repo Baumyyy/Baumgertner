@@ -16,6 +16,7 @@ const Footer       = lazy(() => import('./components/Footer'));
 const Admin        = lazy(() => import('./components/Admin'));
 const NotFound     = lazy(() => import('./components/NotFound'));
 const PrivacyPolicy = lazy(() => import('./components/PrivacyPolicy'));
+const TermsOfUse = lazy(() => import('./components/TermsOfUse'));
 
 function App() {
   var loadingState = useState(true);
@@ -41,6 +42,7 @@ function App() {
             <Routes>
               <Route path="/baumi-dashboard" element={<Admin />} />
               <Route path="/privacy" element={<PrivacyPolicy />} />
+              <Route path="/terms" element={<TermsOfUse />} />
               <Route path="/" element={
                 <AuroraBackground>
                   <Hero ready={!loading} />
