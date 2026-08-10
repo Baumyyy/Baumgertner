@@ -10,6 +10,7 @@ node_modules
 .env
 
 backend/uploads
+SETUP-NOTES.md
 
 node_modules
 dist

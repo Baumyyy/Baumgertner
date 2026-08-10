@@ -188,6 +188,7 @@ var auth = function(req, res, next) {
     req.user = decoded;
     next();
   } catch (err) {
+    console.error('Token verification failed:', err.message);
     res.status(401).json({ error: 'Invalid token' });
   }
 };
@@ -441,7 +442,7 @@ app.post('/api/testimonials/submit', messageLimiter, async function(req, res) {
     if (isNaN(ratingNum) || ratingNum < 1 || ratingNum > 5) {
       return res.status(400).json({ error: 'Rating must be between 1 and 5' });
     }
-    var result = await pool.query(
+    await pool.query(
       'INSERT INTO testimonials (name, role, company, message, rating, avatar, visible, sort_order) VALUES ($1,$2,$3,$4,$5,$6,false,0) RETURNING *',
       [name, role || '', company || '', message, ratingNum, avatar || null]
     );
@@ -526,6 +527,7 @@ app.post('/api/upload-public', messageLimiter, upload.single('image'), async fun
     fs.unlink(req.file.path, function() {});
     res.json({ url: '/uploads/' + filename });
   } catch (err) {
+    console.error('Image processing failed:', err.message);
     fs.unlink(req.file.path, function() {});
     res.status(400).json({ error: 'Invalid image file' });
   }
@@ -544,6 +546,7 @@ app.post('/api/upload', auth, upload.single('image'), async function(req, res) {
     fs.unlink(req.file.path, function() {});
     res.json({ url: '/uploads/' + filename });
   } catch (err) {
+    console.error('Image processing failed:', err.message);
     fs.unlink(req.file.path, function() {});
     res.status(400).json({ error: 'Invalid image file' });
   }
