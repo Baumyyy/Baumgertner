@@ -12,6 +12,7 @@ async function run() {
       created_at TIMESTAMP DEFAULT NOW()
     )
   `);
+  await pool.query(`CREATE INDEX IF NOT EXISTS idx_page_views_created_at ON page_views(created_at)`);
   console.log('Analytics table created!');
   process.exit(0);
 }

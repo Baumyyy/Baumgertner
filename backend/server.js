@@ -26,6 +26,17 @@ if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir);
 }
 
+// Deletes a previously uploaded file given its public "/uploads/xyz.webp" URL.
+// Only ever touches files inside uploadsDir, and only if the URL isn't reused
+// elsewhere, so replacing/removing an image doesn't leave the old file behind.
+var deleteUploadedFile = function(url) {
+  if (!url || typeof url !== 'string' || url.indexOf('/uploads/') !== 0) return;
+  var filename = path.basename(url);
+  var filePath = path.join(uploadsDir, filename);
+  if (path.dirname(filePath) !== uploadsDir) return;
+  fs.unlink(filePath, function() {});
+};
+
 var storage = multer.diskStorage({
   destination: function(req, file, cb) {
     cb(null, uploadsDir);
@@ -256,10 +267,13 @@ app.get('/api/profile', async function(req, res) {
 app.put('/api/profile', auth, async function(req, res) {
   try {
     var { name, role, bio, email, location, timezone, available, avatar } = req.body;
+    var existing = await pool.query('SELECT avatar FROM profile WHERE id=1');
     var result = await pool.query(
       'UPDATE profile SET name=$1, role=$2, bio=$3, email=$4, location=$5, timezone=$6, available=$7, avatar=$8, updated_at=NOW() WHERE id=1 RETURNING *',
       [name, role, bio, email, location, timezone, available, avatar]
     );
+    var oldAvatar = existing.rows[0] && existing.rows[0].avatar;
+    if (oldAvatar && oldAvatar !== avatar) deleteUploadedFile(oldAvatar);
     res.json(result.rows[0]);
   } catch (err) {
     console.error(err);
@@ -321,10 +335,13 @@ app.post('/api/projects', auth, async function(req, res) {
 app.put('/api/projects/:id', auth, async function(req, res) {
   try {
     var { title, description, tags, status, link, image, sort_order } = req.body;
+    var existing = await pool.query('SELECT image FROM projects WHERE id=$1', [req.params.id]);
     var result = await pool.query(
       'UPDATE projects SET title=$1, description=$2, tags=$3, status=$4, link=$5, image=$6, sort_order=$7 WHERE id=$8 RETURNING *',
       [title, description, tags, status, link, image, sort_order, req.params.id]
     );
+    var oldImage = existing.rows[0] && existing.rows[0].image;
+    if (oldImage && oldImage !== image) deleteUploadedFile(oldImage);
     res.json(result.rows[0]);
   } catch (err) {
     console.error(err);
@@ -334,7 +351,9 @@ app.put('/api/projects/:id', auth, async function(req, res) {
 
 app.delete('/api/projects/:id', auth, async function(req, res) {
   try {
+    var existing = await pool.query('SELECT image FROM projects WHERE id=$1', [req.params.id]);
     await pool.query('DELETE FROM projects WHERE id=$1', [req.params.id]);
+    if (existing.rows[0] && existing.rows[0].image) deleteUploadedFile(existing.rows[0].image);
     res.json({ deleted: true });
   } catch (err) {
     console.error(err);
@@ -493,10 +512,13 @@ app.post('/api/testimonials', auth, async function(req, res) {
 app.put('/api/testimonials/:id', auth, async function(req, res) {
   try {
     var { name, role, company, message, avatar, rating, visible, sort_order } = req.body;
+    var existing = await pool.query('SELECT avatar FROM testimonials WHERE id=$1', [req.params.id]);
     var result = await pool.query(
       'UPDATE testimonials SET name=$1, role=$2, company=$3, message=$4, avatar=$5, rating=$6, visible=$7, sort_order=$8 WHERE id=$9 RETURNING *',
       [name, role, company, message, avatar, rating, visible, sort_order, req.params.id]
     );
+    var oldAvatar = existing.rows[0] && existing.rows[0].avatar;
+    if (oldAvatar && oldAvatar !== avatar) deleteUploadedFile(oldAvatar);
     res.json(result.rows[0]);
   } catch (err) {
     console.error(err);
@@ -506,7 +528,9 @@ app.put('/api/testimonials/:id', auth, async function(req, res) {
 
 app.delete('/api/testimonials/:id', auth, async function(req, res) {
   try {
+    var existing = await pool.query('SELECT avatar FROM testimonials WHERE id=$1', [req.params.id]);
     await pool.query('DELETE FROM testimonials WHERE id=$1', [req.params.id]);
+    if (existing.rows[0] && existing.rows[0].avatar) deleteUploadedFile(existing.rows[0].avatar);
     res.json({ deleted: true });
   } catch (err) {
     console.error(err);
@@ -661,6 +685,38 @@ function cleanupOldPageviews() {
 }
 cleanupOldPageviews();
 setInterval(cleanupOldPageviews, PAGEVIEW_RETENTION_INTERVAL);
+
+// ===== UPLOAD RETENTION =====
+// Safety net for files that end up unreferenced (e.g. a testimonial photo
+// uploaded but the form was never submitted). Only removes files older than
+// 24h so an upload mid-flow is never deleted out from under a pending submit.
+var UPLOAD_CLEANUP_INTERVAL = 24 * 60 * 60 * 1000;
+function cleanupOrphanedUploads() {
+  Promise.all([
+    pool.query('SELECT image AS url FROM projects WHERE image IS NOT NULL'),
+    pool.query('SELECT avatar AS url FROM testimonials WHERE avatar IS NOT NULL'),
+    pool.query('SELECT avatar AS url FROM profile WHERE avatar IS NOT NULL')
+  ]).then(function(results) {
+    var referenced = new Set();
+    results.forEach(function(r) {
+      r.rows.forEach(function(row) { referenced.add(path.basename(row.url)); });
+    });
+    fs.readdir(uploadsDir, function(err, files) {
+      if (err) return;
+      var cutoff = Date.now() - 24 * 60 * 60 * 1000;
+      files.forEach(function(file) {
+        if (referenced.has(file)) return;
+        var filePath = path.join(uploadsDir, file);
+        fs.stat(filePath, function(statErr, stats) {
+          if (statErr || stats.mtimeMs > cutoff) return;
+          fs.unlink(filePath, function() {});
+        });
+      });
+    });
+  }).catch(function(err) { console.error('Upload cleanup failed:', err.message); });
+}
+cleanupOrphanedUploads();
+setInterval(cleanupOrphanedUploads, UPLOAD_CLEANUP_INTERVAL);
 
 // ===== START =====
 app.listen(PORT, function() {
