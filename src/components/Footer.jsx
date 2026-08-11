@@ -67,7 +67,7 @@ var Footer = function() {
                 GitHub
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
               </a>
-              <a className="footer-link" href="https://linkedin.com/in/anthony-baumgertner" target="_blank" rel="noopener noreferrer">
+              <a className="footer-link" href="https://www.linkedin.com/in/anthony-baumgertner-022191429/" target="_blank" rel="noopener noreferrer">
                 LinkedIn
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
               </a>

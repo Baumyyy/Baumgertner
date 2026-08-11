@@ -87,7 +87,7 @@ var WhatIDo = function() {
             className={'service-card journey-card' + (hoveredCard === 'journey' ? ' hovered' : '') + (hoveredCard !== null && hoveredCard !== 'journey' ? ' dimmed' : '')}
             onMouseEnter={function() { setHoveredCard('journey'); }}
             onMouseLeave={function() { setHoveredCard(null); }}
-            onClick={function() { window.open('https://linkedin.com/in/anthony-baumgertner', '_blank'); }}
+            onClick={function() { window.open('https://www.linkedin.com/in/anthony-baumgertner-022191429/', '_blank'); }}
             style={{cursor: 'pointer'}}
           >
             <div className="card-top">

@@ -159,8 +159,10 @@ var Testimonials = function() {
             <div className="testimonial-cards-wrapper">
               {testimonials.map(function(item, index) {
                 var isActive = index === active;
-                var isPrev = index === (active - 1 + testimonials.length) % testimonials.length;
-                var isNext = index === (active + 1) % testimonials.length;
+                var prevIndex = (active - 1 + testimonials.length) % testimonials.length;
+                var nextIndex = (active + 1) % testimonials.length;
+                var isNext = testimonials.length > 1 && index === nextIndex;
+                var isPrev = testimonials.length > 1 && index === prevIndex && prevIndex !== nextIndex;
 
                 return (
                   <div
