@@ -66,6 +66,9 @@ var fi = {
   testimonials_sending: 'Lähetetään...',
   testimonials_submit: 'Lähetä suositus',
   testimonials_form_photo: 'Profiilikuva (valinnainen)',
+  testimonials_empty: 'Ei vielä suosituksia',
+  testimonials_role_placeholder: 'esim. toimitusjohtaja, kehittäjä',
+  testimonials_uploading: 'Ladataan...',
 
   // Contact
   contact_tag: 'Yhteystiedot',
@@ -76,6 +79,7 @@ var fi = {
   contact_response_time: 'Vastaan yleensä 24 tunnin sisällä',
   contact_email: 'Sähköposti',
   contact_location: 'Sijainti',
+  location_value: 'Turku, Suomi',
   contact_timezone: 'Aikavyöhyke',
   contact_name: 'Nimi',
   contact_email_field: 'Sähköposti',

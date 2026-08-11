@@ -1,5 +1,5 @@
 .whatido {
-  padding: 8rem 6rem;
+  padding: 5rem 6rem;
   max-width: 1500px;
   margin: 0 auto;
   position: relative;
@@ -15,8 +15,6 @@
   align-items: center;
   gap: 1rem;
   margin-bottom: 1.5rem;
-  opacity: 0;
-  animation: fadeInUp 0.8s ease forwards;
 }
 
 .whatido .tag-number {
@@ -51,8 +49,6 @@
   text-transform: uppercase;
   line-height: 1.05;
   margin-bottom: 0.8rem;
-  opacity: 0;
-  animation: fadeInUp 0.8s ease forwards 0.1s;
 }
 
 .whatido-title .title-accent {
@@ -69,16 +65,12 @@
   color: rgba(255, 255, 255, 0.3);
   font-family: 'Inter', sans-serif;
   font-weight: 300;
-  opacity: 0;
-  animation: fadeInUp 0.8s ease forwards 0.2s;
 }
 
 .services-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1.2rem;
-  opacity: 0;
-  animation: fadeInUp 0.8s ease forwards 0.3s;
 }
 
 .service-card {
@@ -197,7 +189,7 @@
   line-height: 1.7;
 }
 
-.service-card.journey-card { cursor: pointer; }
+.service-card.journey-card { display: block; cursor: pointer; text-decoration: none; }
 
 .service-card.journey-card:hover {
   border-color: rgba(0, 119, 181, 0.15);
@@ -253,11 +245,6 @@
   background: rgba(0, 119, 181, 0.15);
   border-color: rgba(0, 119, 181, 0.35);
   color: #00a0dc;
-}
-
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(25px); }
-  to { opacity: 1; transform: translateY(0); }
 }
 
 @media (max-width: 1200px) { .whatido { padding: 6rem 4rem; } }

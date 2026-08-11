@@ -1,5 +1,5 @@
 .contact {
-  padding: 8rem 6rem;
+  padding: 5rem 6rem;
   max-width: 1500px;
   margin: 0 auto;
   position: relative;
@@ -40,7 +40,6 @@
 
 .section-tag {
   display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;
-  opacity: 0; animation: fadeInUp 0.8s ease forwards;
 }
 .tag-number { font-size: 0.75rem; color: #00ff88; font-family: 'Inter', sans-serif; font-weight: 600; letter-spacing: 0.1em; }
 .tag-line { width: 50px; height: 1px; background: rgba(0, 255, 136, 0.3); }
@@ -54,8 +53,6 @@
   text-transform: uppercase;
   line-height: 1.05;
   margin-bottom: 1.5rem;
-  opacity: 0;
-  animation: fadeInUp 0.8s ease forwards 0.1s;
 }
 
 .title-accent {
@@ -74,8 +71,6 @@
   line-height: 1.7;
   max-width: 420px;
   margin-bottom: 1.2rem;
-  opacity: 0;
-  animation: fadeInUp 0.8s ease forwards 0.2s;
 }
 
 .response-time-badge {
@@ -91,11 +86,9 @@
   font-size: 0.75rem;
   font-family: 'Inter', sans-serif;
   font-weight: 500;
-  opacity: 0;
-  animation: fadeInUp 0.8s ease forwards 0.3s;
 }
 
-.info-cards { display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 2.5rem; opacity: 0; animation: fadeInUp 0.8s ease forwards 0.3s; }
+.info-cards { display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 2.5rem; }
 
 .info-card {
   display: flex;
@@ -134,7 +127,7 @@
 .info-card-label { font-size: 0.6rem; color: rgba(255, 255, 255, 0.15); font-family: 'Inter', sans-serif; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; }
 .info-card-value { font-size: 0.9rem; color: rgba(255, 255, 255, 0.45); font-family: 'Inter', sans-serif; font-weight: 400; }
 
-.contact-socials { display: flex; gap: 0.6rem; opacity: 0; animation: fadeInUp 0.8s ease forwards 0.4s; }
+.contact-socials { display: flex; gap: 0.6rem; }
 
 .contact-social-link {
   display: flex;
@@ -155,7 +148,7 @@
 .contact-social-link i { font-size: 1rem; }
 .contact-social-link:hover { border-color: rgba(0, 255, 136, 0.2); color: #00ff88; background: rgba(0, 255, 136, 0.03); transform: translateY(-2px); }
 
-.contact-form-wrapper { position: relative; opacity: 0; animation: fadeInUp 0.8s ease forwards 0.3s; }
+.contact-form-wrapper { position: relative; }
 
 .form-card {
   background: rgba(255, 255, 255, 0.02);
@@ -310,8 +303,6 @@
 .form-privacy-notice a:hover {
   color: #00ff88;
 }
-
-@keyframes fadeInUp { from { opacity: 0; transform: translateY(25px); } to { opacity: 1; transform: translateY(0); } }
 
 @media (max-width: 1200px) { .contact { padding: 6rem 4rem; } .contact-content { gap: 3rem; } }
 

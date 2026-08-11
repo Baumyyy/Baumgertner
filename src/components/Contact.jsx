@@ -106,7 +106,7 @@ var Contact = function() {
               </div>
               <div className="info-card-content">
                 <span className="info-card-label">{t.contact_location}</span>
-                <span className="info-card-value">Turku, Finland</span>
+                <span className="info-card-value">{t.location_value}</span>
               </div>
             </div>
 

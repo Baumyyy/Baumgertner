@@ -21,20 +21,38 @@ export const useScrollAnimation = () => {
       }
     );
 
+    var mutationObserver;
+
     if (ref.current) {
       var fadeElements = ref.current.querySelectorAll('.fade-in');
       fadeElements.forEach(function(el) {
         observer.observe(el);
       });
+
+      // Some sections render their .fade-in elements only after async data
+      // arrives (e.g. testimonials loaded from the API), which happens after
+      // this effect's initial scan. Watch for those being added later too.
+      mutationObserver = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+          mutation.addedNodes.forEach(function(node) {
+            if (node.nodeType !== 1) return;
+            if (node.classList && node.classList.contains('fade-in')) {
+              observer.observe(node);
+            }
+            if (node.querySelectorAll) {
+              node.querySelectorAll('.fade-in').forEach(function(el) {
+                observer.observe(el);
+              });
+            }
+          });
+        });
+      });
+      mutationObserver.observe(ref.current, { childList: true, subtree: true });
     }
 
     return function() {
-      if (ref.current) {
-        var fadeElements = ref.current.querySelectorAll('.fade-in');
-        fadeElements.forEach(function(el) {
-          observer.unobserve(el);
-        });
-      }
+      observer.disconnect();
+      if (mutationObserver) mutationObserver.disconnect();
     };
   }, []);
 

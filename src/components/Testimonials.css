@@ -1,5 +1,5 @@
 .testimonials {
-  padding: 6rem 4rem;
+  padding: 5rem 4rem;
   position: relative;
   overflow: visible;
   isolation: isolate;
@@ -19,8 +19,6 @@
 .testimonials-header {
   text-align: center;
   margin-bottom: 4rem;
-  opacity: 0;
-  animation: fadeInUp 0.8s ease forwards;
 }
 
 .testimonials-title {
@@ -139,11 +137,16 @@
 
 .testimonial-dots { display: flex; justify-content: center; gap: 0.5rem; margin-top: 2.5rem; }
 
+.testimonials-empty { color: rgba(255, 255, 255, 0.3); text-align: center; padding: 2rem; }
+
 .testimonial-dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.06);
+  border: none;
+  padding: 0;
+  display: inline-block;
   cursor: pointer;
   transition: all 0.3s ease;
 }
@@ -207,7 +210,7 @@
 
 .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
 .modal-title { font-size: 1.5rem; font-family: 'Bebas Neue', sans-serif; color: #fff; letter-spacing: 0.05em; }
-.modal-close { color: rgba(255, 255, 255, 0.2); font-size: 1.2rem; cursor: pointer; padding: 0.5rem; transition: color 0.2s ease; border-radius: 50%; }
+.modal-close { background: none; border: none; color: rgba(255, 255, 255, 0.2); font-size: 1.2rem; cursor: pointer; padding: 0.5rem; transition: color 0.2s ease; border-radius: 50%; }
 .modal-close:hover { color: #fff; background: rgba(255, 255, 255, 0.05); }
 
 .modal-success { text-align: center; padding: 2rem 0; }
@@ -292,8 +295,6 @@
 .tform-photo-row { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
 .tform-photo-preview { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 1.5px solid rgba(0, 255, 136, 0.15); }
 .tform-uploading { font-size: 0.75rem; color: rgba(0, 255, 136, 0.4); font-family: 'Inter', sans-serif; }
-
-@keyframes fadeInUp { from { opacity: 0; transform: translateY(25px); } to { opacity: 1; transform: translateY(0); } }
 
 @media (max-width: 968px) { .testimonial-card.card-prev, .testimonial-card.card-next { display: none; } }
 

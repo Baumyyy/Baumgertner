@@ -11,49 +11,22 @@ var content = {
     intro: 'These terms apply to your use of this website (baumgertner.fi), run by Anthony Baumgertner as a personal portfolio. By using this site, you agree to the terms below. For how your personal data is handled, see the Privacy Policy.',
     sections: [
       {
-        heading: 'Testimonial submissions',
+        heading: 'Using this site',
         body: [
-          'When you submit a testimonial through this site, you confirm it reflects your own genuine opinion and that you have the right to share it.',
-          'Submitted testimonials are reviewed by the site owner before publication and may be edited for length, spelling, or formatting.',
-          'By submitting a testimonial, you grant Anthony Baumgertner a non-exclusive, royalty-free right to display your submitted name, role, company, message, rating, and optional photo on this website and in related portfolio materials, until you request removal.'
+          'If you submit a testimonial, you confirm it\'s your genuine opinion and grant Anthony Baumgertner the right to display your submitted name, role, company, message, rating and optional photo on this site until you request removal. Submissions are reviewed before publishing. Please don\'t submit illegal, abusive, spam, or automated/bulk content through the contact or testimonial forms.',
+          'The site\'s design and code belong to Anthony Baumgertner; testimonial authors retain ownership of their own words.'
         ]
       },
       {
-        heading: 'Acceptable use',
+        heading: 'Liability',
         body: [
-          'You agree not to submit content through the contact form or testimonial form that is illegal, abusive, spam, or infringes on someone else\'s rights.',
-          'Automated or bulk submissions to these forms are not permitted.'
+          'This site is provided "as is", without guarantees of uninterrupted availability or error-free content. To the extent permitted by law, Anthony Baumgertner is not liable for damages arising from your use of this site — this does not affect your mandatory rights as a consumer under Finnish law.'
         ]
       },
       {
-        heading: 'Intellectual property',
+        heading: 'Governing law & contact',
         body: [
-          'The design, code, and original content of this site belong to Anthony Baumgertner unless otherwise noted. Testimonial authors retain ownership of their own words, subject to the license granted above.'
-        ]
-      },
-      {
-        heading: 'Disclaimer and liability',
-        body: [
-          'This site is provided "as is", without guarantees of uninterrupted availability or error-free content.',
-          'To the extent permitted by law, Anthony Baumgertner is not liable for damages arising from your use of this site. This does not affect your mandatory rights as a consumer under Finnish law.'
-        ]
-      },
-      {
-        heading: 'Changes to these terms',
-        body: [
-          'These terms may be updated from time to time. The "last updated" date above reflects the most recent change.'
-        ]
-      },
-      {
-        heading: 'Governing law',
-        body: [
-          'These terms are governed by the laws of Finland.'
-        ]
-      },
-      {
-        heading: 'Contact',
-        body: [
-          'baumgertnerr@outlook.com'
+          'These terms are governed by Finnish law and may be updated from time to time. Questions: baumgertnerr@outlook.com'
         ]
       }
     ],
@@ -65,49 +38,22 @@ var content = {
     intro: 'Nämä ehdot koskevat tämän verkkosivuston (baumgertner.fi) käyttöä, jota ylläpitää Anthony Baumgertner henkilökohtaisena portfoliona. Käyttämällä sivustoa hyväksyt alla olevat ehdot. Henkilötietojesi käsittelystä kerrotaan tietosuojaselosteessa.',
     sections: [
       {
-        heading: 'Suosittelujen lähettäminen',
+        heading: 'Sivuston käyttö',
         body: [
-          'Kun lähetät suosittelun tämän sivuston kautta, vahvistat että se on oma aito mielipiteesi ja että sinulla on oikeus jakaa se.',
-          'Lähetetyt suosittelut tarkistetaan ylläpitäjän toimesta ennen julkaisua, ja niitä voidaan muokata pituuden, oikeinkirjoituksen tai muotoilun osalta.',
-          'Lähettämällä suosittelun myönnät Anthony Baumgertnerille ei-yksinoikeudellisen, rojaltivapaan oikeuden näyttää antamaasi nimeä, roolia, yritystä, viestiä, arvosanaa ja valinnaista kuvaa tällä sivustolla ja siihen liittyvissä portfolio-materiaaleissa, kunnes pyydät sen poistamista.'
+          'Jos lähetät suosittelun, vahvistat että se on aito mielipiteesi ja myönnät Anthony Baumgertnerille oikeuden näyttää antamaasi nimeä, roolia, yritystä, viestiä, arvosanaa ja valinnaista kuvaa tällä sivustolla, kunnes pyydät sen poistamista. Suosittelut tarkistetaan ennen julkaisua. Älä lähetä yhteydenotto- tai suositteluformin kautta laitonta, loukkaavaa, roskapostia tai automatisoitua/massasisältöä.',
+          'Sivuston ulkoasu ja koodi kuuluvat Anthony Baumgertnerille; suosittelujen kirjoittajat säilyttävät omistusoikeuden omiin sanoihinsa.'
         ]
       },
       {
-        heading: 'Hyväksyttävä käyttö',
+        heading: 'Vastuunrajoitus',
         body: [
-          'Sitoudut olemaan lähettämättä yhteydenottolomakkeen tai suositteluformin kautta sisältöä joka on laitonta, loukkaavaa, roskapostia, tai loukkaa jonkun muun oikeuksia.',
-          'Automatisoidut tai massalähetykset näihin lomakkeisiin eivät ole sallittuja.'
+          'Tämä sivusto tarjotaan "sellaisenaan" ilman takuita keskeytyksettömästä saatavuudesta tai virheettömästä sisällöstä. Lain sallimissa rajoissa Anthony Baumgertner ei ole vastuussa vahingoista jotka aiheutuvat sivuston käytöstä — tämä ei vaikuta kuluttajansuojalain mukaisiin pakottaviin oikeuksiisi.'
         ]
       },
       {
-        heading: 'Immateriaalioikeudet',
+        heading: 'Sovellettava laki & yhteystiedot',
         body: [
-          'Tämän sivuston ulkoasu, koodi ja alkuperäinen sisältö kuuluvat Anthony Baumgertnerille, ellei toisin mainita. Suosittelujen kirjoittajat säilyttävät omistusoikeuden omiin sanoihinsa, yllä myönnetyn lisenssin puitteissa.'
-        ]
-      },
-      {
-        heading: 'Vastuuvapaus ja vastuunrajoitus',
-        body: [
-          'Tämä sivusto tarjotaan "sellaisenaan" ilman takuita keskeytyksettömästä saatavuudesta tai virheettömästä sisällöstä.',
-          'Lain sallimissa rajoissa Anthony Baumgertner ei ole vastuussa vahingoista jotka aiheutuvat sivuston käytöstä. Tämä ei vaikuta kuluttajansuojalain mukaisiin pakottaviin oikeuksiisi.'
-        ]
-      },
-      {
-        heading: 'Muutokset näihin ehtoihin',
-        body: [
-          'Näitä ehtoja voidaan päivittää ajoittain. Yllä oleva "päivitetty viimeksi" -päivämäärä kertoo viimeisimmän muutoksen.'
-        ]
-      },
-      {
-        heading: 'Sovellettava laki',
-        body: [
-          'Näihin ehtoihin sovelletaan Suomen lakia.'
-        ]
-      },
-      {
-        heading: 'Yhteystiedot',
-        body: [
-          'baumgertnerr@outlook.com'
+          'Näihin ehtoihin sovelletaan Suomen lakia, ja niitä voidaan päivittää ajoittain. Kysymykset: baumgertnerr@outlook.com'
         ]
       }
     ],

@@ -83,12 +83,13 @@ var WhatIDo = function() {
             );
           })}
 
-          <div
+          <a
             className={'service-card journey-card' + (hoveredCard === 'journey' ? ' hovered' : '') + (hoveredCard !== null && hoveredCard !== 'journey' ? ' dimmed' : '')}
             onMouseEnter={function() { setHoveredCard('journey'); }}
             onMouseLeave={function() { setHoveredCard(null); }}
-            onClick={function() { window.open('https://www.linkedin.com/in/anthony-baumgertner-022191429/', '_blank'); }}
-            style={{cursor: 'pointer'}}
+            href="https://www.linkedin.com/in/anthony-baumgertner-022191429/"
+            target="_blank"
+            rel="noopener noreferrer"
           >
             <div className="card-top">
               <span className="card-number">04</span>
@@ -103,7 +104,7 @@ var WhatIDo = function() {
               <span>{t.whatido_connect}</span>
             </div>
             <div className="card-border-glow journey-glow-border"></div>
-          </div>
+          </a>
         </div>
       </div>
     </section>

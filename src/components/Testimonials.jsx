@@ -4,8 +4,10 @@ import { Link } from 'react-router-dom';
 import './Testimonials.css';
 import { api } from '../api';
 import { useLang } from '../LanguageContext';
+import { useScrollAnimation } from '../hooks/useScrollAnimation';
 
 var Testimonials = function() {
+  var sectionRef = useScrollAnimation();
   var testimonialsState = useState([]);
   var testimonials = testimonialsState[0];
   var setTestimonials = testimonialsState[1];
@@ -135,23 +137,23 @@ var Testimonials = function() {
   };
 
   return (
-    <section id="testimonials" className="testimonials">
+    <section id="testimonials" className="testimonials" ref={sectionRef}>
       <div className="testimonials-content">
-        <div className="testimonials-header">
+        <div className="testimonials-header fade-in stagger-1">
           <div className="section-tag">
             <span className="tag-number">04</span>
             <span className="tag-line"></span>
-            <span className="tag-label">{t.testimonials_tag || 'Testimonials'}</span>
+            <span className="tag-label">{t.testimonials_tag}</span>
           </div>
           <h2 className="testimonials-title">
-            {t.testimonials_title1 || 'What People'} <span className="title-accent">{t.testimonials_title2 || 'Say'}</span>
+            {t.testimonials_title1} <span className="title-accent">{t.testimonials_title2}</span>
           </h2>
-          <p className="testimonials-subtitle">{t.testimonials_subtitle || 'Feedback from people I have worked with'}</p>
+          <p className="testimonials-subtitle">{t.testimonials_subtitle}</p>
         </div>
 
         {testimonials.length > 0 && (
           <div
-            className="testimonials-slider"
+            className="testimonials-slider fade-in stagger-2"
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
@@ -194,11 +196,14 @@ var Testimonials = function() {
             <div className="testimonial-dots">
               {testimonials.map(function(item, index) {
                 return (
-                  <span
+                  <button
                     key={item.id}
+                    type="button"
                     className={'testimonial-dot' + (index === active ? ' dot-active' : '')}
                     onClick={function() { setActive(index); }}
-                  ></span>
+                    aria-label={'Show testimonial ' + (index + 1) + ' of ' + testimonials.length}
+                    aria-current={index === active}
+                  ></button>
                 );
               })}
             </div>
@@ -206,15 +211,15 @@ var Testimonials = function() {
         )}
 
         {testimonials.length === 0 && (
-          <p style={{color: 'rgba(255,255,255,0.3)', textAlign: 'center', padding: '2rem'}}>No testimonials yet</p>
+          <p className="testimonials-empty fade-in stagger-2">{t.testimonials_empty}</p>
         )}
 
-        <div className="testimonial-cta">
+        <div className="testimonial-cta fade-in stagger-3">
           <button className="testimonial-submit-btn" onClick={function() { setShowForm(true); }}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 5v14M5 12h14"/>
             </svg>
-            <span>{t.testimonials_leave || 'Leave a Testimonial'}</span>
+            <span>{t.testimonials_leave}</span>
           </button>
         </div>
       </div>
@@ -223,14 +228,14 @@ var Testimonials = function() {
         <div className="testimonial-modal-overlay" onClick={function(e) { if (e.target === e.currentTarget) setShowForm(false); }}>
           <div className="testimonial-modal">
             <div className="modal-header">
-              <h3 className="modal-title">{submitted ? (t.testimonials_thanks || 'Thank You!') : (t.testimonials_leave || 'Leave a Testimonial')}</h3>
-              <span className="modal-close" onClick={function() { setShowForm(false); }}>✕</span>
+              <h3 className="modal-title">{submitted ? t.testimonials_thanks : t.testimonials_leave}</h3>
+              <button type="button" className="modal-close" onClick={function() { setShowForm(false); }} aria-label="Close">✕</button>
             </div>
 
             {submitted ? (
               <div className="modal-success">
                 <div className="success-icon">✓</div>
-                <p>{t.testimonials_review || 'Your testimonial will be reviewed and published soon!'}</p>
+                <p>{t.testimonials_review}</p>
               </div>
             ) : (
               <form className="testimonial-form" onSubmit={handleSubmit}>
@@ -246,40 +251,40 @@ var Testimonials = function() {
                   />
                 </div>
                 <div className="tform-field">
-                  <label>{t.testimonials_form_name || 'Name'} *</label>
+                  <label>{t.testimonials_form_name} *</label>
                   <input type="text" value={form.name} onChange={function(e) { setForm(Object.assign({}, form, { name: e.target.value })); }} required />
                 </div>
                 <div className="tform-row">
                   <div className="tform-field">
-                    <label>{t.testimonials_form_role || 'Role'}</label>
-                    <input type="text" value={form.role} placeholder="e.g. CEO, Developer" onChange={function(e) { setForm(Object.assign({}, form, { role: e.target.value })); }} />
+                    <label>{t.testimonials_form_role}</label>
+                    <input type="text" value={form.role} placeholder={t.testimonials_role_placeholder} onChange={function(e) { setForm(Object.assign({}, form, { role: e.target.value })); }} />
                   </div>
                   <div className="tform-field">
-                    <label>{t.testimonials_form_company || 'Company'}</label>
+                    <label>{t.testimonials_form_company}</label>
                     <input type="text" value={form.company} onChange={function(e) { setForm(Object.assign({}, form, { company: e.target.value })); }} />
                   </div>
                 </div>
                 <div className="tform-field">
-                  <label>{t.testimonials_form_photo || 'Profile Photo (optional)'}</label>
+                  <label>{t.testimonials_form_photo}</label>
                   <div className="tform-photo-row">
                     {form.avatar && <img src={form.avatar} alt="Profile photo preview" className="tform-photo-preview" />}
                     <input type="file" accept="image/*" className="file-input" onChange={handlePhotoUpload} />
-                    {uploading && <span className="tform-uploading">Uploading...</span>}
+                    {uploading && <span className="tform-uploading">{t.testimonials_uploading}</span>}
                   </div>
                 </div>
                 <div className="tform-field">
-                  <label>{t.testimonials_form_message || 'Your Feedback'} *</label>
+                  <label>{t.testimonials_form_message} *</label>
                   <textarea rows="4" value={form.message} onChange={function(e) { setForm(Object.assign({}, form, { message: e.target.value })); }} required></textarea>
                 </div>
                 <div className="tform-field">
-                  <label>{t.testimonials_form_rating || 'Rating'}</label>
+                  <label>{t.testimonials_form_rating}</label>
                   <div className="rating-select">{renderRatingSelect()}</div>
                 </div>
                 <p className="tform-privacy-notice">
                   {t.testimonial_notice_pre} <Link to="/terms">{t.terms_link_inline}</Link> {t.testimonial_notice_mid} <Link to="/privacy">{t.privacy_link_inline}</Link>{t.testimonial_notice_post}
                 </p>
                 <button type="submit" className="tform-submit" disabled={sending || uploading}>
-                  {sending ? (t.testimonials_sending || 'Sending...') : (t.testimonials_submit || 'Submit Testimonial')}
+                  {sending ? t.testimonials_sending : t.testimonials_submit}
                 </button>
               </form>
             )}
