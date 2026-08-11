@@ -184,7 +184,7 @@ var auth = function(req, res, next) {
   if (!header) return res.status(401).json({ error: 'Not authenticated' });
   try {
     var token = header.split(' ')[1];
-    var decoded = jwt.verify(token, process.env.JWT_SECRET);
+    var decoded = jwt.verify(token, process.env.JWT_SECRET, { algorithms: ['HS256'] });
     req.user = decoded;
     next();
   } catch (err) {
@@ -234,7 +234,7 @@ app.post('/api/login', authLimiter, async function(req, res) {
     validPass = await bcrypt.compare(password, process.env.ADMIN_PASSWORD_HASH);
   }
   if (validUser && validPass) {
-    var token = jwt.sign({ user: 'admin' }, process.env.JWT_SECRET, { expiresIn: '24h' });
+    var token = jwt.sign({ user: 'admin' }, process.env.JWT_SECRET, { expiresIn: '24h', algorithm: 'HS256' });
     res.json({ token: token });
   } else {
     res.status(401).json({ error: 'Wrong credentials' });
@@ -520,7 +520,7 @@ app.post('/api/upload-public', messageLimiter, upload.single('image'), async fun
   try {
     var filename = 'avatar-' + Date.now() + '.webp';
     var outputPath = path.join(uploadsDir, filename);
-    await sharp(req.file.path)
+    await sharp(req.file.path, { limitInputPixels: 30000000 })
       .resize(200, 200, { fit: 'cover' })
       .webp({ quality: 75 })
       .toFile(outputPath);
@@ -539,7 +539,7 @@ app.post('/api/upload', auth, upload.single('image'), async function(req, res) {
   try {
     var filename = 'project-' + Date.now() + '.webp';
     var outputPath = path.join(uploadsDir, filename);
-    await sharp(req.file.path)
+    await sharp(req.file.path, { limitInputPixels: 30000000 })
       .resize(1200, 800, { fit: 'inside', withoutEnlargement: true })
       .webp({ quality: 80 })
       .toFile(outputPath);
