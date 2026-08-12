@@ -12,9 +12,11 @@ var initDB = async function() {
         location VARCHAR(100),
         timezone VARCHAR(50),
         available BOOLEAN DEFAULT true,
-        updated_at TIMESTAMP DEFAULT NOW()
+        updated_at TIMESTAMP DEFAULT NOW(),
+        avatar VARCHAR(500)
       )
     `);
+    await pool.query(`ALTER TABLE profile ADD COLUMN IF NOT EXISTS avatar VARCHAR(500)`);
 
     await pool.query(`
       CREATE TABLE IF NOT EXISTS projects (
@@ -41,6 +43,21 @@ var initDB = async function() {
         email VARCHAR(100) NOT NULL,
         message TEXT NOT NULL,
         read BOOLEAN DEFAULT false,
+        created_at TIMESTAMP DEFAULT NOW()
+      )
+    `);
+
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS testimonials (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        role VARCHAR(255),
+        company VARCHAR(255),
+        message TEXT NOT NULL,
+        avatar VARCHAR(500),
+        rating INTEGER DEFAULT 5,
+        visible BOOLEAN DEFAULT true,
+        sort_order INTEGER DEFAULT 0,
         created_at TIMESTAMP DEFAULT NOW()
       )
     `);
