@@ -35,9 +35,6 @@ var Admin = function() {
   var authState = useState(null);
   var authStatus = authState[0];
   var setAuthStatus = authState[1];
-  var tokenState = useState(localStorage.getItem('admin_token') || '');
-  var token = tokenState[0];
-  var setToken = tokenState[1];
   var loggedInState = useState(false);
   var loggedIn = loggedInState[0];
   var setLoggedIn = loggedInState[1];
@@ -62,15 +59,9 @@ var Admin = function() {
   var profileState = useState({});
   var profile = profileState[0];
   var setProfile = profileState[1];
-  var loginFormState = useState({ username: '', password: '' });
-  var loginForm = loginFormState[0];
-  var setLoginForm = loginFormState[1];
   var editProjectState = useState(null);
   var editProject = editProjectState[0];
   var setEditProject = editProjectState[1];
-  var showBackupLogin = useState(false);
-  var showBackup = showBackupLogin[0];
-  var setShowBackup = showBackupLogin[1];
   var testimonialsState = useState([]);
   var adminTestimonials = testimonialsState[0];
   var setAdminTestimonials = testimonialsState[1];
@@ -80,9 +71,6 @@ var Admin = function() {
   var sidebarState = useState(false);
   var sidebarOpen = sidebarState[0];
   var setSidebarOpen = sidebarState[1];
-  var loginErrorState = useState('');
-  var loginError = loginErrorState[0];
-  var setLoginError = loginErrorState[1];
   var profileSavedState = useState(false);
   var profileSaved = profileSavedState[0];
   var setProfileSaved = profileSavedState[1];
@@ -100,29 +88,12 @@ var Admin = function() {
         if (data.authenticated) {
           setAuthStatus(data.user);
           setLoggedIn(true);
-        } else if (token) {
-          fetch(API_URL + '/admin/stats', { headers: { 'Authorization': 'Bearer ' + token } })
-            .then(function(r) {
-              if (r.ok) {
-                setLoggedIn(true);
-                return r.json();
-              }
-              throw new Error('Invalid token');
-            })
-            .then(function(d) { setStats(d); })
-            .catch(function() { setToken(''); localStorage.removeItem('admin_token'); });
         }
       });
   }, []);
 
-  var getHeaders = function() {
-    var h = { 'Content-Type': 'application/json' };
-    if (token) h['Authorization'] = 'Bearer ' + token;
-    return h;
-  };
-
   var fetchAuth = function(url, options) {
-    var opts = Object.assign({ credentials: 'include', headers: getHeaders() }, options || {});
+    var opts = Object.assign({ credentials: 'include', headers: { 'Content-Type': 'application/json' } }, options || {});
     return fetch(url, opts);
   };
 
@@ -140,26 +111,7 @@ var Admin = function() {
     if (loggedIn) loadAll();
   }, [loggedIn, tab]);
 
-  var handleBackupLogin = function(e) {
-    e.preventDefault();
-    fetch(API_URL + '/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(loginForm)
-    }).then(function(r) { return r.json(); }).then(function(data) {
-      if (data.token) {
-        setToken(data.token);
-        localStorage.setItem('admin_token', data.token);
-        setLoggedIn(true);
-      } else {
-        setLoginError('Wrong credentials');
-      }
-    });
-  };
-
   var handleLogout = function() {
-    setToken('');
-    localStorage.removeItem('admin_token');
     setLoggedIn(false);
     setAuthStatus(null);
     window.location.href = '/api/auth/logout';
@@ -205,7 +157,6 @@ var Admin = function() {
     formData.append('image', file);
     fetch(API_URL + '/upload', {
       method: 'POST',
-      headers: token ? { 'Authorization': 'Bearer ' + token } : {},
       credentials: 'include',
       body: formData
     }).then(function(r) { return r.json(); }).then(function(data) {
@@ -244,23 +195,6 @@ var Admin = function() {
             <i className="fab fa-github"></i>
             <span>Sign in with GitHub</span>
           </a>
-
-          <div className="login-divider">
-            <span>or</span>
-          </div>
-
-          <button className="backup-toggle" onClick={function() { setShowBackup(!showBackup); setLoginError(''); }}>
-            {showBackup ? 'Hide' : 'Use'} password login
-          </button>
-
-          {showBackup && (
-            <form onSubmit={handleBackupLogin}>
-              <input type="text" placeholder="Username" className="login-input" value={loginForm.username} onChange={function(e) { setLoginForm(Object.assign({}, loginForm, { username: e.target.value })); setLoginError(''); }} />
-              <input type="password" placeholder="Password" className="login-input" value={loginForm.password} onChange={function(e) { setLoginForm(Object.assign({}, loginForm, { password: e.target.value })); setLoginError(''); }} />
-              {loginError && <p className="login-error">{loginError}</p>}
-              <button type="submit" className="login-btn">Login</button>
-            </form>
-          )}
         </div>
       </div>
     );
@@ -577,7 +511,6 @@ var Admin = function() {
                     formData.append('image', file);
                     fetch(API_URL + '/upload', {
                       method: 'POST',
-                      headers: token ? { 'Authorization': 'Bearer ' + token } : {},
                       credentials: 'include',
                       body: formData
                     }).then(function(r) { return r.json(); }).then(function(data) {
@@ -668,7 +601,6 @@ var Admin = function() {
                   formData.append('image', file);
                   fetch(API_URL + '/upload', {
                     method: 'POST',
-                    headers: token ? { 'Authorization': 'Bearer ' + token } : {},
                     credentials: 'include',
                     body: formData
                   }).then(function(r) { return r.json(); }).then(function(data) {

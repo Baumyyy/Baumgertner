@@ -1,14 +1,11 @@
 var express = require('express');
 var cors = require('cors');
-var jwt = require('jsonwebtoken');
 var passport = require('passport');
 var GitHubStrategy = require('passport-github2').Strategy;
 var session = require('express-session');
 var multer = require('multer');
 var path = require('path');
 var fs = require('fs');
-var crypto = require('crypto');
-var bcrypt = require('bcryptjs');
 var pool = require('./db');
 var sharp = require('sharp');
 var { Resend } = require('resend');
@@ -151,7 +148,7 @@ app.use('/api', apiLimiter);
 
 // Session
 app.use(session({
-  secret: process.env.SESSION_SECRET || process.env.JWT_SECRET,
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
   cookie: {
@@ -191,17 +188,7 @@ var auth = function(req, res, next) {
   if (req.isAuthenticated && req.isAuthenticated()) {
     return next();
   }
-  var header = req.headers.authorization;
-  if (!header) return res.status(401).json({ error: 'Not authenticated' });
-  try {
-    var token = header.split(' ')[1];
-    var decoded = jwt.verify(token, process.env.JWT_SECRET, { algorithms: ['HS256'] });
-    req.user = decoded;
-    next();
-  } catch (err) {
-    console.error('Token verification failed:', err.message);
-    res.status(401).json({ error: 'Invalid token' });
-  }
+  res.status(401).json({ error: 'Not authenticated' });
 };
 
 // ===== GITHUB AUTH ROUTES =====
@@ -228,28 +215,6 @@ app.get('/api/auth/logout', function(req, res) {
   req.logout(function() {
     res.redirect(FRONTEND_URL + '/baumi-dashboard');
   });
-});
-
-// ===== JWT LOGIN (backup) =====
-var timingSafeStringEqual = function(a, b) {
-  var bufA = crypto.createHash('sha256').update(String(a == null ? '' : a)).digest();
-  var bufB = crypto.createHash('sha256').update(String(b == null ? '' : b)).digest();
-  return crypto.timingSafeEqual(bufA, bufB);
-};
-
-app.post('/api/login', authLimiter, async function(req, res) {
-  var { username, password } = req.body;
-  var validUser = timingSafeStringEqual(username, process.env.ADMIN_USERNAME);
-  var validPass = false;
-  if (process.env.ADMIN_PASSWORD_HASH && password) {
-    validPass = await bcrypt.compare(password, process.env.ADMIN_PASSWORD_HASH);
-  }
-  if (validUser && validPass) {
-    var token = jwt.sign({ user: 'admin' }, process.env.JWT_SECRET, { expiresIn: '24h', algorithm: 'HS256' });
-    res.json({ token: token });
-  } else {
-    res.status(401).json({ error: 'Wrong credentials' });
-  }
 });
 
 // ===== PROFILE (public) =====
