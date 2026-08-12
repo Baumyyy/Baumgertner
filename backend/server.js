@@ -84,9 +84,18 @@ var isValidExternalLink = function(url) {
   try {
     var parsed = new URL(url);
     return parsed.protocol === 'http:' || parsed.protocol === 'https:';
-  } catch (e) {
+  } catch {
     return false;
   }
+};
+var IMAGE_POSITION_REGEX = /^(100|[1-9]?[0-9])% (100|[1-9]?[0-9])%$/;
+var isValidImagePosition = function(pos) {
+  return pos == null || pos === '' || IMAGE_POSITION_REGEX.test(pos);
+};
+var isValidImageZoom = function(zoom) {
+  if (zoom == null || zoom === '') return true;
+  var n = Number(zoom);
+  return Number.isInteger(n) && n >= 50 && n <= 300;
 };
 
 // Email helper
@@ -314,16 +323,22 @@ app.get('/api/projects', async function(req, res) {
 // ===== PROJECTS (admin) =====
 app.post('/api/projects', auth, async function(req, res) {
   try {
-    var { title, description, tags, status, link, image, sort_order } = req.body;
+    var { title, description, tags, status, link, image, image_position, image_zoom, sort_order } = req.body;
     if (!isValidUploadPath(image)) {
       return res.status(400).json({ error: 'Invalid image path' });
     }
     if (!isValidExternalLink(link)) {
       return res.status(400).json({ error: 'Invalid project link' });
     }
+    if (!isValidImagePosition(image_position)) {
+      return res.status(400).json({ error: 'Invalid image position' });
+    }
+    if (!isValidImageZoom(image_zoom)) {
+      return res.status(400).json({ error: 'Invalid image zoom' });
+    }
     var result = await pool.query(
-      'INSERT INTO projects (title, description, tags, status, link, image, sort_order) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *',
-      [title, description, tags || '{}', status || 'Live', link, image, sort_order || 0]
+      'INSERT INTO projects (title, description, tags, status, link, image, image_position, image_zoom, sort_order) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *',
+      [title, description, tags || '{}', status || 'Live', link, image, image_position || '50% 50%', image_zoom || 100, sort_order || 0]
     );
     res.json(result.rows[0]);
   } catch (err) {
@@ -334,17 +349,23 @@ app.post('/api/projects', auth, async function(req, res) {
 
 app.put('/api/projects/:id', auth, async function(req, res) {
   try {
-    var { title, description, tags, status, link, image, sort_order } = req.body;
+    var { title, description, tags, status, link, image, image_position, image_zoom, sort_order } = req.body;
     if (!isValidUploadPath(image)) {
       return res.status(400).json({ error: 'Invalid image path' });
     }
     if (!isValidExternalLink(link)) {
       return res.status(400).json({ error: 'Invalid project link' });
     }
+    if (!isValidImagePosition(image_position)) {
+      return res.status(400).json({ error: 'Invalid image position' });
+    }
+    if (!isValidImageZoom(image_zoom)) {
+      return res.status(400).json({ error: 'Invalid image zoom' });
+    }
     var existing = await pool.query('SELECT image FROM projects WHERE id=$1', [req.params.id]);
     var result = await pool.query(
-      'UPDATE projects SET title=$1, description=$2, tags=$3, status=$4, link=$5, image=$6, sort_order=$7 WHERE id=$8 RETURNING *',
-      [title, description, tags, status, link, image, sort_order, req.params.id]
+      'UPDATE projects SET title=$1, description=$2, tags=$3, status=$4, link=$5, image=$6, image_position=$7, image_zoom=$8, sort_order=$9 WHERE id=$10 RETURNING *',
+      [title, description, tags, status, link, image, image_position || '50% 50%', image_zoom || 100, sort_order, req.params.id]
     );
     var oldImage = existing.rows[0] && existing.rows[0].image;
     if (oldImage && oldImage !== image) deleteUploadedFile(oldImage);

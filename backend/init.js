@@ -25,10 +25,14 @@ var initDB = async function() {
         status VARCHAR(50) DEFAULT 'Live',
         link VARCHAR(500),
         image VARCHAR(500),
+        image_position VARCHAR(20) DEFAULT '50% 50%',
+        image_zoom INTEGER DEFAULT 100,
         sort_order INTEGER DEFAULT 0,
         created_at TIMESTAMP DEFAULT NOW()
       )
     `);
+    await pool.query(`ALTER TABLE projects ADD COLUMN IF NOT EXISTS image_position VARCHAR(20) DEFAULT '50% 50%'`);
+    await pool.query(`ALTER TABLE projects ADD COLUMN IF NOT EXISTS image_zoom INTEGER DEFAULT 100`);
 
     await pool.query(`
       CREATE TABLE IF NOT EXISTS messages (

@@ -89,9 +89,18 @@ var Projects = function() {
       >
         <div className="project-preview">
           {hasImage ? (
-            <div className="preview-image-wrapper">
-              <img src={project.image} alt={project.title} className="preview-image" loading="lazy" />
-            </div>
+            <div
+              className="preview-image-wrapper"
+              role="img"
+              aria-label={project.title}
+              style={{
+                backgroundImage: 'url(' + project.image + ')',
+                backgroundColor: '#000',
+                backgroundRepeat: 'no-repeat',
+                backgroundSize: (project.image_zoom || 100) + '%',
+                backgroundPosition: project.image_position || '50% 50%'
+              }}
+            />
           ) : (
             <div className="preview-placeholder">
               <div className="preview-dots">

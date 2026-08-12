@@ -97,6 +97,14 @@ var Admin = function() {
     return fetch(url, opts);
   };
 
+  var alertIfFailed = function(r) {
+    if (!r.ok) {
+      alert('Something went wrong. Please try again.');
+      return true;
+    }
+    return false;
+  };
+
   var loadAll = function() {
     fetchAuth(API_URL + '/admin/stats').then(function(r) { return r.json(); }).then(setStats);
     fetchAuth(API_URL + '/admin/analytics').then(function(r) { return r.json(); }).then(setAnalytics);
@@ -121,7 +129,7 @@ var Admin = function() {
     fetchAuth(API_URL + '/availability', {
       method: 'PUT',
       body: JSON.stringify({ available: !stats.available })
-    }).then(function() { loadAll(); });
+    }).then(function(r) { if (alertIfFailed(r)) return; loadAll(); });
   };
 
   var deleteProject = function(id) {
@@ -130,7 +138,7 @@ var Admin = function() {
 
   var executeDeleteProject = function(id) {
     fetchAuth(API_URL + '/projects/' + id, { method: 'DELETE' })
-      .then(function() { setConfirmDeleteProjectId(null); loadAll(); });
+      .then(function(r) { if (alertIfFailed(r)) return; setConfirmDeleteProjectId(null); loadAll(); });
   };
 
   var saveProject = function(e) {
@@ -144,7 +152,8 @@ var Admin = function() {
     fetchAuth(url, {
       method: method,
       body: JSON.stringify(Object.assign({}, editProject, { tags: tagsArray }))
-    }).then(function() {
+    }).then(function(r) {
+      if (alertIfFailed(r)) return;
       setEditProject(null);
       loadAll();
     });
@@ -161,19 +170,26 @@ var Admin = function() {
       body: formData
     }).then(function(r) { return r.json(); }).then(function(data) {
       if (data.url) {
-        setEditProject(Object.assign({}, editProject, { image: data.url }));
+        setEditProject(Object.assign({}, editProject, { image: data.url, image_position: '50% 50%', image_zoom: 100 }));
       }
     });
   };
 
+  var parseImagePosition = function(pos) {
+    var parts = (pos || '50% 50%').split(' ');
+    var x = parseInt(parts[0], 10);
+    var y = parseInt(parts[1], 10);
+    return { x: isNaN(x) ? 50 : x, y: isNaN(y) ? 50 : y };
+  };
+
   var markRead = function(id) {
     fetchAuth(API_URL + '/messages/' + id + '/read', { method: 'PUT' })
-      .then(function() { loadAll(); });
+      .then(function(r) { if (alertIfFailed(r)) return; loadAll(); });
   };
 
   var deleteMessage = function(id) {
     fetchAuth(API_URL + '/messages/' + id, { method: 'DELETE' })
-      .then(function() { loadAll(); });
+      .then(function(r) { if (alertIfFailed(r)) return; loadAll(); });
   };
 
   var saveProfile = function(e) {
@@ -181,7 +197,12 @@ var Admin = function() {
     fetchAuth(API_URL + '/profile', {
       method: 'PUT',
       body: JSON.stringify(profile)
-    }).then(function() { loadAll(); setProfileSaved(true); setTimeout(function() { setProfileSaved(false); }, 3000); });
+    }).then(function(r) {
+      if (alertIfFailed(r)) return;
+      loadAll();
+      setProfileSaved(true);
+      setTimeout(function() { setProfileSaved(false); }, 3000);
+    });
   };
 
   if (!loggedIn) {
@@ -447,6 +468,53 @@ var Admin = function() {
                   {editProject.image && <img src={editProject.image} alt="Preview" className="image-preview" />}
                   <input type="file" accept="image/*" onChange={uploadImage} className="file-input" />
                 </div>
+                {editProject.image && (
+                  <div className="image-position-picker">
+                    <div
+                      className="image-position-preview"
+                      style={{
+                        backgroundImage: 'url(' + editProject.image + ')',
+                        backgroundColor: '#000',
+                        backgroundRepeat: 'no-repeat',
+                        backgroundSize: (editProject.image_zoom || 100) + '%',
+                        backgroundPosition: editProject.image_position || '50% 50%'
+                      }}
+                    >
+                      <div className="image-position-grid">
+                        <span className="grid-line-v"></span>
+                        <span className="grid-line-h"></span>
+                      </div>
+                    </div>
+                    <div className="image-position-sliders">
+                      <label className="edit-label">Horizontal position</label>
+                      <input
+                        type="range" min="0" max="100"
+                        value={parseImagePosition(editProject.image_position).x}
+                        onChange={function(e) {
+                          var y = parseImagePosition(editProject.image_position).y;
+                          setEditProject(Object.assign({}, editProject, { image_position: e.target.value + '% ' + y + '%' }));
+                        }}
+                      />
+                      <label className="edit-label">Vertical position</label>
+                      <input
+                        type="range" min="0" max="100"
+                        value={parseImagePosition(editProject.image_position).y}
+                        onChange={function(e) {
+                          var x = parseImagePosition(editProject.image_position).x;
+                          setEditProject(Object.assign({}, editProject, { image_position: x + '% ' + e.target.value + '%' }));
+                        }}
+                      />
+                      <label className="edit-label">Zoom</label>
+                      <input
+                        type="range" min="50" max="250" step="5"
+                        value={editProject.image_zoom || 100}
+                        onChange={function(e) {
+                          setEditProject(Object.assign({}, editProject, { image_zoom: parseInt(e.target.value, 10) }));
+                        }}
+                      />
+                    </div>
+                  </div>
+                )}
                 <input className="edit-input" type="number" placeholder="Sort order" value={editProject.sort_order || 0} onChange={function(e) { setEditProject(Object.assign({}, editProject, { sort_order: parseInt(e.target.value) })); }} />
                 <div className="edit-actions">
                   <button type="submit" className="save-btn">Save</button>
@@ -495,7 +563,7 @@ var Admin = function() {
                 var method = editTestimonial.id ? 'PUT' : 'POST';
                 var url = editTestimonial.id ? API_URL + '/testimonials/' + editTestimonial.id : API_URL + '/testimonials';
                 fetchAuth(url, { method: method, body: JSON.stringify(editTestimonial) })
-                  .then(function() { setEditTestimonial(null); loadAll(); });
+                  .then(function(r) { if (alertIfFailed(r)) return; setEditTestimonial(null); loadAll(); });
               }}>
                 <input className="edit-input" placeholder="Name" value={editTestimonial.name || ''} onChange={function(e) { setEditTestimonial(Object.assign({}, editTestimonial, { name: e.target.value })); }} />
                 <input className="edit-input" placeholder="Role" value={editTestimonial.role || ''} onChange={function(e) { setEditTestimonial(Object.assign({}, editTestimonial, { role: e.target.value })); }} />
@@ -545,7 +613,7 @@ var Admin = function() {
                     {confirmDeleteTestimonialId === t.id ? (
                       <div className="confirm-inline">
                         <span className="confirm-text">Delete?</span>
-                        <button className="confirm-yes" onClick={function() { fetchAuth(API_URL + '/testimonials/' + t.id, { method: 'DELETE' }).then(function() { setConfirmDeleteTestimonialId(null); loadAll(); }); }}>Yes</button>
+                        <button className="confirm-yes" onClick={function() { fetchAuth(API_URL + '/testimonials/' + t.id, { method: 'DELETE' }).then(function(r) { if (alertIfFailed(r)) return; setConfirmDeleteTestimonialId(null); loadAll(); }); }}>Yes</button>
                         <button className="confirm-no" onClick={function() { setConfirmDeleteTestimonialId(null); }}>No</button>
                       </div>
                     ) : (

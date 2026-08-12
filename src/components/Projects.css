@@ -219,9 +219,8 @@ a.project-card { cursor: pointer; text-decoration: none; }
 .projects-github-btn:hover { border-color: rgba(0, 255, 136, 0.2); color: #00ff88; background: rgba(0, 255, 136, 0.04); transform: translateY(-2px); }
 .projects-github-btn:hover svg { opacity: 1; transform: translateX(0); }
 
-.preview-image-wrapper { width: 100%; height: 200px; overflow: hidden; }
-.preview-image { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
-.project-card:hover .preview-image { transform: scale(1.05); }
+.preview-image-wrapper { width: 100%; height: 200px; overflow: hidden; transition: transform 0.5s ease; }
+.project-card:hover .preview-image-wrapper { transform: scale(1.05); }
 
 
 .projects-slider-dots {

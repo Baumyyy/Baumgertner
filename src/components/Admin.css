@@ -642,6 +642,64 @@
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
+.image-position-picker {
+  display: flex;
+  gap: 1.2rem;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.image-position-preview {
+  position: relative;
+  width: 200px;
+  height: 120px;
+  flex-shrink: 0;
+  overflow: hidden;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.image-position-grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.grid-line-v {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  background: rgba(0, 255, 136, 0.6);
+  transform: translateX(-50%);
+}
+
+.grid-line-h {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background: rgba(0, 255, 136, 0.6);
+  transform: translateY(-50%);
+}
+
+.image-position-sliders {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.image-position-sliders input[type="range"] {
+  width: 100%;
+  accent-color: #00ff88;
+}
+
 .file-input {
   font-size: 0.85rem;
   color: rgba(255, 255, 255, 0.5);
