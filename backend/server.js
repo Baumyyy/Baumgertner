@@ -12,6 +12,19 @@ var { Resend } = require('resend');
 var compression = require('compression');
 require('dotenv').config();
 
+// ===== REQUIRED ENV VARS =====
+var REQUIRED_ENV_VARS = [
+  'DB_HOST', 'DB_PORT', 'DB_USER', 'DB_PASSWORD', 'DB_NAME',
+  'SESSION_SECRET',
+  'GITHUB_CLIENT_ID', 'GITHUB_CLIENT_SECRET', 'GITHUB_ALLOWED_USER',
+  'FRONTEND_URL'
+];
+var missingEnvVars = REQUIRED_ENV_VARS.filter(function(name) { return !process.env[name]; });
+if (missingEnvVars.length > 0) {
+  console.error('Missing required environment variable(s): ' + missingEnvVars.join(', '));
+  process.exit(1);
+}
+
 var app = express();
 app.use(compression());
 app.set('trust proxy', 1);
@@ -65,6 +78,15 @@ var isValidLength = function(str, max) {
 var UPLOAD_PATH_REGEX = /^\/uploads\/[a-zA-Z0-9_.-]+$/;
 var isValidUploadPath = function(url) {
   return url == null || url === '' || UPLOAD_PATH_REGEX.test(url);
+};
+var isValidExternalLink = function(url) {
+  if (url == null || url === '') return true;
+  try {
+    var parsed = new URL(url);
+    return parsed.protocol === 'http:' || parsed.protocol === 'https:';
+  } catch (e) {
+    return false;
+  }
 };
 
 // Email helper
@@ -296,6 +318,9 @@ app.post('/api/projects', auth, async function(req, res) {
     if (!isValidUploadPath(image)) {
       return res.status(400).json({ error: 'Invalid image path' });
     }
+    if (!isValidExternalLink(link)) {
+      return res.status(400).json({ error: 'Invalid project link' });
+    }
     var result = await pool.query(
       'INSERT INTO projects (title, description, tags, status, link, image, sort_order) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *',
       [title, description, tags || '{}', status || 'Live', link, image, sort_order || 0]
@@ -312,6 +337,9 @@ app.put('/api/projects/:id', auth, async function(req, res) {
     var { title, description, tags, status, link, image, sort_order } = req.body;
     if (!isValidUploadPath(image)) {
       return res.status(400).json({ error: 'Invalid image path' });
+    }
+    if (!isValidExternalLink(link)) {
+      return res.status(400).json({ error: 'Invalid project link' });
     }
     var existing = await pool.query('SELECT image FROM projects WHERE id=$1', [req.params.id]);
     var result = await pool.query(
