@@ -62,6 +62,10 @@ var EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 var isValidLength = function(str, max) {
   return typeof str === 'string' && str.length > 0 && str.length <= max;
 };
+var UPLOAD_PATH_REGEX = /^\/uploads\/[a-zA-Z0-9_.-]+$/;
+var isValidUploadPath = function(url) {
+  return url == null || url === '' || UPLOAD_PATH_REGEX.test(url);
+};
 
 // Email helper
 var escapeHtml = function(str) {
@@ -232,6 +236,9 @@ app.get('/api/profile', async function(req, res) {
 app.put('/api/profile', auth, async function(req, res) {
   try {
     var { name, role, bio, email, location, timezone, available, avatar } = req.body;
+    if (!isValidUploadPath(avatar)) {
+      return res.status(400).json({ error: 'Invalid avatar path' });
+    }
     var existing = await pool.query('SELECT avatar FROM profile WHERE id=1');
     var result = await pool.query(
       'UPDATE profile SET name=$1, role=$2, bio=$3, email=$4, location=$5, timezone=$6, available=$7, avatar=$8, updated_at=NOW() WHERE id=1 RETURNING *',
@@ -286,6 +293,9 @@ app.get('/api/projects', async function(req, res) {
 app.post('/api/projects', auth, async function(req, res) {
   try {
     var { title, description, tags, status, link, image, sort_order } = req.body;
+    if (!isValidUploadPath(image)) {
+      return res.status(400).json({ error: 'Invalid image path' });
+    }
     var result = await pool.query(
       'INSERT INTO projects (title, description, tags, status, link, image, sort_order) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *',
       [title, description, tags || '{}', status || 'Live', link, image, sort_order || 0]
@@ -300,6 +310,9 @@ app.post('/api/projects', auth, async function(req, res) {
 app.put('/api/projects/:id', auth, async function(req, res) {
   try {
     var { title, description, tags, status, link, image, sort_order } = req.body;
+    if (!isValidUploadPath(image)) {
+      return res.status(400).json({ error: 'Invalid image path' });
+    }
     var existing = await pool.query('SELECT image FROM projects WHERE id=$1', [req.params.id]);
     var result = await pool.query(
       'UPDATE projects SET title=$1, description=$2, tags=$3, status=$4, link=$5, image=$6, sort_order=$7 WHERE id=$8 RETURNING *',
@@ -422,6 +435,9 @@ app.post('/api/testimonials/submit', messageLimiter, async function(req, res) {
         (avatar && !isValidLength(avatar, 500))) {
       return res.status(400).json({ error: 'One or more fields exceed the maximum length' });
     }
+    if (!isValidUploadPath(avatar)) {
+      return res.status(400).json({ error: 'Invalid avatar path' });
+    }
     var ratingNum = rating === undefined ? 5 : parseInt(rating, 10);
     if (isNaN(ratingNum) || ratingNum < 1 || ratingNum > 5) {
       return res.status(400).json({ error: 'Rating must be between 1 and 5' });
@@ -463,6 +479,9 @@ app.get('/api/admin/testimonials', auth, async function(req, res) {
 app.post('/api/testimonials', auth, async function(req, res) {
   try {
     var { name, role, company, message, avatar, rating, visible, sort_order } = req.body;
+    if (!isValidUploadPath(avatar)) {
+      return res.status(400).json({ error: 'Invalid avatar path' });
+    }
     var result = await pool.query(
       'INSERT INTO testimonials (name, role, company, message, avatar, rating, visible, sort_order) VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *',
       [name, role, company, message, avatar, rating || 5, visible !== false, sort_order || 0]
@@ -477,6 +496,9 @@ app.post('/api/testimonials', auth, async function(req, res) {
 app.put('/api/testimonials/:id', auth, async function(req, res) {
   try {
     var { name, role, company, message, avatar, rating, visible, sort_order } = req.body;
+    if (!isValidUploadPath(avatar)) {
+      return res.status(400).json({ error: 'Invalid avatar path' });
+    }
     var existing = await pool.query('SELECT avatar FROM testimonials WHERE id=$1', [req.params.id]);
     var result = await pool.query(
       'UPDATE testimonials SET name=$1, role=$2, company=$3, message=$4, avatar=$5, rating=$6, visible=$7, sort_order=$8 WHERE id=$9 RETURNING *',
