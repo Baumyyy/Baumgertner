@@ -148,28 +148,68 @@ app.use(function(req, res, next) {
   next();
 });
 
+// ===== SECURITY EVENT LOGGING & ALERTING =====
+// Logs every rate-limit trip and, if they cluster (possible bot/abuse
+// traffic), emails a single debounced alert rather than one per request.
+var SECURITY_ALERT_COOLDOWN = 30 * 60 * 1000;
+var SECURITY_ALERT_THRESHOLD = 20;
+var lastSecurityAlertAt = 0;
+
+var logSecurityEvent = function(req) {
+  var ip = req.ip || 'unknown';
+  var route = req.originalUrl || req.path || 'unknown';
+  pool.query('INSERT INTO security_events (ip, route) VALUES ($1,$2)', [ip, route])
+    .catch(function(err) { console.error('Security event log failed:', err.message); });
+
+  var now = Date.now();
+  if (now - lastSecurityAlertAt < SECURITY_ALERT_COOLDOWN) return;
+
+  pool.query("SELECT COUNT(*) FROM security_events WHERE created_at > NOW() - INTERVAL '10 minutes'")
+    .then(function(r) {
+      var count = parseInt(r.rows[0].count, 10);
+      if (count < SECURITY_ALERT_THRESHOLD) return;
+      lastSecurityAlertAt = now;
+      sendNotification(
+        'Security alert: unusual traffic on your site',
+        '<h3>Unusual traffic detected</h3>' +
+        '<p>' + count + ' rate-limited requests in the last 10 minutes.</p>' +
+        '<p>Check the Security tab in the admin dashboard for details.</p>'
+      );
+    })
+    .catch(function(err) { console.error('Security alert check failed:', err.message); });
+};
+
+var rateLimitHandler = function(req, res, next, options) {
+  logSecurityEvent(req);
+  res.status(options.statusCode).json(options.message);
+};
+
 var apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 500,
-  message: { error: 'Too many requests, try again later' }
+  max: 150,
+  message: { error: 'Too many requests, try again later' },
+  handler: rateLimitHandler
 });
 
 var authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 30,
-  message: { error: 'Too many login attempts, try again later' }
+  windowMs: 60 * 60 * 1000,
+  max: 5,
+  message: { error: 'Too many login attempts, try again later' },
+  handler: rateLimitHandler
 });
 
 var messageLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,
-  max: 5,
-  message: { error: 'Too many messages, try again later' }
+  max: 3,
+  message: { error: 'Too many messages, try again later' },
+  handler: rateLimitHandler
 });
 
 var pageviewLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 30,
-  message: { error: 'Too many requests, try again later' }
+  max: 20,
+  message: { error: 'Too many requests, try again later' },
+  handler: rateLimitHandler
 });
 
 // Middleware
@@ -703,6 +743,29 @@ app.get('/api/admin/pageviews', auth, async function(req, res) {
   }
 });
 
+// ===== SECURITY (admin) =====
+app.get('/api/admin/security', auth, async function(req, res) {
+  try {
+    var last24h = await pool.query(
+      "SELECT COUNT(*) FROM security_events WHERE created_at > NOW() - INTERVAL '24 hours'"
+    );
+    var topIps = await pool.query(
+      "SELECT ip, COUNT(*) as count FROM security_events WHERE created_at > NOW() - INTERVAL '24 hours' GROUP BY ip ORDER BY count DESC LIMIT 10"
+    );
+    var recent = await pool.query(
+      'SELECT ip, route, created_at FROM security_events ORDER BY created_at DESC LIMIT 50'
+    );
+    res.json({
+      last24hCount: parseInt(last24h.rows[0].count),
+      topIps: topIps.rows,
+      recent: recent.rows
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Something went wrong. Please try again later.' });
+  }
+});
+
 // ===== ERROR HANDLING (e.g. multer file-type/size rejections) =====
 app.use(function(err, req, res, next) {
   if (err) {
@@ -721,6 +784,18 @@ function cleanupOldPageviews() {
 }
 cleanupOldPageviews();
 setInterval(cleanupOldPageviews, PAGEVIEW_RETENTION_INTERVAL);
+
+// ===== SECURITY EVENT RETENTION =====
+// Unlike page_views, these rows do carry an IP address (needed to spot
+// which client is misbehaving), so they're kept for a much shorter 30
+// days rather than 12 months.
+var SECURITY_EVENT_RETENTION_INTERVAL = 24 * 60 * 60 * 1000;
+function cleanupOldSecurityEvents() {
+  pool.query("DELETE FROM security_events WHERE created_at < NOW() - INTERVAL '30 days'")
+    .catch(function(err) { console.error('Security event cleanup failed:', err.message); });
+}
+cleanupOldSecurityEvents();
+setInterval(cleanupOldSecurityEvents, SECURITY_EVENT_RETENTION_INTERVAL);
 
 // ===== UPLOAD RETENTION =====
 // Safety net for files that end up unreferenced (e.g. a testimonial photo

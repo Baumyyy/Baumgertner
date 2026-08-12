@@ -48,6 +48,16 @@ var initDB = async function() {
     `);
 
     await pool.query(`
+      CREATE TABLE IF NOT EXISTS security_events (
+        id SERIAL PRIMARY KEY,
+        ip VARCHAR(64) NOT NULL,
+        route VARCHAR(255) NOT NULL,
+        created_at TIMESTAMP DEFAULT NOW()
+      )
+    `);
+    await pool.query(`CREATE INDEX IF NOT EXISTS idx_security_events_created_at ON security_events(created_at)`);
+
+    await pool.query(`
       CREATE TABLE IF NOT EXISTS testimonials (
         id SERIAL PRIMARY KEY,
         name VARCHAR(255) NOT NULL,

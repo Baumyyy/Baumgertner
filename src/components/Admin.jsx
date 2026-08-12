@@ -80,6 +80,9 @@ var Admin = function() {
   var confirmDeleteTestimonialState = useState(null);
   var confirmDeleteTestimonialId = confirmDeleteTestimonialState[0];
   var setConfirmDeleteTestimonialId = confirmDeleteTestimonialState[1];
+  var securityState = useState({ last24hCount: 0, topIps: [], recent: [] });
+  var security = securityState[0];
+  var setSecurity = securityState[1];
 
   useEffect(function() {
     fetch(API_URL + '/auth/me', { credentials: 'include' })
@@ -113,6 +116,7 @@ var Admin = function() {
     fetchAuth(API_URL + '/messages').then(function(r) { return r.json(); }).then(setMessages);
     fetch(API_URL + '/profile').then(function(r) { return r.json(); }).then(setProfile);
     fetchAuth(API_URL + '/admin/testimonials').then(function(r) { return r.json(); }).then(setAdminTestimonials);
+    fetchAuth(API_URL + '/admin/security').then(function(r) { return r.json(); }).then(setSecurity);
   };
 
   useEffect(function() {
@@ -243,6 +247,7 @@ var Admin = function() {
           Messages
           {stats.unreadMessages > 0 && <span className="tab-badge">{stats.unreadMessages}</span>}
         </button>
+        <button className={'admin-tab' + (tab === 'security' ? ' active' : '')} onClick={function() { setTab('security'); setSidebarOpen(false); }}>Security</button>
         <button className={'admin-tab' + (tab === 'profile' ? ' active' : '')} onClick={function() { setTab('profile'); setSidebarOpen(false); }}>Profile</button>
         <button className="admin-tab logout" onClick={handleLogout}>Logout</button>
       </div>
@@ -652,6 +657,50 @@ var Admin = function() {
                 );
               })}
             </div>
+          </div>
+        )}
+
+        {tab === 'security' && (
+          <div className="admin-section">
+            <h1 className="admin-title">Security</h1>
+            <p className="welcome-text">Rate-limited requests in the last 24 hours: <strong>{security.last24hCount}</strong></p>
+
+            <h2 className="admin-subtitle">Top IPs (24h)</h2>
+            {security.topIps.length === 0 ? (
+              <p className="welcome-text">No blocked requests in the last 24 hours.</p>
+            ) : (
+              <div className="items-list">
+                {security.topIps.map(function(row, i) {
+                  return (
+                    <div className="item-row" key={i}>
+                      <div className="item-info">
+                        <span className="item-title">{row.ip}</span>
+                      </div>
+                      <span className="tab-badge">{row.count}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            <h2 className="admin-subtitle">Recent events</h2>
+            {security.recent.length === 0 ? (
+              <p className="welcome-text">Nothing logged yet.</p>
+            ) : (
+              <div className="items-list">
+                {security.recent.map(function(row, i) {
+                  return (
+                    <div className="item-row" key={i}>
+                      <div className="item-info">
+                        <span className="item-title">{row.ip}</span>
+                        <span className="item-status">{row.route}</span>
+                      </div>
+                      <span className="message-date">{new Date(row.created_at).toLocaleString()}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         )}
 

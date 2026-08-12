@@ -15,7 +15,8 @@ var content = {
         body: [
           'Contact form: name, email address and message, when you submit the contact form.',
           'Testimonials: name, role, company, message, rating and an optional profile photo, when you submit a testimonial. Submitted testimonials are reviewed before being published publicly on the site.',
-          'Basic page-view analytics: the page you visited, the referring page, and your browser’s user-agent string. This is first-party, does not use cookies or a tracking identifier, and is not linked to your name or email.'
+          'Basic page-view analytics: the page you visited, the referring page, and your browser’s user-agent string. This is first-party, does not use cookies or a tracking identifier, and is not linked to your name or email.',
+          'Security logs: if you trigger one of our rate limits (for example by sending an unusually high number of requests), we log your IP address and the requested route.'
         ]
       },
       {
@@ -23,7 +24,8 @@ var content = {
         body: [
           'To respond to messages sent through the contact form. Legal basis: legitimate interest (responding to inquiries addressed to us).',
           'To review and, if approved, publish testimonials. Legal basis: your consent, given at the moment you submit the testimonial.',
-          'To understand overall site traffic (which pages are visited) in aggregate. Legal basis: legitimate interest (maintaining and improving the site).'
+          'To understand overall site traffic (which pages are visited) in aggregate. Legal basis: legitimate interest (maintaining and improving the site).',
+          'To detect and respond to abusive or malicious traffic (bots, scraping, brute-force attempts). Legal basis: legitimate interest (keeping the site secure and available).'
         ]
       },
       {
@@ -50,13 +52,14 @@ var content = {
         heading: 'Data retention',
         body: [
           'Messages and testimonials are kept until deleted by the site owner. You can request deletion at any time (see contact details below).',
-          'Pageview analytics rows are automatically deleted after 12 months.'
+          'Pageview analytics rows are automatically deleted after 12 months.',
+          'Security logs are automatically deleted after 30 days.'
         ]
       },
       {
         heading: 'How we protect your data',
         body: [
-          'We use security measures including hashed passwords, rate limiting on our systems, and a database access role restricted to only what the site needs to function. HTTPS encryption will be enabled once the site is deployed to its own domain.',
+          'We use security measures including GitHub OAuth for admin login (no passwords stored on this site), rate limiting with automated abuse alerts, and a database access role restricted to only what the site needs to function. HTTPS encryption will be enabled once the site is deployed to its own domain.',
           'No security measure is perfect, but we take reasonable steps to keep your data safe.'
         ]
       },
@@ -93,7 +96,8 @@ var content = {
         body: [
           'Yhteydenottolomake: nimi, sähköpostiosoite ja viesti, kun lähetät yhteydenottolomakkeen.',
           'Suosittelut: nimi, rooli, yritys, viesti, arvosana ja valinnainen profiilikuva, kun lähetät suosittelun. Lähetetyt suosittelut tarkistetaan ennen kuin ne mahdollisesti julkaistaan sivustolla.',
-          'Perustason sivukäyntitilastot: käytetty sivu, mistä tulit sivulle (referrer) ja selaimesi user-agent-tunniste. Tämä on ensimmäisen osapuolen tilastointia, ei käytä evästeitä tai seurantatunnistetta, eikä sitä yhdistetä nimeesi tai sähköpostiisi.'
+          'Perustason sivukäyntitilastot: käytetty sivu, mistä tulit sivulle (referrer) ja selaimesi user-agent-tunniste. Tämä on ensimmäisen osapuolen tilastointia, ei käytä evästeitä tai seurantatunnistetta, eikä sitä yhdistetä nimeesi tai sähköpostiisi.',
+          'Turvalokit: jos laukaiset jonkin pyyntörajoituksistamme (esim. lähettämällä poikkeuksellisen suuren määrän pyyntöjä), tallennamme IP-osoitteesi ja pyydetyn reitin.'
         ]
       },
       {
@@ -101,7 +105,8 @@ var content = {
         body: [
           'Vastataksemme yhteydenottolomakkeen kautta lähetettyihin viesteihin. Oikeusperuste: oikeutettu etu (meille osoitettuihin yhteydenottoihin vastaaminen).',
           'Tarkistaaksemme ja hyväksytyt suosittelut julkaistaksemme. Oikeusperuste: suostumuksesi, jonka annat lähettäessäsi suosittelun.',
-          'Ymmärtääksemme sivuston kokonaiskävijämäärää (mitä sivuja käytetään) koostetusti. Oikeusperuste: oikeutettu etu (sivuston ylläpito ja kehittäminen).'
+          'Ymmärtääksemme sivuston kokonaiskävijämäärää (mitä sivuja käytetään) koostetusti. Oikeusperuste: oikeutettu etu (sivuston ylläpito ja kehittäminen).',
+          'Havaitaksemme ja torjuaksemme väärinkäytöksiä ja haitallista liikennettä (botit, skreippaus, brute-force-yritykset). Oikeusperuste: oikeutettu etu (sivuston turvallisuuden ja saatavuuden ylläpito).'
         ]
       },
       {
@@ -128,13 +133,14 @@ var content = {
         heading: 'Tietojen säilytys',
         body: [
           'Viestit ja suosittelut säilytetään kunnes ylläpitäjä poistaa ne. Voit pyytää tietojesi poistoa milloin tahansa (yhteystiedot alla).',
-          'Sivukäyntitilastojen rivit poistetaan automaattisesti 12 kuukauden jälkeen.'
+          'Sivukäyntitilastojen rivit poistetaan automaattisesti 12 kuukauden jälkeen.',
+          'Turvalokit poistetaan automaattisesti 30 päivän jälkeen.'
         ]
       },
       {
         heading: 'Miten suojaamme tietojasi',
         body: [
-          'Käytämme turvatoimia kuten salasanojen hashays, järjestelmiemme pyyntörajoitukset (rate limiting) ja tietokantakäyttöoikeus joka on rajattu vain siihen mitä sivusto tarvitsee toimiakseen. HTTPS-salaus otetaan käyttöön kun sivusto julkaistaan omalla domainillaan.',
+          'Käytämme turvatoimia kuten GitHub OAuth -kirjautumista admin-paneeliin (sivustolla ei säilytetä salasanoja), pyyntörajoituksia automaattisin väärinkäyttöhälytyksin, ja tietokantakäyttöoikeutta joka on rajattu vain siihen mitä sivusto tarvitsee toimiakseen. HTTPS-salaus otetaan käyttöön kun sivusto julkaistaan omalla domainillaan.',
           'Mikään turvatoimi ei ole täydellinen, mutta pyrimme kohtuullisin keinoin pitämään tietosi turvassa.'
         ]
       },

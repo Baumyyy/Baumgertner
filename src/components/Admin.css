@@ -257,6 +257,14 @@
   color: #fff;
 }
 
+.admin-subtitle {
+  font-size: 1.1rem;
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 1.5rem 0 0.75rem;
+}
+
 .admin-section {
   animation: adminFadeIn 0.3s ease;
 }
