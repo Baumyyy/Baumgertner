@@ -406,18 +406,18 @@
   height: 6px;
   background: #00ff88;
   border-radius: 50%;
-  animation: statusBlink 2s ease-in-out infinite;
-  box-shadow: 0 0 6px rgba(0, 255, 136, 0.6);
+  animation: statusBlink 3.4s ease-in-out infinite;
+  box-shadow: 0 0 4px rgba(0, 255, 136, 0.45);
 }
 
 .status-dot.dot-busy {
   background: #ff6464;
-  box-shadow: 0 0 6px rgba(255, 100, 100, 0.6);
+  box-shadow: 0 0 4px rgba(255, 100, 100, 0.45);
 }
 
 @keyframes statusBlink {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
+  50% { opacity: 0.65; }
 }
 
 /* Stats row */
@@ -752,7 +752,9 @@
   .hero-mini-card {
     flex-wrap: wrap;
     justify-content: center;
-    padding: 0.9rem;
+    width: fit-content;
+    max-width: 100%;
+    padding: 0.9rem 1.3rem;
     border-radius: 20px;
     margin-bottom: 0;
   }

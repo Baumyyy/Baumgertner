@@ -1,19 +1,27 @@
 var API_URL = '/api';
 
+var parseResponse = async function(res) {
+  var data = await res.json();
+  if (!res.ok) {
+    throw new Error((data && data.error) || 'Request failed');
+  }
+  return data;
+};
+
 export var api = {
   getProfile: async function() {
     var res = await fetch(API_URL + '/profile');
-    return res.json();
+    return parseResponse(res);
   },
 
   getProjects: async function() {
     var res = await fetch(API_URL + '/projects');
-    return res.json();
+    return parseResponse(res);
   },
 
   getAvailability: async function() {
     var res = await fetch(API_URL + '/availability');
-    return res.json();
+    return parseResponse(res);
   },
 
   sendMessage: async function(data) {
@@ -22,10 +30,10 @@ export var api = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     });
-    return res.json();
+    return parseResponse(res);
   },
 
   getTestimonials: function() {
-  return fetch('/api/testimonials').then(function(r) { return r.json(); });
-},
+    return fetch('/api/testimonials').then(parseResponse);
+  },
 };
