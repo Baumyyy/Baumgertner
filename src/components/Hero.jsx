@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './Hero.css';
 import { api } from '../api';
-import { useLang } from '../LanguageContext';
+import { useLang } from '../useLang';
 
 const prefersReducedMotion = () => typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -143,9 +143,9 @@ const Hero = ({ ready }) => {
             <span className="nav-dot"></span>{t.nav_contact}
           </a>
         </div>
-        <div className="lang-toggle" onClick={toggleLang}>
+        <button type="button" className="lang-toggle" onClick={toggleLang} aria-label={lang === 'en' ? 'Switch to Finnish' : 'Switch to English'}>
           <span>{lang === 'en' ? 'FI' : 'EN'}</span>
-        </div>
+        </button>
       </nav>
 
       <section id="home" className="hero">
@@ -207,13 +207,13 @@ const Hero = ({ ready }) => {
           </div>
 
           <div className="social-links">
-            <a href="https://github.com/baumyyy" target="_blank" rel="noopener noreferrer" className="social-link">
+            <a href="https://github.com/baumyyy" target="_blank" rel="noopener noreferrer" className="social-link" aria-label="GitHub">
               <i className="fab fa-github"></i>
             </a>
-            <a href="https://www.linkedin.com/in/anthony-baumgertner-022191429/" target="_blank" rel="noopener noreferrer" className="social-link">
+            <a href="https://www.linkedin.com/in/anthony-baumgertner-022191429/" target="_blank" rel="noopener noreferrer" className="social-link" aria-label="LinkedIn">
               <i className="fab fa-linkedin"></i>
             </a>
-            <a href="https://www.instagram.com/baumgertnerr/" target="_blank" rel="noopener noreferrer" className="social-link">
+            <a href="https://www.instagram.com/baumgertnerr/" target="_blank" rel="noopener noreferrer" className="social-link" aria-label="Instagram">
               <i className="fab fa-instagram"></i>
             </a>
           </div>

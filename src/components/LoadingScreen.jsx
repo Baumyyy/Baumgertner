@@ -24,7 +24,7 @@ var LoadingScreen = function({ onFinished }) {
     }, 150);
 
     return function() { clearInterval(interval); };
-  }, []);
+  }, [onFinished, setProgress, setFading]);
 
   return (
     <div className={'loading-screen' + (fading ? ' loading-fade' : '')}>

@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
 import './Testimonials.css';
 import { api } from '../api';
-import { useLang } from '../LanguageContext';
+import { useLang } from '../useLang';
 import { useScrollAnimation } from '../hooks/useScrollAnimation';
 
 var Testimonials = function() {
@@ -29,6 +29,9 @@ var Testimonials = function() {
   var uploadingState = useState(false);
   var uploading = uploadingState[0];
   var setUploading = uploadingState[1];
+  var formErrorState = useState('');
+  var formError = formErrorState[0];
+  var setFormError = formErrorState[1];
   var { t } = useLang();
 
   // Swipe
@@ -66,10 +69,19 @@ var Testimonials = function() {
   }, [showForm]);
 
   useEffect(function() {
+    if (!showForm) return;
+    var handleKeyDown = function(e) {
+      if (e.key === 'Escape') setShowForm(false);
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return function() { document.removeEventListener('keydown', handleKeyDown); };
+  }, [showForm, setShowForm]);
+
+  useEffect(function() {
     api.getTestimonials().then(function(data) {
       if (Array.isArray(data)) setTestimonials(data);
     }).catch(function() {});
-  }, []);
+  }, [setTestimonials]);
 
   useEffect(function() {
     if (testimonials.length === 0) return;
@@ -77,37 +89,36 @@ var Testimonials = function() {
       setActive(function(prev) { return (prev + 1) % testimonials.length; });
     }, 5000);
     return function() { clearInterval(interval); };
-  }, [testimonials]);
+  }, [testimonials, setActive]);
 
   var handlePhotoUpload = function(e) {
     var file = e.target.files[0];
     if (!file) return;
     setUploading(true);
-    var formData = new FormData();
-    formData.append('image', file);
-    fetch('/api/upload-public', {
-      method: 'POST',
-      body: formData
-    }).then(function(r) { return r.json(); }).then(function(data) {
+    setFormError('');
+    api.uploadPublicImage(file).then(function(data) {
       setUploading(false);
       if (data.url) setForm(Object.assign({}, form, { avatar: data.url }));
-    }).catch(function() { setUploading(false); });
+    }).catch(function() {
+      setUploading(false);
+      setFormError('upload');
+    });
   };
 
   var handleSubmit = function(e) {
     e.preventDefault();
     if (!form.name || !form.message) return;
     setSending(true);
-    fetch('/api/testimonials/submit', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(form)
-    }).then(function(r) { return r.json(); }).then(function() {
+    setFormError('');
+    api.submitTestimonial(form).then(function() {
       setSending(false);
       setSubmitted(true);
       setForm({ name: '', role: '', company: '', message: '', rating: 5, avatar: '', website: '' });
       setTimeout(function() { setSubmitted(false); setShowForm(false); }, 3000);
-    }).catch(function() { setSending(false); });
+    }).catch(function() {
+      setSending(false);
+      setFormError('send');
+    });
   };
 
   var renderStars = function(rating) {
@@ -125,11 +136,14 @@ var Testimonials = function() {
     for (var i = 1; i <= 5; i++) {
       (function(val) {
         stars.push(
-          <span
+          <button
             key={val}
+            type="button"
             className={'rating-star' + (val <= form.rating ? ' rating-active' : '')}
+            aria-label={val + ' / 5'}
+            aria-pressed={val === form.rating}
             onClick={function() { setForm(Object.assign({}, form, { rating: val })); }}
-          >★</span>
+          >★</button>
         );
       })(i);
     }
@@ -251,38 +265,40 @@ var Testimonials = function() {
                   />
                 </div>
                 <div className="tform-field">
-                  <label>{t.testimonials_form_name} *</label>
-                  <input type="text" value={form.name} onChange={function(e) { setForm(Object.assign({}, form, { name: e.target.value })); }} required />
+                  <label htmlFor="testimonial-name">{t.testimonials_form_name} *</label>
+                  <input id="testimonial-name" type="text" value={form.name} onChange={function(e) { setForm(Object.assign({}, form, { name: e.target.value })); }} required />
                 </div>
                 <div className="tform-row">
                   <div className="tform-field">
-                    <label>{t.testimonials_form_role}</label>
-                    <input type="text" value={form.role} placeholder={t.testimonials_role_placeholder} onChange={function(e) { setForm(Object.assign({}, form, { role: e.target.value })); }} />
+                    <label htmlFor="testimonial-role">{t.testimonials_form_role}</label>
+                    <input id="testimonial-role" type="text" value={form.role} placeholder={t.testimonials_role_placeholder} onChange={function(e) { setForm(Object.assign({}, form, { role: e.target.value })); }} />
                   </div>
                   <div className="tform-field">
-                    <label>{t.testimonials_form_company}</label>
-                    <input type="text" value={form.company} onChange={function(e) { setForm(Object.assign({}, form, { company: e.target.value })); }} />
+                    <label htmlFor="testimonial-company">{t.testimonials_form_company}</label>
+                    <input id="testimonial-company" type="text" value={form.company} onChange={function(e) { setForm(Object.assign({}, form, { company: e.target.value })); }} />
                   </div>
                 </div>
                 <div className="tform-field">
-                  <label>{t.testimonials_form_photo}</label>
+                  <label htmlFor="testimonial-photo">{t.testimonials_form_photo}</label>
                   <div className="tform-photo-row">
                     {form.avatar && <img src={form.avatar} alt="Profile photo preview" className="tform-photo-preview" />}
-                    <input type="file" accept="image/*" className="file-input" onChange={handlePhotoUpload} />
+                    <input id="testimonial-photo" type="file" accept="image/*" className="file-input" onChange={handlePhotoUpload} />
                     {uploading && <span className="tform-uploading">{t.testimonials_uploading}</span>}
                   </div>
                 </div>
                 <div className="tform-field">
-                  <label>{t.testimonials_form_message} *</label>
-                  <textarea rows="4" value={form.message} onChange={function(e) { setForm(Object.assign({}, form, { message: e.target.value })); }} required></textarea>
+                  <label htmlFor="testimonial-message">{t.testimonials_form_message} *</label>
+                  <textarea id="testimonial-message" rows="4" value={form.message} onChange={function(e) { setForm(Object.assign({}, form, { message: e.target.value })); }} required></textarea>
                 </div>
                 <div className="tform-field">
-                  <label>{t.testimonials_form_rating}</label>
-                  <div className="rating-select">{renderRatingSelect()}</div>
+                  <label id="testimonial-rating-label">{t.testimonials_form_rating}</label>
+                  <div className="rating-select" role="group" aria-labelledby="testimonial-rating-label">{renderRatingSelect()}</div>
                 </div>
                 <p className="tform-privacy-notice">
                   {t.testimonial_notice_pre} <Link to="/terms">{t.terms_link_inline}</Link> {t.testimonial_notice_mid} <Link to="/privacy">{t.privacy_link_inline}</Link>{t.testimonial_notice_post}
                 </p>
+                {formError === 'send' && <p className="tform-error-msg">{t.testimonials_error_send}</p>}
+                {formError === 'upload' && <p className="tform-error-msg">{t.testimonials_error_upload}</p>}
                 <button type="submit" className="tform-submit" disabled={sending || uploading}>
                   {sending ? t.testimonials_sending : t.testimonials_submit}
                 </button>

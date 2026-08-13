@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import './Contact.css';
 import { useScrollAnimation } from '../hooks/useScrollAnimation';
 import { api } from '../api';
-import { useLang } from '../LanguageContext';
+import { useLang } from '../useLang';
 
 var Contact = function() {
   var focusedState = useState('');

@@ -1,4 +1,4 @@
-import { useState, useEffect, lazy, Suspense } from 'react';
+import { useState, useEffect, useCallback, lazy, Suspense } from 'react';
 import CustomCursor from './components/CustomCursor.jsx';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { LanguageProvider } from './LanguageContext';
@@ -31,11 +31,13 @@ function App() {
     }).catch(function() {});
   }, []);
 
+  var handleLoadingFinished = useCallback(function() { setLoading(false); }, [setLoading]);
+
   return (
     <LanguageProvider>
       <a href="#home" className="skip-link">Skip to main content</a>
       <CustomCursor />
-      {loading && <LoadingScreen onFinished={function() { setLoading(false); }} />}
+      {loading && <LoadingScreen onFinished={handleLoadingFinished} />}
       <BrowserRouter>
         <ErrorBoundary>
           <Suspense fallback={null}>

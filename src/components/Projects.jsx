@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import './Projects.css';
 import { useScrollAnimation } from '../hooks/useScrollAnimation';
 import { api } from '../api';
-import { useLang } from '../LanguageContext';
+import { useLang } from '../useLang';
 
 var Projects = function() {
   var state = useState(null);
@@ -60,7 +60,7 @@ var Projects = function() {
       grid.removeEventListener('scroll', handleScroll);
       if (raf) cancelAnimationFrame(raf);
     };
-  }, [projects.length]);
+  }, [projects.length, setActiveSlide]);
 
   var scrollToSlide = function(index) {
     var grid = gridRef.current;

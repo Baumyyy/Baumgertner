@@ -254,7 +254,7 @@
 .tform-field textarea { resize: vertical; min-height: 80px; }
 
 .rating-select { display: flex; gap: 0.3rem; }
-.rating-star { font-size: 1.5rem; color: rgba(255, 255, 255, 0.06); cursor: pointer; transition: all 0.2s ease; }
+.rating-star { background: none; border: none; padding: 0; font-family: inherit; font-size: 1.5rem; color: rgba(255, 255, 255, 0.06); cursor: pointer; transition: all 0.2s ease; }
 .rating-star.rating-active { color: #00ff88; filter: drop-shadow(0 0 4px rgba(0, 255, 136, 0.3)); }
 .rating-star:hover { transform: scale(1.2); }
 
@@ -264,6 +264,15 @@
   font-family: 'Inter', sans-serif;
   line-height: 1.5;
   margin: -0.4rem 0 0 0;
+}
+
+.tform-error-msg {
+  font-size: 0.72rem;
+  color: rgba(255, 90, 90, 0.75);
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  margin: -0.4rem 0 0 0;
+  letter-spacing: 0.02em;
 }
 
 .tform-privacy-notice a {

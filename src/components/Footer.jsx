@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import './Footer.css';
 import { useScrollAnimation } from '../hooks/useScrollAnimation';
 import { api } from '../api';
-import { useLang } from '../LanguageContext';
+import { useLang } from '../useLang';
 
 var Footer = function() {
   var currentYear = new Date().getFullYear();
@@ -17,7 +17,7 @@ var Footer = function() {
     api.getAvailability().then(function(data) {
       setAvailable(data.available);
     }).catch(function() {});
-  }, []);
+  }, [setAvailable]);
 
   var scrollTo = function(targetId) {
     var container = document.querySelector('.aurora-container');

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './WhatIDo.css';
 import { useScrollAnimation } from '../hooks/useScrollAnimation';
-import { useLang } from '../LanguageContext';
+import { useLang } from '../useLang';
 
 var WhatIDo = function() {
   var hoveredCardState = useState(null);

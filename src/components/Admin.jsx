@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import './Admin.css';
 import { usePageMeta } from '../hooks/usePageMeta';
 
@@ -92,13 +92,14 @@ var Admin = function() {
           setAuthStatus(data.user);
           setLoggedIn(true);
         }
-      });
-  }, []);
+      })
+      .catch(function() {});
+  }, [setAuthStatus, setLoggedIn]);
 
-  var fetchAuth = function(url, options) {
+  var fetchAuth = useCallback(function(url, options) {
     var opts = Object.assign({ credentials: 'include', headers: { 'Content-Type': 'application/json' } }, options || {});
     return fetch(url, opts);
-  };
+  }, []);
 
   var alertIfFailed = function(r) {
     if (!r.ok) {
@@ -108,20 +109,24 @@ var Admin = function() {
     return false;
   };
 
-  var loadAll = function() {
-    fetchAuth(API_URL + '/admin/stats').then(function(r) { return r.json(); }).then(setStats);
-    fetchAuth(API_URL + '/admin/analytics').then(function(r) { return r.json(); }).then(setAnalytics);
-    fetchAuth(API_URL + '/admin/pageviews').then(function(r) { return r.json(); }).then(setPageviews);
-    fetch(API_URL + '/projects').then(function(r) { return r.json(); }).then(setProjects);
-    fetchAuth(API_URL + '/messages').then(function(r) { return r.json(); }).then(setMessages);
-    fetch(API_URL + '/profile').then(function(r) { return r.json(); }).then(setProfile);
-    fetchAuth(API_URL + '/admin/testimonials').then(function(r) { return r.json(); }).then(setAdminTestimonials);
-    fetchAuth(API_URL + '/admin/security').then(function(r) { return r.json(); }).then(setSecurity);
+  var parseOk = function(r) {
+    return r.ok ? r.json() : Promise.reject(new Error('Request failed'));
   };
+
+  var loadAll = useCallback(function() {
+    fetchAuth(API_URL + '/admin/stats').then(parseOk).then(setStats).catch(function() {});
+    fetchAuth(API_URL + '/admin/analytics').then(parseOk).then(setAnalytics).catch(function() {});
+    fetchAuth(API_URL + '/admin/pageviews').then(parseOk).then(setPageviews).catch(function() {});
+    fetch(API_URL + '/projects').then(parseOk).then(setProjects).catch(function() {});
+    fetchAuth(API_URL + '/messages').then(parseOk).then(setMessages).catch(function() {});
+    fetch(API_URL + '/profile').then(parseOk).then(setProfile).catch(function() {});
+    fetchAuth(API_URL + '/admin/testimonials').then(parseOk).then(setAdminTestimonials).catch(function() {});
+    fetchAuth(API_URL + '/admin/security').then(parseOk).then(setSecurity).catch(function() {});
+  }, [fetchAuth, setStats, setAnalytics, setPageviews, setProjects, setMessages, setProfile, setAdminTestimonials, setSecurity]);
 
   useEffect(function() {
     if (loggedIn) loadAll();
-  }, [loggedIn, tab]);
+  }, [loggedIn, tab, loadAll]);
 
   var handleLogout = function() {
     setLoggedIn(false);
@@ -163,20 +168,25 @@ var Admin = function() {
     });
   };
 
-  var uploadImage = function(e) {
-    var file = e.target.files[0];
-    if (!file) return;
+  var uploadAdminImage = function(file) {
     var formData = new FormData();
     formData.append('image', file);
-    fetch(API_URL + '/upload', {
+    return fetch(API_URL + '/upload', {
       method: 'POST',
       credentials: 'include',
       body: formData
-    }).then(function(r) { return r.json(); }).then(function(data) {
-      if (data.url) {
-        setEditProject(Object.assign({}, editProject, { image: data.url, image_position: '50% 50%', image_zoom: 100 }));
-      }
-    });
+    }).then(function(r) {
+      if (!r.ok) throw new Error('Upload failed');
+      return r.json();
+    }).then(function(data) { return data.url; });
+  };
+
+  var uploadImage = function(e) {
+    var file = e.target.files[0];
+    if (!file) return;
+    uploadAdminImage(file).then(function(url) {
+      setEditProject(Object.assign({}, editProject, { image: url, image_position: '50% 50%', image_zoom: 100 }));
+    }).catch(function() { alert('Upload failed. Please try again.'); });
   };
 
   var parseImagePosition = function(pos) {
@@ -580,15 +590,9 @@ var Admin = function() {
                   <input type="file" accept="image/*" onChange={function(e) {
                     var file = e.target.files[0];
                     if (!file) return;
-                    var formData = new FormData();
-                    formData.append('image', file);
-                    fetch(API_URL + '/upload', {
-                      method: 'POST',
-                      credentials: 'include',
-                      body: formData
-                    }).then(function(r) { return r.json(); }).then(function(data) {
-                      if (data.url) setEditTestimonial(Object.assign({}, editTestimonial, { avatar: data.url }));
-                    });
+                    uploadAdminImage(file).then(function(url) {
+                      setEditTestimonial(Object.assign({}, editTestimonial, { avatar: url }));
+                    }).catch(function() { alert('Upload failed. Please try again.'); });
                   }} className="file-input" />
                 </div>
                 <select className="edit-input" value={editTestimonial.rating || 5} onChange={function(e) { setEditTestimonial(Object.assign({}, editTestimonial, { rating: parseInt(e.target.value) })); }}>
@@ -714,15 +718,9 @@ var Admin = function() {
                 <input type="file" accept="image/*" onChange={function(e) {
                   var file = e.target.files[0];
                   if (!file) return;
-                  var formData = new FormData();
-                  formData.append('image', file);
-                  fetch(API_URL + '/upload', {
-                    method: 'POST',
-                    credentials: 'include',
-                    body: formData
-                  }).then(function(r) { return r.json(); }).then(function(data) {
-                    if (data.url) setProfile(Object.assign({}, profile, { avatar: data.url }));
-                  });
+                  uploadAdminImage(file).then(function(url) {
+                    setProfile(Object.assign({}, profile, { avatar: url }));
+                  }).catch(function() { alert('Upload failed. Please try again.'); });
                 }} className="file-input" />
               </div>
               <label className="edit-label">Name</label>

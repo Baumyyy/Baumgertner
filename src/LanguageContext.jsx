@@ -1,10 +1,9 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { useState } from 'react';
 import en from './lang/en';
 import fi from './lang/fi';
+import { LanguageContext } from './languageContextObject';
 
 var languages = { en: en, fi: fi };
-
-var LanguageContext = createContext();
 
 export var LanguageProvider = function({ children }) {
   var state = useState('en');
@@ -22,8 +21,4 @@ export var LanguageProvider = function({ children }) {
       {children}
     </LanguageContext.Provider>
   );
-};
-
-export var useLang = function() {
-  return useContext(LanguageContext);
 };

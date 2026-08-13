@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './PrivacyPolicy.css';
-import { useLang } from '../LanguageContext';
+import { useLang } from '../useLang';
 import { usePageMeta } from '../hooks/usePageMeta';
 
 var content = {

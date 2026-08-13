@@ -36,4 +36,20 @@ export var api = {
   getTestimonials: function() {
     return fetch('/api/testimonials').then(parseResponse);
   },
+
+  submitTestimonial: async function(data) {
+    var res = await fetch(API_URL + '/testimonials/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    return parseResponse(res);
+  },
+
+  uploadPublicImage: async function(file) {
+    var formData = new FormData();
+    formData.append('image', file);
+    var res = await fetch(API_URL + '/upload-public', { method: 'POST', body: formData });
+    return parseResponse(res);
+  },
 };

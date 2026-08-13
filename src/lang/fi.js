@@ -65,6 +65,8 @@ var fi = {
   testimonials_form_rating: 'Arvosana',
   testimonials_sending: 'Lähetetään...',
   testimonials_submit: 'Lähetä suositus',
+  testimonials_error_send: 'Lähetys epäonnistui. Yritä uudelleen.',
+  testimonials_error_upload: 'Kuvan lataus epäonnistui. Yritä uudelleen.',
   testimonials_form_photo: 'Profiilikuva (valinnainen)',
   testimonials_empty: 'Ei vielä suosituksia',
   testimonials_role_placeholder: 'esim. toimitusjohtaja, kehittäjä',
