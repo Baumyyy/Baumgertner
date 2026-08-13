@@ -184,30 +184,36 @@ var rateLimitHandler = function(req, res, next, options) {
   res.status(options.statusCode).json(options.message);
 };
 
+// A single dev machine (hot-reload, repeated logins while testing, browser
+// automation) generates far more requests than a real visitor ever would -
+// so the strict limits below only apply in production; local dev gets a
+// much looser budget to avoid tripping over its own traffic.
+var IS_PROD = process.env.NODE_ENV === 'production';
+
 var apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 150,
+  max: IS_PROD ? 150 : 3000,
   message: { error: 'Too many requests, try again later' },
   handler: rateLimitHandler
 });
 
 var authLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,
-  max: 5,
+  max: IS_PROD ? 5 : 200,
   message: { error: 'Too many login attempts, try again later' },
   handler: rateLimitHandler
 });
 
 var messageLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,
-  max: 3,
+  max: IS_PROD ? 3 : 200,
   message: { error: 'Too many messages, try again later' },
   handler: rateLimitHandler
 });
 
 var pageviewLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 20,
+  max: IS_PROD ? 20 : 500,
   message: { error: 'Too many requests, try again later' },
   handler: rateLimitHandler
 });

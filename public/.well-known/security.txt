@@ -1,4 +1,4 @@
-Contact: mailto:baumgertnerr@outlook.com
+Contact: mailto:contact@baumgertner.fi
 Expires: 2027-08-10T00:00:00.000Z
 Preferred-Languages: en, fi
 Canonical: https://baumgertner.fi/.well-known/security.txt

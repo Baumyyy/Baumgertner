@@ -26,7 +26,7 @@ var content = {
       {
         heading: 'Governing law & contact',
         body: [
-          'These terms are governed by Finnish law and may be updated from time to time. Questions: baumgertnerr@outlook.com'
+          'These terms are governed by Finnish law and may be updated from time to time. Questions: contact@baumgertner.fi'
         ]
       }
     ],
@@ -53,7 +53,7 @@ var content = {
       {
         heading: 'Sovellettava laki & yhteystiedot',
         body: [
-          'Näihin ehtoihin sovelletaan Suomen lakia, ja niitä voidaan päivittää ajoittain. Kysymykset: baumgertnerr@outlook.com'
+          'Näihin ehtoihin sovelletaan Suomen lakia, ja niitä voidaan päivittää ajoittain. Kysymykset: contact@baumgertner.fi'
         ]
       }
     ],

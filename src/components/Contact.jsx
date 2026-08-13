@@ -93,7 +93,7 @@ var Contact = function() {
               </div>
               <div className="info-card-content">
                 <span className="info-card-label">{t.contact_email}</span>
-                <span className="info-card-value">baumgertnerr@outlook.com</span>
+                <span className="info-card-value">contact@baumgertner.fi</span>
               </div>
             </div>
 

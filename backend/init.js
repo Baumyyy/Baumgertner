@@ -82,7 +82,7 @@ var initDB = async function() {
         'Anthony Baumgertner',
         'Software Engineer & Project Manager',
         'Student at Turku University of Applied Sciences',
-        'baumgertnerr@outlook.com',
+        'contact@baumgertner.fi',
         'Turku, Finland',
         'EET (UTC +2)',
         true

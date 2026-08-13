@@ -80,7 +80,7 @@ var content = {
       {
         heading: 'Contact',
         body: [
-          'baumgertnerr@outlook.com'
+          'contact@baumgertner.fi'
         ]
       }
     ],
@@ -161,7 +161,7 @@ var content = {
       {
         heading: 'Yhteystiedot',
         body: [
-          'baumgertnerr@outlook.com'
+          'contact@baumgertner.fi'
         ]
       }
     ],
