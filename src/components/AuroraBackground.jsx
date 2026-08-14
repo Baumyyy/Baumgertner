@@ -28,7 +28,7 @@ const AuroraBackground = ({ children }) => {
     const COUNT      = isMobile ? 28 : 85;
     const LINK_DIST  = isMobile ? 110 : 160;
     const PUSH_DIST  = 130;
-    const PUSH_FORCE = 0.55;
+    const PUSH_FORCE = 0.32;
 
     const pts = Array.from({ length: COUNT }, () => ({
       x:  Math.random() * window.innerWidth,
@@ -54,8 +54,8 @@ const AuroraBackground = ({ children }) => {
           p.vy += (dy / dist) * f;
         }
 
-        p.vx *= 0.992;
-        p.vy *= 0.992;
+        p.vx *= 0.975;
+        p.vy *= 0.975;
         p.x  += p.vx + p.driftVx;
         p.y  += p.vy + p.driftVy;
 
