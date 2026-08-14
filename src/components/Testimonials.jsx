@@ -32,6 +32,9 @@ var Testimonials = function() {
   var formErrorState = useState('');
   var formError = formErrorState[0];
   var setFormError = formErrorState[1];
+  var agreedState = useState(false);
+  var agreed = agreedState[0];
+  var setAgreed = agreedState[1];
   var { t } = useLang();
 
   // Swipe
@@ -107,13 +110,14 @@ var Testimonials = function() {
 
   var handleSubmit = function(e) {
     e.preventDefault();
-    if (!form.name || !form.message) return;
+    if (!form.name || !form.message || !agreed) return;
     setSending(true);
     setFormError('');
     api.submitTestimonial(form).then(function() {
       setSending(false);
       setSubmitted(true);
       setForm({ name: '', role: '', company: '', message: '', rating: 5, avatar: '', website: '' });
+      setAgreed(false);
       setTimeout(function() { setSubmitted(false); setShowForm(false); }, 3000);
     }).catch(function() {
       setSending(false);
@@ -294,12 +298,21 @@ var Testimonials = function() {
                   <label id="testimonial-rating-label">{t.testimonials_form_rating}</label>
                   <div className="rating-select" role="group" aria-labelledby="testimonial-rating-label">{renderRatingSelect()}</div>
                 </div>
-                <p className="tform-privacy-notice">
-                  {t.testimonial_notice_pre} <Link to="/terms">{t.terms_link_inline}</Link> {t.testimonial_notice_mid} <Link to="/privacy">{t.privacy_link_inline}</Link>{t.testimonial_notice_post}
-                </p>
+                <label className="tform-consent-row" htmlFor="testimonial-agree">
+                  <input
+                    id="testimonial-agree"
+                    type="checkbox"
+                    checked={agreed}
+                    onChange={function(e) { setAgreed(e.target.checked); }}
+                    required
+                  />
+                  <span className="tform-privacy-notice">
+                    {t.testimonial_notice_pre} <Link to="/terms">{t.terms_link_inline}</Link> {t.testimonial_notice_mid} <Link to="/privacy">{t.privacy_link_inline}</Link>{t.testimonial_notice_post}
+                  </span>
+                </label>
                 {formError === 'send' && <p className="tform-error-msg">{t.testimonials_error_send}</p>}
                 {formError === 'upload' && <p className="tform-error-msg">{t.testimonials_error_upload}</p>}
-                <button type="submit" className="tform-submit" disabled={sending || uploading}>
+                <button type="submit" className="tform-submit" disabled={sending || uploading || !agreed}>
                   {sending ? t.testimonials_sending : t.testimonials_submit}
                 </button>
               </form>

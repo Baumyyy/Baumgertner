@@ -55,8 +55,8 @@
 }
 
 .testimonial-card {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.026);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 24px;
   padding: 2.5rem;
   max-width: 520px;
@@ -258,12 +258,27 @@
 .rating-star.rating-active { color: #00ff88; filter: drop-shadow(0 0 4px rgba(0, 255, 136, 0.3)); }
 .rating-star:hover { transform: scale(1.2); }
 
+.tform-consent-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  cursor: pointer;
+  margin: -0.4rem 0 0 0;
+}
+
+.tform-consent-row input[type="checkbox"] {
+  margin-top: 0.15rem;
+  accent-color: #00ff88;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
 .tform-privacy-notice {
   font-size: 0.72rem;
   color: rgba(255, 255, 255, 0.3);
   font-family: 'Inter', sans-serif;
   line-height: 1.5;
-  margin: -0.4rem 0 0 0;
+  margin: 0;
 }
 
 .tform-error-msg {
