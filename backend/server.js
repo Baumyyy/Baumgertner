@@ -550,12 +550,15 @@ app.get('/api/testimonials', async function(req, res) {
 
 app.post('/api/testimonials/submit', testimonialLimiter, async function(req, res) {
   try {
-    var { name, role, company, message, rating, avatar, website } = req.body;
+    var { name, role, company, message, rating, avatar, website, consent } = req.body;
     if (website) {
       return res.json({ success: true, message: 'Thank you! Your testimonial will be reviewed.' });
     }
     if (!name || !message) {
       return res.status(400).json({ error: 'Name and message are required' });
+    }
+    if (consent !== true) {
+      return res.status(400).json({ error: 'Consent to publish is required' });
     }
     if (!isValidLength(name, 100) || !isValidLength(message, 2000) ||
         (role && !isValidLength(role, 100)) || (company && !isValidLength(company, 100)) ||
@@ -570,7 +573,7 @@ app.post('/api/testimonials/submit', testimonialLimiter, async function(req, res
       return res.status(400).json({ error: 'Rating must be between 1 and 5' });
     }
     await pool.query(
-      'INSERT INTO testimonials (name, role, company, message, rating, avatar, visible, sort_order) VALUES ($1,$2,$3,$4,$5,$6,false,0) RETURNING *',
+      'INSERT INTO testimonials (name, role, company, message, rating, avatar, visible, sort_order, consent_at) VALUES ($1,$2,$3,$4,$5,$6,false,0,NOW()) RETURNING *',
       [name, role || '', company || '', message, ratingNum, avatar || null]
     );
 

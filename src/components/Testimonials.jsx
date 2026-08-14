@@ -144,7 +144,7 @@ var Testimonials = function() {
     if (!form.name || !form.message || !agreed) return;
     setSending(true);
     setFormError('');
-    api.submitTestimonial(form).then(function() {
+    api.submitTestimonial(Object.assign({}, form, { consent: agreed })).then(function() {
       setSending(false);
       setSubmitted(true);
       setForm({ name: '', role: '', company: '', message: '', rating: 5, avatar: '', website: '' });

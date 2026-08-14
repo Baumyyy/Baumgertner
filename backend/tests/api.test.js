@@ -118,6 +118,42 @@ describe('Public API Endpoints', function() {
       expect(check.rows.length).toBe(0);
     });
   });
+
+  describe('POST /api/testimonials/submit', function() {
+    it('should reject a submission without consent, and not store it', async function() {
+      var res = await request(app)
+        .post('/api/testimonials/submit')
+        .send({ name: 'Jest No Consent', message: 'Great to work with!' });
+      expect(res.status).toBe(400);
+
+      var check = await pool.query('SELECT * FROM testimonials WHERE name = $1', ['Jest No Consent']);
+      expect(check.rows.length).toBe(0);
+    });
+
+    it('should reject a submission where consent is not exactly true', async function() {
+      var res = await request(app)
+        .post('/api/testimonials/submit')
+        .send({ name: 'Jest Falsy Consent', message: 'Great to work with!', consent: 'yes' });
+      expect(res.status).toBe(400);
+
+      var check = await pool.query('SELECT * FROM testimonials WHERE name = $1', ['Jest Falsy Consent']);
+      expect(check.rows.length).toBe(0);
+    });
+
+    it('should accept a submission with consent and record consent_at', async function() {
+      var res = await request(app)
+        .post('/api/testimonials/submit')
+        .send({ name: 'Jest With Consent', message: 'Great to work with!', consent: true });
+      expect(res.status).toBe(200);
+
+      var check = await pool.query('SELECT consent_at FROM testimonials WHERE name = $1', ['Jest With Consent']);
+      expect(check.rows.length).toBe(1);
+      expect(check.rows[0].consent_at).not.toBeNull();
+
+      // Cleanup
+      await pool.query('DELETE FROM testimonials WHERE name = $1', ['Jest With Consent']);
+    });
+  });
 });
 
 describe('Protected Endpoints', function() {

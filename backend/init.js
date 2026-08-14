@@ -70,9 +70,14 @@ var initDB = async function() {
         rating INTEGER DEFAULT 5,
         visible BOOLEAN DEFAULT true,
         sort_order INTEGER DEFAULT 0,
-        created_at TIMESTAMP DEFAULT NOW()
+        created_at TIMESTAMP DEFAULT NOW(),
+        consent_at TIMESTAMP
       )
     `);
+    // GDPR Art. 7(1) requires being able to demonstrate consent was given -
+    // this records when the submitter checked the consent box, separately
+    // from created_at (see the 400 rejection in server.js if it's missing).
+    await pool.query(`ALTER TABLE testimonials ADD COLUMN IF NOT EXISTS consent_at TIMESTAMP`);
     await pool.query(`CREATE INDEX IF NOT EXISTS idx_testimonials_visible_sort_order ON testimonials(visible, sort_order)`);
 
     // connect-pg-simple's session store - schema matches its own table.sql
