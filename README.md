@@ -6,7 +6,7 @@ Personal portfolio website for Anthony Baumgertner.
 
 - **Frontend**: React, Vite, React Router
 - **Backend**: Node.js, Express, PostgreSQL
-- **Deployment**: Docker, nginx
+- **Deployment**: Docker, nginx, Caddy (TLS)
 
 ## Getting Started
 
@@ -24,12 +24,18 @@ npm run dev
 
 ## Deployment
 
-The stack runs as three Docker Compose services: `db` (Postgres), `backend`
+The stack runs as four Docker Compose services: `db` (Postgres), `backend`
 (Express, connects as the least-privilege `portfolio_app` role — see
-`backend/db/least-privilege-role.sql`), and `frontend` (nginx). Because the
-backend has no DDL rights at runtime, schema setup is a separate, manual step
-run as the Postgres superuser — it does not happen automatically on
-`docker compose up`.
+`backend/db/least-privilege-role.sql`), `frontend` (nginx, not published to
+the host directly), and `caddy` (the only service listening on 80/443,
+reverse-proxying everything to `frontend`). Because the backend has no DDL
+rights at runtime, schema setup is a separate, manual step run as the
+Postgres superuser — it does not happen automatically on `docker compose up`.
+
+`caddy` needs `DOMAIN` set in `.env` to a real domain name pointed at the
+server (e.g. `baumgertner.fi`) — it requests and renews the Let's Encrypt
+certificate for that domain automatically on first boot, no manual cert
+setup needed. Certs persist across restarts in the `caddy_data` volume.
 
 ### First-time setup
 
@@ -37,7 +43,8 @@ run as the Postgres superuser — it does not happen automatically on
    superuser password), `APP_DB_USER` / `APP_DB_PASSWORD` (the least-privilege
    role's credentials), `SESSION_SECRET`, `GITHUB_CLIENT_ID` /
    `GITHUB_CLIENT_SECRET` / `GITHUB_ALLOWED_USER` / `GITHUB_CALLBACK_URL`,
-   and `FRONTEND_URL`.
+   `FRONTEND_URL`, and `DOMAIN` (the domain Caddy requests a certificate for
+   — must already point at this server's IP).
 2. Start just the database:
    ```bash
    docker compose up -d db

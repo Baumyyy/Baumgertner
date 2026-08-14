@@ -1,0 +1,8 @@
+# Caddy terminates TLS and is the only service with ports published to the
+# host (see docker-compose.yml) - everything else, including nginx's own
+# CSP/HSTS/rate-limit headers, is unchanged behind it. Caddy provisions and
+# renews the Let's Encrypt certificate for {$DOMAIN} automatically; no
+# manual cert setup needed.
+{$DOMAIN} {
+	reverse_proxy frontend:80
+}
