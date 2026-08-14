@@ -146,20 +146,6 @@ var Admin = function() {
     fetchAuth(API_URL + '/admin/security').then(parseOk).then(setSecurity).catch(function() {});
   }, [fetchAuth, setSecurity]);
 
-  // Loads everything - used after login and after any mutation, since a
-  // mutation on one tab (e.g. marking a message read) can change badge
-  // counts (stats) shown on other tabs' nav buttons.
-  var loadAll = useCallback(function() {
-    loadStats();
-    loadAnalytics();
-    loadPageviews();
-    loadProjects();
-    loadMessages();
-    loadProfile();
-    loadTestimonials();
-    loadSecurity();
-  }, [loadStats, loadAnalytics, loadPageviews, loadProjects, loadMessages, loadProfile, loadTestimonials, loadSecurity]);
-
   // Switching tabs only needs that tab's own data - loading all 8 endpoints
   // on every click let a handful of tab clicks burn through the rate limit.
   useEffect(function() {
@@ -183,7 +169,7 @@ var Admin = function() {
     fetchAuth(API_URL + '/availability', {
       method: 'PUT',
       body: JSON.stringify({ available: !stats.available })
-    }).then(function(r) { if (alertIfFailed(r)) return; loadAll(); });
+    }).then(function(r) { if (alertIfFailed(r)) return; loadStats(); });
   };
 
   var deleteProject = function(id) {
@@ -192,7 +178,7 @@ var Admin = function() {
 
   var executeDeleteProject = function(id) {
     fetchAuth(API_URL + '/projects/' + id, { method: 'DELETE' })
-      .then(function(r) { if (alertIfFailed(r)) return; setConfirmDeleteProjectId(null); loadAll(); });
+      .then(function(r) { if (alertIfFailed(r)) return; setConfirmDeleteProjectId(null); loadStats(); loadProjects(); });
   };
 
   var saveProject = function(e) {
@@ -209,7 +195,8 @@ var Admin = function() {
     }).then(function(r) {
       if (alertIfFailed(r)) return;
       setEditProject(null);
-      loadAll();
+      loadStats();
+      loadProjects();
     });
   };
 
@@ -243,12 +230,12 @@ var Admin = function() {
 
   var markRead = function(id) {
     fetchAuth(API_URL + '/messages/' + id + '/read', { method: 'PUT' })
-      .then(function(r) { if (alertIfFailed(r)) return; loadAll(); });
+      .then(function(r) { if (alertIfFailed(r)) return; loadStats(); loadMessages(); });
   };
 
   var deleteMessage = function(id) {
     fetchAuth(API_URL + '/messages/' + id, { method: 'DELETE' })
-      .then(function(r) { if (alertIfFailed(r)) return; loadAll(); });
+      .then(function(r) { if (alertIfFailed(r)) return; loadStats(); loadMessages(); });
   };
 
   var saveProfile = function(e) {
@@ -258,7 +245,8 @@ var Admin = function() {
       body: JSON.stringify(profile)
     }).then(function(r) {
       if (alertIfFailed(r)) return;
-      loadAll();
+      loadStats();
+      loadProfile();
       setProfileSaved(true);
       setTimeout(function() { setProfileSaved(false); }, 3000);
     });
@@ -628,7 +616,7 @@ var Admin = function() {
                 var method = editTestimonial.id ? 'PUT' : 'POST';
                 var url = editTestimonial.id ? API_URL + '/testimonials/' + editTestimonial.id : API_URL + '/testimonials';
                 fetchAuth(url, { method: method, body: JSON.stringify(editTestimonial) })
-                  .then(function(r) { if (alertIfFailed(r)) return; setEditTestimonial(null); loadAll(); });
+                  .then(function(r) { if (alertIfFailed(r)) return; setEditTestimonial(null); loadStats(); loadTestimonials(); });
               }}>
                 <input className="edit-input" placeholder="Name" value={editTestimonial.name || ''} onChange={function(e) { setEditTestimonial(Object.assign({}, editTestimonial, { name: e.target.value })); }} />
                 <input className="edit-input" placeholder="Role" value={editTestimonial.role || ''} onChange={function(e) { setEditTestimonial(Object.assign({}, editTestimonial, { role: e.target.value })); }} />
@@ -672,7 +660,7 @@ var Admin = function() {
                     {confirmDeleteTestimonialId === t.id ? (
                       <div className="confirm-inline">
                         <span className="confirm-text">Delete?</span>
-                        <button className="confirm-yes" onClick={function() { fetchAuth(API_URL + '/testimonials/' + t.id, { method: 'DELETE' }).then(function(r) { if (alertIfFailed(r)) return; setConfirmDeleteTestimonialId(null); loadAll(); }); }}>Yes</button>
+                        <button className="confirm-yes" onClick={function() { fetchAuth(API_URL + '/testimonials/' + t.id, { method: 'DELETE' }).then(function(r) { if (alertIfFailed(r)) return; setConfirmDeleteTestimonialId(null); loadStats(); loadTestimonials(); }); }}>Yes</button>
                         <button className="confirm-no" onClick={function() { setConfirmDeleteTestimonialId(null); }}>No</button>
                       </div>
                     ) : (
