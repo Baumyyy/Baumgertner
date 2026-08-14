@@ -173,12 +173,22 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
 }
 
-.admin-avatar {
-  width: 36px;
-  height: 36px;
+.admin-username {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.admin-user-dot {
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
-  border: 2px solid rgba(0, 255, 136, 0.3);
-  object-fit: cover;
+  background: #00ff88;
+  box-shadow: 0 0 6px rgba(0, 255, 136, 0.6);
+  flex-shrink: 0;
 }
 
 .admin-tab {

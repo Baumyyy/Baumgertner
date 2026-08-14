@@ -290,7 +290,12 @@ var Admin = function() {
 
       <div className={'admin-sidebar' + (sidebarOpen ? ' sidebar-open' : '')}>
         <div className="admin-user">
-          {authStatus && authStatus.avatar && <img src={authStatus.avatar} alt="" className="admin-avatar" />}
+          {authStatus && authStatus.username && (
+            <span className="admin-username">
+              <span className="admin-user-dot"></span>
+              {authStatus.username}
+            </span>
+          )}
         </div>
         <button className={'admin-tab' + (tab === 'dashboard' ? ' active' : '')} onClick={function() { setTab('dashboard'); setSidebarOpen(false); }}>Dashboard</button>
         <button className={'admin-tab' + (tab === 'projects' ? ' active' : '')} onClick={function() { setTab('projects'); setSidebarOpen(false); }}>Projects</button>
