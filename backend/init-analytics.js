@@ -1,4 +1,4 @@
-var pool = require('./db');
+var pool = require('./db-admin');
 require('dotenv').config();
 
 async function run() {
@@ -17,4 +17,13 @@ async function run() {
   process.exit(0);
 }
 
-run().catch(function(e) { console.error(e); process.exit(1); });
+run().catch(function(e) {
+  // 42501 = insufficient_privilege - see init.js for the same check.
+  if (e.code === '42501') {
+    console.error('Error initializing analytics table: insufficient privileges to run CREATE/ALTER.');
+    console.error('Set ADMIN_DB_USER/ADMIN_DB_PASSWORD to superuser credentials and re-run (see backend/db/least-privilege-role.sql).');
+  } else {
+    console.error(e);
+  }
+  process.exit(1);
+});

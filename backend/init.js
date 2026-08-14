@@ -1,4 +1,4 @@
-var pool = require('./db');
+var pool = require('./db-admin');
 
 var initDB = async function() {
   try {
@@ -137,7 +137,16 @@ var initDB = async function() {
     console.log('Database initialized successfully!');
     process.exit(0);
   } catch (err) {
-    console.error('Error initializing database:', err);
+    // 42501 = insufficient_privilege - the most common cause is running this
+    // as the least-privilege portfolio_app role instead of a superuser.
+    if (err.code === '42501') {
+      console.error('Error initializing database: insufficient privileges to run CREATE/ALTER.');
+      console.error('This must be run as a Postgres superuser, not the least-privilege app role (see backend/db/least-privilege-role.sql).');
+      console.error('Set ADMIN_DB_USER/ADMIN_DB_PASSWORD to superuser credentials and re-run, e.g.:');
+      console.error('  docker compose exec -e ADMIN_DB_USER=postgres -e ADMIN_DB_PASSWORD=<postgres_password> backend npm run init-db');
+    } else {
+      console.error('Error initializing database:', err);
+    }
     process.exit(1);
   }
 };
