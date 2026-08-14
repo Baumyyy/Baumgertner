@@ -35,6 +35,7 @@ var initDB = async function() {
     `);
     await pool.query(`ALTER TABLE projects ADD COLUMN IF NOT EXISTS image_position VARCHAR(20) DEFAULT '50% 50%'`);
     await pool.query(`ALTER TABLE projects ADD COLUMN IF NOT EXISTS image_zoom INTEGER DEFAULT 100`);
+    await pool.query(`CREATE INDEX IF NOT EXISTS idx_projects_sort_order ON projects(sort_order)`);
 
     await pool.query(`
       CREATE TABLE IF NOT EXISTS messages (
@@ -46,6 +47,7 @@ var initDB = async function() {
         created_at TIMESTAMP DEFAULT NOW()
       )
     `);
+    await pool.query(`CREATE INDEX IF NOT EXISTS idx_messages_created_at ON messages(created_at)`);
 
     await pool.query(`
       CREATE TABLE IF NOT EXISTS security_events (
@@ -71,6 +73,21 @@ var initDB = async function() {
         created_at TIMESTAMP DEFAULT NOW()
       )
     `);
+    await pool.query(`CREATE INDEX IF NOT EXISTS idx_testimonials_visible_sort_order ON testimonials(visible, sort_order)`);
+
+    // connect-pg-simple's session store - schema matches its own table.sql
+    // exactly. Created here (as superuser) rather than left to the app's
+    // createTableIfMissing, since the least-privilege app role has no DDL
+    // rights; see least-privilege-role.sql.
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS "session" (
+        "sid" varchar NOT NULL COLLATE "default",
+        "sess" json NOT NULL,
+        "expire" timestamp(6) NOT NULL,
+        CONSTRAINT "session_pkey" PRIMARY KEY ("sid") NOT DEFERRABLE INITIALLY IMMEDIATE
+      )
+    `);
+    await pool.query(`CREATE INDEX IF NOT EXISTS "IDX_session_expire" ON "session" ("expire")`);
 
     // Lisää oletusprofiili jos ei ole
     var profileCheck = await pool.query('SELECT COUNT(*) FROM profile');

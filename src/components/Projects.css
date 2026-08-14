@@ -214,10 +214,10 @@ a.project-card { cursor: pointer; text-decoration: none; }
   transition: all 0.3s ease;
 }
 
-.projects-github-btn i { font-size: 1.3rem; }
-.projects-github-btn svg { opacity: 0; transition: all 0.3s ease; transform: translateX(-5px); }
+.projects-github-btn svg:first-child { font-size: 1.3rem; }
+.projects-github-btn svg:last-child { opacity: 0; transition: all 0.3s ease; transform: translateX(-5px); }
 .projects-github-btn:hover { border-color: rgba(0, 255, 136, 0.2); color: #00ff88; background: rgba(0, 255, 136, 0.04); transform: translateY(-2px); }
-.projects-github-btn:hover svg { opacity: 1; transform: translateX(0); }
+.projects-github-btn:hover svg:last-child { opacity: 1; transform: translateX(0); }
 
 .preview-image-wrapper { width: 100%; height: 200px; overflow: hidden; transition: transform 0.5s ease; }
 .project-card:hover .preview-image-wrapper { transform: scale(1.05); }

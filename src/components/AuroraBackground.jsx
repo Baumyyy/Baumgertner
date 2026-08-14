@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import './AuroraBackground.css';
+import { ChevronUpIcon } from './Icons';
 
 const AuroraBackground = ({ children }) => {
   const canvasRef = useRef(null);
@@ -12,17 +13,14 @@ const AuroraBackground = ({ children }) => {
     let animationId;
     const mouse = { x: -9999, y: -9999 };
 
+    const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
     const resize = () => {
       canvas.width  = window.innerWidth;
       canvas.height = window.innerHeight;
     };
     resize();
     window.addEventListener('resize', resize);
-
-    const onMouseMove = (e) => { mouse.x = e.clientX; mouse.y = e.clientY; };
-    const onMouseLeave = ()  => { mouse.x = -9999;    mouse.y = -9999;    };
-    window.addEventListener('mousemove',  onMouseMove);
-    window.addEventListener('mouseleave', onMouseLeave);
 
     const isMobile   = window.innerWidth < 768;
     const COUNT      = isMobile ? 28 : 85;
@@ -40,7 +38,7 @@ const AuroraBackground = ({ children }) => {
       r:  0.8 + Math.random() * 1.4,
     }));
 
-    const animate = () => {
+    const draw = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       pts.forEach((p) => {
@@ -48,21 +46,23 @@ const AuroraBackground = ({ children }) => {
         const dy   = p.y - mouse.y;
         const dist = Math.hypot(dx, dy);
 
-        if (dist < PUSH_DIST && dist > 0) {
+        if (!reduceMotion && dist < PUSH_DIST && dist > 0) {
           const f = ((PUSH_DIST - dist) / PUSH_DIST) * PUSH_FORCE;
           p.vx += (dx / dist) * f;
           p.vy += (dy / dist) * f;
         }
 
-        p.vx *= 0.975;
-        p.vy *= 0.975;
-        p.x  += p.vx + p.driftVx;
-        p.y  += p.vy + p.driftVy;
+        if (!reduceMotion) {
+          p.vx *= 0.975;
+          p.vy *= 0.975;
+          p.x  += p.vx + p.driftVx;
+          p.y  += p.vy + p.driftVy;
 
-        if (p.x < 0) p.x = canvas.width;
-        if (p.x > canvas.width)  p.x = 0;
-        if (p.y < 0) p.y = canvas.height;
-        if (p.y > canvas.height) p.y = 0;
+          if (p.x < 0) p.x = canvas.width;
+          if (p.x > canvas.width)  p.x = 0;
+          if (p.y < 0) p.y = canvas.height;
+          if (p.y > canvas.height) p.y = 0;
+        }
 
         const glow = Math.max(0, 1 - dist / (PUSH_DIST * 1.5));
         ctx.beginPath();
@@ -71,6 +71,13 @@ const AuroraBackground = ({ children }) => {
         ctx.fill();
       });
 
+      // Segments are grouped into a handful of opacity buckets and each
+      // bucket gets ONE beginPath()/stroke() pair, instead of every segment
+      // making its own - a single stroke() can't vary opacity per-segment,
+      // so bucketing keeps the original distance-based fade (in coarse
+      // steps) while cutting draw calls from up to ~3500/frame to <= 6.
+      const ALPHA_BUCKETS = 6;
+      const buckets = Array.from({ length: ALPHA_BUCKETS }, () => []);
       for (let i = 0; i < pts.length; i++) {
         for (let j = i + 1; j < pts.length; j++) {
           const dx   = pts[i].x - pts[j].x;
@@ -78,16 +85,39 @@ const AuroraBackground = ({ children }) => {
           const dist = Math.hypot(dx, dy);
           if (dist > LINK_DIST) continue;
 
-          const alpha = (1 - dist / LINK_DIST) * 0.28;
-          ctx.beginPath();
-          ctx.moveTo(pts[i].x, pts[i].y);
-          ctx.lineTo(pts[j].x, pts[j].y);
-          ctx.strokeStyle = `rgba(0, 255, 136, ${alpha})`;
-          ctx.lineWidth   = 0.6;
-          ctx.stroke();
+          const closeness = 1 - dist / LINK_DIST;
+          const bucket = Math.min(ALPHA_BUCKETS - 1, Math.floor(closeness * ALPHA_BUCKETS));
+          buckets[bucket].push(pts[i].x, pts[i].y, pts[j].x, pts[j].y);
         }
       }
+      ctx.lineWidth = 0.6;
+      for (let b = 0; b < ALPHA_BUCKETS; b++) {
+        if (buckets[b].length === 0) continue;
+        const alpha = ((b + 0.5) / ALPHA_BUCKETS) * 0.28;
+        ctx.beginPath();
+        ctx.strokeStyle = `rgba(0, 255, 136, ${alpha})`;
+        for (let k = 0; k < buckets[b].length; k += 4) {
+          ctx.moveTo(buckets[b][k],     buckets[b][k + 1]);
+          ctx.lineTo(buckets[b][k + 2], buckets[b][k + 3]);
+        }
+        ctx.stroke();
+      }
+    };
 
+    if (reduceMotion) {
+      draw();
+      return () => {
+        window.removeEventListener('resize', resize);
+      };
+    }
+
+    const onMouseMove = (e) => { mouse.x = e.clientX; mouse.y = e.clientY; };
+    const onMouseLeave = ()  => { mouse.x = -9999;    mouse.y = -9999;    };
+    window.addEventListener('mousemove',  onMouseMove);
+    window.addEventListener('mouseleave', onMouseLeave);
+
+    const animate = () => {
+      draw();
       animationId = requestAnimationFrame(animate);
     };
 
@@ -135,7 +165,7 @@ const AuroraBackground = ({ children }) => {
         onClick={() => containerRef.current.scrollTo({ top: 0, behavior: 'smooth' })}
         aria-label="Scroll to top"
       >
-        <i className="fas fa-chevron-up"></i>
+        <ChevronUpIcon />
       </button>
     </>
   );

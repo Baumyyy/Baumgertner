@@ -3,9 +3,11 @@ var cors = require('cors');
 var passport = require('passport');
 var GitHubStrategy = require('passport-github2').Strategy;
 var session = require('express-session');
+var PgSession = require('connect-pg-simple')(session);
 var multer = require('multer');
 var path = require('path');
 var fs = require('fs');
+var crypto = require('crypto');
 var pool = require('./db');
 var sharp = require('sharp');
 var { Resend } = require('resend');
@@ -47,17 +49,29 @@ var deleteUploadedFile = function(url) {
   fs.unlink(filePath, function() {});
 };
 
+var ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+var MIME_EXTENSIONS = {
+  'image/jpeg': '.jpg',
+  'image/png': '.png',
+  'image/webp': '.webp',
+  'image/gif': '.gif'
+};
+
 var storage = multer.diskStorage({
   destination: function(req, file, cb) {
     cb(null, uploadsDir);
   },
   filename: function(req, file, cb) {
-    var ext = path.extname(file.originalname);
-    cb(null, 'project-' + Date.now() + ext);
+    // Extension is derived from the (already fileFilter-validated) mimetype,
+    // never from the client-supplied originalname - otherwise a spoofed
+    // Content-Type + a name like "evil.html" would land in the publicly
+    // served uploads dir under an attacker-chosen extension. A random UUID
+    // also removes the old Date.now() collision risk for same-millisecond
+    // uploads.
+    var ext = MIME_EXTENSIONS[file.mimetype] || '.bin';
+    cb(null, 'upload-' + crypto.randomUUID() + ext);
   }
 });
-
-var ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 
 var upload = multer({
   storage: storage,
@@ -211,6 +225,20 @@ var messageLimiter = rateLimit({
   handler: rateLimitHandler
 });
 
+var testimonialLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: IS_PROD ? 3 : 200,
+  message: { error: 'Too many submissions, try again later' },
+  handler: rateLimitHandler
+});
+
+var uploadPublicLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: IS_PROD ? 3 : 200,
+  message: { error: 'Too many uploads, try again later' },
+  handler: rateLimitHandler
+});
+
 var pageviewLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: IS_PROD ? 20 : 500,
@@ -229,6 +257,7 @@ app.use('/api', apiLimiter);
 
 // Session
 app.use(session({
+  store: new PgSession({ pool: pool, tableName: 'session' }),
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
@@ -292,16 +321,19 @@ app.get('/api/auth/me', function(req, res) {
   }
 });
 
-app.get('/api/auth/logout', function(req, res) {
+app.post('/api/auth/logout', function(req, res) {
   req.logout(function() {
-    res.redirect(FRONTEND_URL + '/baumi-dashboard');
+    req.session.destroy(function() {
+      res.clearCookie('connect.sid');
+      res.json({ loggedOut: true });
+    });
   });
 });
 
 // ===== PROFILE (public) =====
 app.get('/api/profile', async function(req, res) {
   try {
-    var result = await pool.query('SELECT * FROM profile LIMIT 1');
+    var result = await pool.query('SELECT name, role, bio, email, location, timezone, available, avatar FROM profile LIMIT 1');
     res.json(result.rows[0] || {});
   } catch (err) {
     console.error(err);
@@ -474,7 +506,7 @@ app.post('/api/messages', messageLimiter, async function(req, res) {
 // ===== MESSAGES (admin) =====
 app.get('/api/messages', auth, async function(req, res) {
   try {
-    var result = await pool.query('SELECT * FROM messages ORDER BY created_at DESC');
+    var result = await pool.query('SELECT * FROM messages ORDER BY created_at DESC LIMIT 500');
     res.json(result.rows);
   } catch (err) {
     console.error(err);
@@ -508,7 +540,7 @@ app.delete('/api/messages/:id', auth, async function(req, res) {
 // ===== TESTIMONIALS (public) =====
 app.get('/api/testimonials', async function(req, res) {
   try {
-    var result = await pool.query('SELECT * FROM testimonials WHERE visible=true ORDER BY sort_order ASC');
+    var result = await pool.query('SELECT id, name, role, company, message, avatar, rating FROM testimonials WHERE visible=true ORDER BY sort_order ASC');
     res.json(result.rows);
   } catch (err) {
     console.error(err);
@@ -516,7 +548,7 @@ app.get('/api/testimonials', async function(req, res) {
   }
 });
 
-app.post('/api/testimonials/submit', messageLimiter, async function(req, res) {
+app.post('/api/testimonials/submit', testimonialLimiter, async function(req, res) {
   try {
     var { name, role, company, message, rating, avatar, website } = req.body;
     if (website) {
@@ -563,7 +595,7 @@ app.post('/api/testimonials/submit', messageLimiter, async function(req, res) {
 // ===== TESTIMONIALS (admin) =====
 app.get('/api/admin/testimonials', auth, async function(req, res) {
   try {
-    var result = await pool.query('SELECT * FROM testimonials ORDER BY sort_order ASC');
+    var result = await pool.query('SELECT * FROM testimonials ORDER BY sort_order ASC LIMIT 500');
     res.json(result.rows);
   } catch (err) {
     console.error(err);
@@ -621,10 +653,10 @@ app.delete('/api/testimonials/:id', auth, async function(req, res) {
 });
 
 // ===== PUBLIC UPLOAD (testimonial avatars) =====
-app.post('/api/upload-public', messageLimiter, upload.single('image'), async function(req, res) {
+app.post('/api/upload-public', uploadPublicLimiter, upload.single('image'), async function(req, res) {
   if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
   try {
-    var filename = 'avatar-' + Date.now() + '.webp';
+    var filename = 'avatar-' + crypto.randomUUID() + '.webp';
     var outputPath = path.join(uploadsDir, filename);
     await sharp(req.file.path, { limitInputPixels: 30000000 })
       .resize(200, 200, { fit: 'cover' })
@@ -643,7 +675,7 @@ app.post('/api/upload-public', messageLimiter, upload.single('image'), async fun
 app.post('/api/upload', auth, upload.single('image'), async function(req, res) {
   if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
   try {
-    var filename = 'project-' + Date.now() + '.webp';
+    var filename = 'project-' + crypto.randomUUID() + '.webp';
     var outputPath = path.join(uploadsDir, filename);
     await sharp(req.file.path, { limitInputPixels: 30000000 })
       .resize(1200, 800, { fit: 'inside', withoutEnlargement: true })
@@ -706,9 +738,10 @@ app.post('/api/pageview', pageviewLimiter, async function(req, res) {
     var { page } = req.body;
     var userAgent = req.headers['user-agent'] || '';
     var referrer = req.headers['referer'] || '';
+    var pageValue = (typeof page === 'string' && page ? page : '/').slice(0, 255);
     await pool.query(
       'INSERT INTO page_views (page, referrer, user_agent) VALUES ($1,$2,$3)',
-      [page || '/', referrer, userAgent]
+      [pageValue, referrer.slice(0, 500), userAgent]
     );
     res.json({ ok: true });
   } catch (err) {
@@ -774,10 +807,12 @@ app.get('/api/admin/security', auth, async function(req, res) {
 
 // ===== ERROR HANDLING (e.g. multer file-type/size rejections) =====
 app.use(function(err, req, res, next) {
-  if (err) {
-    return res.status(400).json({ error: err.message || 'Request error' });
+  if (!err) return next();
+  if (err instanceof multer.MulterError || err.message === 'Only image files are allowed') {
+    return res.status(400).json({ error: err.message });
   }
-  next();
+  console.error('Unhandled request error:', err.message);
+  res.status(400).json({ error: 'Request error' });
 });
 
 // ===== ANALYTICS RETENTION =====
@@ -788,8 +823,6 @@ function cleanupOldPageviews() {
   pool.query("DELETE FROM page_views WHERE created_at < NOW() - INTERVAL '12 months'")
     .catch(function(err) { console.error('Pageview cleanup failed:', err.message); });
 }
-cleanupOldPageviews();
-setInterval(cleanupOldPageviews, PAGEVIEW_RETENTION_INTERVAL);
 
 // ===== SECURITY EVENT RETENTION =====
 // Unlike page_views, these rows do carry an IP address (needed to spot
@@ -800,8 +833,6 @@ function cleanupOldSecurityEvents() {
   pool.query("DELETE FROM security_events WHERE created_at < NOW() - INTERVAL '30 days'")
     .catch(function(err) { console.error('Security event cleanup failed:', err.message); });
 }
-cleanupOldSecurityEvents();
-setInterval(cleanupOldSecurityEvents, SECURITY_EVENT_RETENTION_INTERVAL);
 
 // ===== UPLOAD RETENTION =====
 // Safety net for files that end up unreferenced (e.g. a testimonial photo
@@ -832,10 +863,21 @@ function cleanupOrphanedUploads() {
     });
   }).catch(function(err) { console.error('Upload cleanup failed:', err.message); });
 }
-cleanupOrphanedUploads();
-setInterval(cleanupOrphanedUploads, UPLOAD_CLEANUP_INTERVAL);
 
 // ===== START =====
-app.listen(PORT, function() {
-  console.log('Portfolio API running on http://localhost:' + PORT);
-});
+// Guarded so requiring this file (e.g. from tests) doesn't also start a
+// live server, register background intervals, or run cleanup queries.
+if (require.main === module) {
+  cleanupOldPageviews();
+  setInterval(cleanupOldPageviews, PAGEVIEW_RETENTION_INTERVAL);
+  cleanupOldSecurityEvents();
+  setInterval(cleanupOldSecurityEvents, SECURITY_EVENT_RETENTION_INTERVAL);
+  cleanupOrphanedUploads();
+  setInterval(cleanupOrphanedUploads, UPLOAD_CLEANUP_INTERVAL);
+
+  app.listen(PORT, function() {
+    console.log('Portfolio API running on http://localhost:' + PORT);
+  });
+}
+
+module.exports = app;

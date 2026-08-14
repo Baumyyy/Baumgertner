@@ -4,6 +4,7 @@ import './Footer.css';
 import { useScrollAnimation } from '../hooks/useScrollAnimation';
 import { api } from '../api';
 import { useLang } from '../useLang';
+import { HeartIcon } from './Icons';
 
 var Footer = function() {
   var currentYear = new Date().getFullYear();
@@ -40,7 +41,7 @@ var Footer = function() {
         <div className="footer-top fade-in stagger-1">
           <div className="footer-brand">
             <div className="footer-brand-row">
-              <h2 className="footer-name"><span className="footer-name-accent">Baumgertner</span></h2>
+              <h2 className="footer-name">&lt;Baumgertner/&gt;</h2>
             </div>
             <p className="footer-tagline">{t.footer_tagline}</p>
             <div className="footer-location">
@@ -94,7 +95,7 @@ var Footer = function() {
           <p className="footer-copyright">&copy; {currentYear} Anthony Baumgertner</p>
           <p className="footer-credit">
             Built with
-            <i className="fas fa-heart footer-heart" aria-hidden="true"></i>
+            <HeartIcon className="footer-heart" />
             by
             <button className="footer-signature" onClick={function() { scrollTo('home'); }}>&lt;Baumgertner/&gt;</button>
           </p>

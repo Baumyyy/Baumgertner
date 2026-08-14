@@ -152,6 +152,7 @@ var Contact = function() {
                   id="contact-name"
                   type="text"
                   name="name"
+                  autoComplete="name"
                   className="field-input"
                   onFocus={function() { setFocused('name'); }}
                   onBlur={function() { setFocused(''); }}
@@ -167,6 +168,7 @@ var Contact = function() {
                   id="contact-email"
                   type="email"
                   name="email"
+                  autoComplete="email"
                   className="field-input"
                   onFocus={function() { setFocused('email'); }}
                   onBlur={function() { setFocused(''); }}
@@ -191,16 +193,16 @@ var Contact = function() {
                 <div className="field-line"></div>
               </div>
 
-              {formError === 'required' && <p className="field-error-msg">{t.contact_error_required}</p>}
-              {formError === 'email' && <p className="field-error-msg">{t.contact_error_email}</p>}
-              {formError === 'send' && <p className="field-error-msg">{t.contact_error_send}</p>}
+              {formError === 'required' && <p className="field-error-msg" role="alert">{t.contact_error_required}</p>}
+              {formError === 'email' && <p className="field-error-msg" role="alert">{t.contact_error_email}</p>}
+              {formError === 'send' && <p className="field-error-msg" role="alert">{t.contact_error_send}</p>}
 
               <p className="form-privacy-notice">
                 {t.privacy_notice_pre} <Link to="/privacy">{t.privacy_link_inline}</Link>{t.privacy_notice_post}
               </p>
 
               <button type="submit" className={'form-send' + (sent ? ' send-success' : '')} disabled={sending}>
-                <span className="send-text">{sending ? t.contact_sending : sent ? t.contact_sent : t.contact_send}</span>
+                <span className="send-text" aria-live="polite">{sending ? t.contact_sending : sent ? t.contact_sent : t.contact_send}</span>
                 <span className="send-icon">
                   {sent ? (
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

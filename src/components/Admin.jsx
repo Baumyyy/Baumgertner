@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import './Admin.css';
 import { usePageMeta } from '../hooks/usePageMeta';
+import { GithubIcon } from './Icons';
 
 var API_URL = '/api';
 
@@ -113,25 +114,69 @@ var Admin = function() {
     return r.ok ? r.json() : Promise.reject(new Error('Request failed'));
   };
 
-  var loadAll = useCallback(function() {
+  var loadStats = useCallback(function() {
     fetchAuth(API_URL + '/admin/stats').then(parseOk).then(setStats).catch(function() {});
-    fetchAuth(API_URL + '/admin/analytics').then(parseOk).then(setAnalytics).catch(function() {});
-    fetchAuth(API_URL + '/admin/pageviews').then(parseOk).then(setPageviews).catch(function() {});
-    fetch(API_URL + '/projects').then(parseOk).then(setProjects).catch(function() {});
-    fetchAuth(API_URL + '/messages').then(parseOk).then(setMessages).catch(function() {});
-    fetch(API_URL + '/profile').then(parseOk).then(setProfile).catch(function() {});
-    fetchAuth(API_URL + '/admin/testimonials').then(parseOk).then(setAdminTestimonials).catch(function() {});
-    fetchAuth(API_URL + '/admin/security').then(parseOk).then(setSecurity).catch(function() {});
-  }, [fetchAuth, setStats, setAnalytics, setPageviews, setProjects, setMessages, setProfile, setAdminTestimonials, setSecurity]);
+  }, [fetchAuth, setStats]);
 
+  var loadAnalytics = useCallback(function() {
+    fetchAuth(API_URL + '/admin/analytics').then(parseOk).then(setAnalytics).catch(function() {});
+  }, [fetchAuth, setAnalytics]);
+
+  var loadPageviews = useCallback(function() {
+    fetchAuth(API_URL + '/admin/pageviews').then(parseOk).then(setPageviews).catch(function() {});
+  }, [fetchAuth, setPageviews]);
+
+  var loadProjects = useCallback(function() {
+    fetch(API_URL + '/projects').then(parseOk).then(setProjects).catch(function() {});
+  }, [setProjects]);
+
+  var loadMessages = useCallback(function() {
+    fetchAuth(API_URL + '/messages').then(parseOk).then(setMessages).catch(function() {});
+  }, [fetchAuth, setMessages]);
+
+  var loadProfile = useCallback(function() {
+    fetch(API_URL + '/profile').then(parseOk).then(setProfile).catch(function() {});
+  }, [setProfile]);
+
+  var loadTestimonials = useCallback(function() {
+    fetchAuth(API_URL + '/admin/testimonials').then(parseOk).then(setAdminTestimonials).catch(function() {});
+  }, [fetchAuth, setAdminTestimonials]);
+
+  var loadSecurity = useCallback(function() {
+    fetchAuth(API_URL + '/admin/security').then(parseOk).then(setSecurity).catch(function() {});
+  }, [fetchAuth, setSecurity]);
+
+  // Loads everything - used after login and after any mutation, since a
+  // mutation on one tab (e.g. marking a message read) can change badge
+  // counts (stats) shown on other tabs' nav buttons.
+  var loadAll = useCallback(function() {
+    loadStats();
+    loadAnalytics();
+    loadPageviews();
+    loadProjects();
+    loadMessages();
+    loadProfile();
+    loadTestimonials();
+    loadSecurity();
+  }, [loadStats, loadAnalytics, loadPageviews, loadProjects, loadMessages, loadProfile, loadTestimonials, loadSecurity]);
+
+  // Switching tabs only needs that tab's own data - loading all 8 endpoints
+  // on every click let a handful of tab clicks burn through the rate limit.
   useEffect(function() {
-    if (loggedIn) loadAll();
-  }, [loggedIn, tab, loadAll]);
+    if (!loggedIn) return;
+    if (tab === 'dashboard') { loadStats(); loadAnalytics(); loadPageviews(); }
+    else if (tab === 'projects') loadProjects();
+    else if (tab === 'testimonials') loadTestimonials();
+    else if (tab === 'messages') loadMessages();
+    else if (tab === 'security') loadSecurity();
+    else if (tab === 'profile') loadProfile();
+  }, [loggedIn, tab, loadStats, loadAnalytics, loadPageviews, loadProjects, loadTestimonials, loadMessages, loadSecurity, loadProfile]);
 
   var handleLogout = function() {
-    setLoggedIn(false);
-    setAuthStatus(null);
-    window.location.href = '/api/auth/logout';
+    fetch(API_URL + '/auth/logout', { method: 'POST', credentials: 'include' }).finally(function() {
+      setLoggedIn(false);
+      setAuthStatus(null);
+    });
   };
 
   var toggleAvailability = function() {
@@ -227,7 +272,7 @@ var Admin = function() {
           <p className="login-subtitle">Portfolio Management</p>
 
           <a href="/api/auth/github" className="github-login-btn">
-            <i className="fab fa-github"></i>
+            <GithubIcon />
             <span>Sign in with GitHub</span>
           </a>
         </div>

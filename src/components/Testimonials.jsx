@@ -41,6 +41,12 @@ var Testimonials = function() {
   var touchStart = useRef(null);
   var touchEnd = useRef(null);
 
+  // Modal focus management
+  var modalRef = useRef(null);
+  var closeBtnRef = useRef(null);
+  var triggerBtnRef = useRef(null);
+  var wasOpenRef = useRef(false);
+
   var handleTouchStart = function(e) {
     touchStart.current = e.targetTouches[0].clientX;
     touchEnd.current = null;
@@ -74,11 +80,36 @@ var Testimonials = function() {
   useEffect(function() {
     if (!showForm) return;
     var handleKeyDown = function(e) {
-      if (e.key === 'Escape') setShowForm(false);
+      if (e.key === 'Escape') { setShowForm(false); return; }
+      if (e.key === 'Tab' && modalRef.current) {
+        var focusable = modalRef.current.querySelectorAll(
+          'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusable.length === 0) return;
+        var first = focusable[0];
+        var last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
     };
     document.addEventListener('keydown', handleKeyDown);
     return function() { document.removeEventListener('keydown', handleKeyDown); };
   }, [showForm, setShowForm]);
+
+  useEffect(function() {
+    if (showForm) {
+      wasOpenRef.current = true;
+      if (closeBtnRef.current) closeBtnRef.current.focus();
+    } else if (wasOpenRef.current) {
+      wasOpenRef.current = false;
+      if (triggerBtnRef.current) triggerBtnRef.current.focus();
+    }
+  }, [showForm]);
 
   useEffect(function() {
     api.getTestimonials().then(function(data) {
@@ -233,7 +264,7 @@ var Testimonials = function() {
         )}
 
         <div className="testimonial-cta fade-in stagger-3">
-          <button className="testimonial-submit-btn" onClick={function() { setShowForm(true); }}>
+          <button className="testimonial-submit-btn" ref={triggerBtnRef} onClick={function() { setShowForm(true); }}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 5v14M5 12h14"/>
             </svg>
@@ -244,14 +275,14 @@ var Testimonials = function() {
 
       {showForm && createPortal(
         <div className="testimonial-modal-overlay" onClick={function(e) { if (e.target === e.currentTarget) setShowForm(false); }}>
-          <div className="testimonial-modal">
+          <div className="testimonial-modal" ref={modalRef} role="dialog" aria-modal="true" aria-labelledby="testimonial-modal-title">
             <div className="modal-header">
-              <h3 className="modal-title">{submitted ? t.testimonials_thanks : t.testimonials_leave}</h3>
-              <button type="button" className="modal-close" onClick={function() { setShowForm(false); }} aria-label="Close">✕</button>
+              <h3 className="modal-title" id="testimonial-modal-title">{submitted ? t.testimonials_thanks : t.testimonials_leave}</h3>
+              <button type="button" className="modal-close" ref={closeBtnRef} onClick={function() { setShowForm(false); }} aria-label="Close">✕</button>
             </div>
 
             {submitted ? (
-              <div className="modal-success">
+              <div className="modal-success" role="status">
                 <div className="success-icon">✓</div>
                 <p>{t.testimonials_review}</p>
               </div>
@@ -310,8 +341,8 @@ var Testimonials = function() {
                     {t.testimonial_notice_pre} <Link to="/terms">{t.terms_link_inline}</Link> {t.testimonial_notice_mid} <Link to="/privacy">{t.privacy_link_inline}</Link>{t.testimonial_notice_post}
                   </span>
                 </label>
-                {formError === 'send' && <p className="tform-error-msg">{t.testimonials_error_send}</p>}
-                {formError === 'upload' && <p className="tform-error-msg">{t.testimonials_error_upload}</p>}
+                {formError === 'send' && <p className="tform-error-msg" role="alert">{t.testimonials_error_send}</p>}
+                {formError === 'upload' && <p className="tform-error-msg" role="alert">{t.testimonials_error_upload}</p>}
                 <button type="submit" className="tform-submit" disabled={sending || uploading || !agreed}>
                   {sending ? t.testimonials_sending : t.testimonials_submit}
                 </button>

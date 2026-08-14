@@ -283,7 +283,8 @@
 
 .tform-error-msg {
   font-size: 0.72rem;
-  color: rgba(255, 90, 90, 0.75);
+  color: rgba(255, 100, 100, 0.85);
+  filter: drop-shadow(0 0 4px rgba(255, 100, 100, 0.3));
   font-family: 'Inter', sans-serif;
   font-weight: 500;
   margin: -0.4rem 0 0 0;
@@ -324,9 +325,14 @@
 
 @media (max-width: 480px) {
   .testimonials { padding: 3rem 1.2rem; }
+  .testimonials-header { margin-bottom: 2rem; }
   .testimonials-title { font-size: 2.2rem; }
+  .testimonial-cards-wrapper { min-height: 220px; }
   .testimonial-card { padding: 1.5rem; border-radius: 18px; }
+  .testimonial-quote { font-size: 3rem; }
   .testimonial-message { font-size: 0.85rem; }
+  .testimonial-dots { margin-top: 1.25rem; }
+  .testimonial-cta { margin-top: 1.75rem; }
   .testimonial-modal { padding: 1.5rem; border-radius: 18px; }
   .tform-row { grid-template-columns: 1fr; }
 }

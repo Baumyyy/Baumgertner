@@ -552,11 +552,16 @@
 }
 
 /* Language toggle */
-.lang-toggle {
+.lang-toggle-wrap {
   display: flex;
   align-items: center;
   justify-content: flex-end;
   flex: 1;
+}
+
+.lang-toggle {
+  display: flex;
+  align-items: center;
   gap: 0.4rem;
   padding: 0.35rem 0.7rem;
   background: transparent;
@@ -567,7 +572,6 @@
   font-family: 'Inter', sans-serif;
   font-weight: 500;
   letter-spacing: 0.08em;
-  cursor: pointer;
   transition: all 0.3s ease;
   z-index: 9999;
 }
@@ -697,7 +701,7 @@
 
   .hamburger { display: flex; order: 3; }
 
-  .lang-toggle {
+  .lang-toggle-wrap {
     flex: 0;
     order: 2;
     margin-right: 0.3rem;

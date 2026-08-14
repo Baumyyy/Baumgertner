@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import './Hero.css';
 import { api } from '../api';
 import { useLang } from '../useLang';
+import { GithubIcon, LinkedinIcon, InstagramIcon } from './Icons';
 
 const prefersReducedMotion = () => typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -143,9 +144,11 @@ const Hero = ({ ready }) => {
             <span className="nav-dot"></span>{t.nav_contact}
           </a>
         </div>
-        <button type="button" className="lang-toggle" onClick={toggleLang} aria-label={lang === 'en' ? 'Switch to Finnish' : 'Switch to English'}>
-          <span>{lang === 'en' ? 'FI' : 'EN'}</span>
-        </button>
+        <div className="lang-toggle-wrap">
+          <button type="button" className="lang-toggle" onClick={toggleLang} aria-label={lang === 'en' ? 'Switch to Finnish' : 'Switch to English'}>
+            <span>{lang === 'en' ? 'FI' : 'EN'}</span>
+          </button>
+        </div>
       </nav>
 
       <section id="home" className="hero">
@@ -208,13 +211,13 @@ const Hero = ({ ready }) => {
 
           <div className="social-links">
             <a href="https://github.com/baumyyy" target="_blank" rel="noopener noreferrer" className="social-link" aria-label="GitHub">
-              <i className="fab fa-github"></i>
+              <GithubIcon />
             </a>
             <a href="https://www.linkedin.com/in/anthony-baumgertner-022191429/" target="_blank" rel="noopener noreferrer" className="social-link" aria-label="LinkedIn">
-              <i className="fab fa-linkedin"></i>
+              <LinkedinIcon />
             </a>
             <a href="https://www.instagram.com/baumgertnerr/" target="_blank" rel="noopener noreferrer" className="social-link" aria-label="Instagram">
-              <i className="fab fa-instagram"></i>
+              <InstagramIcon />
             </a>
           </div>
         </div>

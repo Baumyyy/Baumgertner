@@ -134,4 +134,13 @@
 
 @media (max-width: 480px) {
   .loading-bar { width: clamp(130px, 38vw, 200px); }
-} 
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loading-screen { transition: none; }
+  .loading-content { animation: none; opacity: 1; transform: none; }
+  .loading-logo-text { animation: none; }
+  .loading-bar-fill { transition: none; }
+  .loading-bar-fill::after { animation: none; }
+  .loading-particle { animation: none; }
+}

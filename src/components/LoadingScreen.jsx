@@ -10,6 +10,14 @@ var LoadingScreen = function({ onFinished }) {
   var setFading = fadingState[1];
 
   useEffect(function() {
+    var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (reduceMotion) {
+      setProgress(100);
+      var t = setTimeout(function() { onFinished(); }, 50);
+      return function() { clearTimeout(t); };
+    }
+
     var interval = setInterval(function() {
       setProgress(function(prev) {
         if (prev >= 100) {

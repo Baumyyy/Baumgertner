@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './WhatIDo.css';
 import { useScrollAnimation } from '../hooks/useScrollAnimation';
 import { useLang } from '../useLang';
+import { LinkedinIcon } from './Icons';
 
 var WhatIDo = function() {
   var hoveredCardState = useState(null);
@@ -94,13 +95,13 @@ var WhatIDo = function() {
             <div className="card-top">
               <span className="card-number">04</span>
               <div className="card-icon card-icon-linkedin">
-                <i className="fab fa-linkedin"></i>
+                <LinkedinIcon />
               </div>
             </div>
             <h3 className="card-title">{t.whatido_journey}</h3>
             <p className="card-desc">{t.whatido_journey_desc}</p>
             <div className="journey-linkedin-btn">
-              <i className="fab fa-linkedin"></i>
+              <LinkedinIcon />
               <span>{t.whatido_connect}</span>
             </div>
             <div className="card-border-glow journey-glow-border"></div>

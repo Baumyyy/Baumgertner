@@ -29,8 +29,8 @@ services:
       NODE_ENV: production
       DB_HOST: db
       DB_PORT: 5432
-      DB_USER: ${APP_DB_USER:-postgres}
-      DB_PASSWORD: ${APP_DB_PASSWORD:-${DB_PASSWORD}}
+      DB_USER: ${APP_DB_USER:?APP_DB_USER must be set in .env - see backend/db/least-privilege-role.sql}
+      DB_PASSWORD: ${APP_DB_PASSWORD:?APP_DB_PASSWORD must be set in .env - see backend/db/least-privilege-role.sql}
       DB_NAME: portfolio
       GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
       GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}

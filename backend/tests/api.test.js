@@ -1,56 +1,7 @@
 var request = require('supertest');
-var express = require('express');
+var app = require('../server');
 var pool = require('../db');
 
-// Create test app
-var app = express();
-app.use(express.json());
-
-// Import routes by recreating them for testing
-app.get('/api/profile', async function(req, res) {
-  try {
-    var result = await pool.query('SELECT * FROM profile LIMIT 1');
-    res.json(result.rows[0] || {});
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-app.get('/api/projects', async function(req, res) {
-  try {
-    var result = await pool.query('SELECT * FROM projects ORDER BY sort_order ASC');
-    res.json(result.rows);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-app.get('/api/availability', async function(req, res) {
-  try {
-    var result = await pool.query('SELECT available FROM profile LIMIT 1');
-    res.json(result.rows[0] || { available: true });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-app.post('/api/messages', async function(req, res) {
-  try {
-    var { name, email, message } = req.body;
-    if (!name || !email || !message) {
-      return res.status(400).json({ error: 'Name, email and message are required' });
-    }
-    var result = await pool.query(
-      'INSERT INTO messages (name, email, message) VALUES ($1,$2,$3) RETURNING *',
-      [name, email, message]
-    );
-    res.json(result.rows[0]);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// ===== TESTS =====
 describe('Public API Endpoints', function() {
 
   afterAll(async function() {
@@ -142,10 +93,33 @@ describe('Public API Endpoints', function() {
         .send({ name: 'Test', email: 'test@test.com' });
       expect(res.status).toBe(400);
     });
+
+    it('should reject an invalid email address', async function() {
+      var res = await request(app)
+        .post('/api/messages')
+        .send({ name: 'Test', email: 'not-an-email', message: 'Hello' });
+      expect(res.status).toBe(400);
+    });
+
+    it('should reject a field exceeding the max length', async function() {
+      var res = await request(app)
+        .post('/api/messages')
+        .send({ name: 'x'.repeat(101), email: 'test@test.com', message: 'Hello' });
+      expect(res.status).toBe(400);
+    });
+
+    it('should silently accept (and not store) a honeypot-triggered submission', async function() {
+      var res = await request(app)
+        .post('/api/messages')
+        .send({ name: 'Bot', email: 'bot@test.com', message: 'Spam', website: 'http://spam.example' });
+      expect(res.status).toBe(200);
+
+      var check = await pool.query('SELECT * FROM messages WHERE email = $1', ['bot@test.com']);
+      expect(check.rows.length).toBe(0);
+    });
   });
 });
 
-// Auth endpoints
 describe('Protected Endpoints', function() {
 
   it('GET /api/profile should be public', async function() {
@@ -158,4 +132,34 @@ describe('Protected Endpoints', function() {
     expect(res.status).not.toBe(401);
   });
 
+  // Every route wired up with the `auth` middleware must reject an
+  // unauthenticated request with 401 - this is the actual security
+  // boundary of the admin dashboard, so it must be exercised directly
+  // rather than assumed from the public routes working.
+  var protectedRoutes = [
+    { method: 'put', path: '/api/profile' },
+    { method: 'put', path: '/api/availability' },
+    { method: 'post', path: '/api/projects' },
+    { method: 'put', path: '/api/projects/1' },
+    { method: 'delete', path: '/api/projects/1' },
+    { method: 'get', path: '/api/messages' },
+    { method: 'put', path: '/api/messages/1/read' },
+    { method: 'delete', path: '/api/messages/1' },
+    { method: 'get', path: '/api/admin/testimonials' },
+    { method: 'post', path: '/api/testimonials' },
+    { method: 'put', path: '/api/testimonials/1' },
+    { method: 'delete', path: '/api/testimonials/1' },
+    { method: 'post', path: '/api/upload' },
+    { method: 'get', path: '/api/admin/stats' },
+    { method: 'get', path: '/api/admin/analytics' },
+    { method: 'get', path: '/api/admin/pageviews' },
+    { method: 'get', path: '/api/admin/security' }
+  ];
+
+  protectedRoutes.forEach(function(route) {
+    it(route.method.toUpperCase() + ' ' + route.path + ' should require authentication', async function() {
+      var res = await request(app)[route.method](route.path);
+      expect(res.status).toBe(401);
+    });
+  });
 });

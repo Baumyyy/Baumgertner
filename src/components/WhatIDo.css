@@ -239,7 +239,7 @@
   transition: all 0.3s ease;
 }
 
-.journey-linkedin-btn i { font-size: 1.1rem; }
+.journey-linkedin-btn svg { font-size: 1.1rem; }
 
 .service-card.journey-card:hover .journey-linkedin-btn {
   background: rgba(0, 119, 181, 0.15);
