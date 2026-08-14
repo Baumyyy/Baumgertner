@@ -1,0 +1,75 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '26'
+          cache: npm
+
+      # Matches the production Dockerfile, which needs --legacy-peer-deps
+      # for the same dependency tree.
+      - run: npm ci --legacy-peer-deps
+      - run: npm run lint
+      - run: npm run build
+      - run: npm test
+
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: portfolio
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+    env:
+      DB_HOST: localhost
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: portfolio
+      SESSION_SECRET: ci-test-session-secret
+      GITHUB_CLIENT_ID: ci-test-client-id
+      GITHUB_CLIENT_SECRET: ci-test-client-secret
+      GITHUB_ALLOWED_USER: ci-test-user
+      GITHUB_CALLBACK_URL: http://localhost:3001/api/auth/github/callback
+      FRONTEND_URL: http://localhost:5173
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '26'
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+
+      - run: npm ci
+
+      # Runs as the postgres superuser (the CI service container has no
+      # separate least-privilege role), so this can create the schema
+      # directly - see backend/db-admin.js.
+      - run: node init.js
+
+      - run: npm test
