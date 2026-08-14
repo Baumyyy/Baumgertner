@@ -106,8 +106,20 @@ const AuroraBackground = ({ children }) => {
 
     if (reduceMotion) {
       draw();
+      // There's no rAF loop in this branch to repaint the next frame, so a
+      // plain resize() (which clears the canvas as a side effect of setting
+      // width/height) would leave it blank until something else redraws it.
+      // Swap in a resize handler that redraws immediately after - this only
+      // affects the reduced-motion path, so the animated branch below still
+      // draws exactly once per rAF tick.
+      const onResizeStatic = () => {
+        resize();
+        draw();
+      };
+      window.removeEventListener('resize', resize);
+      window.addEventListener('resize', onResizeStatic);
       return () => {
-        window.removeEventListener('resize', resize);
+        window.removeEventListener('resize', onResizeStatic);
       };
     }
 
