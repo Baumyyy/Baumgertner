@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import './Admin.css';
 import { usePageMeta } from '../hooks/usePageMeta';
 import { GithubIcon } from './Icons';
@@ -72,9 +72,10 @@ var Admin = function() {
   var sidebarState = useState(false);
   var sidebarOpen = sidebarState[0];
   var setSidebarOpen = sidebarState[1];
-  var profileSavedState = useState(false);
-  var profileSaved = profileSavedState[0];
-  var setProfileSaved = profileSavedState[1];
+  var toastState = useState(null);
+  var toast = toastState[0];
+  var setToast = toastState[1];
+  var toastTimeoutRef = useRef(null);
   var confirmDeleteProjectState = useState(null);
   var confirmDeleteProjectId = confirmDeleteProjectState[0];
   var setConfirmDeleteProjectId = confirmDeleteProjectState[1];
@@ -102,9 +103,23 @@ var Admin = function() {
     return fetch(url, opts);
   }, []);
 
+  // Auto-dismisses after 4s; a new toast replaces whatever's showing rather
+  // than queuing, since there's only ever one notification area.
+  var showToast = useCallback(function(type, message) {
+    if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
+    setToast({ type: type, message: message });
+    toastTimeoutRef.current = setTimeout(function() { setToast(null); }, 4000);
+  }, [setToast]);
+
+  useEffect(function() {
+    return function() {
+      if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
+    };
+  }, []);
+
   var alertIfFailed = function(r) {
     if (!r.ok) {
-      alert('Something went wrong. Please try again.');
+      showToast('error', 'Something went wrong. Please try again.');
       return true;
     }
     return false;
@@ -115,36 +130,36 @@ var Admin = function() {
   };
 
   var loadStats = useCallback(function() {
-    fetchAuth(API_URL + '/admin/stats').then(parseOk).then(setStats).catch(function() {});
-  }, [fetchAuth, setStats]);
+    fetchAuth(API_URL + '/admin/stats').then(parseOk).then(setStats).catch(function() { showToast('error', 'Failed to load stats.'); });
+  }, [fetchAuth, setStats, showToast]);
 
   var loadAnalytics = useCallback(function() {
-    fetchAuth(API_URL + '/admin/analytics').then(parseOk).then(setAnalytics).catch(function() {});
-  }, [fetchAuth, setAnalytics]);
+    fetchAuth(API_URL + '/admin/analytics').then(parseOk).then(setAnalytics).catch(function() { showToast('error', 'Failed to load analytics.'); });
+  }, [fetchAuth, setAnalytics, showToast]);
 
   var loadPageviews = useCallback(function() {
-    fetchAuth(API_URL + '/admin/pageviews').then(parseOk).then(setPageviews).catch(function() {});
-  }, [fetchAuth, setPageviews]);
+    fetchAuth(API_URL + '/admin/pageviews').then(parseOk).then(setPageviews).catch(function() { showToast('error', 'Failed to load pageviews.'); });
+  }, [fetchAuth, setPageviews, showToast]);
 
   var loadProjects = useCallback(function() {
-    fetch(API_URL + '/projects').then(parseOk).then(setProjects).catch(function() {});
-  }, [setProjects]);
+    fetch(API_URL + '/projects').then(parseOk).then(setProjects).catch(function() { showToast('error', 'Failed to load projects.'); });
+  }, [setProjects, showToast]);
 
   var loadMessages = useCallback(function() {
-    fetchAuth(API_URL + '/messages').then(parseOk).then(setMessages).catch(function() {});
-  }, [fetchAuth, setMessages]);
+    fetchAuth(API_URL + '/messages').then(parseOk).then(setMessages).catch(function() { showToast('error', 'Failed to load messages.'); });
+  }, [fetchAuth, setMessages, showToast]);
 
   var loadProfile = useCallback(function() {
-    fetch(API_URL + '/profile').then(parseOk).then(setProfile).catch(function() {});
-  }, [setProfile]);
+    fetch(API_URL + '/profile').then(parseOk).then(setProfile).catch(function() { showToast('error', 'Failed to load profile.'); });
+  }, [setProfile, showToast]);
 
   var loadTestimonials = useCallback(function() {
-    fetchAuth(API_URL + '/admin/testimonials').then(parseOk).then(setAdminTestimonials).catch(function() {});
-  }, [fetchAuth, setAdminTestimonials]);
+    fetchAuth(API_URL + '/admin/testimonials').then(parseOk).then(setAdminTestimonials).catch(function() { showToast('error', 'Failed to load testimonials.'); });
+  }, [fetchAuth, setAdminTestimonials, showToast]);
 
   var loadSecurity = useCallback(function() {
-    fetchAuth(API_URL + '/admin/security').then(parseOk).then(setSecurity).catch(function() {});
-  }, [fetchAuth, setSecurity]);
+    fetchAuth(API_URL + '/admin/security').then(parseOk).then(setSecurity).catch(function() { showToast('error', 'Failed to load security data.'); });
+  }, [fetchAuth, setSecurity, showToast]);
 
   // Switching tabs only needs that tab's own data - loading all 8 endpoints
   // on every click let a handful of tab clicks burn through the rate limit.
@@ -197,6 +212,7 @@ var Admin = function() {
       setEditProject(null);
       loadStats();
       loadProjects();
+      showToast('success', 'Project saved.');
     });
   };
 
@@ -218,7 +234,7 @@ var Admin = function() {
     if (!file) return;
     uploadAdminImage(file).then(function(url) {
       setEditProject(Object.assign({}, editProject, { image: url, image_position: '50% 50%', image_zoom: 100 }));
-    }).catch(function() { alert('Upload failed. Please try again.'); });
+    }).catch(function() { showToast('error', 'Upload failed. Please try again.'); });
   };
 
   var parseImagePosition = function(pos) {
@@ -247,8 +263,7 @@ var Admin = function() {
       if (alertIfFailed(r)) return;
       loadStats();
       loadProfile();
-      setProfileSaved(true);
-      setTimeout(function() { setProfileSaved(false); }, 3000);
+      showToast('success', 'Profile saved.');
     });
   };
 
@@ -507,19 +522,24 @@ var Admin = function() {
 
             {editProject && (
               <form className="edit-form" onSubmit={saveProject}>
-                <input className="edit-input" placeholder="Title" value={editProject.title || ''} onChange={function(e) { setEditProject(Object.assign({}, editProject, { title: e.target.value })); }} />
-                <textarea className="edit-input edit-textarea" placeholder="Description" value={editProject.description || ''} onChange={function(e) { setEditProject(Object.assign({}, editProject, { description: e.target.value })); }} />
-                <input className="edit-input" placeholder="Tags (comma separated)" value={editProject.tags || ''} onChange={function(e) { setEditProject(Object.assign({}, editProject, { tags: e.target.value })); }} />
-                <select className="edit-input" value={editProject.status || 'Live'} onChange={function(e) { setEditProject(Object.assign({}, editProject, { status: e.target.value })); }}>
+                <label className="edit-label" htmlFor="project-title">Title</label>
+                <input id="project-title" className="edit-input" placeholder="e.g. Portfolio Website" value={editProject.title || ''} onChange={function(e) { setEditProject(Object.assign({}, editProject, { title: e.target.value })); }} />
+                <label className="edit-label" htmlFor="project-description">Description</label>
+                <textarea id="project-description" className="edit-input edit-textarea" placeholder="What is this project about?" value={editProject.description || ''} onChange={function(e) { setEditProject(Object.assign({}, editProject, { description: e.target.value })); }} />
+                <label className="edit-label" htmlFor="project-tags">Tags (comma separated)</label>
+                <input id="project-tags" className="edit-input" placeholder="React, Node.js, CSS3" value={editProject.tags || ''} onChange={function(e) { setEditProject(Object.assign({}, editProject, { tags: e.target.value })); }} />
+                <label className="edit-label" htmlFor="project-status">Status</label>
+                <select id="project-status" className="edit-input" value={editProject.status || 'Live'} onChange={function(e) { setEditProject(Object.assign({}, editProject, { status: e.target.value })); }}>
                   <option value="Live">Live</option>
                   <option value="Coming Soon">Coming Soon</option>
                   <option value="In Progress">In Progress</option>
                 </select>
-                <input className="edit-input" placeholder="Link (optional)" value={editProject.link || ''} onChange={function(e) { setEditProject(Object.assign({}, editProject, { link: e.target.value })); }} />
-                <label className="edit-label">Cover Image</label>
+                <label className="edit-label" htmlFor="project-link">Link (optional)</label>
+                <input id="project-link" className="edit-input" placeholder="https://..." value={editProject.link || ''} onChange={function(e) { setEditProject(Object.assign({}, editProject, { link: e.target.value })); }} />
+                <label className="edit-label" htmlFor="project-image">Cover Image</label>
                 <div className="image-upload-row">
                   {editProject.image && <img src={editProject.image} alt="Preview" className="image-preview" />}
-                  <input type="file" accept="image/*" onChange={uploadImage} className="file-input" />
+                  <input id="project-image" type="file" accept="image/*" onChange={uploadImage} className="file-input" />
                 </div>
                 {editProject.image && (
                   <div className="image-position-picker">
@@ -568,7 +588,8 @@ var Admin = function() {
                     </div>
                   </div>
                 )}
-                <input className="edit-input" type="number" placeholder="Sort order" value={editProject.sort_order || 0} onChange={function(e) { setEditProject(Object.assign({}, editProject, { sort_order: parseInt(e.target.value) })); }} />
+                <label className="edit-label" htmlFor="project-sort-order">Sort order</label>
+                <input id="project-sort-order" className="edit-input" type="number" value={editProject.sort_order || 0} onChange={function(e) { setEditProject(Object.assign({}, editProject, { sort_order: parseInt(e.target.value) })); }} />
                 <div className="edit-actions">
                   <button type="submit" className="save-btn">Save</button>
                   <button type="button" className="cancel-btn" onClick={function() { setEditProject(null); }}>Cancel</button>
@@ -616,32 +637,40 @@ var Admin = function() {
                 var method = editTestimonial.id ? 'PUT' : 'POST';
                 var url = editTestimonial.id ? API_URL + '/testimonials/' + editTestimonial.id : API_URL + '/testimonials';
                 fetchAuth(url, { method: method, body: JSON.stringify(editTestimonial) })
-                  .then(function(r) { if (alertIfFailed(r)) return; setEditTestimonial(null); loadStats(); loadTestimonials(); });
+                  .then(function(r) { if (alertIfFailed(r)) return; setEditTestimonial(null); loadStats(); loadTestimonials(); showToast('success', 'Testimonial saved.'); });
               }}>
-                <input className="edit-input" placeholder="Name" value={editTestimonial.name || ''} onChange={function(e) { setEditTestimonial(Object.assign({}, editTestimonial, { name: e.target.value })); }} />
-                <input className="edit-input" placeholder="Role" value={editTestimonial.role || ''} onChange={function(e) { setEditTestimonial(Object.assign({}, editTestimonial, { role: e.target.value })); }} />
-                <input className="edit-input" placeholder="Company" value={editTestimonial.company || ''} onChange={function(e) { setEditTestimonial(Object.assign({}, editTestimonial, { company: e.target.value })); }} />
-                <textarea className="edit-input edit-textarea" placeholder="Message" value={editTestimonial.message || ''} onChange={function(e) { setEditTestimonial(Object.assign({}, editTestimonial, { message: e.target.value })); }} />
-                <label className="edit-label">Avatar</label>
+                <label className="edit-label" htmlFor="admin-testimonial-name">Name</label>
+                <input id="admin-testimonial-name" className="edit-input" placeholder="Jane Doe" value={editTestimonial.name || ''} onChange={function(e) { setEditTestimonial(Object.assign({}, editTestimonial, { name: e.target.value })); }} />
+                <label className="edit-label" htmlFor="admin-testimonial-role">Role</label>
+                <input id="admin-testimonial-role" className="edit-input" placeholder="e.g. CEO" value={editTestimonial.role || ''} onChange={function(e) { setEditTestimonial(Object.assign({}, editTestimonial, { role: e.target.value })); }} />
+                <label className="edit-label" htmlFor="admin-testimonial-company">Company</label>
+                <input id="admin-testimonial-company" className="edit-input" placeholder="Acme Inc." value={editTestimonial.company || ''} onChange={function(e) { setEditTestimonial(Object.assign({}, editTestimonial, { company: e.target.value })); }} />
+                <label className="edit-label" htmlFor="admin-testimonial-message">Message</label>
+                <textarea id="admin-testimonial-message" className="edit-input edit-textarea" placeholder="What they said..." value={editTestimonial.message || ''} onChange={function(e) { setEditTestimonial(Object.assign({}, editTestimonial, { message: e.target.value })); }} />
+                <label className="edit-label" htmlFor="admin-testimonial-avatar">Avatar</label>
                 <div className="image-upload-row">
                   {editTestimonial.avatar && <img src={editTestimonial.avatar} alt="Avatar" className="avatar-preview" />}
-                  <input type="file" accept="image/*" onChange={function(e) {
+                  <input id="admin-testimonial-avatar" type="file" accept="image/*" onChange={function(e) {
                     var file = e.target.files[0];
                     if (!file) return;
                     uploadAdminImage(file).then(function(url) {
                       setEditTestimonial(Object.assign({}, editTestimonial, { avatar: url }));
-                    }).catch(function() { alert('Upload failed. Please try again.'); });
+                    }).catch(function() { showToast('error', 'Upload failed. Please try again.'); });
                   }} className="file-input" />
                 </div>
-                <select className="edit-input" value={editTestimonial.rating || 5} onChange={function(e) { setEditTestimonial(Object.assign({}, editTestimonial, { rating: parseInt(e.target.value) })); }}>
+                <label className="edit-label" htmlFor="admin-testimonial-rating">Rating</label>
+                <select id="admin-testimonial-rating" className="edit-input" value={editTestimonial.rating || 5} onChange={function(e) { setEditTestimonial(Object.assign({}, editTestimonial, { rating: parseInt(e.target.value) })); }}>
                   <option value="5">★★★★★</option>
                   <option value="4">★★★★</option>
                   <option value="3">★★★</option>
+                  <option value="2">★★</option>
+                  <option value="1">★</option>
                 </select>
                 <label className="edit-label">
                   <input type="checkbox" checked={editTestimonial.visible !== false} onChange={function(e) { setEditTestimonial(Object.assign({}, editTestimonial, { visible: e.target.checked })); }} /> Visible
                 </label>
-                <input className="edit-input" type="number" placeholder="Sort order" value={editTestimonial.sort_order || 0} onChange={function(e) { setEditTestimonial(Object.assign({}, editTestimonial, { sort_order: parseInt(e.target.value) })); }} />
+                <label className="edit-label" htmlFor="admin-testimonial-sort-order">Sort order</label>
+                <input id="admin-testimonial-sort-order" className="edit-input" type="number" value={editTestimonial.sort_order || 0} onChange={function(e) { setEditTestimonial(Object.assign({}, editTestimonial, { sort_order: parseInt(e.target.value) })); }} />
                 <div className="edit-actions">
                   <button type="submit" className="save-btn">Save</button>
                   <button type="button" className="cancel-btn" onClick={function() { setEditTestimonial(null); }}>Cancel</button>
@@ -750,35 +779,41 @@ var Admin = function() {
           <div className="admin-section">
             <h1 className="admin-title">Profile</h1>
             <form className="edit-form" onSubmit={saveProfile}>
-              <label className="edit-label">Profile Photo</label>
+              <label className="edit-label" htmlFor="profile-avatar">Profile Photo</label>
               <div className="image-upload-row">
                 {profile.avatar && <img src={profile.avatar} alt="Avatar" className="avatar-preview" />}
-                <input type="file" accept="image/*" onChange={function(e) {
+                <input id="profile-avatar" type="file" accept="image/*" onChange={function(e) {
                   var file = e.target.files[0];
                   if (!file) return;
                   uploadAdminImage(file).then(function(url) {
                     setProfile(Object.assign({}, profile, { avatar: url }));
-                  }).catch(function() { alert('Upload failed. Please try again.'); });
+                  }).catch(function() { showToast('error', 'Upload failed. Please try again.'); });
                 }} className="file-input" />
               </div>
-              <label className="edit-label">Name</label>
-              <input className="edit-input" value={profile.name || ''} onChange={function(e) { setProfile(Object.assign({}, profile, { name: e.target.value })); }} />
-              <label className="edit-label">Role</label>
-              <input className="edit-input" value={profile.role || ''} onChange={function(e) { setProfile(Object.assign({}, profile, { role: e.target.value })); }} />
-              <label className="edit-label">Bio</label>
-              <textarea className="edit-input edit-textarea" value={profile.bio || ''} onChange={function(e) { setProfile(Object.assign({}, profile, { bio: e.target.value })); }} />
-              <label className="edit-label">Email</label>
-              <input className="edit-input" value={profile.email || ''} onChange={function(e) { setProfile(Object.assign({}, profile, { email: e.target.value })); }} />
-              <label className="edit-label">Location</label>
-              <input className="edit-input" value={profile.location || ''} onChange={function(e) { setProfile(Object.assign({}, profile, { location: e.target.value })); }} />
-              <label className="edit-label">Timezone</label>
-              <input className="edit-input" value={profile.timezone || ''} onChange={function(e) { setProfile(Object.assign({}, profile, { timezone: e.target.value })); }} />
-              {profileSaved && <p className="profile-saved-msg">Profile saved!</p>}
+              <label className="edit-label" htmlFor="profile-name">Name</label>
+              <input id="profile-name" className="edit-input" value={profile.name || ''} onChange={function(e) { setProfile(Object.assign({}, profile, { name: e.target.value })); }} />
+              <label className="edit-label" htmlFor="profile-role">Role</label>
+              <input id="profile-role" className="edit-input" value={profile.role || ''} onChange={function(e) { setProfile(Object.assign({}, profile, { role: e.target.value })); }} />
+              <label className="edit-label" htmlFor="profile-bio">Bio</label>
+              <textarea id="profile-bio" className="edit-input edit-textarea" value={profile.bio || ''} onChange={function(e) { setProfile(Object.assign({}, profile, { bio: e.target.value })); }} />
+              <label className="edit-label" htmlFor="profile-email">Email</label>
+              <input id="profile-email" className="edit-input" value={profile.email || ''} onChange={function(e) { setProfile(Object.assign({}, profile, { email: e.target.value })); }} />
+              <label className="edit-label" htmlFor="profile-location">Location</label>
+              <input id="profile-location" className="edit-input" value={profile.location || ''} onChange={function(e) { setProfile(Object.assign({}, profile, { location: e.target.value })); }} />
+              <label className="edit-label" htmlFor="profile-timezone">Timezone</label>
+              <input id="profile-timezone" className="edit-input" value={profile.timezone || ''} onChange={function(e) { setProfile(Object.assign({}, profile, { timezone: e.target.value })); }} />
               <button type="submit" className="save-btn">Save Profile</button>
             </form>
           </div>
         )}
       </div>
+
+      {toast && (
+        <div className={'admin-toast toast-' + toast.type} role="status">
+          <span>{toast.message}</span>
+          <button type="button" className="admin-toast-close" onClick={function() { setToast(null); }} aria-label="Dismiss">✕</button>
+        </div>
+      )}
     </div>
   );
 };
