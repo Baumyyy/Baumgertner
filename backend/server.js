@@ -673,6 +673,15 @@ app.delete('/api/testimonials/:id', auth, async function(req, res) {
 // every other request on the site, not just uploads. Cap how many run
 // concurrently and reject new ones past that instead of letting them queue
 // up and starve unrelated traffic.
+//
+// limitInputPixels below (50MP) is the other half of that same defense -
+// it was originally set much lower (12MP) but that rejected completely
+// ordinary phone photos (e.g. a stock 4032x3024 shot is 12.19MP, just over
+// the old limit), breaking real uploads. The concurrency cap above is what
+// actually protects the single vCPU from being pinned by decoding several
+// large images at once; the pixel limit only needs to catch genuinely
+// extreme outliers (crafted decompression bombs, huge scans), so it can
+// afford to be far more generous without giving that up.
 var MAX_CONCURRENT_IMAGE_JOBS = 2;
 var activeImageJobs = 0;
 
@@ -698,7 +707,7 @@ app.post('/api/upload-public', uploadPublicLimiter, upload.single('image'), asyn
     var filename = 'avatar-' + crypto.randomUUID() + '.webp';
     var outputPath = path.join(uploadsDir, filename);
     await runImageJob(function() {
-      return sharp(req.file.path, { limitInputPixels: 12000000 })
+      return sharp(req.file.path, { limitInputPixels: 50000000 })
         .resize(200, 200, { fit: 'cover' })
         .webp({ quality: 75 })
         .toFile(outputPath);
@@ -723,7 +732,7 @@ app.post('/api/upload', auth, upload.single('image'), async function(req, res) {
     var filename = 'project-' + crypto.randomUUID() + '.webp';
     var outputPath = path.join(uploadsDir, filename);
     await runImageJob(function() {
-      return sharp(req.file.path, { limitInputPixels: 12000000 })
+      return sharp(req.file.path, { limitInputPixels: 50000000 })
         .resize(1200, 800, { fit: 'inside', withoutEnlargement: true })
         .webp({ quality: 80 })
         .toFile(outputPath);
