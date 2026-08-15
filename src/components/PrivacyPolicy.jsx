@@ -7,7 +7,7 @@ import { usePageMeta } from '../hooks/usePageMeta';
 var content = {
   en: {
     title: 'Privacy Policy',
-    updated: 'Last updated: 10 August 2026',
+    updated: 'Last updated: 15 August 2026',
     intro: 'This page explains what personal data this website (baumgertner.fi) collects, why, and what rights you have. The data controller for the personal data described here is Anthony Baumgertner, who runs this site as a personal portfolio.',
     sections: [
       {
@@ -33,19 +33,21 @@ var content = {
         body: [
           'Resend — used to deliver email notifications when a contact message or testimonial is submitted.',
           'A PostgreSQL database host — used to store the data listed above.',
-          'GitHub — used only for the site owner’s own admin login (OAuth), not for visitor tracking.'
+          'GitHub — used only for the site owner’s own admin login (OAuth), not for visitor tracking.',
+          'Cloudflare Turnstile — a bot-protection challenge on the contact and testimonial forms. To verify you are not a bot, your IP address and browser signals are shared with Cloudflare when you load a page with one of these forms and when you submit it. It does not track you across other sites.'
         ]
       },
       {
         heading: 'International data transfers',
         body: [
-          'Resend and the database host may process data outside the EU/EEA (for example in the United States). Where this happens, the transfer is safeguarded under the EU-US Data Privacy Framework and/or the European Commission\'s Standard Contractual Clauses.'
+          'Resend, the database host, and Cloudflare (Turnstile) may process data outside the EU/EEA (for example in the United States). Where this happens, the transfer is safeguarded under the EU-US Data Privacy Framework and/or the European Commission\'s Standard Contractual Clauses.'
         ]
       },
       {
         heading: 'Cookies',
         body: [
-          'This site does not set any cookies for regular visitors. A session cookie is only created if someone attempts to log in to the admin area.'
+          'This site does not set any cookies for regular visitors. A session cookie is only created if someone attempts to log in to the admin area.',
+          'Cloudflare Turnstile, the bot-protection challenge on the contact and testimonial forms, may set its own technical identifier on pages that include one of these forms. This is not a tracking cookie.'
         ]
       },
       {
@@ -59,7 +61,7 @@ var content = {
       {
         heading: 'How we protect your data',
         body: [
-          'We use security measures including GitHub OAuth for admin login (no passwords stored on this site), rate limiting with automated abuse alerts, and a database access role restricted to only what the site needs to function. HTTPS encryption will be enabled once the site is deployed to its own domain.',
+          'We use security measures including GitHub OAuth for admin login (no passwords stored on this site), rate limiting with automated abuse alerts, and a database access role restricted to only what the site needs to function. All traffic to this site is encrypted with HTTPS (TLS).',
           'No security measure is perfect, but we take reasonable steps to keep your data safe.'
         ]
       },
@@ -88,7 +90,7 @@ var content = {
   },
   fi: {
     title: 'Tietosuojaseloste',
-    updated: 'Päivitetty viimeksi: 10.8.2026',
+    updated: 'Päivitetty viimeksi: 15.8.2026',
     intro: 'Tämä sivu kertoo, mitä henkilötietoja tämä verkkosivusto (baumgertner.fi) kerää, miksi, ja mitä oikeuksia sinulla on. Näiden henkilötietojen rekisterinpitäjä on Anthony Baumgertner, joka ylläpitää sivustoa henkilökohtaisena portfoliona.',
     sections: [
       {
@@ -114,19 +116,21 @@ var content = {
         body: [
           'Resend — käytetään sähköposti-ilmoitusten lähettämiseen kun yhteydenotto tai suosittelu lähetetään.',
           'PostgreSQL-tietokannan hosting-palveluntarjoaja — käytetään yllä lueteltujen tietojen tallentamiseen.',
-          'GitHub — käytetään vain sivuston ylläpitäjän omaan admin-kirjautumiseen (OAuth), ei kävijöiden seurantaan.'
+          'GitHub — käytetään vain sivuston ylläpitäjän omaan admin-kirjautumiseen (OAuth), ei kävijöiden seurantaan.',
+          'Cloudflare Turnstile — bottisuojaus yhteydenotto- ja suositteluformeissa. Sen varmistamiseksi, ettet ole botti, IP-osoitteesi ja selaintietoja välitetään Cloudflarelle kun lataat lomakkeen sisältävän sivun ja kun lähetät lomakkeen. Se ei seuraa sinua muilla sivustoilla.'
         ]
       },
       {
         heading: 'Kansainväliset tiedonsiirrot',
         body: [
-          'Resend ja tietokannan hosting-palveluntarjoaja saattavat käsitellä tietoja EU/ETA-alueen ulkopuolella (esimerkiksi Yhdysvalloissa). Tällöin siirto on suojattu EU:n ja Yhdysvaltojen tietosuojakehyksellä (Data Privacy Framework) ja/tai Euroopan komission vakiosopimuslausekkeilla (Standard Contractual Clauses).'
+          'Resend, tietokannan hosting-palveluntarjoaja ja Cloudflare (Turnstile) saattavat käsitellä tietoja EU/ETA-alueen ulkopuolella (esimerkiksi Yhdysvalloissa). Tällöin siirto on suojattu EU:n ja Yhdysvaltojen tietosuojakehyksellä (Data Privacy Framework) ja/tai Euroopan komission vakiosopimuslausekkeilla (Standard Contractual Clauses).'
         ]
       },
       {
         heading: 'Evästeet',
         body: [
-          'Tämä sivusto ei aseta evästeitä tavallisille kävijöille. Sessioeväste luodaan vain, jos joku yrittää kirjautua admin-paneeliin.'
+          'Tämä sivusto ei aseta evästeitä tavallisille kävijöille. Sessioeväste luodaan vain, jos joku yrittää kirjautua admin-paneeliin.',
+          'Cloudflare Turnstile, yhteydenotto- ja suositteluformien bottisuojaus, voi asettaa oman teknisen tunnisteensa lomakkeita sisältävillä sivuilla. Tämä ei ole seurantaeväste.'
         ]
       },
       {
@@ -140,7 +144,7 @@ var content = {
       {
         heading: 'Miten suojaamme tietojasi',
         body: [
-          'Käytämme turvatoimia kuten GitHub OAuth -kirjautumista admin-paneeliin (sivustolla ei säilytetä salasanoja), pyyntörajoituksia automaattisin väärinkäyttöhälytyksin, ja tietokantakäyttöoikeutta joka on rajattu vain siihen mitä sivusto tarvitsee toimiakseen. HTTPS-salaus otetaan käyttöön kun sivusto julkaistaan omalla domainillaan.',
+          'Käytämme turvatoimia kuten GitHub OAuth -kirjautumista admin-paneeliin (sivustolla ei säilytetä salasanoja), pyyntörajoituksia automaattisin väärinkäyttöhälytyksin, ja tietokantakäyttöoikeutta joka on rajattu vain siihen mitä sivusto tarvitsee toimiakseen. Kaikki liikenne tälle sivustolle on salattu HTTPS:llä (TLS).',
           'Mikään turvatoimi ei ole täydellinen, mutta pyrimme kohtuullisin keinoin pitämään tietosi turvassa.'
         ]
       },
