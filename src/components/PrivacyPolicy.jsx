@@ -15,7 +15,7 @@ var content = {
         body: [
           'Contact form: name, email address and message, when you submit the contact form.',
           'Testimonials: name, role, company, message, rating and an optional profile photo, when you submit a testimonial. Submitted testimonials are reviewed before being published publicly on the site.',
-          'Basic page-view analytics: the page you visited, the referring page, and your browser’s user-agent string. This is first-party, does not use cookies or a tracking identifier, and is not linked to your name or email.',
+          'Basic page-view analytics: the page you visited and your browser’s user-agent string. This is first-party, does not use cookies or a tracking identifier, and is not linked to your name or email.',
           'Security logs: if you trigger one of our rate limits (for example by sending an unusually high number of requests), we log your IP address and the requested route.'
         ]
       },
@@ -98,7 +98,7 @@ var content = {
         body: [
           'Yhteydenottolomake: nimi, sähköpostiosoite ja viesti, kun lähetät yhteydenottolomakkeen.',
           'Suosittelut: nimi, rooli, yritys, viesti, arvosana ja valinnainen profiilikuva, kun lähetät suosittelun. Lähetetyt suosittelut tarkistetaan ennen kuin ne mahdollisesti julkaistaan sivustolla.',
-          'Perustason sivukäyntitilastot: käytetty sivu, mistä tulit sivulle (referrer) ja selaimesi user-agent-tunniste. Tämä on ensimmäisen osapuolen tilastointia, ei käytä evästeitä tai seurantatunnistetta, eikä sitä yhdistetä nimeesi tai sähköpostiisi.',
+          'Perustason sivukäyntitilastot: käytetty sivu ja selaimesi user-agent-tunniste. Tämä on ensimmäisen osapuolen tilastointia, ei käytä evästeitä tai seurantatunnistetta, eikä sitä yhdistetä nimeesi tai sähköpostiisi.',
           'Turvalokit: jos laukaiset jonkin pyyntörajoituksistamme (esim. lähettämällä poikkeuksellisen suuren määrän pyyntöjä), tallennamme IP-osoitteesi ja pyydetyn reitin.'
         ]
       },

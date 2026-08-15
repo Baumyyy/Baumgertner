@@ -6,12 +6,18 @@ async function run() {
     CREATE TABLE IF NOT EXISTS page_views (
       id SERIAL PRIMARY KEY,
       page VARCHAR(255) NOT NULL,
-      referrer VARCHAR(500),
       user_agent TEXT,
       country VARCHAR(100),
       created_at TIMESTAMP DEFAULT NOW()
     )
   `);
+  // Was captured from the request's Referer header, but never surfaced
+  // anywhere in the admin UI, and in production nginx's own
+  // `Referrer-Policy: no-referrer` header stops the browser from ever
+  // sending it on the same-origin pageview call anyway - so this column
+  // held real values only in local dev, and was otherwise always empty.
+  // Dropped rather than left dead.
+  await pool.query(`ALTER TABLE page_views DROP COLUMN IF EXISTS referrer`);
   await pool.query(`CREATE INDEX IF NOT EXISTS idx_page_views_created_at ON page_views(created_at)`);
   console.log('Analytics table created!');
   process.exit(0);

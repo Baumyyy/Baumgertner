@@ -793,11 +793,10 @@ app.post('/api/pageview', pageviewLimiter, async function(req, res) {
   try {
     var { page } = req.body;
     var userAgent = req.headers['user-agent'] || '';
-    var referrer = req.headers['referer'] || '';
     var pageValue = (typeof page === 'string' && page ? page : '/').slice(0, 255);
     await pool.query(
-      'INSERT INTO page_views (page, referrer, user_agent) VALUES ($1,$2,$3)',
-      [pageValue, referrer.slice(0, 500), userAgent]
+      'INSERT INTO page_views (page, user_agent) VALUES ($1,$2)',
+      [pageValue, userAgent]
     );
     res.json({ ok: true });
   } catch (err) {
