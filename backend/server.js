@@ -112,16 +112,6 @@ var isValidImageZoom = function(zoom) {
   return Number.isInteger(n) && n >= 50 && n <= 300;
 };
 
-// Email helper
-var escapeHtml = function(str) {
-  return String(str == null ? '' : str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-};
-
 var sendNotification = async function(subject, html) {
   if (!process.env.RESEND_API_KEY || !process.env.NOTIFICATION_EMAIL) return;
   try {
@@ -487,14 +477,7 @@ app.post('/api/messages', messageLimiter, async function(req, res) {
       [name, email, message]
     );
 
-    sendNotification(
-      'New message from ' + escapeHtml(name),
-      '<h3>New Contact Message</h3>' +
-      '<p><strong>From:</strong> ' + escapeHtml(name) + '</p>' +
-      '<p><strong>Email:</strong> ' + escapeHtml(email) + '</p>' +
-      '<p><strong>Message:</strong></p>' +
-      '<p>' + escapeHtml(message) + '</p>'
-    );
+    // No per-submission email here - see sendDigestNotification below.
 
     res.json(result.rows[0]);
   } catch (err) {
@@ -577,16 +560,7 @@ app.post('/api/testimonials/submit', testimonialLimiter, async function(req, res
       [name, role || '', company || '', message, ratingNum, avatar || null]
     );
 
-    sendNotification(
-      'New testimonial from ' + escapeHtml(name),
-      '<h3>New Testimonial</h3>' +
-      '<p><strong>From:</strong> ' + escapeHtml(name) + '</p>' +
-      '<p><strong>Role:</strong> ' + escapeHtml(role || 'N/A') + '</p>' +
-      '<p><strong>Company:</strong> ' + escapeHtml(company || 'N/A') + '</p>' +
-      '<p><strong>Rating:</strong> ' + ratingNum + '/5</p>' +
-      '<p><strong>Message:</strong></p>' +
-      '<p>' + escapeHtml(message) + '</p>'
-    );
+    // No per-submission email here - see sendDigestNotification below.
 
     res.json({ success: true, message: 'Thank you! Your testimonial will be reviewed.' });
   } catch (err) {
@@ -837,6 +811,50 @@ function cleanupOldSecurityEvents() {
     .catch(function(err) { console.error('Security event cleanup failed:', err.message); });
 }
 
+// ===== MESSAGE / TESTIMONIAL DIGEST NOTIFICATIONS =====
+// POST /api/messages and /api/testimonials/submit used to email on every
+// single submission. The rate limit on those routes is per-IP (3/hour), so
+// a botnet or a handful of proxies could each stay under it while still
+// filling the inbox with hundreds of emails an hour - worst case, Resend's
+// daily quota gets burned and real contact-form messages stop being
+// deliverable. Batch instead: check periodically for anything new since the
+// last digest and send at most one summary email, never one per submission.
+var DIGEST_INTERVAL = 15 * 60 * 1000;
+// In-memory only (not persisted across restarts) - a restart just means the
+// next digest's window starts from the restart time, which at worst delays
+// a notification by one interval rather than losing or duplicating it.
+var lastDigestNotifiedAt = new Date();
+
+function sendDigestNotification() {
+  var since = lastDigestNotifiedAt;
+  var checkedAt = new Date();
+  Promise.all([
+    pool.query('SELECT COUNT(*) FROM messages WHERE created_at > $1', [since]),
+    pool.query('SELECT COUNT(*) FROM testimonials WHERE created_at > $1', [since])
+  ]).then(function(results) {
+    var newMessages = parseInt(results[0].rows[0].count, 10);
+    var newTestimonials = parseInt(results[1].rows[0].count, 10);
+    if (newMessages === 0 && newTestimonials === 0) return;
+
+    var parts = [];
+    if (newMessages > 0) parts.push(newMessages + ' new message' + (newMessages === 1 ? '' : 's'));
+    if (newTestimonials > 0) parts.push(newTestimonials + ' new testimonial' + (newTestimonials === 1 ? '' : 's'));
+    var summary = parts.join(' and ');
+
+    // Only advance the watermark once something is actually reported, so a
+    // quiet period never causes a gap - the next check just looks further back.
+    lastDigestNotifiedAt = checkedAt;
+
+    // Deliberately generic - no submitted names/emails/message bodies here,
+    // so this can't become a way to smuggle unescaped user input into an
+    // email client. Anyone who wants details opens the admin panel.
+    sendNotification(
+      summary + ' — check the admin panel',
+      '<h3>New activity on your site</h3><p>' + summary + ' since the last update. Open the admin panel to review.</p>'
+    );
+  }).catch(function(err) { console.error('Digest notification check failed:', err.message); });
+}
+
 // ===== UPLOAD RETENTION =====
 // Safety net for files that end up unreferenced (e.g. a testimonial photo
 // uploaded but the form was never submitted). Only removes files older than
@@ -877,6 +895,7 @@ if (require.main === module) {
   setInterval(cleanupOldSecurityEvents, SECURITY_EVENT_RETENTION_INTERVAL);
   cleanupOrphanedUploads();
   setInterval(cleanupOrphanedUploads, UPLOAD_CLEANUP_INTERVAL);
+  setInterval(sendDigestNotification, DIGEST_INTERVAL);
 
   app.listen(PORT, function() {
     console.log('Portfolio API running on http://localhost:' + PORT);
