@@ -889,9 +889,12 @@ function sendDigestNotification() {
 
 // ===== UPLOAD RETENTION =====
 // Safety net for files that end up unreferenced (e.g. a testimonial photo
-// uploaded but the form was never submitted). Only removes files older than
-// 24h so an upload mid-flow is never deleted out from under a pending submit.
-var UPLOAD_CLEANUP_INTERVAL = 24 * 60 * 60 * 1000;
+// uploaded but the form was never submitted) - also the thing that clears
+// out anything an abuser pushes through the upload routes. Checking hourly
+// instead of daily shrinks that window from a full day to an hour; the 24h
+// mtime cutoff below (unchanged) still protects an upload mid-flow from
+// being deleted out from under a pending submit.
+var UPLOAD_CLEANUP_INTERVAL = 60 * 60 * 1000;
 function cleanupOrphanedUploads() {
   Promise.all([
     pool.query('SELECT image AS url FROM projects WHERE image IS NOT NULL'),
