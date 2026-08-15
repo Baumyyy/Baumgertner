@@ -1,7 +1,19 @@
 node_modules
 dist
 .env
-backend/node_modules
-backend/.env
-backend/uploads
 .git
+.github
+.claude
+
+# Everything below belongs to the backend build (its own context, see
+# backend/Dockerfile + backend/.dockerignore) or is otherwise irrelevant to
+# `npm run build` here - none of it ends up in the final nginx image
+# either way, but keeping it out of this build stage's context keeps a
+# single-vCPU build from copying/hashing files it never touches.
+backend
+scripts
+docker-compose.yml
+Caddyfile
+README.md
+SETUP-NOTES.md
+DEPLOY.md
