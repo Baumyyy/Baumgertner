@@ -112,6 +112,35 @@ var isValidImageZoom = function(zoom) {
   return Number.isInteger(n) && n >= 50 && n <= 300;
 };
 
+// Verifies a Cloudflare Turnstile token against the siteverify endpoint.
+// Fails open (returns true without making a request) when TURNSTILE_SECRET
+// isn't set, so the contact/testimonial forms keep working in local dev
+// without provisioning Cloudflare keys - logs a warning so that's obvious
+// rather than silent if it's ever unintentional in a real deployment.
+var verifyTurnstile = async function(token, ip) {
+  if (!process.env.TURNSTILE_SECRET) {
+    console.warn('TURNSTILE_SECRET not set - skipping CAPTCHA verification');
+    return true;
+  }
+  if (!token || typeof token !== 'string') return false;
+  try {
+    var params = new URLSearchParams();
+    params.append('secret', process.env.TURNSTILE_SECRET);
+    params.append('response', token);
+    if (ip) params.append('remoteip', ip);
+    var res = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: params
+    });
+    var data = await res.json();
+    return data.success === true;
+  } catch (err) {
+    console.error('Turnstile verification request failed:', err.message);
+    return false;
+  }
+};
+
 var sendNotification = async function(subject, html) {
   if (!process.env.RESEND_API_KEY || !process.env.NOTIFICATION_EMAIL) return;
   try {
@@ -137,9 +166,11 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'"],
+      scriptSrc: ["'self'", 'https://challenges.cloudflare.com'],
       styleSrc: ["'self'", "'unsafe-inline'"],
       imgSrc: ["'self'", 'data:'],
+      connectSrc: ["'self'", 'https://challenges.cloudflare.com'],
+      frameSrc: ["'self'", 'https://challenges.cloudflare.com'],
       objectSrc: ["'none'"],
       frameAncestors: ["'self'"]
     }
@@ -460,9 +491,12 @@ app.delete('/api/projects/:id', auth, async function(req, res) {
 // ===== MESSAGES (public: send) =====
 app.post('/api/messages', messageLimiter, async function(req, res) {
   try {
-    var { name, email, message, website } = req.body;
+    var { name, email, message, website, turnstileToken } = req.body;
     if (website) {
       return res.json({ id: 0, name: name, email: email, message: message });
+    }
+    if (!(await verifyTurnstile(turnstileToken, req.ip))) {
+      return res.status(400).json({ error: 'CAPTCHA verification failed' });
     }
     if (!name || !email || !message) {
       return res.status(400).json({ error: 'Name, email and message are required' });
@@ -534,9 +568,12 @@ app.get('/api/testimonials', async function(req, res) {
 
 app.post('/api/testimonials/submit', testimonialLimiter, async function(req, res) {
   try {
-    var { name, role, company, message, rating, avatar, website, consent } = req.body;
+    var { name, role, company, message, rating, avatar, website, consent, turnstileToken } = req.body;
     if (website) {
       return res.json({ success: true, message: 'Thank you! Your testimonial will be reviewed.' });
+    }
+    if (!(await verifyTurnstile(turnstileToken, req.ip))) {
+      return res.status(400).json({ error: 'CAPTCHA verification failed' });
     }
     if (!name || !message) {
       return res.status(400).json({ error: 'Name and message are required' });

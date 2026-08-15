@@ -4,6 +4,9 @@ import './Contact.css';
 import { useScrollAnimation } from '../hooks/useScrollAnimation';
 import { api } from '../api';
 import { useLang } from '../useLang';
+import Turnstile from './Turnstile';
+
+var TURNSTILE_ENABLED = !!import.meta.env.VITE_TURNSTILE_SITE_KEY;
 
 var Contact = function() {
   var focusedState = useState('');
@@ -21,6 +24,9 @@ var Contact = function() {
   var formErrorState = useState('');
   var formError = formErrorState[0];
   var setFormError = formErrorState[1];
+  var turnstileTokenState = useState('');
+  var turnstileToken = turnstileTokenState[0];
+  var setTurnstileToken = turnstileTokenState[1];
   var sectionRef = useScrollAnimation();
   var { t } = useLang();
 
@@ -42,13 +48,18 @@ var Contact = function() {
       setFormError('email');
       return;
     }
+    if (TURNSTILE_ENABLED && !turnstileToken) {
+      setFormError('send');
+      return;
+    }
     setFormError('');
 
     setSending(true);
-    api.sendMessage(formData).then(function() {
+    api.sendMessage(Object.assign({}, formData, { turnstileToken: turnstileToken })).then(function() {
       setSending(false);
       setSent(true);
       setFormData({ name: '', email: '', message: '', website: '' });
+      setTurnstileToken('');
       setTimeout(function() { setSent(false); }, 4000);
     }).catch(function() {
       setSending(false);
@@ -201,7 +212,9 @@ var Contact = function() {
                 {t.privacy_notice_pre} <Link to="/privacy">{t.privacy_link_inline}</Link>{t.privacy_notice_post}
               </p>
 
-              <button type="submit" className={'form-send' + (sent ? ' send-success' : '')} disabled={sending}>
+              <Turnstile onVerify={setTurnstileToken} onExpire={function() { setTurnstileToken(''); }} />
+
+              <button type="submit" className={'form-send' + (sent ? ' send-success' : '')} disabled={sending || (TURNSTILE_ENABLED && !turnstileToken)}>
                 <span className="send-text" aria-live="polite">{sending ? t.contact_sending : sent ? t.contact_sent : t.contact_send}</span>
                 <span className="send-icon">
                   {sent ? (

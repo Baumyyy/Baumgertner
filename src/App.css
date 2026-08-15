@@ -62,6 +62,11 @@ body {
 .stagger-4 { transition-delay: 0.45s; }
 .stagger-5 { transition-delay: 0.6s; }
 
+/* ===== TURNSTILE ===== */
+.turnstile-widget {
+  margin: 0.2rem 0;
+}
+
 ::selection {
   background: rgba(0, 255, 136, 0.25);
   color: #ffffff;

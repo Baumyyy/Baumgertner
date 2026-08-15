@@ -154,6 +154,76 @@ describe('Public API Endpoints', function() {
       await pool.query('DELETE FROM testimonials WHERE name = $1', ['Jest With Consent']);
     });
   });
+
+  // With TURNSTILE_SECRET unset (as in every test above), verifyTurnstile
+  // fails open - these exercise the other side, where it's actually
+  // enforced. siteverify is mocked rather than hitting Cloudflare for real.
+  describe('Turnstile CAPTCHA verification (TURNSTILE_SECRET set)', function() {
+    var originalSecret = process.env.TURNSTILE_SECRET;
+    var originalFetch = global.fetch;
+
+    beforeAll(function() {
+      process.env.TURNSTILE_SECRET = 'test-secret';
+    });
+
+    afterEach(function() {
+      global.fetch = originalFetch;
+    });
+
+    afterAll(function() {
+      process.env.TURNSTILE_SECRET = originalSecret;
+    });
+
+    it('should reject a message with no Turnstile token, and not store it', async function() {
+      var res = await request(app)
+        .post('/api/messages')
+        .send({ name: 'No Token', email: 'no-token@test.com', message: 'Hello' });
+      expect(res.status).toBe(400);
+
+      var check = await pool.query('SELECT * FROM messages WHERE email = $1', ['no-token@test.com']);
+      expect(check.rows.length).toBe(0);
+    });
+
+    it('should reject a testimonial with no Turnstile token, and not store it', async function() {
+      var res = await request(app)
+        .post('/api/testimonials/submit')
+        .send({ name: 'Jest No Token', message: 'Great to work with!', consent: true });
+      expect(res.status).toBe(400);
+
+      var check = await pool.query('SELECT * FROM testimonials WHERE name = $1', ['Jest No Token']);
+      expect(check.rows.length).toBe(0);
+    });
+
+    it('should reject a message when siteverify reports the token invalid', async function() {
+      global.fetch = jest.fn().mockResolvedValue({
+        json: async function() { return { success: false }; }
+      });
+      var res = await request(app)
+        .post('/api/messages')
+        .send({ name: 'Bad Token', email: 'bad-token@test.com', message: 'Hello', turnstileToken: 'bad-token' });
+      expect(res.status).toBe(400);
+      expect(global.fetch).toHaveBeenCalledWith(
+        'https://challenges.cloudflare.com/turnstile/v0/siteverify',
+        expect.objectContaining({ method: 'POST' })
+      );
+
+      var check = await pool.query('SELECT * FROM messages WHERE email = $1', ['bad-token@test.com']);
+      expect(check.rows.length).toBe(0);
+    });
+
+    it('should accept a message when siteverify confirms the token', async function() {
+      global.fetch = jest.fn().mockResolvedValue({
+        json: async function() { return { success: true }; }
+      });
+      var res = await request(app)
+        .post('/api/messages')
+        .send({ name: 'Good Token', email: 'good-token@test.com', message: 'Hello', turnstileToken: 'good-token' });
+      expect(res.status).toBe(200);
+
+      // Cleanup
+      await pool.query('DELETE FROM messages WHERE email = $1', ['good-token@test.com']);
+    });
+  });
 });
 
 describe('Protected Endpoints', function() {
