@@ -762,9 +762,18 @@
     padding: 0.9rem 1.3rem;
     border-radius: 20px;
     margin-bottom: 0;
+    /* row-gap column-gap - `gap` was 1rem in both directions, which reads
+       fine between the photo and text but leaves an oversized empty band
+       above the status pill once it wraps to its own line. */
+    gap: 0.5rem 1rem;
   }
 
-  .mini-card-status { margin-left: 0; margin-top: 0.5rem; }
+  .mini-card-photo {
+    width: 56px;
+    height: 56px;
+  }
+
+  .mini-card-status { margin-left: 0; margin-top: 0; }
 
   .hero-stats-row { gap: 0; }
   .hero-stat-value { font-size: 1.6rem; }
