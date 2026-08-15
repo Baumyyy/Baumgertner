@@ -11,6 +11,7 @@ node_modules
 
 backend/uploads
 SETUP-NOTES.md
+DEPLOY.md
 
 node_modules
 dist
