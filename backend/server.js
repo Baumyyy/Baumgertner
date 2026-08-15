@@ -629,16 +629,42 @@ app.delete('/api/testimonials/:id', auth, async function(req, res) {
   }
 });
 
+// ===== IMAGE PROCESSING CONCURRENCY LIMIT =====
+// Sharp's decode/resize is CPU-bound and this box has a single vCPU, so a
+// couple of large images processed at once pin the only core and stall
+// every other request on the site, not just uploads. Cap how many run
+// concurrently and reject new ones past that instead of letting them queue
+// up and starve unrelated traffic.
+var MAX_CONCURRENT_IMAGE_JOBS = 2;
+var activeImageJobs = 0;
+
+// Wraps a Sharp job so the counter always comes back down, including when
+// the job throws (invalid/corrupt image, decode failure, etc).
+var runImageJob = async function(fn) {
+  activeImageJobs++;
+  try {
+    return await fn();
+  } finally {
+    activeImageJobs--;
+  }
+};
+
 // ===== PUBLIC UPLOAD (testimonial avatars) =====
 app.post('/api/upload-public', uploadPublicLimiter, upload.single('image'), async function(req, res) {
   if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+  if (activeImageJobs >= MAX_CONCURRENT_IMAGE_JOBS) {
+    fs.unlink(req.file.path, function() {});
+    return res.status(503).json({ error: 'Server busy, try again shortly' });
+  }
   try {
     var filename = 'avatar-' + crypto.randomUUID() + '.webp';
     var outputPath = path.join(uploadsDir, filename);
-    await sharp(req.file.path, { limitInputPixels: 30000000 })
-      .resize(200, 200, { fit: 'cover' })
-      .webp({ quality: 75 })
-      .toFile(outputPath);
+    await runImageJob(function() {
+      return sharp(req.file.path, { limitInputPixels: 12000000 })
+        .resize(200, 200, { fit: 'cover' })
+        .webp({ quality: 75 })
+        .toFile(outputPath);
+    });
     fs.unlink(req.file.path, function() {});
     res.json({ url: '/uploads/' + filename });
   } catch (err) {
@@ -651,13 +677,19 @@ app.post('/api/upload-public', uploadPublicLimiter, upload.single('image'), asyn
 // ===== UPLOAD (admin) =====
 app.post('/api/upload', auth, upload.single('image'), async function(req, res) {
   if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+  if (activeImageJobs >= MAX_CONCURRENT_IMAGE_JOBS) {
+    fs.unlink(req.file.path, function() {});
+    return res.status(503).json({ error: 'Server busy, try again shortly' });
+  }
   try {
     var filename = 'project-' + crypto.randomUUID() + '.webp';
     var outputPath = path.join(uploadsDir, filename);
-    await sharp(req.file.path, { limitInputPixels: 30000000 })
-      .resize(1200, 800, { fit: 'inside', withoutEnlargement: true })
-      .webp({ quality: 80 })
-      .toFile(outputPath);
+    await runImageJob(function() {
+      return sharp(req.file.path, { limitInputPixels: 12000000 })
+        .resize(1200, 800, { fit: 'inside', withoutEnlargement: true })
+        .webp({ quality: 80 })
+        .toFile(outputPath);
+    });
     fs.unlink(req.file.path, function() {});
     res.json({ url: '/uploads/' + filename });
   } catch (err) {
