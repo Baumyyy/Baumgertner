@@ -112,14 +112,33 @@ var isValidImageZoom = function(zoom) {
   return Number.isInteger(n) && n >= 50 && n <= 300;
 };
 
-// Email helper
-var escapeHtml = function(str) {
-  return String(str == null ? '' : str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
+// Verifies a Cloudflare Turnstile token against the siteverify endpoint.
+// Fails open (returns true without making a request) when TURNSTILE_SECRET
+// isn't set, so the contact/testimonial forms keep working in local dev
+// without provisioning Cloudflare keys - logs a warning so that's obvious
+// rather than silent if it's ever unintentional in a real deployment.
+var verifyTurnstile = async function(token, ip) {
+  if (!process.env.TURNSTILE_SECRET) {
+    console.warn('TURNSTILE_SECRET not set - skipping CAPTCHA verification');
+    return true;
+  }
+  if (!token || typeof token !== 'string') return false;
+  try {
+    var params = new URLSearchParams();
+    params.append('secret', process.env.TURNSTILE_SECRET);
+    params.append('response', token);
+    if (ip) params.append('remoteip', ip);
+    var res = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: params
+    });
+    var data = await res.json();
+    return data.success === true;
+  } catch (err) {
+    console.error('Turnstile verification request failed:', err.message);
+    return false;
+  }
 };
 
 var sendNotification = async function(subject, html) {
@@ -147,9 +166,11 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'"],
+      scriptSrc: ["'self'", 'https://challenges.cloudflare.com'],
       styleSrc: ["'self'", "'unsafe-inline'"],
       imgSrc: ["'self'", 'data:'],
+      connectSrc: ["'self'", 'https://challenges.cloudflare.com'],
+      frameSrc: ["'self'", 'https://challenges.cloudflare.com'],
       objectSrc: ["'none'"],
       frameAncestors: ["'self'"]
     }
@@ -307,6 +328,7 @@ app.get('/api/auth/github', authLimiter, passport.authenticate('github', { scope
 var FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
 
 app.get('/api/auth/github/callback',
+  authLimiter,
   passport.authenticate('github', { failureRedirect: FRONTEND_URL + '/baumi-dashboard?error=unauthorized' }),
   function(req, res) {
     res.redirect(FRONTEND_URL + '/baumi-dashboard');
@@ -469,9 +491,12 @@ app.delete('/api/projects/:id', auth, async function(req, res) {
 // ===== MESSAGES (public: send) =====
 app.post('/api/messages', messageLimiter, async function(req, res) {
   try {
-    var { name, email, message, website } = req.body;
+    var { name, email, message, website, turnstileToken } = req.body;
     if (website) {
       return res.json({ id: 0, name: name, email: email, message: message });
+    }
+    if (!(await verifyTurnstile(turnstileToken, req.ip))) {
+      return res.status(400).json({ error: 'CAPTCHA verification failed' });
     }
     if (!name || !email || !message) {
       return res.status(400).json({ error: 'Name, email and message are required' });
@@ -487,14 +512,7 @@ app.post('/api/messages', messageLimiter, async function(req, res) {
       [name, email, message]
     );
 
-    sendNotification(
-      'New message from ' + escapeHtml(name),
-      '<h3>New Contact Message</h3>' +
-      '<p><strong>From:</strong> ' + escapeHtml(name) + '</p>' +
-      '<p><strong>Email:</strong> ' + escapeHtml(email) + '</p>' +
-      '<p><strong>Message:</strong></p>' +
-      '<p>' + escapeHtml(message) + '</p>'
-    );
+    // No per-submission email here - see sendDigestNotification below.
 
     res.json(result.rows[0]);
   } catch (err) {
@@ -550,9 +568,12 @@ app.get('/api/testimonials', async function(req, res) {
 
 app.post('/api/testimonials/submit', testimonialLimiter, async function(req, res) {
   try {
-    var { name, role, company, message, rating, avatar, website, consent } = req.body;
+    var { name, role, company, message, rating, avatar, website, consent, turnstileToken } = req.body;
     if (website) {
       return res.json({ success: true, message: 'Thank you! Your testimonial will be reviewed.' });
+    }
+    if (!(await verifyTurnstile(turnstileToken, req.ip))) {
+      return res.status(400).json({ error: 'CAPTCHA verification failed' });
     }
     if (!name || !message) {
       return res.status(400).json({ error: 'Name and message are required' });
@@ -577,16 +598,7 @@ app.post('/api/testimonials/submit', testimonialLimiter, async function(req, res
       [name, role || '', company || '', message, ratingNum, avatar || null]
     );
 
-    sendNotification(
-      'New testimonial from ' + escapeHtml(name),
-      '<h3>New Testimonial</h3>' +
-      '<p><strong>From:</strong> ' + escapeHtml(name) + '</p>' +
-      '<p><strong>Role:</strong> ' + escapeHtml(role || 'N/A') + '</p>' +
-      '<p><strong>Company:</strong> ' + escapeHtml(company || 'N/A') + '</p>' +
-      '<p><strong>Rating:</strong> ' + ratingNum + '/5</p>' +
-      '<p><strong>Message:</strong></p>' +
-      '<p>' + escapeHtml(message) + '</p>'
-    );
+    // No per-submission email here - see sendDigestNotification below.
 
     res.json({ success: true, message: 'Thank you! Your testimonial will be reviewed.' });
   } catch (err) {
@@ -655,16 +667,42 @@ app.delete('/api/testimonials/:id', auth, async function(req, res) {
   }
 });
 
+// ===== IMAGE PROCESSING CONCURRENCY LIMIT =====
+// Sharp's decode/resize is CPU-bound and this box has a single vCPU, so a
+// couple of large images processed at once pin the only core and stall
+// every other request on the site, not just uploads. Cap how many run
+// concurrently and reject new ones past that instead of letting them queue
+// up and starve unrelated traffic.
+var MAX_CONCURRENT_IMAGE_JOBS = 2;
+var activeImageJobs = 0;
+
+// Wraps a Sharp job so the counter always comes back down, including when
+// the job throws (invalid/corrupt image, decode failure, etc).
+var runImageJob = async function(fn) {
+  activeImageJobs++;
+  try {
+    return await fn();
+  } finally {
+    activeImageJobs--;
+  }
+};
+
 // ===== PUBLIC UPLOAD (testimonial avatars) =====
 app.post('/api/upload-public', uploadPublicLimiter, upload.single('image'), async function(req, res) {
   if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+  if (activeImageJobs >= MAX_CONCURRENT_IMAGE_JOBS) {
+    fs.unlink(req.file.path, function() {});
+    return res.status(503).json({ error: 'Server busy, try again shortly' });
+  }
   try {
     var filename = 'avatar-' + crypto.randomUUID() + '.webp';
     var outputPath = path.join(uploadsDir, filename);
-    await sharp(req.file.path, { limitInputPixels: 30000000 })
-      .resize(200, 200, { fit: 'cover' })
-      .webp({ quality: 75 })
-      .toFile(outputPath);
+    await runImageJob(function() {
+      return sharp(req.file.path, { limitInputPixels: 12000000 })
+        .resize(200, 200, { fit: 'cover' })
+        .webp({ quality: 75 })
+        .toFile(outputPath);
+    });
     fs.unlink(req.file.path, function() {});
     res.json({ url: '/uploads/' + filename });
   } catch (err) {
@@ -677,13 +715,19 @@ app.post('/api/upload-public', uploadPublicLimiter, upload.single('image'), asyn
 // ===== UPLOAD (admin) =====
 app.post('/api/upload', auth, upload.single('image'), async function(req, res) {
   if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+  if (activeImageJobs >= MAX_CONCURRENT_IMAGE_JOBS) {
+    fs.unlink(req.file.path, function() {});
+    return res.status(503).json({ error: 'Server busy, try again shortly' });
+  }
   try {
     var filename = 'project-' + crypto.randomUUID() + '.webp';
     var outputPath = path.join(uploadsDir, filename);
-    await sharp(req.file.path, { limitInputPixels: 30000000 })
-      .resize(1200, 800, { fit: 'inside', withoutEnlargement: true })
-      .webp({ quality: 80 })
-      .toFile(outputPath);
+    await runImageJob(function() {
+      return sharp(req.file.path, { limitInputPixels: 12000000 })
+        .resize(1200, 800, { fit: 'inside', withoutEnlargement: true })
+        .webp({ quality: 80 })
+        .toFile(outputPath);
+    });
     fs.unlink(req.file.path, function() {});
     res.json({ url: '/uploads/' + filename });
   } catch (err) {
@@ -837,11 +881,58 @@ function cleanupOldSecurityEvents() {
     .catch(function(err) { console.error('Security event cleanup failed:', err.message); });
 }
 
+// ===== MESSAGE / TESTIMONIAL DIGEST NOTIFICATIONS =====
+// POST /api/messages and /api/testimonials/submit used to email on every
+// single submission. The rate limit on those routes is per-IP (3/hour), so
+// a botnet or a handful of proxies could each stay under it while still
+// filling the inbox with hundreds of emails an hour - worst case, Resend's
+// daily quota gets burned and real contact-form messages stop being
+// deliverable. Batch instead: check periodically for anything new since the
+// last digest and send at most one summary email, never one per submission.
+var DIGEST_INTERVAL = 15 * 60 * 1000;
+// In-memory only (not persisted across restarts) - a restart just means the
+// next digest's window starts from the restart time, which at worst delays
+// a notification by one interval rather than losing or duplicating it.
+var lastDigestNotifiedAt = new Date();
+
+function sendDigestNotification() {
+  var since = lastDigestNotifiedAt;
+  var checkedAt = new Date();
+  Promise.all([
+    pool.query('SELECT COUNT(*) FROM messages WHERE created_at > $1', [since]),
+    pool.query('SELECT COUNT(*) FROM testimonials WHERE created_at > $1', [since])
+  ]).then(function(results) {
+    var newMessages = parseInt(results[0].rows[0].count, 10);
+    var newTestimonials = parseInt(results[1].rows[0].count, 10);
+    if (newMessages === 0 && newTestimonials === 0) return;
+
+    var parts = [];
+    if (newMessages > 0) parts.push(newMessages + ' new message' + (newMessages === 1 ? '' : 's'));
+    if (newTestimonials > 0) parts.push(newTestimonials + ' new testimonial' + (newTestimonials === 1 ? '' : 's'));
+    var summary = parts.join(' and ');
+
+    // Only advance the watermark once something is actually reported, so a
+    // quiet period never causes a gap - the next check just looks further back.
+    lastDigestNotifiedAt = checkedAt;
+
+    // Deliberately generic - no submitted names/emails/message bodies here,
+    // so this can't become a way to smuggle unescaped user input into an
+    // email client. Anyone who wants details opens the admin panel.
+    sendNotification(
+      summary + ' — check the admin panel',
+      '<h3>New activity on your site</h3><p>' + summary + ' since the last update. Open the admin panel to review.</p>'
+    );
+  }).catch(function(err) { console.error('Digest notification check failed:', err.message); });
+}
+
 // ===== UPLOAD RETENTION =====
 // Safety net for files that end up unreferenced (e.g. a testimonial photo
-// uploaded but the form was never submitted). Only removes files older than
-// 24h so an upload mid-flow is never deleted out from under a pending submit.
-var UPLOAD_CLEANUP_INTERVAL = 24 * 60 * 60 * 1000;
+// uploaded but the form was never submitted) - also the thing that clears
+// out anything an abuser pushes through the upload routes. Checking hourly
+// instead of daily shrinks that window from a full day to an hour; the 24h
+// mtime cutoff below (unchanged) still protects an upload mid-flow from
+// being deleted out from under a pending submit.
+var UPLOAD_CLEANUP_INTERVAL = 60 * 60 * 1000;
 function cleanupOrphanedUploads() {
   Promise.all([
     pool.query('SELECT image AS url FROM projects WHERE image IS NOT NULL'),
@@ -877,6 +968,7 @@ if (require.main === module) {
   setInterval(cleanupOldSecurityEvents, SECURITY_EVENT_RETENTION_INTERVAL);
   cleanupOrphanedUploads();
   setInterval(cleanupOrphanedUploads, UPLOAD_CLEANUP_INTERVAL);
+  setInterval(sendDigestNotification, DIGEST_INTERVAL);
 
   app.listen(PORT, function() {
     console.log('Portfolio API running on http://localhost:' + PORT);

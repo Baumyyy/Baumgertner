@@ -5,6 +5,9 @@ import './Testimonials.css';
 import { api } from '../api';
 import { useLang } from '../useLang';
 import { useScrollAnimation } from '../hooks/useScrollAnimation';
+import Turnstile from './Turnstile';
+
+var TURNSTILE_ENABLED = !!import.meta.env.VITE_TURNSTILE_SITE_KEY;
 
 var Testimonials = function() {
   var sectionRef = useScrollAnimation();
@@ -35,6 +38,9 @@ var Testimonials = function() {
   var agreedState = useState(false);
   var agreed = agreedState[0];
   var setAgreed = agreedState[1];
+  var turnstileTokenState = useState('');
+  var turnstileToken = turnstileTokenState[0];
+  var setTurnstileToken = turnstileTokenState[1];
   var { t } = useLang();
 
   // Swipe
@@ -142,13 +148,15 @@ var Testimonials = function() {
   var handleSubmit = function(e) {
     e.preventDefault();
     if (!form.name || !form.message || !agreed) return;
+    if (TURNSTILE_ENABLED && !turnstileToken) return;
     setSending(true);
     setFormError('');
-    api.submitTestimonial(Object.assign({}, form, { consent: agreed })).then(function() {
+    api.submitTestimonial(Object.assign({}, form, { consent: agreed, turnstileToken: turnstileToken })).then(function() {
       setSending(false);
       setSubmitted(true);
       setForm({ name: '', role: '', company: '', message: '', rating: 5, avatar: '', website: '' });
       setAgreed(false);
+      setTurnstileToken('');
       setTimeout(function() { setSubmitted(false); setShowForm(false); }, 3000);
     }).catch(function() {
       setSending(false);
@@ -341,9 +349,10 @@ var Testimonials = function() {
                     {t.testimonial_notice_pre} <Link to="/terms">{t.terms_link_inline}</Link> {t.testimonial_notice_mid} <Link to="/privacy">{t.privacy_link_inline}</Link>{t.testimonial_notice_post}
                   </span>
                 </label>
+                <Turnstile onVerify={setTurnstileToken} onExpire={function() { setTurnstileToken(''); }} />
                 {formError === 'send' && <p className="tform-error-msg" role="alert">{t.testimonials_error_send}</p>}
                 {formError === 'upload' && <p className="tform-error-msg" role="alert">{t.testimonials_error_upload}</p>}
-                <button type="submit" className="tform-submit" disabled={sending || uploading || !agreed}>
+                <button type="submit" className="tform-submit" disabled={sending || uploading || !agreed || (TURNSTILE_ENABLED && !turnstileToken)}>
                   {sending ? t.testimonials_sending : t.testimonials_submit}
                 </button>
               </form>

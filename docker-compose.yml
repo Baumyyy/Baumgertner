@@ -49,7 +49,10 @@ services:
       start_period: 10s
 
   frontend:
-    build: .
+    build:
+      context: .
+      args:
+        VITE_TURNSTILE_SITE_KEY: ${VITE_TURNSTILE_SITE_KEY}
     restart: always
     depends_on:
       backend:
