@@ -297,6 +297,7 @@ app.get('/api/auth/github', authLimiter, passport.authenticate('github', { scope
 var FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
 
 app.get('/api/auth/github/callback',
+  authLimiter,
   passport.authenticate('github', { failureRedirect: FRONTEND_URL + '/baumi-dashboard?error=unauthorized' }),
   function(req, res) {
     res.redirect(FRONTEND_URL + '/baumi-dashboard');
