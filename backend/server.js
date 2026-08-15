@@ -898,10 +898,17 @@ function cleanupOldSecurityEvents() {
 // deliverable. Batch instead: check periodically for anything new since the
 // last digest and send at most one summary email, never one per submission.
 var DIGEST_INTERVAL = 15 * 60 * 1000;
-// In-memory only (not persisted across restarts) - a restart just means the
-// next digest's window starts from the restart time, which at worst delays
-// a notification by one interval rather than losing or duplicating it.
-var lastDigestNotifiedAt = new Date();
+// In-memory only (not persisted across restarts). Starting the watermark at
+// "now" seemed harmless at first - worst case, a restart delays the next
+// notification by one interval - but that's wrong: WHERE created_at > $1
+// means anything submitted *before* the watermark never matches, ever, once
+// it's moved past. A message that arrives and then the process restarts
+// before the next check is silently dropped forever, not just delayed.
+// Starting further back instead means a restart can only ever cause a
+// harmless duplicate notification (something already reported before the
+// restart gets mentioned again), never a silently lost one.
+var DIGEST_STARTUP_LOOKBACK = 24 * 60 * 60 * 1000;
+var lastDigestNotifiedAt = new Date(Date.now() - DIGEST_STARTUP_LOOKBACK);
 
 function sendDigestNotification() {
   var since = lastDigestNotifiedAt;
@@ -976,6 +983,7 @@ if (require.main === module) {
   setInterval(cleanupOldSecurityEvents, SECURITY_EVENT_RETENTION_INTERVAL);
   cleanupOrphanedUploads();
   setInterval(cleanupOrphanedUploads, UPLOAD_CLEANUP_INTERVAL);
+  sendDigestNotification();
   setInterval(sendDigestNotification, DIGEST_INTERVAL);
 
   app.listen(PORT, function() {
