@@ -7,7 +7,7 @@ import { usePageMeta } from '../hooks/usePageMeta';
 var content = {
   en: {
     title: 'Privacy Policy',
-    updated: 'Last updated: 15 August 2026',
+    updated: 'Last updated: 16 August 2026',
     intro: 'This page explains what personal data this website (baumgertner.fi) collects, why, and what rights you have. The data controller for the personal data described here is Anthony Baumgertner, who runs this site as a personal portfolio.',
     sections: [
       {
@@ -53,9 +53,11 @@ var content = {
       {
         heading: 'Data retention',
         body: [
-          'Messages and testimonials are kept until deleted by the site owner. You can request deletion at any time (see contact details below).',
+          'Contact form messages are automatically deleted from the database after 45 days. Note that an email notification of your message is separately retained in the site owner\'s own email inbox.',
+          'Testimonials that are not approved for publication are automatically deleted after 45 days. Published testimonials remain until removed by the site owner or at your request.',
           'Pageview analytics rows are automatically deleted after 12 months.',
-          'Security logs are automatically deleted after 30 days.'
+          'Security logs are automatically deleted after 30 days.',
+          'You can request deletion of your data at any time (see contact details below).'
         ]
       },
       {
@@ -90,7 +92,7 @@ var content = {
   },
   fi: {
     title: 'Tietosuojaseloste',
-    updated: 'Päivitetty viimeksi: 15.8.2026',
+    updated: 'Päivitetty viimeksi: 16.8.2026',
     intro: 'Tämä sivu kertoo, mitä henkilötietoja tämä verkkosivusto (baumgertner.fi) kerää, miksi, ja mitä oikeuksia sinulla on. Näiden henkilötietojen rekisterinpitäjä on Anthony Baumgertner, joka ylläpitää sivustoa henkilökohtaisena portfoliona.',
     sections: [
       {
@@ -136,9 +138,11 @@ var content = {
       {
         heading: 'Tietojen säilytys',
         body: [
-          'Viestit ja suosittelut säilytetään kunnes ylläpitäjä poistaa ne. Voit pyytää tietojesi poistoa milloin tahansa (yhteystiedot alla).',
+          'Yhteydenottolomakkeen viestit poistetaan tietokannasta automaattisesti 45 päivän kuluttua. Huomaa, että viestistäsi lähtenyt sähköposti-ilmoitus säilyy erikseen sivuston omistajan omassa sähköpostissa.',
+          'Suosittelut, joita ei hyväksytä julkaistaviksi, poistetaan automaattisesti 45 päivän kuluttua. Julkaistut suosittelut säilyvät kunnes omistaja poistaa ne tai pyydät niiden poistoa.',
           'Sivukäyntitilastojen rivit poistetaan automaattisesti 12 kuukauden jälkeen.',
-          'Turvalokit poistetaan automaattisesti 30 päivän jälkeen.'
+          'Turvalokit poistetaan automaattisesti 30 päivän jälkeen.',
+          'Voit pyytää tietojesi poistoa milloin tahansa (yhteystiedot alla).'
         ]
       },
       {

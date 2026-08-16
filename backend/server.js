@@ -889,6 +889,29 @@ function cleanupOldSecurityEvents() {
     .catch(function(err) { console.error('Security event cleanup failed:', err.message); });
 }
 
+// ===== MESSAGE / TESTIMONIAL RETENTION =====
+// Contact messages have no legitimate reason to live in the database
+// forever (GDPR Art. 5(1)(e) storage limitation) - the site owner is
+// notified by email when one arrives, so the DB row is just the admin
+// panel's working copy, not the only record. Unpublished testimonials are
+// the same story: once rejected or left unmoderated, there's no reason to
+// keep them indefinitely either. Published testimonials (visible=true) are
+// live site content, not transient submission data, so they're never
+// touched here - only the owner deleting one, or a visitor's own removal
+// request, should ever remove a published testimonial.
+var MESSAGE_RETENTION_INTERVAL = 24 * 60 * 60 * 1000;
+// Returns a Promise (unlike the fire-and-forget cleanups above) so tests can
+// await it directly; the interval below still just calls it without awaiting,
+// which is fine since each query still catches its own error internally.
+function cleanupOldMessages() {
+  return Promise.all([
+    pool.query("DELETE FROM messages WHERE created_at < NOW() - INTERVAL '45 days'")
+      .catch(function(err) { console.error('Message cleanup failed:', err.message); }),
+    pool.query("DELETE FROM testimonials WHERE visible = false AND created_at < NOW() - INTERVAL '45 days'")
+      .catch(function(err) { console.error('Unpublished testimonial cleanup failed:', err.message); })
+  ]);
+}
+
 // ===== MESSAGE / TESTIMONIAL DIGEST NOTIFICATIONS =====
 // POST /api/messages and /api/testimonials/submit used to email on every
 // single submission. The rate limit on those routes is per-IP (3/hour), so
@@ -981,6 +1004,8 @@ if (require.main === module) {
   setInterval(cleanupOldPageviews, PAGEVIEW_RETENTION_INTERVAL);
   cleanupOldSecurityEvents();
   setInterval(cleanupOldSecurityEvents, SECURITY_EVENT_RETENTION_INTERVAL);
+  cleanupOldMessages();
+  setInterval(cleanupOldMessages, MESSAGE_RETENTION_INTERVAL);
   cleanupOrphanedUploads();
   setInterval(cleanupOrphanedUploads, UPLOAD_CLEANUP_INTERVAL);
   sendDigestNotification();
@@ -990,5 +1015,10 @@ if (require.main === module) {
     console.log('Portfolio API running on http://localhost:' + PORT);
   });
 }
+
+// Exposed so tests can exercise the real retention query directly against a
+// test database, instead of re-implementing (and possibly drifting from) the
+// same SQL in the test file.
+app.cleanupOldMessages = cleanupOldMessages;
 
 module.exports = app;

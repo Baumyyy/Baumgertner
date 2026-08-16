@@ -213,7 +213,7 @@ const Hero = ({ ready }) => {
             <a href="https://github.com/baumyyy" target="_blank" rel="noopener noreferrer" className="social-link" aria-label="GitHub">
               <GithubIcon />
             </a>
-            <a href="https://www.linkedin.com/in/anthony-baumgertner-022191429/" target="_blank" rel="noopener noreferrer" className="social-link" aria-label="LinkedIn">
+            <a href="https://www.linkedin.com/in/anthony-baumgertner-65548742a/" target="_blank" rel="noopener noreferrer" className="social-link" aria-label="LinkedIn">
               <LinkedinIcon />
             </a>
             <a href="https://www.instagram.com/baumgertnerr/" target="_blank" rel="noopener noreferrer" className="social-link" aria-label="Instagram">

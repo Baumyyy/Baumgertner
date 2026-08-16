@@ -2,6 +2,42 @@ var request = require('supertest');
 var app = require('../server');
 var pool = require('../db');
 
+// Declared before 'Public API Endpoints' rather than after: that describe's
+// afterAll closes the shared pool once its own tests finish, and Jest runs
+// top-level describes in file order, so any block using `pool` has to come
+// before it.
+describe('Message / testimonial retention', function() {
+  it('purges messages and unpublished testimonials past 45 days, but never a published testimonial', async function() {
+    await pool.query(
+      "INSERT INTO messages (name, email, message, created_at) VALUES ($1,$2,$3, NOW() - INTERVAL '46 days')",
+      ['Jest Old Message', 'jest-old-message@test.com', 'old message']
+    );
+    await pool.query(
+      "INSERT INTO testimonials (name, message, visible, created_at) VALUES ($1,$2,false, NOW() - INTERVAL '46 days')",
+      ['Jest Old Unpublished', 'old unpublished testimonial']
+    );
+    await pool.query(
+      "INSERT INTO testimonials (name, message, visible, created_at) VALUES ($1,$2,true, NOW() - INTERVAL '46 days')",
+      ['Jest Old Published', 'old published testimonial']
+    );
+
+    await app.cleanupOldMessages();
+
+    var message = await pool.query('SELECT * FROM messages WHERE email = $1', ['jest-old-message@test.com']);
+    expect(message.rows.length).toBe(0);
+
+    var unpublished = await pool.query('SELECT * FROM testimonials WHERE name = $1', ['Jest Old Unpublished']);
+    expect(unpublished.rows.length).toBe(0);
+
+    var published = await pool.query('SELECT * FROM testimonials WHERE name = $1', ['Jest Old Published']);
+    expect(published.rows.length).toBe(1);
+
+    // The published testimonial deliberately survives cleanupOldMessages()
+    // (that's the point of this test) - clean it up ourselves.
+    await pool.query('DELETE FROM testimonials WHERE name = $1', ['Jest Old Published']);
+  });
+});
+
 describe('Public API Endpoints', function() {
 
   afterAll(async function() {
