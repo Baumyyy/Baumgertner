@@ -232,9 +232,13 @@ var apiLimiter = rateLimit({
   handler: rateLimitHandler
 });
 
+// Shared between /api/auth/github and its /callback, so one login attempt
+// costs 2 of this budget (initiate + return from GitHub) - 7 allows a
+// handful of real attempts/hour (new device, expired session, mistyped
+// GitHub login) while still capping abuse of the OAuth flow hard.
 var authLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,
-  max: IS_PROD ? 5 : 200,
+  max: IS_PROD ? 7 : 200,
   message: { error: 'Too many login attempts, try again later' },
   handler: rateLimitHandler
 });
@@ -283,9 +287,21 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: {
-    maxAge: 24 * 60 * 60 * 1000,
+    // Admin session - short-lived on purpose (was 24h) so being logged in
+    // doesn't linger indefinitely; expires on its own after 40 minutes of
+    // being issued regardless of activity, not tied to any particular
+    // page load or refresh (the server can't reliably tell a hard refresh
+    // apart from a normal one - both just carry the same cookie).
+    maxAge: 40 * 60 * 1000,
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    // 'auto' (not a hardcoded NODE_ENV check) asks express-session to look
+    // at whether the request actually arrived over HTTPS - via `req.secure`,
+    // which honors X-Forwarded-Proto because of `trust proxy` above. Behind
+    // Caddy in production that's true, so the cookie is still Secure there;
+    // testing the production build locally over plain HTTP (no Caddy) no
+    // longer silently drops the session cookie the way a flat
+    // NODE_ENV === 'production' check did.
+    secure: 'auto',
     sameSite: 'lax'
   }
 }));
@@ -346,7 +362,17 @@ app.get('/api/auth/me', function(req, res) {
 app.post('/api/auth/logout', function(req, res) {
   req.logout(function() {
     req.session.destroy(function() {
-      res.clearCookie('connect.sid');
+      // Browsers only clear a cookie if these options match the ones it was
+      // set with (path/secure/sameSite/httpOnly) - Express docs are explicit
+      // about this. Without them, the DB-side session row is gone but the
+      // browser keeps sending the old cookie, so a plain clearCookie() call
+      // with no options silently does nothing.
+      res.clearCookie('connect.sid', {
+        path: '/',
+        httpOnly: true,
+        secure: req.secure,
+        sameSite: 'lax'
+      });
       res.json({ loggedOut: true });
     });
   });
