@@ -67,13 +67,16 @@ services:
       start_period: 5s
 
   caddy:
-    image: caddy:2-alpine
+    build:
+      context: .
+      dockerfile: Caddy.Dockerfile
     restart: always
     depends_on:
       frontend:
         condition: service_healthy
     environment:
       DOMAIN: ${DOMAIN:?DOMAIN must be set in .env, e.g. baumgertner.fi}
+      CLOUDFLARE_API_TOKEN: ${CLOUDFLARE_API_TOKEN:?CLOUDFLARE_API_TOKEN must be set in .env - a Cloudflare API token scoped to Zone:DNS:Edit for this domain, used for the DNS-01 certificate challenge}
     ports:
       - "80:80"
       - "443:443"

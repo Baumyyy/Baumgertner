@@ -3,6 +3,15 @@
 # CSP/HSTS/rate-limit headers, is unchanged behind it. Caddy provisions and
 # renews the Let's Encrypt certificate for {$DOMAIN} automatically; no
 # manual cert setup needed.
+#
+# Uses a DNS-01 challenge (proves domain ownership via a Cloudflare API
+# call, not an HTTP request Cloudflare's proxy would have to forward) so
+# this keeps working regardless of whether Cloudflare proxying is on or
+# off for the domain - see Caddy.Dockerfile for why the plain caddy:2-alpine
+# image can't do this on its own.
 {$DOMAIN} {
+	tls {
+		dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+	}
 	reverse_proxy frontend:80
 }
