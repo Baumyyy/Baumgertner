@@ -667,6 +667,27 @@
 }
 
 /* ===== RESPONSIVE ===== */
+/* .hero-big-name's clamp() ceiling (6.4rem) is reached around ~1140px
+   viewport width, and .hero-center has no explicit width, so it shrinks to
+   fit its content (measured ~636px) well inside its 860px max-width - on
+   any desktop screen from ~1200px up, that leaves a large, fixed amount of
+   empty canvas on both sides that only gets more obvious as the screen
+   gets wider, plus a ~112px gap above "WELCOME TO" from vertical centering
+   in a full 100vh box. Neither scales with viewport width past that point,
+   which is what reads as "zoomed out" on anything wider than a laptop.
+   Bigger text closes the side gap (content grows toward its max-width
+   instead of just sitting at its unforced natural width), and less top
+   padding plus a shorter min-height closes the vertical one. */
+@media (min-width: 1200px) {
+  .hero { padding: 5rem 2rem 3.5rem 2rem; min-height: 94vh; }
+  .hero-center { max-width: 1150px; }
+  .hero-welcome { font-size: 1rem; margin-bottom: 0.8rem; }
+  .hero-big-name { font-size: clamp(6.4rem, 7vw, 8.2rem); margin-bottom: 0.9rem; }
+  .hero-tagline { font-size: 1.05rem; margin-bottom: 2.2rem; }
+  .hero-actions { margin-bottom: 2.2rem; }
+  .hero-badge-row { margin-bottom: 2.2rem; }
+}
+
 @media (max-width: 968px) {
   .navbar {
     padding: 1rem 2rem;

@@ -23,7 +23,7 @@ const AuroraBackground = ({ children }) => {
     window.addEventListener('resize', resize);
 
     const isMobile   = window.innerWidth < 768;
-    const COUNT      = isMobile ? 28 : 85;
+    const COUNT      = isMobile ? 18 : 55;
     const LINK_DIST  = isMobile ? 110 : 160;
     const PUSH_DIST  = 130;
     const PUSH_FORCE = 0.32;
