@@ -189,7 +189,7 @@ var PrivacyPolicy = function() {
   return (
     <div className="privacy-page">
       <div className="privacy-content">
-        <Link to="/" className="privacy-back">&larr; {c.back}</Link>
+        <Link to={'/' + lang} className="privacy-back">&larr; {c.back}</Link>
         <h1 className="privacy-title">{c.title}</h1>
         <p className="privacy-updated">{c.updated}</p>
         <p className="privacy-intro">{c.intro}</p>

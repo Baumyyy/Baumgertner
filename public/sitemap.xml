@@ -1,20 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://baumgertner.fi/</loc>
-    <lastmod>2026-08-10</lastmod>
+    <loc>https://baumgertner.fi/en</loc>
+    <lastmod>2026-08-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://baumgertner.fi/en" />
+    <xhtml:link rel="alternate" hreflang="fi" href="https://baumgertner.fi/fi" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://baumgertner.fi/en" />
+  </url>
+  <url>
+    <loc>https://baumgertner.fi/fi</loc>
+    <lastmod>2026-08-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://baumgertner.fi/en" />
+    <xhtml:link rel="alternate" hreflang="fi" href="https://baumgertner.fi/fi" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://baumgertner.fi/en" />
   </url>
   <url>
     <loc>https://baumgertner.fi/privacy</loc>
-    <lastmod>2026-08-10</lastmod>
+    <lastmod>2026-08-19</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
     <loc>https://baumgertner.fi/terms</loc>
-    <lastmod>2026-08-10</lastmod>
+    <lastmod>2026-08-19</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>

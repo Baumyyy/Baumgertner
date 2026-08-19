@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5, viewport-fit=cover" />
     <title>Anthony Baumgertner | Software Engineer & Project Manager</title>
     <meta name="description" content="Portfolio of Anthony Baumgertner - Software Engineering student, Project Manager, and Developer based in Turku, Finland." />
-    <meta name="keywords" content="Anthony Baumgertner, Software Engineer, Project Manager, Developer, React, Portfolio, Turku, Finland" />
+    <meta name="keywords" content="Anthony Baumgertner, Software Engineer, Project Manager, Developer, Portfolio, Turku, Finland" />
     <meta name="author" content="Anthony Baumgertner" />
 
     <!-- Open Graph -->
     <meta property="og:title" content="Anthony Baumgertner | Software Engineer & Project Manager" />
     <meta property="og:description" content="Software Engineering student and Project Manager based in Turku, Finland. Check out my projects and get in touch!" />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://baumgertner.fi" />
+    <meta property="og:url" content="https://baumgertner.fi/en" />
     <meta property="og:image" content="https://baumgertner.fi/og-image.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -30,7 +30,19 @@
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.json" />
-    <link rel="canonical" href="https://baumgertner.fi/" />
+    <link rel="canonical" href="https://baumgertner.fi/en" />
+
+    <!-- Language variants - "/" itself has no content of its own, it just
+         redirects client-side to the visitor's language (see App.jsx), so
+         these are the two URLs actually worth indexing. Present in the raw
+         HTML (not only injected by JS - see useHomeSeo) since Google's own
+         guidance is to have hreflang discoverable without running
+         JavaScript. useHomeSeo keeps these in sync while navigating
+         between /en and /fi client-side; these are the values a crawler
+         sees on first load of either URL. -->
+    <link rel="alternate" hreflang="en" href="https://baumgertner.fi/en" />
+    <link rel="alternate" hreflang="fi" href="https://baumgertner.fi/fi" />
+    <link rel="alternate" hreflang="x-default" href="https://baumgertner.fi/en" />
 
     <!-- Structured data -->
     <script type="application/ld+json">

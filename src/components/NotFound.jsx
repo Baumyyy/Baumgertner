@@ -4,7 +4,9 @@ import { useLang } from '../useLang';
 import { usePageMeta } from '../hooks/usePageMeta';
 
 var NotFound = function() {
-  var { t } = useLang();
+  var langCtx = useLang();
+  var t = langCtx.t;
+  var lang = langCtx.lang;
 
   usePageMeta('Page Not Found | Anthony Baumgertner', 'The page you are looking for does not exist or has been moved.');
 
@@ -34,7 +36,7 @@ var NotFound = function() {
         fontSize: '1.1rem',
         maxWidth: '400px'
       }}>{t.notfound_text || 'The page you are looking for does not exist or has been moved.'}</p>
-      <Link to="/" style={{
+      <Link to={'/' + lang} style={{
         padding: '0.8rem 2rem',
         background: 'rgba(0,255,136,0.15)',
         border: '1px solid rgba(0,255,136,0.3)',

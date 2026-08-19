@@ -1,7 +1,9 @@
 import { useState, useEffect, useCallback, lazy, Suspense } from 'react';
 import CustomCursor from './components/CustomCursor.jsx';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { LanguageProvider } from './LanguageContext';
+import { useLang } from './useLang';
+import { useHomeSeo } from './hooks/useHomeSeo';
 import AuroraBackground from './components/AuroraBackground';
 import Hero from './components/Hero';
 import LoadingScreen from './components/LoadingScreen.jsx';
@@ -17,6 +19,32 @@ const Admin        = lazy(() => import('./components/Admin'));
 const NotFound     = lazy(() => import('./components/NotFound'));
 const PrivacyPolicy = lazy(() => import('./components/PrivacyPolicy'));
 const TermsOfUse = lazy(() => import('./components/TermsOfUse'));
+
+// "/" carries no language of its own, so search engines have exactly one
+// canonical URL per language (/en, /fi) to index instead of duplicate
+// content under both "/" and a language path. Real visitors only ever see
+// this for a moment - it redirects before paint.
+function RootRedirect() {
+  var browserLang = (typeof navigator !== 'undefined' && navigator.language ? navigator.language : '')
+    .toLowerCase().indexOf('fi') === 0 ? 'fi' : 'en';
+  return <Navigate to={'/' + browserLang} replace />;
+}
+
+function HomePage({ ready }) {
+  var lang = useLang().lang;
+  useHomeSeo(lang);
+
+  return (
+    <AuroraBackground>
+      <Hero ready={ready} />
+      <WhatIDo />
+      <Projects />
+      <Testimonials />
+      <Contact />
+      <Footer />
+    </AuroraBackground>
+  );
+}
 
 function App() {
   var loadingState = useState(true);
@@ -34,33 +62,26 @@ function App() {
   var handleLoadingFinished = useCallback(function() { setLoading(false); }, [setLoading]);
 
   return (
-    <LanguageProvider>
-      <a href="#home" className="skip-link">Skip to main content</a>
-      <CustomCursor />
-      {loading && <LoadingScreen onFinished={handleLoadingFinished} />}
-      <BrowserRouter>
+    <BrowserRouter>
+      <LanguageProvider>
+        <a href="#home" className="skip-link">Skip to main content</a>
+        <CustomCursor />
+        {loading && <LoadingScreen onFinished={handleLoadingFinished} />}
         <ErrorBoundary>
           <Suspense fallback={null}>
             <Routes>
               <Route path="/baumi-dashboard" element={<Admin />} />
               <Route path="/privacy" element={<PrivacyPolicy />} />
               <Route path="/terms" element={<TermsOfUse />} />
-              <Route path="/" element={
-                <AuroraBackground>
-                  <Hero ready={!loading} />
-                  <WhatIDo />
-                  <Projects />
-                  <Testimonials />
-                  <Contact />
-                  <Footer />
-                </AuroraBackground>
-              } />
+              <Route path="/" element={<RootRedirect />} />
+              <Route path="/en" element={<HomePage ready={!loading} />} />
+              <Route path="/fi" element={<HomePage ready={!loading} />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>
         </ErrorBoundary>
-      </BrowserRouter>
-    </LanguageProvider>
+      </LanguageProvider>
+    </BrowserRouter>
   );
 }
 
