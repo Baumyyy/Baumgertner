@@ -12,7 +12,10 @@
   margin-bottom: 4rem;
 }
 
-.footer-content { max-width: 1400px; margin: 0 auto; }
+/* Flat below ~1918px viewport (same 1400px as before), then grows with the
+   viewport instead of leaving a fixed, ever-larger empty margin on very
+   wide screens. */
+.footer-content { max-width: min(1800px, 96vw); margin: 0 auto; }
 
 .footer-top { display: flex; justify-content: space-between; gap: 4rem; margin-bottom: 3rem; }
 .footer-brand { flex: 0 0 auto; max-width: 350px; }

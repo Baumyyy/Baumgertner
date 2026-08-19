@@ -5,7 +5,10 @@
   isolation: isolate;
 }
 
-.testimonials-content { max-width: 1500px; margin: 0 auto; }
+/* Flat below ~1923px viewport (same 1500px as before), then grows with the
+   viewport instead of leaving a fixed, ever-larger empty margin on very
+   wide screens. */
+.testimonials-content { max-width: min(1900px, 96vw); margin: 0 auto; }
 
 .honeypot-field {
   position: absolute;

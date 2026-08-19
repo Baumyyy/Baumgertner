@@ -1,6 +1,9 @@
 .projects {
   padding: 5rem 6rem;
-  max-width: 1500px;
+  /* Flat below ~1923px viewport (same 1500px as before), then grows with
+     the viewport instead of leaving a fixed, ever-larger empty margin on
+     very wide screens. */
+  max-width: min(1900px, 96vw);
   margin: 0 auto;
   position: relative;
   z-index: 1;

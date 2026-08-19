@@ -680,7 +680,7 @@
    padding plus a shorter min-height closes the vertical one. */
 @media (min-width: 1200px) {
   .hero { padding: 5rem 2rem 3.5rem 2rem; min-height: 94vh; }
-  .hero-center { max-width: 1150px; }
+  .hero-center { max-width: clamp(1150px, 75vw, 1500px); }
   .hero-welcome { font-size: 1rem; margin-bottom: 0.8rem; }
   .hero-big-name { font-size: clamp(6.4rem, 7vw, 8.2rem); margin-bottom: 0.9rem; }
   .hero-tagline { font-size: 1.05rem; margin-bottom: 2.2rem; }
