@@ -23,11 +23,12 @@ const TermsOfUse = lazy(() => import('./components/TermsOfUse'));
 // "/" carries no language of its own, so search engines have exactly one
 // canonical URL per language (/en, /fi) to index instead of duplicate
 // content under both "/" and a language path. Real visitors only ever see
-// this for a moment - it redirects before paint.
+// this for a moment - it redirects before paint. English is always the
+// default here regardless of the visitor's browser language - Google
+// still serves /fi to Finnish searchers via the hreflang tags in the
+// sitemap and page head, which is independent of this redirect.
 function RootRedirect() {
-  var browserLang = (typeof navigator !== 'undefined' && navigator.language ? navigator.language : '')
-    .toLowerCase().indexOf('fi') === 0 ? 'fi' : 'en';
-  return <Navigate to={'/' + browserLang} replace />;
+  return <Navigate to="/en" replace />;
 }
 
 function HomePage({ ready }) {
