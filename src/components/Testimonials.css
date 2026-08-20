@@ -1,14 +1,19 @@
 .testimonials {
-  padding: 5rem 4rem;
+  padding: 5rem 6rem;
+  /* Flat below ~1923px viewport (same 1500px as before), then grows with
+     the viewport instead of leaving a fixed, ever-larger empty margin on
+     very wide screens. Centered on the section itself (not -content) so
+     the padding box centers the same way Projects/Contact/WhatIDo do -
+     centering only -content left this section a few px further left than
+     its siblings since -content is already narrower than the max-width. */
+  max-width: min(1900px, 96vw);
+  margin: 0 auto;
   position: relative;
   overflow: visible;
   isolation: isolate;
 }
 
-/* Flat below ~1923px viewport (same 1500px as before), then grows with the
-   viewport instead of leaving a fixed, ever-larger empty margin on very
-   wide screens. */
-.testimonials-content { max-width: min(1900px, 96vw); margin: 0 auto; }
+.testimonials-content { position: relative; }
 
 .honeypot-field {
   position: absolute;
@@ -324,7 +329,12 @@
 .tform-photo-preview { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 1.5px solid rgba(0, 255, 136, 0.15); }
 .tform-uploading { font-size: 0.75rem; color: rgba(0, 255, 136, 0.4); font-family: 'Inter', sans-serif; }
 
-@media (max-width: 968px) { .testimonial-card.card-prev, .testimonial-card.card-next { display: none; } }
+@media (max-width: 1200px) { .testimonials { padding: 6rem 4rem; } }
+
+@media (max-width: 968px) {
+  .testimonials { padding: 5rem 2rem; }
+  .testimonial-card.card-prev, .testimonial-card.card-next { display: none; }
+}
 
 @media (max-width: 480px) {
   .testimonials { padding: 3rem 1.2rem; }
