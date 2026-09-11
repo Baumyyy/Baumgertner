@@ -1,11 +1,6 @@
 {
-  "name": "Anthony Baumgertner",
+  "name": "Baumgertner",
   "short_name": "Baumgertner",
-  "description": "Portfolio of Anthony Baumgertner - Software Engineer & Project Manager",
-  "start_url": "/",
-  "display": "standalone",
-  "background_color": "#000000",
-  "theme_color": "#000000",
   "icons": [
     {
       "src": "/icon-192.png",
@@ -17,5 +12,8 @@
       "sizes": "512x512",
       "type": "image/png"
     }
-  ]
+  ],
+  "theme_color": "#000000",
+  "background_color": "#000000",
+  "display": "standalone"
 }
