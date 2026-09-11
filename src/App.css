@@ -2,26 +2,6 @@ html {
   scroll-behavior: smooth;
 }
 
-.skip-link {
-  position: fixed;
-  top: -100px;
-  left: 1rem;
-  z-index: 99998;
-  background: #00ff88;
-  color: #000;
-  padding: 0.5rem 1.25rem;
-  border-radius: 6px;
-  font-weight: 600;
-  font-size: 0.9rem;
-  text-decoration: none;
-  transition: top 0.2s ease;
-}
-.skip-link:focus {
-  top: 1rem;
-  outline: 2px solid #000;
-  outline-offset: 2px;
-}
-
 * {
   margin: 0;
   padding: 0;
@@ -37,18 +17,145 @@ body, html, #root {
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ===== SCROLL ANIMATIONS ===== */
+/* Keyboard-only affordance, so the one place a red fill is unmissable. */
+.skip-link {
+  position: fixed;
+  top: -100px;
+  left: var(--s-4);
+  z-index: 99998;
+  background: var(--signal);
+  color: var(--signal-on);
+  padding: var(--s-2) var(--s-5);
+  border-radius: var(--r-sm);
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: top var(--d-standard) var(--ease);
+}
+
+.skip-link:focus {
+  top: var(--s-4);
+}
+
+/* ===== SECTION MARKER =====
+   01 ———— WORK
+
+   One definition for the whole site. Four near-duplicate copies used to
+   live in Contact, Projects and WhatIDo; they drifted apart and produced
+   a visible misalignment between sections. */
+.section-tag {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  margin-bottom: var(--s-5);
+}
+
+.tag-number {
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: var(--track-label);
+  color: var(--text-primary);
+}
+
+.tag-line {
+  width: 56px;
+  height: 1px;
+  background: var(--line-strong);
+}
+
+.tag-label {
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* ===== BUTTONS =====
+   Small, uppercase, mono, letterspaced - sized by padding rather than a
+   fixed height so an icon can sit inside without special-casing. */
+.btn,
+.btn-primary,
+.btn-secondary,
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-2);
+  padding: var(--s-3) var(--s-5);
+  border-radius: var(--r-sm);
+  border: 1px solid transparent;
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background var(--d-micro) var(--ease),
+              border-color var(--d-micro) var(--ease),
+              color var(--d-micro) var(--ease);
+}
+
+/* The single strongest call to action in a view. Never more than one. */
+.btn-primary {
+  background: var(--signal);
+  color: var(--signal-on);
+  border-color: var(--signal);
+}
+
+.btn-primary:hover {
+  filter: brightness(1.12);
+}
+
+.btn-secondary {
+  background: transparent;
+  border-color: var(--line-strong);
+  color: var(--text-primary);
+}
+
+.btn-secondary:hover {
+  border-color: var(--text-primary);
+}
+
+.btn-ghost {
+  background: transparent;
+  border-color: var(--line);
+  color: var(--text-secondary);
+}
+
+.btn-ghost:hover {
+  border-color: var(--line-strong);
+  color: var(--text-primary);
+}
+
+/* ===== CHIP / TAG ===== */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--s-1) var(--s-3);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* ===== SCROLL ANIMATIONS =====
+   Fade plus a small rise. No scale, no overshoot. */
 .fade-in {
   opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.8s ease, transform 0.8s ease;
+  transform: translateY(12px);
+  transition: opacity var(--d-entrance) var(--ease),
+              transform var(--d-entrance) var(--ease);
 }
 
 .fade-in.visible {
@@ -57,10 +164,18 @@ body {
 }
 
 .stagger-1 { transition-delay: 0s; }
-.stagger-2 { transition-delay: 0.15s; }
-.stagger-3 { transition-delay: 0.3s; }
-.stagger-4 { transition-delay: 0.45s; }
-.stagger-5 { transition-delay: 0.6s; }
+.stagger-2 { transition-delay: 0.08s; }
+.stagger-3 { transition-delay: 0.16s; }
+.stagger-4 { transition-delay: 0.24s; }
+.stagger-5 { transition-delay: 0.32s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-in {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
 
 /* ===== TURNSTILE ===== */
 .turnstile-widget {
@@ -68,22 +183,16 @@ body {
 }
 
 ::selection {
-  background: rgba(0, 255, 136, 0.25);
-  color: #ffffff;
+  background: var(--signal);
+  color: var(--signal-on);
 }
 
 ::-moz-selection {
-  background: rgba(0, 255, 136, 0.25);
-  color: #ffffff;
+  background: var(--signal);
+  color: var(--signal-on);
 }
 
-
-/* ===== FOCUS STYLES ===== */
-:focus-visible {
-  outline: 2px solid rgba(0, 255, 136, 0.7);
-  outline-offset: 3px;
-  border-radius: 3px;
-}
+/* Focus styling lives in index.css - one ring for the whole site. */
 
 /* ===== ERROR BOUNDARY ===== */
 .error-boundary-page {
@@ -91,48 +200,51 @@ body {
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background: #000;
-  color: #fff;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  padding: 2rem;
+  background: var(--canvas);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  padding: var(--s-6);
 }
 
 .error-boundary-content {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  gap: var(--s-4);
   text-align: center;
   max-width: 400px;
 }
 
 .error-boundary-icon {
   font-size: 2.5rem;
-  color: #00ff88;
+  color: var(--signal-text);
 }
 
 .error-boundary-title {
-  font-size: 1.5rem;
-  color: #fff;
+  font-size: var(--t-h3);
+  color: var(--text-primary);
 }
 
 .error-boundary-msg {
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--text-secondary);
   line-height: 1.6;
 }
 
 .error-boundary-btn {
-  margin-top: 0.5rem;
-  background: rgba(0, 255, 136, 0.1);
-  border: 1px solid rgba(0, 255, 136, 0.3);
-  color: #00ff88;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
+  margin-top: var(--s-2);
+  background: transparent;
+  border: 1px solid var(--line-strong);
+  color: var(--text-primary);
+  padding: var(--s-3) var(--s-5);
+  border-radius: var(--r-sm);
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
   cursor: pointer;
-  font-size: 0.9rem;
-  transition: background 0.2s ease;
+  transition: border-color var(--d-micro) var(--ease);
 }
 
 .error-boundary-btn:hover {
-  background: rgba(0, 255, 136, 0.2);
+  border-color: var(--text-primary);
 }

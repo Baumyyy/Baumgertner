@@ -13,35 +13,9 @@
 .whatido-content { position: relative; }
 .whatido-header { margin-bottom: 4rem; }
 
-.whatido .section-tag {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-}
 
-.whatido .tag-number {
-  font-size: 0.75rem;
-  color: #00ff88;
-  font-family: 'Inter', sans-serif;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-}
 
-.whatido .tag-line {
-  width: 50px;
-  height: 1px;
-  background: rgba(0, 255, 136, 0.3);
-}
 
-.whatido .tag-label {
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.25);
-  font-family: 'Inter', sans-serif;
-  font-weight: 500;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
 
 .whatido-title {
   text-align: center;
