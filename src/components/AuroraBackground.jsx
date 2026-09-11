@@ -2,156 +2,17 @@ import { useEffect, useRef, useState } from 'react';
 import './AuroraBackground.css';
 import { ChevronUpIcon } from './Icons';
 
+// Owns three things: the backdrop, the page scroll container, and the
+// scroll-to-top control. The page does not scroll on <body> - it scrolls
+// inside .aurora-container - so this is structural, not decorative.
+//
+// The canvas particle field it used to draw is gone. It cost a
+// requestAnimationFrame loop on every frame for an effect that no longer
+// belongs to the brand, and it made the component untestable in jsdom,
+// which has no canvas implementation.
 const AuroraBackground = ({ children }) => {
-  const canvasRef = useRef(null);
   const containerRef = useRef(null);
   const [showScrollTop, setShowScrollTop] = useState(false);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    let animationId;
-    const mouse = { x: -9999, y: -9999 };
-
-    const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    const resize = () => {
-      canvas.width  = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
-    resize();
-    window.addEventListener('resize', resize);
-
-    const isMobile   = window.innerWidth < 768;
-    const COUNT      = isMobile ? 18 : 55;
-    const LINK_DIST  = isMobile ? 110 : 160;
-    const PUSH_DIST  = 130;
-    const PUSH_FORCE = 0.32;
-
-    const pts = Array.from({ length: COUNT }, () => ({
-      x:  Math.random() * window.innerWidth,
-      y:  Math.random() * window.innerHeight,
-      vx: (Math.random() - 0.5) * 0.1,
-      vy: (Math.random() - 0.5) * 0.1,
-      driftVx: (Math.random() - 0.5) * 0.35,
-      driftVy: (Math.random() - 0.5) * 0.35,
-      r:  0.8 + Math.random() * 1.4,
-    }));
-
-    const draw = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      pts.forEach((p) => {
-        const dx   = p.x - mouse.x;
-        const dy   = p.y - mouse.y;
-        const dist = Math.hypot(dx, dy);
-
-        if (!reduceMotion && dist < PUSH_DIST && dist > 0) {
-          const f = ((PUSH_DIST - dist) / PUSH_DIST) * PUSH_FORCE;
-          p.vx += (dx / dist) * f;
-          p.vy += (dy / dist) * f;
-        }
-
-        if (!reduceMotion) {
-          p.vx *= 0.975;
-          p.vy *= 0.975;
-          p.x  += p.vx + p.driftVx;
-          p.y  += p.vy + p.driftVy;
-
-          if (p.x < 0) p.x = canvas.width;
-          if (p.x > canvas.width)  p.x = 0;
-          if (p.y < 0) p.y = canvas.height;
-          if (p.y > canvas.height) p.y = 0;
-        }
-
-        const glow = Math.max(0, 1 - dist / (PUSH_DIST * 1.5));
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r + glow * 1.5, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(0, 255, 136, ${0.45 + glow * 0.45})`;
-        ctx.fill();
-      });
-
-      // Segments are grouped into a handful of opacity buckets and each
-      // bucket gets ONE beginPath()/stroke() pair, instead of every segment
-      // making its own - a single stroke() can't vary opacity per-segment,
-      // so bucketing keeps the original distance-based fade (in coarse
-      // steps) while cutting draw calls from up to ~3500/frame to <= 6.
-      const ALPHA_BUCKETS = 6;
-      const buckets = Array.from({ length: ALPHA_BUCKETS }, () => []);
-      for (let i = 0; i < pts.length; i++) {
-        for (let j = i + 1; j < pts.length; j++) {
-          const dx   = pts[i].x - pts[j].x;
-          const dy   = pts[i].y - pts[j].y;
-          const dist = Math.hypot(dx, dy);
-          if (dist > LINK_DIST) continue;
-
-          const closeness = 1 - dist / LINK_DIST;
-          const bucket = Math.min(ALPHA_BUCKETS - 1, Math.floor(closeness * ALPHA_BUCKETS));
-          buckets[bucket].push(pts[i].x, pts[i].y, pts[j].x, pts[j].y);
-        }
-      }
-      ctx.lineWidth = 0.6;
-      for (let b = 0; b < ALPHA_BUCKETS; b++) {
-        if (buckets[b].length === 0) continue;
-        const alpha = ((b + 0.5) / ALPHA_BUCKETS) * 0.28;
-        ctx.beginPath();
-        ctx.strokeStyle = `rgba(0, 255, 136, ${alpha})`;
-        for (let k = 0; k < buckets[b].length; k += 4) {
-          ctx.moveTo(buckets[b][k],     buckets[b][k + 1]);
-          ctx.lineTo(buckets[b][k + 2], buckets[b][k + 3]);
-        }
-        ctx.stroke();
-      }
-    };
-
-    if (reduceMotion) {
-      draw();
-      // There's no rAF loop in this branch to repaint the next frame, so a
-      // plain resize() (which clears the canvas as a side effect of setting
-      // width/height) would leave it blank until something else redraws it.
-      // Swap in a resize handler that redraws immediately after - this only
-      // affects the reduced-motion path, so the animated branch below still
-      // draws exactly once per rAF tick.
-      const onResizeStatic = () => {
-        resize();
-        draw();
-      };
-      window.removeEventListener('resize', resize);
-      window.addEventListener('resize', onResizeStatic);
-      return () => {
-        window.removeEventListener('resize', onResizeStatic);
-      };
-    }
-
-    const onMouseMove = (e) => { mouse.x = e.clientX; mouse.y = e.clientY; };
-    const onMouseLeave = ()  => { mouse.x = -9999;    mouse.y = -9999;    };
-    window.addEventListener('mousemove',  onMouseMove);
-    window.addEventListener('mouseleave', onMouseLeave);
-
-    const animate = () => {
-      draw();
-      animationId = requestAnimationFrame(animate);
-    };
-
-    const onVisibilityChange = () => {
-      if (document.hidden) {
-        cancelAnimationFrame(animationId);
-      } else {
-        animate();
-      }
-    };
-    document.addEventListener('visibilitychange', onVisibilityChange);
-
-    animate();
-
-    return () => {
-      cancelAnimationFrame(animationId);
-      window.removeEventListener('resize',     resize);
-      window.removeEventListener('mousemove',  onMouseMove);
-      window.removeEventListener('mouseleave', onMouseLeave);
-      document.removeEventListener('visibilitychange', onVisibilityChange);
-    };
-  }, []);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -161,20 +22,23 @@ const AuroraBackground = ({ children }) => {
     return () => container.removeEventListener('scroll', onScroll);
   }, []);
 
+  const scrollToTop = () => {
+    const container = containerRef.current;
+    if (container) container.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <>
       <div className="bg-layer" aria-hidden="true">
-        <div className="bg-orb bg-orb-1" />
-        <div className="bg-orb bg-orb-2" />
-        <div className="bg-orb bg-orb-3" />
-        <canvas ref={canvasRef} className="bg-canvas" />
+        <div className="bg-glow bg-glow-primary" />
+        <div className="bg-glow bg-glow-secondary" />
       </div>
       <div className="aurora-container" ref={containerRef}>
         {children}
       </div>
       <button
         className={'scroll-top-btn' + (showScrollTop ? ' visible' : '')}
-        onClick={() => containerRef.current.scrollTo({ top: 0, behavior: 'smooth' })}
+        onClick={scrollToTop}
         aria-label="Scroll to top"
       >
         <ChevronUpIcon />

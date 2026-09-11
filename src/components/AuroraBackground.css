@@ -1,71 +1,43 @@
 .bg-layer {
   position: fixed;
   inset: 0;
-  background: #000000;
+  background: var(--canvas);
   z-index: 0;
   overflow: hidden;
   pointer-events: none;
 }
 
-.bg-orb {
+/* Light has a source and a direction. The primary reads as light entering
+   from above right, behind the hero; the secondary is a faint bounce low
+   on the opposite side. Nothing else on the page emits light.
+
+   Neutral white only, and capped at the 8% ceiling the token sets -
+   coloured, drifting blobs are the single strongest tell of a generated
+   page, so these do not animate and are not tinted. */
+.bg-glow {
   position: absolute;
   border-radius: 50%;
-  filter: blur(90px);
-  will-change: transform;
+  filter: blur(100px);
 }
 
-.bg-orb-1 {
-  width: 950px;
-  height: 950px;
-  background: radial-gradient(circle, rgba(0, 255, 136, 0.18) 0%, transparent 70%);
-  top: -320px;
-  left: -200px;
-  animation: orbFloat1 32s ease-in-out infinite;
+.bg-glow-primary {
+  width: 1100px;
+  height: 1100px;
+  top: -420px;
+  right: -220px;
+  background: radial-gradient(circle, var(--glow-strong) 0%, transparent 70%);
 }
 
-.bg-orb-2 {
-  width: 680px;
-  height: 680px;
-  background: radial-gradient(circle, rgba(0, 210, 110, 0.13) 0%, transparent 70%);
-  top: 20%;
-  right: -200px;
-  animation: orbFloat2 40s ease-in-out infinite;
+.bg-glow-secondary {
+  width: 760px;
+  height: 760px;
+  bottom: -280px;
+  left: -180px;
+  background: radial-gradient(circle, var(--glow-soft) 0%, transparent 70%);
 }
 
-.bg-orb-3 {
-  width: 620px;
-  height: 620px;
-  background: radial-gradient(circle, rgba(0, 180, 90, 0.10) 0%, transparent 70%);
-  bottom: 5%;
-  left: 25%;
-  animation: orbFloat3 26s ease-in-out infinite;
-}
-
-@keyframes orbFloat1 {
-  0%,  100% { transform: translate(  0px,   0px) scale(1.00); }
-  25%        { transform: translate(120px,  80px) scale(1.12); }
-  50%        { transform: translate(-70px, 160px) scale(0.92); }
-  75%        { transform: translate(140px, -40px) scale(1.06); }
-}
-
-@keyframes orbFloat2 {
-  0%,  100% { transform: translate(  0px,  0px) scale(1.00); }
-  33%        { transform: translate(-90px, 90px) scale(1.10); }
-  66%        { transform: translate( 60px,-90px) scale(0.94); }
-}
-
-@keyframes orbFloat3 {
-  0%,  100% { transform: translate(   0px,   0px) scale(1.00); }
-  50%        { transform: translate(-120px,-100px) scale(1.20); }
-}
-
-.bg-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-
+/* The page scroll container. Not decorative - removing this breaks
+   scrolling for the entire site. */
 .aurora-container {
   position: relative;
   z-index: 1;
@@ -81,65 +53,38 @@
   touch-action: none;
 }
 
-@media (max-width: 768px) {
-  .bg-orb {
-    filter: blur(45px);
-  }
-  .bg-orb-1 {
-    width: 420px;
-    height: 420px;
-    background: radial-gradient(circle, rgba(0, 255, 136, 0.07) 0%, transparent 70%);
-    top: -120px;
-    left: -100px;
-  }
-  .bg-orb-2 {
-    width: 320px;
-    height: 320px;
-    background: radial-gradient(circle, rgba(0, 210, 110, 0.05) 0%, transparent 70%);
-    top: 40%;
-    right: -80px;
-  }
-  .bg-orb-3 {
-    width: 300px;
-    height: 300px;
-    background: radial-gradient(circle, rgba(0, 180, 90, 0.04) 0%, transparent 70%);
-    bottom: 10%;
-    left: 15%;
-  }
-}
-
 .aurora-container::-webkit-scrollbar       { width: 5px; }
 .aurora-container::-webkit-scrollbar-track { background: transparent; }
 .aurora-container::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 10px;
+  background: var(--line);
+  border-radius: var(--r-md);
 }
 .aurora-container::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: var(--line-strong);
 }
 
 .scroll-top-btn {
   position: fixed;
-  bottom: calc(2rem + env(safe-area-inset-bottom));
-  right: 2rem;
+  bottom: calc(var(--s-6) + env(safe-area-inset-bottom));
+  right: var(--s-6);
   z-index: 200;
   width: 44px;
   height: 44px;
   padding: 0;
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.6);
-  border: 1px solid rgba(0, 255, 136, 0.2);
-  color: #00ff88;
-  font-size: 1.4rem;
-  cursor: pointer;
+  background: var(--surface-1);
+  border: 1px solid var(--line);
+  color: var(--text-secondary);
   display: flex;
   align-items: center;
   justify-content: center;
   opacity: 0;
   transform: translateY(12px);
   pointer-events: none;
-  transition: opacity 0.3s ease, transform 0.3s ease, background 0.3s ease, border-color 0.3s ease;
-  backdrop-filter: blur(10px);
+  transition: opacity var(--d-standard) var(--ease),
+              transform var(--d-standard) var(--ease),
+              border-color var(--d-standard) var(--ease),
+              color var(--d-standard) var(--ease);
 }
 
 .scroll-top-btn.visible {
@@ -148,13 +93,23 @@
   pointer-events: auto;
 }
 
+/* Separation on black comes from the hairline and a brightness shift,
+   never from a shadow - a shadow has nothing to fall on. */
 .scroll-top-btn:hover {
-  background: rgba(0, 255, 136, 0.1);
-  border-color: rgba(0, 255, 136, 0.5);
-  box-shadow: 0 0 20px rgba(0, 255, 136, 0.15);
+  border-color: var(--line-strong);
+  color: var(--text-primary);
   transform: translateY(-2px);
 }
 
+@media (max-width: 768px) {
+  .bg-glow { filter: blur(60px); }
+  .bg-glow-primary   { width: 520px; height: 520px; top: -200px; right: -140px; }
+  .bg-glow-secondary { width: 420px; height: 420px; bottom: -160px; left: -120px; }
+}
+
 @media (max-width: 480px) {
-  .scroll-top-btn { bottom: calc(1.2rem + env(safe-area-inset-bottom)); right: 1.2rem; }
+  .scroll-top-btn {
+    bottom: calc(var(--s-4) + env(safe-area-inset-bottom));
+    right: var(--s-4);
+  }
 }
