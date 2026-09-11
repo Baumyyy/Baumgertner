@@ -1,0 +1,94 @@
+/* Single source of truth for the Baumgertner design system.
+   No other stylesheet may define a raw colour, duration or radius.
+
+   Contrast ratios below are asserted by src/tests/tokens.test.js - change
+   a value here and the test tells you whether it is still legible. */
+
+:root {
+  /* Surface --------------------------------------------------------- */
+  --canvas:       #000000;
+  --surface-1:    #0B0B0D;
+  --surface-2:    #141416;
+
+  --line:         rgba(255, 255, 255, 0.12);
+  --line-strong:  rgba(255, 255, 255, 0.24);
+
+  /* Text ------------------------------------------------------------ */
+  --text-primary:   #FFFFFF;  /* 21.0:1 */
+  --text-secondary: #B8B8B8;  /* 10.6:1 */
+  --text-muted:     #8C8C8C;  /*  6.3:1 - floor for body copy */
+  --text-faint:     #616161;  /*  3.4:1 - large text and UI only */
+
+  /* Signal ----------------------------------------------------------
+     Two tokens, deliberately not interchangeable. --signal is only
+     4.6:1 on black, which passes AA for body text by a hair and leaves
+     no headroom, so red *text* uses --signal-text instead. */
+  --signal:      #E5242A;  /* fills, markers, CTA background */
+  --signal-text: #FF4D52;  /* red used AS text on the canvas */
+  --signal-on:   #FFFFFF;  /* text placed on a --signal fill */
+
+  /* Light -----------------------------------------------------------
+     Neutral white only. Coloured glow is what makes a page read as
+     generated rather than designed. 8% is the hard ceiling. */
+  --glow-strong: rgba(255, 255, 255, 0.08);
+  --glow-soft:   rgba(255, 255, 255, 0.05);
+
+  /* Type ------------------------------------------------------------
+     Orbitron is loaded at 400/500 only - heavier weights contradict the
+     monoline wordmark, so they are simply not shipped. */
+  --font-display: 'Orbitron', 'Inter', system-ui, sans-serif;
+  --font-body:    'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono:    'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace;
+
+  /* min(px, vw) rather than clamp(): a clamp with a flat floor does not
+     scale until an arbitrary crossover width, which is what caused the
+     hero to look zoomed out on wide screens. */
+  --t-display: min(9.5rem, 13vw);
+  --t-h1:      min(4.5rem, 7vw);
+  --t-h2:      min(3rem, 5vw);
+  --t-h3:      1.5rem;
+  --t-body-l:  1.125rem;
+  --t-body:    1rem;
+  --t-body-s:  0.875rem;
+  --t-label:   0.75rem;
+
+  /* Tracking widens as size drops, so headings stay relatives of the
+     wordmark rather than drifting into ordinary uppercase. */
+  --track-display: 0.12em;
+  --track-heading: 0.16em;
+  --track-label:   0.20em;
+
+  /* Shape -----------------------------------------------------------
+     Derived from the mark's own geometry: 20-unit outer radius and
+     8-unit inner radius on a 104x100 grid. Three values, no more. */
+  --r-sm: 4px;
+  --r-md: 10px;
+  --r-lg: 20px;
+
+  /* Space ----------------------------------------------------------- */
+  --s-1:  4px;
+  --s-2:  8px;
+  --s-3:  12px;
+  --s-4:  16px;
+  --s-5:  24px;
+  --s-6:  32px;
+  --s-7:  48px;
+  --s-8:  64px;
+  --s-9:  96px;
+  --s-10: 128px;
+
+  /* Motion ----------------------------------------------------------
+     Fade plus a small rise. No scale bounce, no spring overshoot. */
+  --d-micro:    160ms;
+  --d-standard: 240ms;
+  --d-entrance: 420ms;
+  --ease: cubic-bezier(.2, .6, .2, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --d-micro:    1ms;
+    --d-standard: 1ms;
+    --d-entrance: 1ms;
+  }
+}
