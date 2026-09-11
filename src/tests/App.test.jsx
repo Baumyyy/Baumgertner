@@ -5,7 +5,8 @@ describe('Language Files', function() {
     var en = (await import('../lang/en')).default;
     expect(en.nav_home).toBe('Home');
     expect(en.nav_projects).toBe('Projects');
-    expect(en.hero_greeting).toBeDefined();
+    expect(en.hero_claim1).toBeDefined();
+    expect(en.hero_lede).toBeDefined();
     expect(en.contact_send).toBeDefined();
   });
 
@@ -13,7 +14,8 @@ describe('Language Files', function() {
     var fi = (await import('../lang/fi')).default;
     expect(fi.nav_home).toBe('Etusivu');
     expect(fi.nav_projects).toBe('Projektit');
-    expect(fi.hero_greeting).toBeDefined();
+    expect(fi.hero_claim1).toBeDefined();
+    expect(fi.hero_lede).toBeDefined();
     expect(fi.contact_send).toBeDefined();
   });
 

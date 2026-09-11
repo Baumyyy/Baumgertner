@@ -22,6 +22,21 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Real text for screen readers and crawlers, where the visible element
+   carries the meaning as artwork instead - the hero heading being the
+   case that matters, since an h1 should not be image-only. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* Keyboard-only affordance, so the one place a red fill is unmissable. */
 .skip-link {
   position: fixed;
@@ -81,17 +96,35 @@ body {
 /* ===== BUTTONS =====
    Small, uppercase, mono, letterspaced - sized by padding rather than a
    fixed height so an icon can sit inside without special-casing. */
+/* Two opposite corners are chamfered - top-left and bottom-right - which
+   is where the geometric edge of the identity shows up in the interface.
+   clip-path clips the border along with everything else, so an outlined
+   button cannot simply be clipped: the line would vanish on exactly the
+   two cut edges. Instead the element's background IS the outline, and a
+   ::before inset by 1px supplies the fill. Both share the same shape, so
+   the line follows the chamfer the whole way round. */
 .btn,
 .btn-primary,
 .btn-secondary,
 .btn-ghost {
+  --cut: 12px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: var(--s-2);
   padding: var(--s-3) var(--s-5);
-  border-radius: var(--r-sm);
-  border: 1px solid transparent;
+  border: none;
+  border-radius: 0;
+  position: relative;
+  isolation: isolate;
+  clip-path: polygon(
+    var(--cut) 0,
+    100% 0,
+    100% calc(100% - var(--cut)),
+    calc(100% - var(--cut)) 100%,
+    0 100%,
+    0 var(--cut)
+  );
   font-family: var(--font-mono);
   font-size: var(--t-label);
   letter-spacing: var(--track-label);
@@ -99,15 +132,35 @@ body {
   text-decoration: none;
   cursor: pointer;
   transition: background var(--d-micro) var(--ease),
-              border-color var(--d-micro) var(--ease),
-              color var(--d-micro) var(--ease);
+              color var(--d-micro) var(--ease),
+              filter var(--d-micro) var(--ease);
+}
+
+/* Inner fill for the outlined variants, inset by the width of the line.
+   The cut is reduced by 1px so the chamfer stays parallel to the outer
+   edge rather than drifting inward at the corners. */
+.btn-secondary::before,
+.btn-ghost::before {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  z-index: -1;
+  clip-path: polygon(
+    calc(var(--cut) - 1px) 0,
+    100% 0,
+    100% calc(100% - var(--cut) + 1px),
+    calc(100% - var(--cut) + 1px) 100%,
+    0 100%,
+    0 calc(var(--cut) - 1px)
+  );
+  background: rgba(0, 0, 0, 0.55);
+  transition: background var(--d-micro) var(--ease);
 }
 
 /* The single strongest call to action in a view. Never more than one. */
 .btn-primary {
   background: var(--signal);
   color: var(--signal-on);
-  border-color: var(--signal);
 }
 
 .btn-primary:hover {
@@ -115,23 +168,21 @@ body {
 }
 
 .btn-secondary {
-  background: transparent;
-  border-color: var(--line-strong);
+  background: var(--line-strong);
   color: var(--text-primary);
 }
 
 .btn-secondary:hover {
-  border-color: var(--text-primary);
+  background: var(--text-primary);
 }
 
 .btn-ghost {
-  background: transparent;
-  border-color: var(--line);
+  background: var(--line);
   color: var(--text-secondary);
 }
 
 .btn-ghost:hover {
-  border-color: var(--line-strong);
+  background: var(--line-strong);
   color: var(--text-primary);
 }
 

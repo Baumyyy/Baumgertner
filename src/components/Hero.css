@@ -1,29 +1,44 @@
-/* ===== NAVIGATION ===== */
+/* ===== NAVIGATION =====
+   A transparent full-width strip holding a floating pill. The pill is the
+   only visible chrome, so the navigation reads as an object resting on the
+   page rather than a bar cutting across it. The strip keeps
+   pointer-events off so it does not swallow clicks on either side. */
 .navbar {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 1000;
-  padding: 1.1rem 4rem;
-  padding-top: calc(1.1rem + env(safe-area-inset-top));
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-  transition: padding 0.35s ease, background 0.35s ease, border-color 0.35s ease;
+  justify-content: center;
+  padding: var(--s-5);
+  padding-top: calc(var(--s-5) + env(safe-area-inset-top));
+  pointer-events: none;
+  transition: padding-top var(--d-standard) var(--ease);
 }
 
 .navbar.scrolled {
-  padding: 0.65rem 4rem;
-  padding-top: calc(0.65rem + env(safe-area-inset-top));
-  background: rgba(0, 0, 0, 0.82);
-  backdrop-filter: blur(32px);
-  -webkit-backdrop-filter: blur(32px);
-  border-bottom-color: rgba(255, 255, 255, 0.08);
+  padding-top: calc(var(--s-3) + env(safe-area-inset-top));
+}
+
+.nav-pill {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--s-6);
+  padding: var(--s-2) var(--s-2) var(--s-2) var(--s-5);
+  border-radius: 999px;
+  background: rgba(10, 10, 10, 0.72);
+  border: 1px solid var(--line);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  transition: background var(--d-standard) var(--ease),
+              border-color var(--d-standard) var(--ease);
+}
+
+.navbar.scrolled .nav-pill {
+  background: rgba(10, 10, 10, 0.9);
+  border-color: var(--line-strong);
 }
 
 .nav-progress-bar {
@@ -34,12 +49,12 @@
   .nav-progress-bar {
     display: block;
     position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
+    left: var(--s-5);
+    right: var(--s-5);
+    bottom: 2px;
     height: 2px;
-    background: #00ff88;
-    box-shadow: 0 0 6px rgba(0, 255, 136, 0.6);
+    border-radius: 999px;
+    background: var(--text-primary);
     transform: scaleX(0);
     transform-origin: left;
     will-change: transform;
@@ -48,214 +63,207 @@
 
 .nav-links {
   display: flex;
-  gap: 0.3rem;
+  gap: var(--s-5);
   align-items: center;
 }
 
+/* Sentence case rather than the uppercase mono used for section markers.
+   Navigation is read at a glance; a marker is scanned for. Different jobs,
+   different treatment. */
 .nav-link {
-  color: rgba(255, 255, 255, 0.4);
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 450;
+  color: var(--text-secondary);
   text-decoration: none;
-  font-size: 0.78rem;
-  transition: color 0.25s ease, background 0.25s ease;
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
-  font-family: 'Inter', sans-serif;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  white-space: nowrap;
   background: none;
   border: none;
-  padding: 0.42rem 0.9rem;
-  border-radius: 30px;
+  padding: 0;
   cursor: pointer;
-  font-weight: 500;
+  transition: color var(--d-micro) var(--ease);
 }
 
-.nav-link:hover {
-  color: rgba(255, 255, 255, 0.85);
-  background: rgba(255, 255, 255, 0.06);
-}
-
+.nav-link:hover,
 .nav-link.active {
-  color: #00ff88;
-  background: rgba(0, 255, 136, 0.09);
+  color: var(--text-primary);
 }
-
-.nav-dot {
-  width: 5px;
-  height: 5px;
-  background: #00ff88;
-  border-radius: 50%;
-  display: none;
-  box-shadow: 0 0 8px rgba(0, 255, 136, 0.9);
-  flex-shrink: 0;
-}
-
-.nav-link.active .nav-dot { display: inline-block; }
 
 .nav-logo {
   text-decoration: none;
   cursor: pointer;
   display: flex;
   align-items: center;
-  flex: 1;
   flex-shrink: 0;
 }
 
-.nav-logo-text {
-  font-family: var(--font-display);
-  font-size: 1.5rem;
-  letter-spacing: 0.02em;
-  background: linear-gradient(135deg, #ffffff 20%, #00ff88 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  transition: filter 0.3s ease;
+.nav-end {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
 }
 
-.nav-logo:hover .nav-logo-text {
-  filter: brightness(1.3) drop-shadow(0 0 6px rgba(0, 255, 136, 0.5));
+/* The one button on the site that is not chamfered. A cut rectangle
+   inside a capsule fights the container's geometry - it visibly pokes out
+   of the rounded corner - so this one follows the pill it sits in.
+   Sentence case in the body face, not the uppercase letterspaced mono the
+   section buttons use: at this size that treatment reads as shouting. */
+.nav-pill .nav-cta {
+  clip-path: none;
+  border-radius: 999px;
+  background: var(--text-primary);
+  color: var(--canvas);
+  padding: 0.55rem 1.1rem;
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.nav-pill .nav-cta:hover {
+  background: rgba(255, 255, 255, 0.85);
+  filter: none;
+}
+
+/* The wordmark is ~19.3:1, so it is sized by width and height follows.
+   Never set a height on it. */
+/* Deliberately larger than the links and the button beside it - the
+   wordmark is the identity, everything else in the pill is navigation. */
+.nav-logo-mark {
+  display: block;
+  width: 178px;
+  height: auto;
+  color: var(--text-primary);
+  transition: opacity var(--d-standard) var(--ease);
+}
+
+.nav-logo:hover .nav-logo-mark {
+  opacity: 0.65;
 }
 
 /* ===== HERO ===== */
 .hero {
   min-height: 100vh;
+  min-height: 100svh;
   display: flex;
   align-items: center;
   justify-content: center;
-  /* Reduced top padding since navbar is shorter, bottom balanced */
-  padding: 6rem 2rem 4rem 2rem;
+  padding: 7rem 4rem 4rem 4rem;
   position: relative;
   z-index: 1;
   overflow: hidden;
   isolation: isolate;
 }
 
+/* The valley photograph. Sits behind everything in the hero and is
+   purely decorative, so it is hidden from assistive technology in the
+   markup rather than described. */
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.hero-bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+/* Deliberately light. The photograph should read as a photograph, so the
+   centre is left almost untouched and only the edges are closed off - the
+   top so the navigation pill has something to sit against, the bottom so
+   the section meets the black page below it without a hard crop line.
+   Contrast is verified against the lightest pixel behind each text block
+   rather than assumed. */
+.hero-scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 100% 85% at 50% 45%, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.05) 55%, rgba(0, 0, 0, 0.34) 100%),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.32) 0%, rgba(0, 0, 0, 0) 26%, rgba(0, 0, 0, 0) 78%, rgba(0, 0, 0, 0.42) 100%);
+}
+
+/* Centred: the valley opens in the middle of the frame, so the type sits
+   in the gap the landscape already makes. */
 .hero-center {
   text-align: center;
-  max-width: 860px;
+  width: 100%;
+  max-width: min(1500px, 94vw);
   margin: 0 auto;
-  /* Tighter vertical rhythm throughout */
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-/* Welcome text */
-.hero-welcome {
-  font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.3);
-  font-family: 'Inter', sans-serif;
-  font-weight: 300;
+/* Each line of the claim is written as its own line in the copy, so it
+   is set nowrap and the type size is tuned to the longest line instead.
+   That keeps the break where the writing intends it rather than leaving
+   an orphan wherever the viewport happens to run out. */
+.hero-claim {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-display);
+  font-weight: var(--weight-display);
+  /* Tuned to the longest line in either language - Finnish
+     "VERKKOSIVU UUDELLEEN" is the widest string the hero has to hold. */
+  font-size: min(5.8rem, 5.5vw);
+  line-height: 1.04;
+  letter-spacing: var(--track-display);
   text-transform: uppercase;
-  margin-bottom: 0.6rem;
+  color: var(--text-primary);
+  margin-bottom: var(--s-6);
   opacity: 0;
-  animation: heroWelcomeReveal 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  animation-delay: 0.1s;
+  transform: translateY(12px);
+  animation: heroNameReveal var(--d-entrance) var(--ease) forwards 0.1s;
   animation-play-state: paused;
 }
 
-@keyframes heroWelcomeReveal {
-  0% { opacity: 0; letter-spacing: 0.9em; filter: blur(6px); }
-  100% { opacity: 1; letter-spacing: 0.35em; filter: blur(0); }
+.hero-claim-line {
+  display: block;
+  white-space: nowrap;
 }
 
-/* Big name */
-.hero-big-name {
-  font-size: var(--t-display);
-  font-family: var(--font-display);
-  letter-spacing: 0.04em;
-  line-height: 1;
-  margin-bottom: 0.7rem;
-  background: linear-gradient(135deg, #ffffff 30%, #00ff88 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+/* Each sentence is its own line, as written - the second one is the turn,
+   so it does not get left to whatever the measure decides. */
+.hero-lede-line {
+  display: block;
+}
+
+.hero-lede {
+  font-size: var(--t-lead);
+  line-height: 1.5;
+  color: var(--text-secondary);
+  max-width: 52ch;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: var(--s-4);
   opacity: 0;
-  transform: scale(1.06);
-  filter: blur(18px) drop-shadow(0 0 40px rgba(0, 255, 136, 0.15));
-  animation: heroNameReveal 0.9s cubic-bezier(0.19, 1, 0.22, 1) forwards 0.3s;
+  transform: translateY(10px);
+  animation: fadeInUp 0.6s var(--ease) forwards 0.25s;
   animation-play-state: paused;
 }
 
 @keyframes heroNameReveal {
-  0% {
-    opacity: 0;
-    transform: scale(1.06);
-    filter: blur(18px) drop-shadow(0 0 40px rgba(0, 255, 136, 0.15));
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-    filter: blur(0) drop-shadow(0 0 40px rgba(0, 255, 136, 0.2));
-  }
-}
-
-/* Tagline */
-.hero-tagline {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.8rem;
-  margin-bottom: 2rem;
-  font-size: 0.95rem;
-  color: rgba(255, 255, 255, 0.35);
-  font-family: 'Inter', sans-serif;
-  font-weight: 300;
-  letter-spacing: 0.03em;
-  flex-wrap: nowrap;
-}
-
-.tagline-word {
-  opacity: 0;
-  transform: translateY(10px);
-  animation: fadeInUp 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  animation-play-state: paused;
-}
-
-.tw1 { animation-delay: 0.85s; }
-.tw2 { animation-delay: 1s; }
-.tw3 { animation-delay: 1.15s; }
-
-.tagline-dot {
-  width: 5px;
-  height: 5px;
-  background: #00ff88;
-  border-radius: 50%;
-  flex-shrink: 0;
-  box-shadow: 0 0 6px rgba(0, 255, 136, 0.4);
-  opacity: 0;
-  transform: scale(0);
-  animation: dotPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-  animation-play-state: paused;
-}
-
-.d1 { animation-delay: 0.95s; }
-.d2 { animation-delay: 1.1s; }
-
-@keyframes dotPop {
-  0% { opacity: 0; transform: scale(0); }
-  100% { opacity: 1; transform: scale(1); }
+  0%   { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
 }
 
 /* Buttons */
 .hero-actions {
   display: flex;
-  gap: 1rem;
+  gap: var(--s-3);
   justify-content: center;
-  margin-bottom: 2rem;
+  margin-bottom: var(--s-7);
   opacity: 0;
-  animation: heroPopIn 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-  animation-delay: 1.35s;
+  transform: translateY(10px);
+  animation: fadeInUp 0.6s var(--ease) forwards 0.45s;
   animation-play-state: paused;
 }
-
-@keyframes heroPopIn {
-  0% { opacity: 0; transform: translateY(20px) scale(0.85); }
-  100% { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-
 
 .btn-arrow {
   transition: transform 0.3s ease;
@@ -265,197 +273,37 @@
   transform: translateX(4px);
 }
 
-
-
-/* Mini badge card */
-.hero-badge-row {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 2rem;
-  perspective: 900px;
-}
-
-.hero-mini-card {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 0.85rem 1.8rem;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 60px;
-  transition: background 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
-  opacity: 0;
-  transform-origin: top center;
-  animation: cardTiltIn 0.8s cubic-bezier(0.19, 1, 0.22, 1) forwards;
-  animation-delay: 1.55s;
-  animation-play-state: paused;
-}
-
-@keyframes cardTiltIn {
-  0% { opacity: 0; transform: rotateX(-40deg) translateY(-14px) scale(0.92); border-color: rgba(0, 255, 136, 0.5); }
-  60% { opacity: 1; }
-  100% { opacity: 1; transform: rotateX(0) translateY(0) scale(1); border-color: rgba(255, 255, 255, 0.08); }
-}
-
-.hero-mini-card:hover {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(0, 255, 136, 0.2);
-}
-
-.mini-card-photo {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  overflow: hidden;
-  border: 2px solid rgba(0, 255, 136, 0.3);
-  flex-shrink: 0;
-}
-
-.mini-card-photo img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 25%;
-}
-
-.mini-card-info {
-  display: flex;
-  flex-direction: column;
-  text-align: left;
-}
-
-.mini-card-name {
-  font-size: 0.9rem;
-  color: #fff;
-  font-family: 'Inter', sans-serif;
-  font-weight: 600;
-}
-
-.mini-card-role {
-  font-size: 0.72rem;
-  color: rgba(255, 255, 255, 0.35);
-  font-family: 'Inter', sans-serif;
-  font-weight: 400;
-}
-
-.mini-card-status {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.28rem 0.75rem;
-  background: rgba(0, 255, 136, 0.08);
-  border-radius: 20px;
-  font-size: 0.62rem;
-  color: rgba(0, 255, 136, 0.7);
-  font-family: 'Inter', sans-serif;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin-left: 0.4rem;
-}
-
-.mini-card-status.status-busy {
-  background: rgba(255, 100, 100, 0.08);
-  color: rgba(255, 100, 100, 0.7);
-}
-
-.status-dot {
-  width: 6px;
-  height: 6px;
-  background: #00ff88;
-  border-radius: 50%;
-  animation: statusBlink 3.4s ease-in-out infinite;
-  box-shadow: 0 0 4px rgba(0, 255, 136, 0.45);
-}
-
-.status-dot.dot-busy {
-  background: #ff6464;
-  box-shadow: 0 0 4px rgba(255, 100, 100, 0.45);
-}
-
 @keyframes statusBlink {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.65; }
 }
 
-/* Stats row */
-.hero-stats-row {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0;
-  margin-bottom: 1.8rem;
-  opacity: 0;
-  animation: heroPopIn 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-  animation-delay: 1.75s;
-  animation-play-state: paused;
-  width: 100%;
-  max-width: 480px;
-}
-
-.hero-stat {
-  text-align: center;
-  flex: 1;
-  min-width: 0;
-  padding: 0 1.2rem;
-}
-
-.hero-stat-value {
-  display: block;
-  font-size: 2rem;
-  font-family: var(--font-display);
-  color: #00ff88;
-  letter-spacing: 0.03em;
-  line-height: 1.2;
-  white-space: nowrap;
-}
-
-.hero-stat-langs {
-  font-size: 1.1rem;
-  letter-spacing: 0.06em;
-}
-
-.hero-stat-label {
-  display: block;
-  font-size: 0.58rem;
-  color: rgba(255, 255, 255, 0.25);
-  font-family: 'Inter', sans-serif;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  margin-top: 0.15rem;
-}
-
-.hero-stat-divider {
-  width: 1px;
-  height: 28px;
-  background: rgba(255, 255, 255, 0.08);
-  flex-shrink: 0;
-}
-
-/* Social */
-.social-links {
-  display: flex;
-  gap: 0.7rem;
-  justify-content: center;
-  position: relative;
-  margin-bottom: 3.5rem;
-}
-
-.social-links::after {
-  content: '';
+/* Anchored to the hero itself rather than to a sibling block, so it
+   survives whatever content sits above it. */
+.hero-scroll-cue {
   position: absolute;
   left: 50%;
-  bottom: -70px;
-  width: 18px;
-  height: 18px;
-  border-right: 2px solid #00ff88;
-  border-bottom: 2px solid #00ff88;
-  transform: translateX(-50%) rotate(45deg);
-  filter: drop-shadow(0 0 8px rgba(0, 255, 136, 0.6));
+  bottom: calc(var(--s-7) + env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.hero-scroll-chevron {
+  width: 16px;
+  height: 16px;
+  border-right: 2px solid var(--text-muted);
+  border-bottom: 2px solid var(--text-muted);
+  transform: rotate(45deg);
   opacity: 0;
-  animation: arrowReveal 0.6s ease-out forwards 2.3s, floatUpDown 2s ease-in-out infinite 2.3s;
+  animation: arrowReveal 0.6s var(--ease) forwards 1.1s,
+             floatUpDown 2.4s ease-in-out infinite 1.1s;
   animation-play-state: paused;
+}
+
+.hero-scroll-cue.hero-ready .hero-scroll-chevron {
+  animation-play-state: running;
 }
 
 @keyframes arrowReveal {
@@ -463,82 +311,19 @@
   to { opacity: 0.9; }
 }
 
+/* The chevron is a rotated square, so the drift has to be composed with
+   its rotation - a bare translateY would cancel the 45deg out. After
+   rotate(45deg), translate(t, t) resolves to straight down on screen. */
 @keyframes floatUpDown {
-  0% {
-    bottom: -50px;
-  }
-  50% {
-    bottom: -60px;
-  }
-  100% {
-    bottom: -50px;
-  }
-}
-.social-link {
-  width: 40px;
-  height: 40px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: rgba(255, 255, 255, 0.4);
-  font-size: 1rem;
-  transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
-  text-decoration: none;
-  opacity: 0;
-  animation: iconPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-  animation-play-state: paused;
+  0%, 100% { transform: rotate(45deg) translate(0, 0); }
+  50%      { transform: rotate(45deg) translate(3px, 3px); }
 }
 
-.social-link:nth-child(1) { animation-delay: 1.95s; }
-.social-link:nth-child(2) { animation-delay: 2.03s; }
-.social-link:nth-child(3) { animation-delay: 2.11s; }
 
 @keyframes iconPop {
   0% { opacity: 0; transform: scale(0.4) translateY(10px); }
   70% { opacity: 1; }
   100% { opacity: 1; transform: scale(1) translateY(0); }
-}
-
-.social-link:hover {
-  background: rgba(0, 255, 136, 0.1);
-  border-color: rgba(0, 255, 136, 0.3);
-  color: #00ff88;
-  transform: translateY(-2px);
-}
-
-/* Language toggle */
-.lang-toggle-wrap {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  flex: 1;
-}
-
-.lang-toggle {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.35rem 0.7rem;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  color: rgba(255, 255, 255, 0.35);
-  font-size: 0.75rem;
-  font-family: 'Inter', sans-serif;
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  transition: all 0.3s ease;
-  z-index: 9999;
-}
-
-.lang-toggle:hover { color: #00ff88; }
-
-.lang-flag-btn {
-  font-size: 1.1rem;
-  line-height: 1;
 }
 
 /* Hamburger */
@@ -565,14 +350,14 @@
 
 .hamburger-line.open:nth-child(1) {
   transform: rotate(45deg) translateY(5px) translateX(5px);
-  background: #00ff88;
+  background: var(--text-primary);
 }
 
 .hamburger-line.open:nth-child(2) { opacity: 0; }
 
 .hamburger-line.open:nth-child(3) {
   transform: rotate(-45deg) translateY(-5px) translateX(5px);
-  background: #00ff88;
+  background: var(--text-primary);
 }
 
 /* ===== ANIMATIONS ===== */
@@ -592,28 +377,17 @@
   animation-delay: 1s;
 }
 
-.hero-ready .hero-welcome,
-.hero-ready .hero-big-name,
-.hero-ready .tagline-word,
-.hero-ready .tagline-dot,
-.hero-ready .hero-actions,
-.hero-ready .hero-mini-card,
-.hero-ready .hero-stats-row,
-.hero-ready .social-link,
-.hero-ready .social-links::after {
+.hero-ready .hero-claim,
+.hero-ready .hero-lede,
+.hero-ready .hero-actions {
   animation-play-state: running;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-welcome,
-  .hero-big-name,
-  .tagline-word,
-  .tagline-dot,
+  .hero-claim,
+  .hero-lede,
   .hero-actions,
-  .hero-mini-card,
-  .hero-stats-row,
-  .social-link,
-  .social-links::after,
+  .hero-scroll-chevron,
   .navbar {
     animation: none !important;
     opacity: 1 !important;
@@ -624,66 +398,53 @@
   }
 }
 
-/* ===== RESPONSIVE ===== */
-/* .hero-big-name's clamp() ceiling (6.4rem) is reached around ~1140px
-   viewport width, and .hero-center has no explicit width, so it shrinks to
-   fit its content (measured ~636px) well inside its 860px max-width - on
-   any desktop screen from ~1200px up, that leaves a large, fixed amount of
-   empty canvas on both sides that only gets more obvious as the screen
-   gets wider, plus a ~112px gap above "WELCOME TO" from vertical centering
-   in a full 100vh box. Neither scales with viewport width past that point,
-   which is what reads as "zoomed out" on anything wider than a laptop.
-   Bigger text closes the side gap (content grows toward its max-width
-   instead of just sitting at its unforced natural width), and less top
-   padding plus a shorter min-height closes the vertical one. */
+/* ===== RESPONSIVE =====
+   Sizes come from the token scale, which is viewport-relative and
+   continuous, so the hero no longer needs per-breakpoint type overrides.
+   What is left here is layout: padding and the vertical rhythm. */
+/* No min-height override here. The hero fills the viewport exactly, which
+   also lets the 16:9 backdrop sit uncropped on a 16:9 display - shrinking
+   it to 94vh was what made the photograph look cut off at the bottom. */
 @media (min-width: 1200px) {
-  .hero { padding: 5rem 2rem 3.5rem 2rem; min-height: 94vh; }
-  .hero-center { max-width: clamp(1150px, 75vw, 1500px); }
-  .hero-welcome { font-size: 1rem; margin-bottom: 0.8rem; }
-  .hero-big-name { margin-bottom: 0.9rem; }
-  .hero-tagline { font-size: 1.05rem; margin-bottom: 2.2rem; }
-  .hero-actions { margin-bottom: 2.2rem; }
-  .hero-badge-row { margin-bottom: 2.2rem; }
+  .hero { padding: 8rem 4rem 5rem 4rem; }
 }
 
 @media (max-width: 968px) {
-  .navbar {
-    padding: 1rem 2rem;
-    padding-top: calc(1rem + env(safe-area-inset-top));
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+  .navbar { padding: var(--s-3); padding-top: calc(var(--s-3) + env(safe-area-inset-top)); }
+
+  /* The pill spans the strip on small screens - a centred capsule with
+     nothing either side of it looks stranded once the links collapse. */
+  .nav-pill {
+    width: 100%;
+    justify-content: space-between;
+    gap: var(--s-3);
   }
-  .navbar.scrolled {
-    padding: 0.6rem 2rem;
-    padding-top: calc(0.6rem + env(safe-area-inset-top));
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-  }
+
   .hero { padding: 5.5rem 2rem 3rem 2rem; }
 }
 
 @media (max-width: 480px) {
-  .hero { padding: 5rem 1.2rem 2rem 1.2rem; min-height: auto; }
+  .hero { padding: 5rem 1.2rem 3rem 1.2rem; }
 
   .navbar {
-    padding: 1rem 1.2rem;
-    padding-top: calc(1rem + env(safe-area-inset-top));
+    padding: var(--s-3);
+    padding-top: calc(var(--s-3) + env(safe-area-inset-top));
     z-index: 9998;
     opacity: 1 !important;
     animation: none !important;
   }
 
-  .navbar.scrolled { padding: 0.6rem 1.2rem; padding-top: calc(0.6rem + env(safe-area-inset-top)); }
+  .nav-pill { padding: var(--s-2) var(--s-2) var(--s-2) var(--s-4); }
 
-  .nav-logo-text { font-size: 1.15rem; }
+  .nav-logo-mark { width: 128px; }
 
-  .hamburger { display: flex; order: 3; }
+  .hamburger { display: flex; }
 
-  .lang-toggle-wrap {
-    flex: 0;
-    order: 2;
-    margin-right: 0.3rem;
-  }
+  /* The call to action lives in the opened menu on small screens - the
+     pill has room for the mark, the language toggle and the menu control,
+     and not much else. Needs the parent in the selector to outrank
+     .btn-primary, which sets display and loads later. */
+  .nav-pill .nav-cta { display: none; }
 
   .nav-links {
     position: fixed;
@@ -714,40 +475,20 @@
     color: rgba(255, 255, 255, 0.5);
   }
 
-  .nav-link.active { color: #00ff88; }
-
-  .hero-welcome { font-size: 0.8rem; letter-spacing: 0.2em; }
-  .hero-tagline { font-size: 0.68rem; gap: 0.45rem; margin-bottom: 1.5rem; letter-spacing: 0.01em; }
+  .nav-link.active { color: var(--text-primary); }
 
   .hero-actions {
     flex-direction: column;
     width: 100%;
-    margin-bottom: 1.5rem;
+    margin-bottom: var(--s-6);
   }
 
-  .btn-primary, 
-  .hero-mini-card {
-    flex-wrap: wrap;
-    justify-content: center;
-    width: fit-content;
-    max-width: 100%;
-    padding: 0.9rem 1.3rem;
-    border-radius: 20px;
-    margin-bottom: 0;
-    /* row-gap column-gap - `gap` was 1rem in both directions, which reads
-       fine between the photo and text but leaves an oversized empty band
-       above the status pill once it wraps to its own line. */
-    gap: 0.5rem 1rem;
+  /* Both buttons stack full width, so they read as one control group
+     rather than two differently sized pills. No radius - the chamfer is
+     the shape. */
+  .hero-actions .btn-primary,
+  .hero-actions .btn-secondary {
+    width: 100%;
+    padding: var(--s-4) var(--s-5);
   }
-
-  .mini-card-photo {
-    width: 56px;
-    height: 56px;
-  }
-
-  .mini-card-status { margin-left: 0; margin-top: 0; }
-
-  .hero-stats-row { gap: 0; }
-  .hero-stat-value { font-size: 1.6rem; }
-  .hero-stat-langs { font-size: 0.85rem; letter-spacing: 0.03em; }
 }

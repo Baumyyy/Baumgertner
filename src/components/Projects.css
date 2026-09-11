@@ -125,8 +125,12 @@ a.project-card { cursor: pointer; text-decoration: none; }
   text-transform: uppercase;
 }
 
-.status-dot { width: 5px; height: 5px; background: #00ff88; border-radius: 50%; box-shadow: 0 0 8px rgba(0, 255, 136, 0.7); animation: statusPulse 2s ease-in-out infinite; }
-.status-dot-pending { background: rgba(255, 200, 50, 0.7); box-shadow: 0 0 8px rgba(255, 200, 50, 0.5); }
+/* Scoped to this section. Hero uses the same class name for its
+   availability dot, and because this file is a lazy chunk it loaded
+   later and silently overrode the hero's. Same collision class as the
+   duplicated .section-tag rules removed in the previous task. */
+.projects .status-dot { width: 5px; height: 5px; background: #00ff88; border-radius: 50%; box-shadow: 0 0 8px rgba(0, 255, 136, 0.7); animation: statusPulse 2s ease-in-out infinite; }
+.projects .status-dot-pending { background: rgba(255, 200, 50, 0.7); box-shadow: 0 0 8px rgba(255, 200, 50, 0.5); }
 @keyframes statusPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 .coming-soon .project-status { color: rgba(255, 200, 50, 0.7); }
 
