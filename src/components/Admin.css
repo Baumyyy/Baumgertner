@@ -99,7 +99,7 @@
 .login-title {
   font-size: 2.2rem;
   color: #fff;
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: var(--font-display);
   letter-spacing: 0.08em;
   margin-bottom: 0.3rem;
 }
@@ -261,7 +261,7 @@
 
 .admin-title {
   font-size: 2rem;
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: var(--font-display);
   letter-spacing: 0.05em;
   margin-bottom: 0.5rem;
   color: #fff;
@@ -269,7 +269,7 @@
 
 .admin-subtitle {
   font-size: 1.1rem;
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: var(--font-display);
   letter-spacing: 0.05em;
   color: rgba(255, 255, 255, 0.6);
   margin: 1.5rem 0 0.75rem;
@@ -354,7 +354,7 @@
 .stat-card-value {
   display: block;
   font-size: 2.2rem;
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: var(--font-display);
   color: #00ff88;
   margin-bottom: 0.3rem;
   line-height: 1;
@@ -412,7 +412,7 @@
   padding: 0.2rem 0.7rem;
   border-radius: 20px;
   text-transform: uppercase;
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: var(--font-display);
   letter-spacing: 0.1em;
 }
 
@@ -840,7 +840,7 @@
 
 .overview-value {
   font-size: 1.1rem;
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: var(--font-display);
   color: #00ff88;
 }
 
@@ -969,7 +969,7 @@
 
 .kpi-value {
   font-size: 1.8rem;
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: var(--font-display);
   color: #fff;
   line-height: 1;
 }
@@ -1044,7 +1044,7 @@
 
 .dcs-value {
   font-size: 1.3rem;
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: var(--font-display);
   color: #00ff88;
 }
 
@@ -1146,7 +1146,7 @@
 
 .doi-value {
   font-size: 1rem;
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: var(--font-display);
   color: #00ff88;
 }
 

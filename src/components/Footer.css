@@ -36,7 +36,7 @@
 
 .footer-name {
   font-size: 1.8rem;
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: var(--font-display);
   letter-spacing: 0.04em;
   margin-bottom: 0;
   background: linear-gradient(135deg, #ffffff 30%, #00ff88 100%);

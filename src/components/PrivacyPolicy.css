@@ -27,7 +27,7 @@
 }
 
 .privacy-title {
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: var(--font-display);
   font-size: clamp(2.5rem, 7vw, 4rem);
   letter-spacing: 0.04em;
   background: linear-gradient(135deg, #ffffff 30%, #00ff88 100%);
@@ -64,7 +64,7 @@
 }
 
 .privacy-heading {
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: var(--font-display);
   font-size: 1.4rem;
   letter-spacing: 0.05em;
   color: #00ff88;

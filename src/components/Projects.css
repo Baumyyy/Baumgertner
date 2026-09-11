@@ -24,7 +24,7 @@
   text-align: center;
   font-size: clamp(2.8rem, 5vw, 4.5rem);
   color: #ffffff;
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: var(--font-display);
   letter-spacing: 0.02em;
   text-transform: uppercase;
   line-height: 1.05;
@@ -141,7 +141,7 @@ a.project-card { cursor: pointer; text-decoration: none; }
 .project-name {
   font-size: 1.3rem;
   color: #ffffff;
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: var(--font-display);
   letter-spacing: 0.04em;
   text-transform: uppercase;
   margin-bottom: 0.5rem;

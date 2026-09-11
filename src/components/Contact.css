@@ -51,7 +51,7 @@
 .contact-title {
   font-size: clamp(2.8rem, 5vw, 4.5rem);
   color: #ffffff;
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: var(--font-display);
   letter-spacing: 0.02em;
   text-transform: uppercase;
   line-height: 1.05;

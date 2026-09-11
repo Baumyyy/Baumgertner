@@ -34,8 +34,9 @@
   --glow-soft:   rgba(255, 255, 255, 0.05);
 
   /* Type ------------------------------------------------------------
-     Orbitron is loaded at 400/500 only - heavier weights contradict the
-     monoline wordmark, so they are simply not shipped. */
+     Headings are Orbitron 900, set tight, per the reference the owner
+     supplied. This is deliberately heavier than the monoline wordmark -
+     the logo stays delicate, the headings carry weight. */
   --font-display: 'Orbitron', 'Inter', system-ui, sans-serif;
   --font-body:    'Inter', system-ui, -apple-system, sans-serif;
   --font-mono:    'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace;
@@ -43,7 +44,10 @@
   /* min(px, vw) rather than clamp(): a clamp with a flat floor does not
      scale until an arbitrary crossover width, which is what caused the
      hero to look zoomed out on wide screens. */
-  --t-display: min(9.5rem, 13vw);
+  /* 8vw, not the 13vw first specced. Orbitron's letterforms are far wider
+     than the Bebas Neue they replace - measured at ~11x the font size for
+     a 14-character line - so 13vw overflowed every viewport under 800px. */
+  --t-display: min(9.5rem, 8vw);
   --t-h1:      min(4.5rem, 7vw);
   --t-h2:      min(3rem, 5vw);
   --t-h3:      1.5rem;
@@ -52,11 +56,15 @@
   --t-body-s:  0.875rem;
   --t-label:   0.75rem;
 
-  /* Tracking widens as size drops, so headings stay relatives of the
-     wordmark rather than drifting into ordinary uppercase. */
-  --track-display: 0.12em;
-  --track-heading: 0.16em;
+  /* Headings sit near-normal tracking: Orbitron is already a wide face,
+     and at 900 the counters close up if it is spaced out further. Only
+     the small mono labels get real letterspacing. */
+  --track-display: 0.01em;
+  --track-heading: 0.02em;
   --track-label:   0.20em;
+
+  --weight-display: 700;
+  --lh-display: 1.2;
 
   /* Shape -----------------------------------------------------------
      Derived from the mark's own geometry: 20-unit outer radius and

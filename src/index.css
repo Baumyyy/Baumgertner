@@ -33,11 +33,11 @@ body {
    family, case and tracking should stay put. */
 h1, h2, h3, h4 {
   font-family: var(--font-display);
-  font-weight: 500;
+  font-weight: var(--weight-display);
   color: var(--text-primary);
   text-transform: uppercase;
   letter-spacing: var(--track-heading);
-  line-height: 1.1;
+  line-height: var(--lh-display);
   margin: 0;
 }
 

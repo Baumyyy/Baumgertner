@@ -10,7 +10,7 @@
   line-height: 1;
   color: #ffffff;
   letter-spacing: 0.02em;
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: var(--font-display);
   transition: all 0.5s ease;
 }
 

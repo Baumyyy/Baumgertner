@@ -24,7 +24,7 @@ var NotFound = function() {
     }}>
       <h1 style={{
         fontSize: 'clamp(6rem, 20vw, 12rem)',
-        fontFamily: "'Bebas Neue', sans-serif",
+        fontFamily: "var(--font-display)",
         background: 'linear-gradient(135deg, #00ff88, #00bb66)',
         WebkitBackgroundClip: 'text',
         WebkitTextFillColor: 'transparent',
@@ -43,7 +43,7 @@ var NotFound = function() {
         borderRadius: '8px',
         color: '#00ff88',
         textDecoration: 'none',
-        fontFamily: "'Bebas Neue', sans-serif",
+        fontFamily: "var(--font-display)",
         letterSpacing: '0.1em',
         fontSize: '1rem',
         transition: 'all 0.3s ease'
