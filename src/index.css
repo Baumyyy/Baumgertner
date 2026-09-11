@@ -1,11 +1,18 @@
+/* Global element defaults. Every colour, size and duration comes from
+   styles/tokens.css - nothing here declares a raw value.
+
+   This file was the Vite starter template until the rebrand, which is how
+   Vite's purple ended up as the default link colour on a site that has
+   never had a purple in its palette. src/tests/base.test.js keeps it out. */
+
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
+  font-family: var(--font-body);
+  line-height: 1.6;
   font-weight: 400;
 
   color-scheme: dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #000000;
+  color: var(--text-secondary);
+  background-color: var(--canvas);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -13,42 +20,54 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
 body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
   min-height: 100dvh;
-  background-color: #000000;
+  background-color: var(--canvas);
 }
 
-h1 {
-  font-size: 3.2em;
+/* Headings are the brand voice: Orbitron, uppercase, tracked so they read
+   as relatives of the wordmark. Sections may override the size, but the
+   family, case and tracking should stay put. */
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: var(--track-heading);
   line-height: 1.1;
+  margin: 0;
+}
+
+h1 { font-size: var(--t-h1); letter-spacing: var(--track-display); }
+h2 { font-size: var(--t-h2); }
+h3 { font-size: var(--t-h3); }
+h4 { font-size: var(--t-body-l); }
+
+p { margin: 0; }
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: color var(--d-micro) var(--ease);
 }
 
 button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
+  font-size: var(--t-body);
+  border: 1px solid transparent;
+  background: none;
+  color: inherit;
   cursor: pointer;
-  transition: border-color 0.25s;
 }
-button:hover {
-  border-color: #646cff;
-}
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+
+/* One focus treatment for the entire site, on :focus-visible only. A bare
+   :focus rule here previously left a ring stuck on buttons after a mouse
+   click - keyboard users get the ring, mouse users do not. */
+:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 3px;
+  border-radius: var(--r-sm);
 }
