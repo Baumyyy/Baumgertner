@@ -158,8 +158,6 @@ var Projects = function() {
       <div className="projects-content">
         <div className="projects-header fade-in stagger-1">
           <div className="section-tag">
-            <span className="tag-number">03</span>
-            <span className="tag-line"></span>
             <span className="tag-label">{t.projects_tag}</span>
           </div>
           <h2 className="projects-title">

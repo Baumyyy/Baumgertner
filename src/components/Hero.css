@@ -235,7 +235,7 @@
 }
 
 .hero-lede {
-  font-size: var(--t-lead);
+  font-size: var(--t-body-l);
   line-height: 1.5;
   color: var(--text-secondary);
   max-width: 52ch;

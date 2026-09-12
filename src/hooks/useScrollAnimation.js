@@ -10,7 +10,14 @@ export const useScrollAnimation = () => {
       function(entries) {
         entries.forEach(function(entry) {
           if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
+            // A data attribute rather than a class, deliberately. React
+            // owns `className` on these elements: the moment one of them
+            // re-renders with a changed class - a section with an open
+            // accordion row, say - React rewrites className and wipes any
+            // class added from outside, leaving the element stuck at
+            // opacity 0 because we have already unobserved it. React does
+            // not manage attributes it never set, so this survives.
+            entry.target.setAttribute('data-visible', 'true');
             observer.unobserve(entry.target);
           }
         });

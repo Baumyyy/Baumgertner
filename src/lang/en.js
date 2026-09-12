@@ -20,6 +20,23 @@ var en = {
   hero_available: 'Available for projects',
   hero_busy: 'Currently busy',
 
+  // Problem
+  problem_tag: 'The problem',
+  problem_claim1: 'Cheap sites',
+  problem_claim2: 'cost more',
+  problem_lede: 'A template is cheap on day one. Then it is slow, invisible, and identical to a thousand others — and you are still paying for it every month.',
+  problem_1_caption: 'The same layout, sold a thousand times over.',
+  problem_2_caption: 'Every feature you never asked for, loading anyway.',
+  problem_3_caption: 'Your site, inside someone else’s platform.',
+  problem_1_title: 'They all look the same',
+  problem_1_body: 'Page builders ship the same handful of layouts. Same hero, same stock photo, same three cards. A visitor cannot tell you apart from your competitor, because there is nothing to tell apart.',
+  problem_2_title: 'Slow is expensive',
+  problem_2_body: 'A builder loads code for every feature you never used. Visitors leave before the first paint, and search engines notice. Speed is not a detail — it decides whether anyone sees the page at all.',
+  problem_3_title: 'You never actually own it',
+  problem_3_body: 'Stop paying and the site disappears. You cannot move it, cannot export it properly, cannot change what it runs on. You are renting a shopfront with someone else’s lock on the door.',
+  problem_turn_pre: 'That is why',
+  problem_turn_post: 'was born',
+
   // WhatIDo
   whatido_tag: 'Skills',
   whatido_title1: 'My',

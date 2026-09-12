@@ -54,8 +54,6 @@ var WhatIDo = function() {
       <div className="whatido-content">
         <div className="whatido-header fade-in stagger-1">
           <div className="section-tag">
-            <span className="tag-number">02</span>
-            <span className="tag-line"></span>
             <span className="tag-label">{t.whatido_tag}</span>
           </div>
           <h2 className="whatido-title">

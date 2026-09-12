@@ -20,6 +20,23 @@ var fi = {
   hero_available: 'Vapaa projekteille',
   hero_busy: 'Kiireinen tällä hetkellä',
 
+  // Problem
+  problem_tag: 'Ongelma',
+  problem_claim1: 'Halvat sivut',
+  problem_claim2: 'maksavat enemmän',
+  problem_lede: 'Mallipohja on halpa ensimmäisenä päivänä. Sitten se on hidas, näkymätön ja täysin samanlainen kuin tuhat muuta — ja maksat siitä edelleen joka kuukausi.',
+  problem_1_caption: 'Sama asettelu, myytynä tuhat kertaa.',
+  problem_2_caption: 'Jokainen ominaisuus jota et pyytänyt, latautuu silti.',
+  problem_3_caption: 'Sinun sivusi, jonkun toisen alustan sisällä.',
+  problem_1_title: 'Ne näyttävät kaikki samalta',
+  problem_1_body: 'Sivupohjakoneet tarjoavat samat muutamat asettelut. Sama hero, sama kuvapankkikuva, samat kolme korttia. Kävijä ei erota sinua kilpailijastasi, koska erotettavaa ei ole.',
+  problem_2_title: 'Hitaus maksaa',
+  problem_2_body: 'Mallipohja lataa koodia jokaiselle ominaisuudelle jota et koskaan ottanut käyttöön. Kävijä lähtee ennen kuin mitään on piirtynyt, ja hakukoneet huomaavat sen. Nopeus ei ole yksityiskohta — se ratkaisee näkeekö sivua kukaan.',
+  problem_3_title: 'Et omista sitä koskaan',
+  problem_3_body: 'Lopeta maksaminen ja sivu katoaa. Et voi siirtää sitä, et viedä sitä ulos kunnolla, etkä vaihtaa sitä mille se on rakennettu. Vuokraat myymälää jonka ovessa on jonkun toisen lukko.',
+  problem_turn_pre: 'Siksi',
+  problem_turn_post: 'syntyi',
+
   // WhatIDo
   whatido_tag: 'Taidot',
   whatido_title1: 'Minun',

@@ -198,8 +198,6 @@ var Testimonials = function() {
       <div className="testimonials-content">
         <div className="testimonials-header fade-in stagger-1">
           <div className="section-tag">
-            <span className="tag-number">04</span>
-            <span className="tag-line"></span>
             <span className="tag-label">{t.testimonials_tag}</span>
           </div>
           <h2 className="testimonials-title">

@@ -1,0 +1,325 @@
+/* Flat black, deliberately. The valley is the hero's signature; repeating
+   photography here would spend that. This section argues, and an argument
+   reads better on nothing. */
+.problem {
+  padding: 8rem 4rem;
+  max-width: min(1900px, 96vw);
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
+}
+
+/* The one section whose marker is red. Signal is otherwise reserved for
+   the primary call to action and for genuine state, and this is genuine
+   state - the label names what is wrong. Kept to the marker and the
+   diagrams rather than the headline, so it never competes with the red
+   CTA buttons for meaning. */
+.problem .tag-label,
+.problem .tag-label::before,
+.problem .tag-label::after {
+  color: var(--signal-text);
+}
+
+/* Claim across the full width, the three points as columns beneath it,
+   the turn last. The hero above is centred and large, so this section
+   changes register by going full-width and left-aligned rather than
+   repeating that symmetry. */
+.problem-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-7);
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.problem-claim {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-display);
+  font-weight: var(--weight-display);
+  font-size: min(6.4rem, 7vw);
+  line-height: 1.06;
+  letter-spacing: var(--track-display);
+  text-transform: uppercase;
+  color: var(--text-primary);
+  margin-bottom: var(--s-5);
+}
+
+.problem-claim-line {
+  display: block;
+}
+
+/* A red full stop closes the claim and each point. It is real punctuation
+   rather than an ornament, so it costs nothing structurally, and it is the
+   smallest accent that still registers at this size. */
+.problem-claim-line:last-child::after,
+.problem-point-title::after {
+  content: '.';
+  color: var(--signal-text);
+}
+
+.problem-lede {
+  font-size: var(--t-body-l);
+  line-height: 1.55;
+  color: var(--text-secondary);
+  max-width: 58ch;
+}
+
+/* ===== THE THREE POINTS =====
+   Shown together rather than behind a disclosure: three columns fit the
+   whole argument in one pass, which is what collapsing them was trying to
+   achieve. A list, because these are parallel items, not a sequence.
+
+   Four named rows - title, body, diagram, caption - which each column
+   then borrows with subgrid. That is what keeps the three diagrams on one
+   line: the titles wrap to different depths at different widths, and any
+   fixed height reserved for them is wrong at some viewport. Subgrid has
+   the grid work it out instead of guessing. */
+.problem-points {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: auto auto auto auto;
+  gap: var(--s-6);
+  list-style: none;
+  margin: 0;
+  padding: var(--s-6) 0 0 0;
+  border-top: 1px solid var(--line);
+}
+
+/* A rule down the left of each column rather than a card: the section
+   already sits on black, and a hairline is enough to separate three
+   things that belong together.
+
+   Each column borrows the parent's four rows rather than defining its
+   own, so every band lines up across all three. */
+.problem-point {
+  display: grid;
+  grid-row: span 4;
+  grid-template-rows: subgrid;
+  row-gap: 0;
+  padding-left: var(--s-5);
+  border-left: 1px solid var(--line);
+}
+
+.problem-point-title {
+  font-family: var(--font-display);
+  font-weight: var(--weight-display);
+  font-size: var(--t-h4);
+  line-height: 1.2;
+  letter-spacing: var(--track-heading);
+  text-transform: uppercase;
+  color: var(--text-primary);
+  margin-bottom: var(--s-3);
+}
+
+.problem-point-body {
+  font-size: var(--t-body-s);
+  line-height: 1.65;
+  color: var(--text-secondary);
+  margin-bottom: var(--s-5);
+}
+
+/* ===== FIGURES =====
+   All three diagrams share one height band. Without it each column ends
+   at a different place - a width-driven SVG takes its height from its
+   aspect ratio, and the waterfall alone came out four times taller than
+   the template row.
+
+   The figure borrows the last two rows, so the diagram and its caption
+   are each their own band across the section. */
+.problem-figure {
+  display: grid;
+  grid-row: span 2;
+  grid-template-rows: subgrid;
+  margin: 0;
+}
+
+.problem-figure-art {
+  height: 88px;
+  display: flex;
+  align-items: center;
+}
+
+.problem-figure-caption {
+  margin-top: var(--s-3);
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+/* Width-driven and allowed to shrink, unlike the other two diagrams: four
+   tiles at band height are wider than the column they sit in, so these
+   divide the width instead and the band only caps their height. */
+.sameness-row {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+}
+
+.sameness-tile {
+  flex: 1 1 0;
+  min-width: 0;
+  width: auto;
+  height: auto;
+  max-height: 100%;
+  display: block;
+  color: var(--text-primary);
+}
+
+/* Full strength at the left, fading right, so the row reads as
+   "and on, and on" rather than as four equal items. */
+.sameness-tile:nth-child(1) { opacity: 0.42; }
+.sameness-tile:nth-child(2) { opacity: 0.31; }
+.sameness-tile:nth-child(3) { opacity: 0.21; }
+.sameness-tile:nth-child(4) { opacity: 0.12; }
+
+.sk-frame {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1;
+}
+
+.sk-block {
+  fill: currentColor;
+  opacity: 0.14;
+}
+
+/* The one slot in a template that is supposed to be yours, sitting in
+   the same place at the same size in every single one of them. */
+.sk-mark {
+  fill: var(--signal);
+  opacity: 0.9;
+}
+
+.sk-dim {
+  fill: currentColor;
+  opacity: 0.3;
+}
+
+/* Shared diagram vocabulary: hairline outlines, soft filled blocks.
+   Height-driven so every figure lands in the same band. */
+.diagram {
+  height: 100%;
+  width: auto;
+  max-width: 100%;
+  display: block;
+  color: var(--text-primary);
+}
+
+.dg-bar { fill: currentColor; }
+
+/* The point at which loading stops being loading and starts being loss. */
+.dg-bar-late { fill: var(--signal); }
+
+.dg-frame {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1;
+  opacity: 0.22;
+}
+
+.dg-dashed { stroke-dasharray: 4 3; }
+
+.dg-solid {
+  fill: currentColor;
+  opacity: 0.16;
+}
+
+.dg-dim {
+  fill: currentColor;
+  opacity: 0.3;
+}
+
+/* The lock is the whole argument of the third point, so it is the one
+   element in the figure that is not neutral. */
+.dg-shackle {
+  fill: none;
+  stroke: var(--signal);
+  stroke-width: 2;
+  opacity: 0.85;
+}
+
+.dg-body {
+  fill: var(--signal);
+  opacity: 0.85;
+}
+
+/* ===== THE TURN =====
+   The one place in the section that is not a complaint, so it is set as a
+   statement rather than a paragraph - and centred, which is the only
+   centred thing here. The section reads left-aligned all the way down and
+   then squares up for the answer. */
+.problem-turn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--s-2);
+  padding-top: var(--s-7);
+  border-top: 1px solid var(--line);
+}
+
+.problem-turn-line {
+  font-family: var(--font-display);
+  font-weight: var(--weight-display);
+  font-size: var(--t-h4);
+  line-height: 1.1;
+  letter-spacing: var(--track-heading);
+  text-transform: uppercase;
+  color: var(--text-primary);
+}
+
+.problem-turn-mark {
+  display: block;
+  width: 100%;
+  max-width: 460px;
+  margin: 0 auto;
+}
+
+/* Sized by width - the wordmark is ~19.3:1 and must never be given a
+   height. Sits between the two words, so it reads as the subject of the
+   sentence rather than as a logo dropped into a paragraph. */
+.problem-turn-wordmark {
+  display: block;
+  width: 100%;
+  height: auto;
+  color: var(--text-primary);
+}
+
+@media (max-width: 968px) {
+  .problem { padding: 5rem 2rem; }
+
+  /* Two across - three columns stop being readable well before the
+     viewport runs out. */
+  .problem-points {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--s-6) var(--s-5);
+  }
+
+  /* The third would otherwise sit alone on its own row with an empty
+     half beside it. Spanning the row fills it; the copy keeps its own
+     measure so the line length does not double. */
+  .problem-point:last-child { grid-column: 1 / -1; }
+  .problem-point:last-child .problem-point-body { max-width: 62ch; }
+  .problem-point:last-child .problem-figure { max-width: 340px; }
+}
+
+@media (max-width: 640px) {
+  .problem-points {
+    grid-template-columns: 1fr;
+    gap: var(--s-6);
+  }
+
+  .problem-figure-art { height: 76px; }
+}
+
+@media (max-width: 480px) {
+  .problem { padding: 4rem 1.2rem; }
+  .problem-point { padding-left: var(--s-4); }
+}

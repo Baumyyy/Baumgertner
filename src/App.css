@@ -60,29 +60,19 @@ body {
 }
 
 /* ===== SECTION MARKER =====
-   01 ———— WORK
+   [ WORK ]
 
    One definition for the whole site. Four near-duplicate copies used to
    live in Contact, Projects and WhatIDo; they drifted apart and produced
-   a visible misalignment between sections. */
+   a visible misalignment between sections.
+
+   The brackets are drawn as pseudo-elements rather than written into the
+   copy, so translators never have to carry punctuation and the marker
+   cannot end up with one bracket in one language. */
 .section-tag {
   display: flex;
   align-items: center;
-  gap: var(--s-4);
   margin-bottom: var(--s-5);
-}
-
-.tag-number {
-  font-family: var(--font-mono);
-  font-size: var(--t-label);
-  letter-spacing: var(--track-label);
-  color: var(--text-primary);
-}
-
-.tag-line {
-  width: 56px;
-  height: 1px;
-  background: var(--line-strong);
 }
 
 .tag-label {
@@ -90,6 +80,20 @@ body {
   font-size: var(--t-label);
   letter-spacing: var(--track-label);
   text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.tag-label::before {
+  content: '[';
+  margin-right: 0.55em;
+  color: var(--text-muted);
+}
+
+.tag-label::after {
+  content: ']';
+  /* The label is letterspaced, so the trailing space belongs to the last
+     letter - this pulls the closing bracket back to match the opening. */
+  margin-left: calc(0.55em - var(--track-label));
   color: var(--text-muted);
 }
 
@@ -209,7 +213,9 @@ body {
               transform var(--d-entrance) var(--ease);
 }
 
-.fade-in.visible {
+/* Set by useScrollAnimation as an attribute, not a class - see the note
+   there for why a class cannot survive a re-render on these elements. */
+.fade-in[data-visible] {
   opacity: 1;
   transform: translateY(0);
 }

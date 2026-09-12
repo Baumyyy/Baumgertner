@@ -10,6 +10,7 @@ import LoadingScreen from './components/LoadingScreen.jsx';
 import ErrorBoundary from './components/ErrorBoundary.jsx';
 import './App.css';
 
+const Problem      = lazy(() => import('./components/Problem'));
 const WhatIDo      = lazy(() => import('./components/WhatIDo'));
 const Projects     = lazy(() => import('./components/Projects'));
 const Testimonials = lazy(() => import('./components/Testimonials.jsx'));
@@ -38,6 +39,7 @@ function HomePage({ ready }) {
   return (
     <AuroraBackground>
       <Hero ready={ready} />
+      <Problem />
       <WhatIDo />
       <Projects />
       <Testimonials />
