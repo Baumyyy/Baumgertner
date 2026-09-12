@@ -10,17 +10,6 @@
   isolation: isolate;
 }
 
-/* The one section whose marker is red. Signal is otherwise reserved for
-   the primary call to action and for genuine state, and this is genuine
-   state - the label names what is wrong. Kept to the marker and the
-   diagrams rather than the headline, so it never competes with the red
-   CTA buttons for meaning. */
-.problem .tag-label,
-.problem .tag-label::before,
-.problem .tag-label::after {
-  color: var(--signal-text);
-}
-
 /* Claim across the full width, the three points as columns beneath it,
    the turn last. The hero above is centred and large, so this section
    changes register by going full-width and left-aligned rather than
@@ -48,15 +37,6 @@
 
 .problem-claim-line {
   display: block;
-}
-
-/* A red full stop closes the claim and each point. It is real punctuation
-   rather than an ornament, so it costs nothing structurally, and it is the
-   smallest accent that still registers at this size. */
-.problem-claim-line:last-child::after,
-.problem-point-title::after {
-  content: '.';
-  color: var(--signal-text);
 }
 
 .problem-lede {

@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback, lazy, Suspense } from 'react';
-import CustomCursor from './components/CustomCursor.jsx';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { LanguageProvider } from './LanguageContext';
 import { useLang } from './useLang';
@@ -11,6 +10,7 @@ import ErrorBoundary from './components/ErrorBoundary.jsx';
 import './App.css';
 
 const Problem      = lazy(() => import('./components/Problem'));
+const Services     = lazy(() => import('./components/Services'));
 const WhatIDo      = lazy(() => import('./components/WhatIDo'));
 const Projects     = lazy(() => import('./components/Projects'));
 const Testimonials = lazy(() => import('./components/Testimonials.jsx'));
@@ -40,6 +40,7 @@ function HomePage({ ready }) {
     <AuroraBackground>
       <Hero ready={ready} />
       <Problem />
+      <Services />
       <WhatIDo />
       <Projects />
       <Testimonials />
@@ -68,7 +69,6 @@ function App() {
     <BrowserRouter>
       <LanguageProvider>
         <a href="#home" className="skip-link">Skip to main content</a>
-        <CustomCursor />
         {loading && <LoadingScreen onFinished={handleLoadingFinished} />}
         <ErrorBoundary>
           <Suspense fallback={null}>

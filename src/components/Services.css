@@ -1,0 +1,189 @@
+.services {
+  padding: 6rem 4rem;
+  max-width: min(1900px, 96vw);
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
+}
+
+.services-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.services-claim {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-display);
+  font-weight: var(--weight-display);
+  font-size: min(4.6rem, 5.2vw);
+  line-height: 1.06;
+  letter-spacing: var(--track-display);
+  text-transform: uppercase;
+  color: var(--text-primary);
+  margin-bottom: var(--s-5);
+}
+
+.services-claim-line {
+  display: block;
+}
+
+.services-lede {
+  font-size: var(--t-body-l);
+  line-height: 1.55;
+  color: var(--text-secondary);
+  max-width: 56ch;
+  margin-bottom: var(--s-6);
+}
+
+/* ===== THE RANGE =====
+   Cut-corner cards on a three-wide grid. The chamfer is the same shape
+   the buttons use, so the geometry of the identity carries through to the
+   surfaces rather than living only on the controls.
+
+   clip-path clips a border along with everything else, so an outlined
+   chamfered card cannot simply be clipped - the line would vanish on the
+   two cut edges. The card's background IS the outline, and a ::before
+   inset by 1px supplies the fill. Both share the shape, so the hairline
+   follows the chamfer the whole way round. */
+.svc-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: auto auto auto;
+  gap: var(--s-4);
+  list-style: none;
+  margin: 0 0 var(--s-7) 0;
+  padding: 0;
+}
+
+.svc-card {
+  --cut: 16px;
+  display: grid;
+  grid-row: span 3;
+  grid-template-rows: subgrid;
+  row-gap: 0;
+  position: relative;
+  isolation: isolate;
+  padding: var(--s-5);
+  background: var(--line);
+  clip-path: polygon(
+    var(--cut) 0,
+    100% 0,
+    100% calc(100% - var(--cut)),
+    calc(100% - var(--cut)) 100%,
+    0 100%,
+    0 var(--cut)
+  );
+}
+
+/* The outline is the card's own background, so brightening it on hover
+   lights the whole chamfered edge at once. No glow and no colour shift -
+   a coloured halo is the thing this design system exists to avoid. */
+.svc-card {
+  transition: background var(--d-standard) var(--ease),
+              transform var(--d-standard) var(--ease);
+}
+
+.svc-card:hover {
+  background: var(--line-strong);
+  transform: translateY(-2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .svc-card,
+  .svc-card:hover {
+    transition: none;
+    transform: none;
+  }
+}
+
+.svc-card::before {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  z-index: -1;
+  background: var(--surface-1);
+  clip-path: polygon(
+    calc(var(--cut) - 1px) 0,
+    100% 0,
+    100% calc(100% - var(--cut) + 1px),
+    calc(100% - var(--cut) + 1px) 100%,
+    0 100%,
+    0 calc(var(--cut) - 1px)
+  );
+}
+
+.svc-icon {
+  width: 24px;
+  height: 24px;
+  display: block;
+  margin-bottom: var(--s-4);
+}
+
+/* Two tones by one rule: the structure is white, and exactly one element
+   is red - always the part that carries the meaning. Red never outlines
+   the whole shape, which would make it decoration instead of a mark. */
+.ic-base { stroke: var(--text-primary); }
+.ic-accent { stroke: var(--signal-text); }
+
+.svc-name {
+  font-family: var(--font-display);
+  font-weight: var(--weight-display);
+  font-size: var(--t-h4);
+  line-height: 1.2;
+  letter-spacing: var(--track-heading);
+  text-transform: uppercase;
+  color: var(--text-primary);
+  margin-bottom: var(--s-2);
+}
+
+.svc-line {
+  font-size: var(--t-body-s);
+  line-height: 1.55;
+  color: var(--text-secondary);
+}
+
+/* ===== CLOSE ===== */
+.services-close {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-5);
+}
+
+.services-proof {
+  font-family: var(--font-display);
+  font-weight: var(--weight-display);
+  font-size: var(--t-h4);
+  line-height: 1.2;
+  letter-spacing: var(--track-heading);
+  text-transform: uppercase;
+  color: var(--text-primary);
+  max-width: 34ch;
+}
+
+@media (max-width: 968px) {
+  .services { padding: 4.5rem 2rem; }
+  .svc-grid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: none;
+  }
+  .svc-card { grid-row: auto; display: flex; flex-direction: column; }
+}
+
+@media (max-width: 560px) {
+  .svc-grid { grid-template-columns: 1fr; }
+
+  .services-close {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .services-close .btn-primary { width: 100%; }
+}
+
+@media (max-width: 480px) {
+  .services { padding: 3.5rem 1.2rem; }
+}

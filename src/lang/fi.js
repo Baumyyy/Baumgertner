@@ -37,6 +37,27 @@ var fi = {
   problem_turn_pre: 'Siksi',
   problem_turn_post: 'syntyi',
 
+  // Services
+  services_tag: 'Palvelut',
+  services_claim1: 'Logosta',
+  services_claim2: 'palvelimeen',
+  services_lede: 'Kuusi asiaa, yksi tekijä. Yksi brief, yksi yhteyshenkilö, eikä mitään katoa tekijöiden väliin.',
+
+  services_1_title: 'Verkkosivut',
+  services_1_body: 'Suunniteltu ja rakennettu alusta asti sen ympärille mitä oikeasti teet.',
+  services_2_title: 'Brändi',
+  services_2_body: 'Logo, värit ja typografia jotka pitävät yhdessä kaikkialla missä niitä käytät.',
+  services_3_title: 'Suorituskyky',
+  services_3_body: 'Kevyet sivut jotka aukeavat siinä hetkessä kun niitä painetaan, ei odottelun jälkeen.',
+  services_4_title: 'Hakukonenäkyvyys',
+  services_4_body: 'Rakennettu niin että sinua etsivät myös löytävät sinut.',
+  services_5_title: 'Julkaisu',
+  services_5_body: 'Etsin sinulle sopivan palvelimen, asennan sivuston sille ja vien sen julki omalla verkkotunnuksellasi.',
+  services_6_title: 'Projektinhallinta',
+  services_6_body: 'Yksi yhteyshenkilö, selkeä suunnitelma, eikä arvailua siitä missä mennään.',
+
+  services_proof: 'Jokainen näistä on käytössä tällä sivulla juuri nyt.',
+  services_cta: 'Aloitetaan projekti',
   // WhatIDo
   whatido_tag: 'Taidot',
   whatido_title1: 'Minun',

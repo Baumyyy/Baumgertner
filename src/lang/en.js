@@ -37,6 +37,27 @@ var en = {
   problem_turn_pre: 'That is why',
   problem_turn_post: 'was born',
 
+  // Services
+  services_tag: 'Services',
+  services_claim1: 'From the logo',
+  services_claim2: 'to the server',
+  services_lede: 'Six things, one person. One brief, one point of contact, and nothing lost between people who never speak.',
+
+  services_1_title: 'Websites',
+  services_1_body: 'Designed and built from scratch around what you actually do.',
+  services_2_title: 'Branding',
+  services_2_body: 'A logo, colours and type that hold together everywhere you use them.',
+  services_3_title: 'Performance',
+  services_3_body: 'Light pages that open the moment someone taps them, not after a wait.',
+  services_4_title: 'SEO',
+  services_4_body: 'Built so the people looking for what you do actually find you.',
+  services_5_title: 'Launch',
+  services_5_body: 'I find you the right hosting, set the site up on it and take it live on your own domain.',
+  services_6_title: 'Project management',
+  services_6_body: 'One point of contact, a clear plan, and no guessing where things stand.',
+
+  services_proof: 'Every one of these is running on this page right now.',
+  services_cta: 'Start a project',
   // WhatIDo
   whatido_tag: 'Skills',
   whatido_title1: 'My',

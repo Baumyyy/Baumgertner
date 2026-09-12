@@ -75,12 +75,15 @@ body {
   margin-bottom: var(--s-5);
 }
 
+/* Red across the site, not just where it names something negative. It
+   gives every section one point of colour, which is what keeps a
+   black-and-white page from reading as monotone. */
 .tag-label {
   font-family: var(--font-mono);
   font-size: var(--t-label);
   letter-spacing: var(--track-label);
   text-transform: uppercase;
-  color: var(--text-muted);
+  color: var(--signal-text);
 }
 
 .tag-label::before {
@@ -95,6 +98,15 @@ body {
      letter - this pulls the closing bracket back to match the opening. */
   margin-left: calc(0.55em - var(--track-label));
   color: var(--text-muted);
+}
+
+/* A red full stop, opted into per heading. Real punctuation rather than
+   an ornament, so it costs nothing structurally, and it is the smallest
+   accent that still registers at display sizes. Deliberately not applied
+   to every heading on the site - it marks the ones that are statements. */
+.stop::after {
+  content: '.';
+  color: var(--signal-text);
 }
 
 /* ===== BUTTONS =====

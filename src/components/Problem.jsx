@@ -96,7 +96,7 @@ const Problem = () => {
 
           <h2 className="problem-claim fade-in stagger-1">
             <span className="problem-claim-line">{t.problem_claim1}</span>
-            <span className="problem-claim-line">{t.problem_claim2}</span>
+            <span className="problem-claim-line stop">{t.problem_claim2}</span>
           </h2>
 
           <p className="problem-lede fade-in stagger-2">{t.problem_lede}</p>
@@ -107,7 +107,7 @@ const Problem = () => {
         <ul className="problem-points">
           {points.map((p, i) => (
             <li className={`problem-point fade-in stagger-${i + 1}`} key={p.title}>
-              <h3 className="problem-point-title">{p.title}</h3>
+              <h3 className="problem-point-title stop">{p.title}</h3>
               <p className="problem-point-body">{p.body}</p>
               <figure className="problem-figure">
                 <div className="problem-figure-art" aria-hidden="true">{p.figure}</div>
