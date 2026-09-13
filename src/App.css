@@ -317,3 +317,69 @@ body {
 .error-boundary-btn:hover {
   border-color: var(--text-primary);
 }
+
+/* ===== DIAGRAMS =====
+   Shared by the problem section and the approach answers: hairline
+   outlines and soft filled blocks in currentColor, with the signal red
+   reserved for the one element that carries the point. Lives here rather
+   than in either section so the two cannot drift apart. */
+.diagram {
+  height: 100%;
+  width: auto;
+  max-width: 100%;
+  display: block;
+  color: var(--text-primary);
+}
+
+.dg-frame {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1;
+  opacity: 0.22;
+}
+
+.dg-dashed { stroke-dasharray: 4 3; }
+
+.dg-solid {
+  fill: currentColor;
+  opacity: 0.16;
+}
+
+.dg-dim {
+  fill: currentColor;
+  opacity: 0.3;
+}
+
+/* Nodes and connectors, for the figures that read as a flow rather than
+   a picture. The highlighted node is outlined rather than filled solid:
+   at this size a solid red block loses the shape that makes it a node. */
+.dg-node {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1;
+  opacity: 0.3;
+}
+
+.dg-node-fill {
+  fill: currentColor;
+  opacity: 0.12;
+}
+
+.dg-node-on {
+  fill: var(--signal);
+  fill-opacity: 0.16;
+  stroke: var(--signal);
+  stroke-width: 1.4;
+}
+
+.dg-link {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1;
+  opacity: 0.24;
+}
+
+.dg-mark {
+  fill: var(--signal);
+  opacity: 0.9;
+}

@@ -304,9 +304,27 @@
 
 /* Close under the question rather than a size below it: these are
    answers people actually read, not captions. */
+/* Answer on the left, figure on the right, and the figure is capped
+   rather than fluid: these are diagrams, not illustrations, and past a
+   certain size they stop reading as a note beside the words. */
+.ap-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 260px);
+  gap: var(--s-7);
+  align-items: center;
+  padding-bottom: var(--s-5);
+}
+
+.ap-figure {
+  margin: 0;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
 .ap-a {
   margin: 0;
-  padding-bottom: var(--s-5);
   font-size: var(--t-body);
   line-height: 1.7;
   color: var(--text-secondary);
@@ -324,6 +342,15 @@
 
 @media (max-width: 968px) {
   .about { padding: 4.5rem 2rem; }
+
+  /* The figure goes under the answer rather than beside it, and moves to
+     the left edge so it lines up with the text it belongs to. */
+  .ap-body {
+    grid-template-columns: 1fr;
+    gap: var(--s-5);
+  }
+
+  .ap-figure { justify-content: flex-start; }
 
   /* The wide gap is there to keep the centred lede from running into
      the text column beside the portrait. Once the body stacks there is

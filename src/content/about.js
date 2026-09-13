@@ -18,10 +18,10 @@ export const about = {
 
   socials: [
     {
-      id: 'email',
-      label: 'Email',
-      handle: email,
-      href: 'mailto:' + email,
+      id: 'linkedin',
+      label: 'LinkedIn',
+      handle: 'Anthony Baumgertner',
+      href: 'https://www.linkedin.com/in/anthony-baumgertner-65548742a/',
     },
     {
       id: 'github',
@@ -30,16 +30,16 @@ export const about = {
       href: 'https://github.com/baumyyy',
     },
     {
-      id: 'linkedin',
-      label: 'LinkedIn',
-      handle: 'Anthony Baumgertner',
-      href: 'https://www.linkedin.com/in/anthony-baumgertner-65548742a/',
-    },
-    {
       id: 'instagram',
       label: 'Instagram',
       handle: '@baumgertnerr',
       href: 'https://www.instagram.com/baumgertnerr/',
+    },
+    {
+      id: 'email',
+      label: 'Email',
+      handle: email,
+      href: 'mailto:' + email,
     },
   ],
 };

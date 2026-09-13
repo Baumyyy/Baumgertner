@@ -182,39 +182,10 @@
   opacity: 0.3;
 }
 
-/* Shared diagram vocabulary: hairline outlines, soft filled blocks.
-   Height-driven so every figure lands in the same band. */
-.diagram {
-  height: 100%;
-  width: auto;
-  max-width: 100%;
-  display: block;
-  color: var(--text-primary);
-}
-
 .dg-bar { fill: currentColor; }
 
 /* The point at which loading stops being loading and starts being loss. */
 .dg-bar-late { fill: var(--signal); }
-
-.dg-frame {
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1;
-  opacity: 0.22;
-}
-
-.dg-dashed { stroke-dasharray: 4 3; }
-
-.dg-solid {
-  fill: currentColor;
-  opacity: 0.16;
-}
-
-.dg-dim {
-  fill: currentColor;
-  opacity: 0.3;
-}
 
 /* The lock is the whole argument of the third point, so it is the one
    element in the figure that is not neutral. */
