@@ -1,110 +1,68 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import './Footer.css';
-import { useScrollAnimation } from '../hooks/useScrollAnimation';
-import { api } from '../api';
 import { useLang } from '../useLang';
-import { useContactPanel } from '../useContactPanel';
-import { HeartIcon } from './Icons';
+import { Wordmark } from './BrandMark';
+import { GithubIcon, LinkedinIcon, InstagramIcon, MailIcon } from './Icons';
+import { about } from '../content/about';
+
+// No band, no rules across the page, no surface of its own - the footer
+// sits on the same black as everything above it. What marks it as the
+// end is scale: a small mark, icons instead of words, and a short rule
+// over the copyright.
+var socialIcons = {
+  linkedin: LinkedinIcon,
+  github: GithubIcon,
+  instagram: InstagramIcon,
+  email: MailIcon,
+};
 
 var Footer = function() {
   var currentYear = new Date().getFullYear();
-  var sectionRef = useScrollAnimation();
-  var availableState = useState(true);
-  var available = availableState[0];
-  var setAvailable = availableState[1];
   var { t } = useLang();
-  var openContact = useContactPanel().open;
 
-  useEffect(function() {
-    api.getAvailability().then(function(data) {
-      setAvailable(data.available);
-    }).catch(function() {});
-  }, [setAvailable]);
-
-  var scrollTo = function(targetId) {
+  var toTop = function() {
     var container = document.querySelector('.aurora-container');
-    if (targetId === 'home') {
-      if (container) container.scrollTo({ top: 0, behavior: 'smooth' });
-    } else {
-      var element = document.getElementById(targetId);
-      if (element && container) {
-        var elementTop = element.offsetTop - 60;
-        container.scrollTo({ top: elementTop, behavior: 'smooth' });
-      }
-    }
+    if (container) container.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
-    <footer className="footer" ref={sectionRef}>
-      <div className="footer-glow"></div>
+    <footer className="footer">
+      <div className="footer-inner">
+        <div className="ft-row">
+          <button type="button" className="ft-brand" onClick={toTop}>
+            <span className="sr-only">Baumgertner</span>
+            <Wordmark className="ft-wordmark" decorative />
+          </button>
 
-      <div className="footer-content">
-        <div className="footer-top fade-in stagger-1">
-          <div className="footer-brand">
-            <div className="footer-brand-row">
-              <h2 className="footer-name">&lt;Baumgertner/&gt;</h2>
-            </div>
-            <p className="footer-tagline">{t.footer_tagline}</p>
-            <div className="footer-location">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                <circle cx="12" cy="10" r="3"></circle>
-              </svg>
-              <span>{t.location_value}</span>
-            </div>
-          </div>
+          <ul className="ft-socials">
+            {about.socials.map(function(social) {
+              var Icon = socialIcons[social.id];
+              var external = social.href.indexOf('http') === 0;
+              return (
+                <li key={social.id}>
+                  <a
+                    className="ft-icon"
+                    href={social.href}
+                    target={external ? '_blank' : undefined}
+                    rel={external ? 'noopener noreferrer' : undefined}
+                  >
+                    {Icon ? <Icon /> : null}
+                    {/* The icon carries no name of its own. */}
+                    <span className="sr-only">{social.label}</span>
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
 
-          <div className="footer-links-grid">
-            <div className="footer-links-col">
-              <h4 className="footer-links-title">{t.footer_navigate}</h4>
-              <button className="footer-link footer-nav-btn" onClick={function() { scrollTo('home'); }}>{t.nav_home}</button>
-              <button className="footer-link footer-nav-btn" onClick={function() { scrollTo('projects'); }}>{t.nav_projects}</button>
-              <button className="footer-link footer-nav-btn" onClick={openContact}>{t.nav_contact}</button>
-            </div>
-
-            <div className="footer-links-col">
-              <h4 className="footer-links-title">{t.footer_connect}</h4>
-              <a className="footer-link" href="https://github.com/baumyyy" target="_blank" rel="noopener noreferrer">
-                GitHub
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
-              </a>
-              <a className="footer-link" href="https://www.linkedin.com/in/anthony-baumgertner-65548742a/" target="_blank" rel="noopener noreferrer">
-                LinkedIn
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
-              </a>
-              <a className="footer-link" href="https://www.instagram.com/baumgertnerr/" target="_blank" rel="noopener noreferrer">
-                Instagram
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
-              </a>
-            </div>
-
-            <div className="footer-links-col">
-              <h4 className="footer-links-title">{t.footer_status}</h4>
-              <div className="footer-status">
-                <span className={'footer-status-dot' + (available ? '' : ' footer-status-busy')}></span>
-                <span style={available ? {} : {color: 'rgba(255, 100, 100, 0.8)'}}>{available ? t.footer_available : t.footer_busy}</span>
-              </div>
-              <p className="footer-status-detail" style={available ? {} : {color: 'rgba(255, 100, 100, 0.5)'}}>{available ? t.footer_available_desc : t.footer_busy_desc}</p>
-            </div>
+          <div className="ft-legal">
+            <Link className="ft-link" to="/privacy">{t.footer_privacy}</Link>
+            <Link className="ft-link" to="/terms">{t.footer_terms}</Link>
           </div>
         </div>
 
-        <div className="footer-divider"></div>
-
-        <div className="footer-bottom fade-in stagger-2">
-          <p className="footer-copyright">&copy; {currentYear} Anthony Baumgertner</p>
-          <p className="footer-credit">
-            Built with
-            <HeartIcon className="footer-heart" />
-            by
-            <button className="footer-signature" onClick={function() { scrollTo('home'); }}>&lt;Baumgertner/&gt;</button>
-          </p>
-          <div className="footer-legal-links">
-            <Link to="/privacy" className="footer-link footer-privacy-link">{t.footer_privacy}</Link>
-            <Link to="/terms" className="footer-link footer-privacy-link">{t.footer_terms}</Link>
-          </div>
-        </div>
+        <p className="ft-copy">&copy; {currentYear} Anthony Baumgertner</p>
       </div>
     </footer>
   );

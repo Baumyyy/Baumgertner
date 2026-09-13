@@ -180,13 +180,6 @@ var Admin = function() {
     });
   };
 
-  var toggleAvailability = function() {
-    fetchAuth(API_URL + '/availability', {
-      method: 'PUT',
-      body: JSON.stringify({ available: !stats.available })
-    }).then(function(r) { if (alertIfFailed(r)) return; loadStats(); });
-  };
-
   var deleteProject = function(id) {
     setConfirmDeleteProjectId(id);
   };
@@ -323,10 +316,6 @@ var Admin = function() {
                 <h1 className="admin-title">Dashboard</h1>
                 {authStatus && <p className="welcome-text">Welcome back, {authStatus.username} 👋</p>}
               </div>
-              <button className={'dash-status-pill' + (stats.available ? '' : ' pill-busy')} onClick={toggleAvailability}>
-                <span className={'dash-status-dot' + (stats.available ? '' : ' dot-busy')}></span>
-                <span>{stats.available ? 'Available for work' : 'Currently busy'}</span>
-              </button>
             </div>
 
             <div className="dash-kpi-grid">

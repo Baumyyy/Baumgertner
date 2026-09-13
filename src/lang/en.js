@@ -1,6 +1,5 @@
 var en = {
   // Nav
-  nav_home: 'Home',
   nav_projects: 'Projects',
   nav_about: 'About',
   nav_contact: 'Contact',
@@ -130,14 +129,6 @@ var en = {
   privacy_link_inline: 'Privacy Policy',
 
   // Footer
-  footer_tagline: 'Building digital experiences with passion and precision',
-  footer_navigate: 'Navigate',
-  footer_connect: 'Connect',
-  footer_status: 'Status',
-  footer_available: 'Available for projects',
-  footer_busy: 'Currently busy',
-  footer_available_desc: 'Open to freelance, collaboration and full-time opportunities',
-  footer_busy_desc: 'Not taking new projects at the moment',
   footer_privacy: 'Privacy Policy',
   footer_terms: 'Terms of Use',
 

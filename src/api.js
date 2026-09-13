@@ -8,35 +8,17 @@ var parseResponse = async function(res) {
   return data;
 };
 
+// One call, because the public site now reads everything else from the
+// repo: the work list is content in src/content, the profile text is in
+// the language files, and the availability line is gone. Sending a
+// message is the only thing left that needs the server.
 export var api = {
-  getProfile: async function() {
-    var res = await fetch(API_URL + '/profile');
-    return parseResponse(res);
-  },
-
-  getProjects: async function() {
-    var res = await fetch(API_URL + '/projects');
-    return parseResponse(res);
-  },
-
-  getAvailability: async function() {
-    var res = await fetch(API_URL + '/availability');
-    return parseResponse(res);
-  },
-
   sendMessage: async function(data) {
     var res = await fetch(API_URL + '/messages', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     });
-    return parseResponse(res);
-  },
-
-  uploadPublicImage: async function(file) {
-    var formData = new FormData();
-    formData.append('image', file);
-    var res = await fetch(API_URL + '/upload-public', { method: 'POST', body: formData });
     return parseResponse(res);
   },
 };

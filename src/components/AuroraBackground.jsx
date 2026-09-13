@@ -17,6 +17,10 @@ import { MailIcon } from './Icons';
 // the call to action. Two floating controls in the same corner is one
 // more than the corner can carry, and getting back to the top is
 // something the browser and the navbar already do.
+// Roughly the height of the footer band, so the button steps aside for
+// the whole of it rather than only once it has already overlapped.
+const FOOTER_CLEARANCE = 160;
+
 const AuroraBackground = ({ children }) => {
   const containerRef = useRef(null);
   const [showCta, setShowCta] = useState(false);
@@ -26,7 +30,14 @@ const AuroraBackground = ({ children }) => {
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
-    const onScroll = () => setShowCta(container.scrollTop > 400);
+    // Hidden again at the very bottom: down there it covers the footer's
+    // own links, and the footer already offers the same thing in text.
+    const onScroll = () => {
+      const past = container.scrollTop > 400;
+      const atEnd = container.scrollTop + container.clientHeight
+        > container.scrollHeight - FOOTER_CLEARANCE;
+      setShowCta(past && !atEnd);
+    };
     container.addEventListener('scroll', onScroll);
     return () => container.removeEventListener('scroll', onScroll);
   }, []);

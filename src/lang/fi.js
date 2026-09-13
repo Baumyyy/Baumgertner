@@ -1,6 +1,5 @@
 var fi = {
   // Nav
-  nav_home: 'Etusivu',
   nav_projects: 'Projektit',
   nav_about: 'Minusta',
   nav_contact: 'Yhteystiedot',
@@ -130,14 +129,6 @@ var fi = {
   privacy_link_inline: 'tietosuojaselosteen',
 
   // Footer
-  footer_tagline: 'Rakennan digitaalisia kokemuksia intohimolla ja tarkkuudella',
-  footer_navigate: 'Navigoi',
-  footer_connect: 'Yhdistä',
-  footer_status: 'Tila',
-  footer_available: 'Vapaa projekteille',
-  footer_busy: 'Kiireinen tällä hetkellä',
-  footer_available_desc: 'Avoin freelance-, yhteistyö- ja kokoaikaisille mahdollisuuksille',
-  footer_busy_desc: 'En ota uusia projekteja tällä hetkellä',
   footer_privacy: 'Tietosuojaseloste',
   footer_terms: 'Käyttöehdot',
 

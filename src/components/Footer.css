@@ -1,243 +1,147 @@
+/* Same canvas as the rest of the page: no surface, no rule across the
+   top. What ends the page here is scale rather than contrast - a small
+   mark, icons where the sections use words, and one short rule over the
+   copyright. */
 .footer {
   position: relative;
-  padding: 0 6rem;
-  overflow: hidden;
-  isolation: isolate;
+  z-index: 1;
+  margin-top: var(--s-9);
+  padding: var(--s-7) 4rem var(--s-6);
 }
 
-.footer-glow {
-  width: 100%;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.15) 20%, rgba(0, 255, 136, 0.3) 50%, rgba(0, 255, 136, 0.15) 80%, transparent);
-  margin-bottom: 4rem;
+.footer-inner {
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
-/* Flat below ~1918px viewport (same 1400px as before), then grows with the
-   viewport instead of leaving a fixed, ever-larger empty margin on very
-   wide screens. */
-.footer-content { max-width: min(1800px, 96vw); margin: 0 auto; }
-
-.footer-top { display: flex; justify-content: space-between; gap: 4rem; margin-bottom: 3rem; }
-.footer-brand { flex: 0 0 auto; max-width: 350px; }
-
-.footer-brand-row {
-  display: flex;
+/* Three tracks rather than space-between: with equal outer tracks the
+   icons sit on the true centre of the page, not on whatever is left
+   between two blocks of different width. */
+.ft-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  gap: 0.8rem;
-  margin-bottom: 0.8rem;
+  gap: var(--s-5);
 }
 
-.footer-logo-img {
-  height: 36px;
-  width: auto;
-  object-fit: contain;
-  mix-blend-mode: screen;
-}
-
-.footer-name {
-  font-size: 1.8rem;
-  font-family: var(--font-display);
-  letter-spacing: 0.04em;
-  margin-bottom: 0;
-  background: linear-gradient(135deg, #ffffff 30%, #00ff88 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  filter: drop-shadow(0 0 20px rgba(0, 255, 136, 0.15));
-}
-
-.footer-tagline {
-  font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.3);
-  font-family: 'Inter', sans-serif;
-  font-weight: 300;
-  line-height: 1.6;
-  margin-bottom: 1.2rem;
-}
-
-.footer-location {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: rgba(0, 255, 136, 0.4);
-  font-size: 0.8rem;
-  font-family: 'Inter', sans-serif;
-  font-weight: 400;
-}
-
-.footer-links-grid { display: flex; gap: 5rem; }
-.footer-links-col { display: flex; flex-direction: column; gap: 0.6rem; }
-
-.footer-links-title {
-  font-size: 0.7rem;
-  color: rgba(255, 255, 255, 0.15);
-  font-family: 'Inter', sans-serif;
-  font-weight: 600;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  margin-bottom: 0.5rem;
-}
-
-.footer-nav-btn {
+.ft-brand {
+  justify-self: start;
+  display: block;
+  padding: 0;
   background: none;
   border: none;
-  padding: 0;
+  border-radius: 0;
   cursor: pointer;
-  font-family: inherit;
-  text-align: left;
+  color: var(--text-secondary);
+  transition: color var(--d-micro) var(--ease);
 }
 
-.footer-link {
-  color: rgba(255, 255, 255, 0.4);
-  text-decoration: none;
-  font-size: 0.9rem;
-  font-family: 'Inter', sans-serif;
-  font-weight: 400;
-  transition: all 0.3s ease;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  width: fit-content;
+.ft-brand:hover,
+.ft-brand:focus-visible {
+  color: var(--text-primary);
 }
 
-.footer-link:visited { color: rgba(255, 255, 255, 0.4); }
-.footer-link:hover { color: #00ff88; transform: translateX(3px); }
-.footer-link svg { opacity: 0; transition: all 0.3s ease; transform: translateX(-4px); }
-.footer-link:hover svg { opacity: 1; transform: translateX(0); }
+/* Sized by width - the wordmark is ~19.3:1 and must never be given a
+   height. */
+.ft-wordmark {
+  display: block;
+  width: 180px;
+  height: auto;
+  color: currentColor;
+}
 
-.footer-status {
+.ft-socials {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  font-size: 0.9rem;
-  color: rgba(0, 255, 136, 0.6);
-  font-family: 'Inter', sans-serif;
-  font-weight: 400;
-}
-
-.footer-status-dot {
-  width: 6px;
-  height: 6px;
-  background: #00ff88;
-  border-radius: 50%;
-  box-shadow: 0 0 10px rgba(0, 255, 136, 0.7);
-  animation: footerDotPulse 2s ease-in-out infinite;
-}
-
-@keyframes footerDotPulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
-}
-
-.footer-status-detail {
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.2);
-  font-family: 'Inter', sans-serif;
-  font-weight: 300;
-  line-height: 1.5;
-  margin-top: 0.2rem;
-  max-width: 200px;
-}
-
-.footer-divider {
-  width: 100%;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
-}
-
-.footer-bottom {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1.5rem 0 2rem 0;
-}
-
-.footer-copyright {
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.2);
-  font-family: 'Inter', sans-serif;
-}
-
-.footer-credit {
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.2);
-  font-family: 'Inter', sans-serif;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35em;
-}
-
-.footer-heart {
-  color: #00ff88;
-  font-size: 0.85em;
-}
-
-.footer-signature {
-  background: none;
-  border: none;
+  gap: var(--s-5);
+  list-style: none;
+  margin: 0;
   padding: 0;
-  cursor: pointer;
-  font-size: 0.75rem;
-  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
-  font-weight: 600;
-  background-image: linear-gradient(135deg, #ffffff 20%, #00ff88 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  transition: filter 0.25s ease;
 }
 
-.footer-signature:hover {
-  filter: brightness(1.3) drop-shadow(0 0 6px rgba(0, 255, 136, 0.5));
-}
-
-.footer-legal-links {
+.ft-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 1rem;
+  font-size: 18px;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color var(--d-micro) var(--ease);
 }
 
-.footer-privacy-link {
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.25);
+.ft-icon:hover,
+.ft-icon:focus-visible {
+  color: var(--text-primary);
 }
 
-.footer-privacy-link:hover {
-  color: #00ff88;
+.ft-legal {
+  justify-self: end;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-5);
 }
 
-.footer-status-dot.footer-status-busy {
-  background: #ff6464;
-  box-shadow: 0 0 10px rgba(255, 100, 100, 0.6);
-  animation: footerBusyPulse 1.5s ease-in-out infinite;
+.ft-link {
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color var(--d-micro) var(--ease);
 }
 
-@keyframes footerBusyPulse {
-  0%, 100% { box-shadow: 0 0 8px rgba(255, 100, 100, 0.4); transform: scale(1); }
-  50% { box-shadow: 0 0 20px rgba(255, 100, 100, 0.9); transform: scale(1.3); }
+.ft-link:hover,
+.ft-link:focus-visible {
+  color: var(--text-primary);
 }
 
-.footer-status-busy ~ span { color: rgba(255, 100, 100, 0.8); }
+/* The one rule in the footer, and it is short and centred rather than
+   drawn across the page - a full width line here would read as another
+   section boundary. */
+.ft-copy {
+  position: relative;
+  margin-top: var(--s-6);
+  padding-top: var(--s-5);
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--text-muted);
+  opacity: 0.7;
+}
 
-@media (max-width: 1200px) { .footer { padding: 0 4rem; } .footer-links-grid { gap: 3rem; } }
+.ft-copy::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(280px, 60%);
+  height: 1px;
+  background: var(--line);
+}
 
 @media (max-width: 968px) {
-  .footer { padding: 0 2rem; }
-  .footer-top { flex-direction: column; gap: 2rem; }
-  .footer-links-grid { gap: 2rem; }
-  .footer-brand { max-width: 100%; }
+  .footer { padding: var(--s-6) 2rem var(--s-5); }
+}
+
+@media (max-width: 700px) {
+  /* Three tracks stop fitting long before the content does. Stacked and
+     centred keeps the icons on the axis they were already on. */
+  .ft-row {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: var(--s-5);
+  }
+
+  .ft-brand,
+  .ft-legal {
+    justify-self: center;
+  }
 }
 
 @media (max-width: 480px) {
-  .footer { padding: 0 1.2rem; }
-  .footer-glow { margin-bottom: 2rem; }
-  .footer-name { font-size: 1.3rem; }
-  .footer-tagline { font-size: 0.8rem; }
-  .footer-links-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
-  .footer-links-col:last-child { grid-column: 1 / -1; }
-  .footer-links-title { font-size: 0.65rem; }
-  .footer-link { font-size: 0.8rem; }
-  .footer-bottom { flex-direction: column; gap: 0.3rem; text-align: center; padding: 1.2rem 0 1.5rem 0; }
-  .footer-copyright, .footer-credit { font-size: 0.7rem; }
+  .footer { padding: var(--s-6) 1.2rem var(--s-5); }
 }
