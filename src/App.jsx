@@ -12,7 +12,7 @@ import './App.css';
 const Problem      = lazy(() => import('./components/Problem'));
 const Services     = lazy(() => import('./components/Services'));
 const Projects     = lazy(() => import('./components/Projects'));
-const Testimonials = lazy(() => import('./components/Testimonials.jsx'));
+const About        = lazy(() => import('./components/About'));
 const Contact      = lazy(() => import('./components/Contact'));
 const Footer       = lazy(() => import('./components/Footer'));
 const Admin        = lazy(() => import('./components/Admin'));
@@ -41,7 +41,7 @@ function HomePage({ ready }) {
       <Problem />
       <Services />
       <Projects />
-      <Testimonials />
+      <About />
       <Contact />
       <Footer />
     </AuroraBackground>

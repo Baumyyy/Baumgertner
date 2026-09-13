@@ -1,0 +1,355 @@
+.about {
+  padding: 6rem 4rem;
+  max-width: min(1900px, 96vw);
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
+}
+
+.about-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* The same head as the work section: tag, claim and lede centred as one
+   stack, with the content below it left aligned. A step smaller than
+   that one, because this claim is twice the string - at a matching size
+   it reads as the louder of the two. */
+.about .section-tag {
+  justify-content: center;
+}
+
+.about-claim {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  font-family: var(--font-display);
+  font-weight: var(--weight-display);
+  font-size: min(4.4rem, 4.8vw);
+  line-height: 1.06;
+  letter-spacing: var(--track-display);
+  text-transform: uppercase;
+  color: var(--text-primary);
+  margin-bottom: var(--s-4);
+}
+
+.about-claim-line { display: block; }
+
+/* The same lede as the work section, down to the measure. A 44ch lede
+   centred in this container happened to start at almost exactly the x
+   the text column below it starts at, which is what made the two read
+   as one running paragraph. At 52ch the two left edges are nowhere near
+   each other. */
+.about-lede {
+  font-size: var(--t-body-l);
+  line-height: 1.55;
+  color: var(--text-secondary);
+  max-width: 52ch;
+  margin: 0 auto var(--s-9);
+  text-align: center;
+  text-wrap: balance;
+}
+
+/* ===== THE PERSON =====
+   A fixed column for the portrait and the rest for the words. The
+   portrait column is capped rather than fluid: a face that grows with the
+   viewport ends up larger than the name it belongs to. */
+.about-body {
+  display: grid;
+  grid-template-columns: minmax(0, 360px) minmax(0, 1fr);
+  gap: var(--s-8);
+  align-items: start;
+}
+
+/* The chamfer cuts the border away with everything else, so the outline
+   cannot be a border: the element's background IS the line and the
+   ::before, inset by a pixel, supplies the fill. Both carry the same
+   shape, so the rule follows the cut corners the whole way round. */
+.about-portrait {
+  --cut: 22px;
+  position: relative;
+  isolation: isolate;
+  margin: 0;
+  aspect-ratio: 4 / 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: var(--line-strong);
+  clip-path: polygon(
+    var(--cut) 0,
+    100% 0,
+    100% calc(100% - var(--cut)),
+    calc(100% - var(--cut)) 100%,
+    0 100%,
+    0 var(--cut)
+  );
+}
+
+.about-portrait::before {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  z-index: -1;
+  background: var(--surface-1);
+  clip-path: polygon(
+    calc(var(--cut) - 1px) 0,
+    100% 0,
+    100% calc(100% - var(--cut) + 1px),
+    calc(100% - var(--cut) + 1px) 100%,
+    0 100%,
+    0 calc(var(--cut) - 1px)
+  );
+}
+
+.about-portrait-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+}
+
+/* Stands in for the photograph without pretending to be one. */
+.about-portrait-mark {
+  width: 76px;
+  height: auto;
+  color: var(--text-primary);
+  opacity: 0.1;
+}
+
+.about-para {
+  font-size: var(--t-body);
+  line-height: 1.75;
+  color: var(--text-secondary);
+  max-width: 62ch;
+}
+
+.about-para + .about-para {
+  margin-top: var(--s-4);
+}
+
+.about-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s-5);
+  margin: var(--s-7) 0 0;
+  padding-top: var(--s-5);
+  border-top: 1px solid var(--line);
+}
+
+/* The micro-labels carry the signal colour, the same as the section tag
+   and the approach label above them. One typographic role, one colour:
+   mono, uppercase and tiny means "this names the thing below it". */
+.about-fact dt,
+.about-social-label {
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--signal-text);
+  margin-bottom: var(--s-2);
+}
+
+.about-fact dd {
+  margin: 0;
+  font-size: var(--t-body-s);
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.about-fact-sub {
+  display: block;
+  margin-top: var(--s-1);
+  color: var(--text-muted);
+}
+
+.about-social {
+  margin-top: var(--s-6);
+}
+
+.about-social-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-3) var(--s-6);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* The icons are 1em and take currentColor, so they dim and lift with the
+   text rather than needing a rule of their own. */
+.about-social-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-size: var(--t-body-s);
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color var(--d-micro) var(--ease);
+}
+
+.about-social-link:hover,
+.about-social-link:focus-visible {
+  color: var(--text-primary);
+}
+
+/* ===== THE APPROACH =====
+   Deliberately not a second section. No display claim, no rule across
+   the top, no gap wide enough to read as a break - a quiet label and a
+   list, so the questions land as the rest of this introduction rather
+   than as a new one. */
+.about-approach {
+  margin-top: var(--s-8);
+}
+
+.about-approach-label {
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--signal-text);
+  margin-bottom: var(--s-4);
+}
+
+.ap-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--line);
+}
+
+.ap-item {
+  border-bottom: 1px solid var(--line);
+}
+
+.ap-heading {
+  font: inherit;
+  margin: 0;
+}
+
+.ap-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-5);
+  width: 100%;
+  padding: var(--s-4) 0;
+  background: none;
+  border: none;
+  border-radius: 0;
+  text-align: left;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: color var(--d-micro) var(--ease);
+}
+
+.ap-trigger:hover,
+.ap-item.is-open .ap-trigger {
+  color: var(--text-primary);
+}
+
+/* Set as a question, in the voice someone would ask it - not as a
+   heading shouted in the display face. */
+.ap-q {
+  font-size: var(--t-body-l);
+  line-height: 1.4;
+  color: inherit;
+}
+
+/* A plus that becomes a minus, drawn from two hairlines so it matches
+   the rules above and below it exactly. Red rather than inherited: red
+   already means "this opens" on this site - it is the colour of the chip
+   that follows the pointer across the project list. */
+.ap-sign {
+  position: relative;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.ap-sign::before,
+.ap-sign::after {
+  content: '';
+  position: absolute;
+  inset: 50% 0 auto 0;
+  height: 1px;
+  background: var(--signal-text);
+  transition: transform var(--d-standard) var(--ease);
+}
+
+.ap-sign::after { transform: rotate(90deg); }
+.ap-item.is-open .ap-sign::after { transform: rotate(0deg); }
+
+.ap-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  visibility: hidden;
+  transition: grid-template-rows var(--d-standard) var(--ease),
+              visibility 0s linear var(--d-standard);
+}
+
+.ap-item.is-open .ap-panel {
+  grid-template-rows: 1fr;
+  visibility: visible;
+  transition: grid-template-rows var(--d-standard) var(--ease),
+              visibility 0s linear 0s;
+}
+
+.ap-panel-inner {
+  overflow: hidden;
+}
+
+/* Close under the question rather than a size below it: these are
+   answers people actually read, not captions. */
+.ap-a {
+  margin: 0;
+  padding-bottom: var(--s-5);
+  font-size: var(--t-body);
+  line-height: 1.7;
+  color: var(--text-secondary);
+  max-width: 70ch;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ap-panel,
+  .ap-item.is-open .ap-panel,
+  .ap-sign::before,
+  .ap-sign::after {
+    transition: none;
+  }
+}
+
+@media (max-width: 968px) {
+  .about { padding: 4.5rem 2rem; }
+
+  /* The wide gap is there to keep the centred lede from running into
+     the text column beside the portrait. Once the body stacks there is
+     no column to run into, and 96px of nothing on a phone is just a
+     hole in the page. */
+  .about-lede { margin-bottom: var(--s-7); }
+
+  /* The portrait stops earning a column of its own once the text beside
+     it is down to a narrow measure. */
+  .about-body {
+    grid-template-columns: 1fr;
+    gap: var(--s-6);
+  }
+
+  .about-portrait {
+    max-width: 300px;
+  }
+}
+
+@media (max-width: 620px) {
+  .about-facts {
+    grid-template-columns: 1fr;
+    gap: var(--s-5);
+  }
+}
+
+@media (max-width: 480px) {
+  .about { padding: 3.5rem 1.2rem; }
+}

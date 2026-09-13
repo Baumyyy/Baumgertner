@@ -2,7 +2,7 @@ var fi = {
   // Nav
   nav_home: 'Etusivu',
   nav_projects: 'Projektit',
-  nav_testimonials: 'Suositukset',
+  nav_about: 'Minusta',
   nav_contact: 'Yhteystiedot',
 
   // Hero
@@ -73,31 +73,33 @@ var fi = {
   projects_outro2: 'voi olla sinun',
   projects_cta: 'Aloitetaan projekti',
 
+  // About
+  about_tag: 'Minusta',
+  about_claim1: 'Mies kaiken',
+  about_claim2: 'näkemäsi takana',
+  about_lede: 'Yksi ihminen suunnittelee, rakentaa ja vie julki. Ei ole ketään kenelle sinut siirrettäisiin.',
+  about_body1: 'Olen Anthony Baumgertner. Suunnittelen ja rakennan verkkosivuja yrityksille joiden nykyinen sivu ei enää kerro niistä mitään totta — yleensä template joka oli aikanaan ihan hyvä eikä ole ollut vuosiin.',
+  about_body2: 'Tämä sivu on todiste siitä. Mitään siitä ei ole ostettu teemana, ja jokainen sen väite on tarkistettavissa siitä millä sitä juuri luet.',
+  about_education_label: 'Koulutus',
+  about_education_degree: 'Ohjelmistotekniikka ja projektinhallinta',
+  about_education_school: 'Turun ammattikorkeakoulu',
+  about_location_label: 'Sijainti',
+  about_social_label: 'Muualla',
 
-  //Testimonials
+  about_approach_tag: 'Toimintatapa',
+  about_q1: 'Miltä työprosessi näyttää?',
+  about_a1: 'Aloitetaan sopimalla mitä sivun pitää tehdä ja kenelle. Sitten suunnittelen sen, näytän edistymisen matkan varrella enkä vasta lopussa, ja rakennan kun muoto on kohdallaan. Ei työpajoja eikä vaiheita jotka on keksitty täyttämään suunnitelmaa. Pidetään yhteyttä sähköpostilla, puhelimella, Teamsissa tai Slackissa — sillä mikä sinulla on jo käytössä.',
+  about_q2: 'Mitä tapahtuu kun lähetän lomakkeen?',
+  about_a2: 'Luen sen ja vastaan parin päivän sisällä. Jos homma vaikuttaa sopivalta, käydään lyhyt puhelu jossa naulataan laajuus, aikataulu ja budjetti. Sen jälkeen saat tarjouksen.',
+  about_q3: 'Kauanko projekti yleensä kestää?',
+  about_a3: 'Useimmat neljästä kahdeksaan viikkoa, laajuudesta riippuen. Pieni sivusto etenee nopeammin, ja räätälöity työ sen takana vie pidempään. Aikataulu sovitaan ennen aloitusta eikä huomata puolessa välissä.',
+  about_q4: 'Teetkö työn yksin vai tiimin kanssa?',
+  about_a4: 'Aina yksin. Ilme, muotoilu, koodi ja julkaisu ovat samat kädet, joten sinun ja sivun oikeasti rakentavan ihmisen välissä ei ole asiakkuuspäällikköä.',
+  about_q5: 'Entä jos minulla on jo sivut?',
+  about_a5: 'Useimmilla on, ja yleensä kyse on templatesta joka on ikääntynyt. Sen korvaaminen on työ. Paikkaaminen on syy siihen missä ollaan.',
+  about_q6: 'Entä webhotelli?',
+  about_a6: 'Kilpailutan vaihtoehdot puolestasi sen sijaan että valitsisin yhden oletuksena, ja vien valmiin sivuston palvelimelle kun se on valmis.',
 
-  testimonials_tag: 'Suositukset',
-  testimonials_title1: 'Mitä ihmiset',
-  testimonials_title2: 'sanovat',
-  testimonials_subtitle: 'Palautetta ihmisiltä joiden kanssa olen työskennellyt',
-
-  //Testimonials submit
-  testimonials_leave: 'Jätä suositus',
-  testimonials_thanks: 'Kiitos!',
-  testimonials_review: 'Suosituksesi tarkistetaan ja julkaistaan pian!',
-  testimonials_form_name: 'Nimi',
-  testimonials_form_role: 'Rooli',
-  testimonials_form_company: 'Yritys',
-  testimonials_form_message: 'Palautteesi',
-  testimonials_form_rating: 'Arvosana',
-  testimonials_sending: 'Lähetetään...',
-  testimonials_submit: 'Lähetä suositus',
-  testimonials_error_send: 'Lähetys epäonnistui. Yritä uudelleen.',
-  testimonials_error_upload: 'Kuvan lataus epäonnistui. Yritä uudelleen.',
-  testimonials_form_photo: 'Profiilikuva (valinnainen)',
-  testimonials_empty: 'Ei vielä suosituksia',
-  testimonials_role_placeholder: 'esim. toimitusjohtaja, kehittäjä',
-  testimonials_uploading: 'Ladataan...',
 
   // Contact
   contact_tag: 'Yhteystiedot',
@@ -125,9 +127,6 @@ var fi = {
   privacy_notice_post: ' mukaisesti.',
   privacy_link_inline: 'tietosuojaselosteen',
   terms_link_inline: 'käyttöehtojemme',
-  testimonial_notice_pre: 'Lähettämällä hyväksyt, että sisältö voidaan julkaista sivustolla',
-  testimonial_notice_mid: 'ja',
-  testimonial_notice_post: ' mukaisesti.',
 
   // Footer
   footer_tagline: 'Rakennan digitaalisia kokemuksia intohimolla ja tarkkuudella',
@@ -140,7 +139,6 @@ var fi = {
   footer_busy_desc: 'En ota uusia projekteja tällä hetkellä',
   footer_privacy: 'Tietosuojaseloste',
   footer_terms: 'Käyttöehdot',
-
 
   //Error 404
   notfound_text: 'Sivua jota etsit ei löydy tai se on siirretty.',

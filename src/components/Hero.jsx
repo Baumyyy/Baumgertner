@@ -94,8 +94,8 @@ const Hero = ({ ready }) => {
             <a href="#projects" className={`nav-link ${activeSection === 'projects' ? 'active' : ''}`} onClick={(e) => { handleClick(e, 'projects'); setMenuOpen(false); }}>
               {t.nav_projects}
             </a>
-            <a href="#testimonials" className={`nav-link ${activeSection === 'testimonials' ? 'active' : ''}`} onClick={(e) => { handleClick(e, 'testimonials'); setMenuOpen(false); }}>
-              {t.nav_testimonials}
+            <a href="#about" className={`nav-link ${activeSection === 'about' ? 'active' : ''}`} onClick={(e) => { handleClick(e, 'about'); setMenuOpen(false); }}>
+              {t.nav_about}
             </a>
             <a href="#contact" className={`nav-link ${activeSection === 'contact' ? 'active' : ''}`} onClick={(e) => { handleClick(e, 'contact'); setMenuOpen(false); }}>
               {t.nav_contact}

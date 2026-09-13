@@ -2,7 +2,7 @@ var en = {
   // Nav
   nav_home: 'Home',
   nav_projects: 'Projects',
-  nav_testimonials: 'Testimonials',
+  nav_about: 'About',
   nav_contact: 'Contact',
 
   // Hero
@@ -73,30 +73,33 @@ var en = {
   projects_outro2: 'could be yours',
   projects_cta: 'Start a project',
 
+  // About
+  about_tag: 'About',
+  about_claim1: 'The man behind',
+  about_claim2: 'everything you see',
+  about_lede: 'One person designs it, builds it and takes it live. There is nobody to hand you off to.',
+  about_body1: 'I am Anthony Baumgertner. I design and build websites for companies whose current site no longer says anything true about them — usually a template that was fine once and has not been fine for years.',
+  about_body2: 'This site is the proof. None of it was bought as a theme, and every claim it makes can be checked against the thing you are reading it on.',
+  about_education_label: 'Education',
+  about_education_degree: 'Software engineering and project management',
+  about_education_school: 'Turku University of Applied Sciences',
+  about_location_label: 'Based in',
+  about_social_label: 'Elsewhere',
 
-  // Testimonials
-  testimonials_tag: 'Testimonials',
-  testimonials_title1: 'What People',
-  testimonials_title2: 'Say',
-  testimonials_subtitle: 'Feedback from people I have worked with',
+  about_approach_tag: 'The approach',
+  about_q1: 'What does your process look like?',
+  about_a1: 'We start by agreeing what the site has to do and who it is for. Then I design it, show you progress while it is being made rather than at the end, and build it once the shape is right. No workshops, and no phases invented to fill out a plan. We keep in touch by email, phone, Teams or Slack — whichever you already use.',
+  about_q2: 'What happens after I send the form?',
+  about_a2: 'I read it and come back to you within a few days. If it looks like a fit, we take a short call to pin down scope, timeline and budget, and you get a proposal after that.',
+  about_q3: 'How long do projects usually take?',
+  about_a3: 'Most take four to eight weeks, depending on scope. A small site moves faster; anything with custom work behind it takes longer. The timeline is agreed before we start rather than discovered halfway through.',
+  about_q4: 'Do you work solo or with a team?',
+  about_a4: 'Solo, every time. Brand, design, code and launch are the same pair of hands, so there is no account manager standing between you and the person actually building the thing.',
+  about_q5: 'What if I already have a site?',
+  about_a5: 'Most companies do, and it is usually a template that has aged. Replacing it is the work. Patching it is how it got there.',
+  about_q6: 'What about hosting?',
+  about_a6: 'I compare the options for you instead of defaulting to one, and I put the finished site on the server when it is ready.',
 
-  //Testimonials submit
-testimonials_leave: 'Leave a Testimonial',
-  testimonials_thanks: 'Thank You!',
-  testimonials_review: 'Your testimonial will be reviewed and published soon!',
-  testimonials_form_name: 'Name',
-  testimonials_form_role: 'Role',
-  testimonials_form_company: 'Company',
-  testimonials_form_message: 'Your Feedback',
-  testimonials_form_rating: 'Rating',
-  testimonials_sending: 'Sending...',
-  testimonials_submit: 'Submit Testimonial',
-  testimonials_error_send: 'Failed to submit. Please try again.',
-  testimonials_error_upload: 'Photo upload failed. Please try again.',
-  testimonials_form_photo: 'Profile Photo (optional)',
-  testimonials_empty: 'No testimonials yet',
-  testimonials_role_placeholder: 'e.g. CEO, Developer',
-  testimonials_uploading: 'Uploading...',
 
   // Contact
   contact_tag: 'Contact',
@@ -124,9 +127,6 @@ testimonials_leave: 'Leave a Testimonial',
   privacy_notice_post: '.',
   privacy_link_inline: 'Privacy Policy',
   terms_link_inline: 'Terms of Use',
-  testimonial_notice_pre: 'By submitting, you agree this content may be published on the site, in line with our',
-  testimonial_notice_mid: 'and',
-  testimonial_notice_post: '.',
 
   // Footer
   footer_tagline: 'Building digital experiences with passion and precision',
@@ -139,7 +139,6 @@ testimonials_leave: 'Leave a Testimonial',
   footer_busy_desc: 'Not taking new projects at the moment',
   footer_privacy: 'Privacy Policy',
   footer_terms: 'Terms of Use',
-
 
   //Error 404
   notfound_text: 'The page you are looking for does not exist or has been moved.',
