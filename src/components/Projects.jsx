@@ -1,214 +1,225 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import './Projects.css';
 import { useScrollAnimation } from '../hooks/useScrollAnimation';
-import { api } from '../api';
 import { useLang } from '../useLang';
 import { GithubIcon } from './Icons';
+import { Wordmark } from './BrandMark';
+import WorkCarousel from './WorkCarousel';
+import { work } from '../content/work';
 
-var Projects = function() {
-  var state = useState(null);
-  var hoveredCard = state[0];
-  var setHoveredCard = state[1];
-  var projectsState = useState([]);
-  var projects = projectsState[0];
-  var setProjects = projectsState[1];
-  var loadingState = useState(true);
-  var loading = loadingState[0];
-  var setLoading = loadingState[1];
-  var errorState = useState(false);
-  var loadError = errorState[0];
-  var setLoadError = errorState[1];
-  var activeSlideState = useState(0);
-  var activeSlide = activeSlideState[0];
-  var setActiveSlide = activeSlideState[1];
-  var sectionRef = useScrollAnimation();
-  var gridRef = useRef(null);
-  var { t } = useLang();
+// How far from the pointer the notification sits.
+var HINT_X = 20;
 
-  useEffect(function() {
-    api.getProjects().then(function(data) {
-      setProjects(data);
-      setLoading(false);
-    }).catch(function() {
-      setLoading(false);
-      setLoadError(true);
-    });
-  }, [setProjects, setLoading, setLoadError]);
+var WorkRow = function({ project, isOpen, onToggle, statusLabel, t, index }) {
+  var itemRef = useRef(null);
+  var hintRef = useRef(null);
+  var panelId = 'wk-panel-' + project.slug;
+  var buttonId = 'wk-button-' + project.slug;
 
-  useEffect(function() {
-    var grid = gridRef.current;
-    if (!grid || projects.length === 0) return;
-    var raf = null;
-    var handleScroll = function() {
-      if (raf) return;
-      raf = requestAnimationFrame(function() {
-        raf = null;
-        var cards = grid.children;
-        if (!cards.length) return;
-        var center = grid.scrollLeft + grid.clientWidth / 2;
-        var closest = 0;
-        var minDist = Infinity;
-        for (var i = 0; i < cards.length; i++) {
-          var cardCenter = cards[i].offsetLeft + cards[i].clientWidth / 2;
-          var dist = Math.abs(cardCenter - center);
-          if (dist < minDist) { minDist = dist; closest = i; }
-        }
-        setActiveSlide(closest);
-      });
-    };
-    grid.addEventListener('scroll', handleScroll, { passive: true });
-    return function() {
-      grid.removeEventListener('scroll', handleScroll);
-      if (raf) cancelAnimationFrame(raf);
-    };
-  }, [projects.length, setActiveSlide]);
+  // Written straight onto the node instead of through state. A pointermove
+  // that went through React would re-render the whole list on every sample
+  // the mouse produces - dozens a second, for a label that is not part of
+  // the component's data at all.
+  var place = function(e) {
+    if (e.pointerType === 'touch') return;
+    var hint = hintRef.current;
+    var item = itemRef.current;
+    if (!hint || !item) return;
 
-  var scrollToSlide = function(index) {
-    var grid = gridRef.current;
-    if (!grid || !grid.children[index]) return;
-    var card = grid.children[index];
-    grid.scrollTo({ left: card.offsetLeft - (grid.clientWidth - card.clientWidth) / 2, behavior: 'smooth' });
+    var r = item.getBoundingClientRect();
+    var x = e.clientX - r.left;
+    var w = hint.offsetWidth;
+
+    // Flips to the left of the pointer near the right edge, so the
+    // notification never hangs off the end of the row.
+    var left = x + HINT_X + w > r.width ? x - HINT_X - w : x + HINT_X;
+
+    hint.style.setProperty('--hx', left + 'px');
+    hint.style.setProperty('--hy', (e.clientY - r.top) + 'px');
   };
 
-  var renderProject = function(project, index) {
-    var isComingSoon = project.status === 'Coming Soon';
-    var hasLink = project.link !== null && project.link !== '';
-    var hasImage = project.image !== null && project.image !== '';
+  return (
+    <li
+      className={'wk-item' + (isOpen ? ' is-open' : '') + ' fade-in stagger-' + ((index % 3) + 1)}
+      ref={itemRef}
+    >
+      <h3 className="wk-heading">
+        <button
+          type="button"
+          id={buttonId}
+          className="wk-trigger"
+          aria-expanded={isOpen}
+          aria-controls={panelId}
+          onClick={onToggle}
+          onPointerEnter={place}
+          onPointerMove={place}
+        >
+          {/* A real mark where there is one, the name set as type where
+              there is not. The name is always present as text for screen
+              readers either way. */}
+          <span className="wk-brand">
+            <span className="sr-only">{project.name}</span>
+            {project.logo === 'wordmark' ? (
+              <Wordmark className="wk-wordmark" decorative />
+            ) : project.logo ? (
+              <img className="wk-logo-img" src={project.logo} alt="" />
+            ) : (
+              <span className="wk-name" aria-hidden="true">{project.name}</span>
+            )}
+          </span>
 
-    return (
+          <span className={'wk-status is-' + project.status}>
+            <span className="wk-status-dot" aria-hidden="true"></span>
+            {statusLabel[project.status] || project.status}
+          </span>
+
+          <span className="wk-sign" aria-hidden="true"></span>
+        </button>
+      </h3>
+
+      {/* Rides the pointer across a closed row. It sits outside the button
+          so the button stays a plain grid of three things, and it is inert
+          so it can never eat the click it is inviting. */}
+      <span className="wk-cursor-hint" ref={hintRef} aria-hidden="true">
+        <span className="wk-cursor-chip">{t.projects_open_hint}</span>
+      </span>
+
+      {/* Collapsed to zero height and hidden from assistive technology,
+          but not display:none - that cannot be transitioned, and the
+          panel has to animate open. */}
       <div
-        key={project.id || index}
-        className={'project-card' + (hoveredCard === index ? ' hovered' : '') + (hoveredCard !== null && hoveredCard !== index ? ' dimmed' : '') + (isComingSoon ? ' coming-soon' : '')}
-        onMouseEnter={function() { setHoveredCard(index); }}
-        onMouseLeave={function() { setHoveredCard(null); }}
-        onClick={hasLink ? function() { window.open(project.link, '_blank', 'noopener,noreferrer'); } : undefined}
-        onKeyDown={hasLink ? function(e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); window.open(project.link, '_blank', 'noopener,noreferrer'); } } : undefined}
-        role={hasLink ? 'button' : undefined}
-        tabIndex={hasLink ? 0 : undefined}
-        aria-label={hasLink ? t.projects_view + ': ' + project.title : undefined}
-        style={hasLink ? {cursor: 'pointer'} : {}}
+        className="wk-panel"
+        id={panelId}
+        role="region"
+        aria-labelledby={buttonId}
       >
-        <div className="project-preview">
-          {hasImage ? (
-            <div
-              className="preview-image-wrapper"
-              role="img"
-              aria-label={project.title}
-              style={{
-                backgroundImage: 'url(' + project.image + ')',
-                backgroundColor: '#000',
-                backgroundRepeat: 'no-repeat',
-                backgroundSize: (project.image_zoom || 100) + '%',
-                backgroundPosition: project.image_position || '50% 50%'
-              }}
-            />
-          ) : (
-            <div className="preview-placeholder">
-              <div className="preview-dots">
-                <span className="preview-dot"></span>
-                <span className="preview-dot"></span>
-                <span className="preview-dot"></span>
-              </div>
-              <div className="preview-content">
-                {isComingSoon ? (
-                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="12" cy="12" r="10"/>
-                    <path d="M12 6v6l4 2"/>
-                  </svg>
-                ) : (
-                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="16 18 22 12 16 6"/>
-                    <polyline points="8 6 2 12 8 18"/>
-                  </svg>
-                )}
-              </div>
+        <div className="wk-panel-inner">
+          <WorkCarousel shots={project.shots} active={isOpen} label={project.name} />
+
+          {/* The information bar under the images: what it is on the left,
+              why it matters in the middle, the hard facts on the right. */}
+          <div className="wk-meta">
+            <div className="wk-meta-main">
+              <p className="wk-title">{project.title}</p>
+              <ul className="wk-tags">
+                {project.tags.map(function(tag) {
+                  return <li className="wk-tag" key={tag}>{tag}</li>;
+                })}
+              </ul>
             </div>
-          )}
-          <div className="project-status">
-            <span className={'status-dot' + (isComingSoon ? ' status-dot-pending' : '')}></span>
-            <span>{project.status}</span>
+
+            <div className="wk-meta-body">
+              {project.body.map(function(para) {
+                return <p key={para.slice(0, 32)}>{para}</p>;
+              })}
+
+              {project.feedback && (
+                <figure className="wk-feedback">
+                  <blockquote>{project.feedback.quote}</blockquote>
+                  <figcaption>
+                    {project.feedback.name}
+                    {project.feedback.role ? ' · ' + project.feedback.role : ''}
+                  </figcaption>
+                </figure>
+              )}
+            </div>
+
+            <dl className="wk-facts">
+              <div className="wk-fact">
+                <dt>{t.projects_industry}</dt>
+                <dd>{project.industry}</dd>
+              </div>
+              {project.site && (
+                <div className="wk-fact">
+                  <dt>{t.projects_live_site}</dt>
+                  <dd>
+                    <a href={project.site.href} target="_blank" rel="noopener noreferrer">
+                      {project.site.label}
+                    </a>
+                  </dd>
+                </div>
+              )}
+            </dl>
           </div>
         </div>
-        <div className="project-info">
-          <h3 className="project-name">{project.title}</h3>
-          <p className="project-desc">{project.description}</p>
-          {project.tags && project.tags.length > 0 && (
-            <div className="project-tags">
-              {project.tags.map(function(tag, i) {
-                return <span className="project-tag" key={i}>{tag}</span>;
-              })}
-            </div>
-          )}
-          {hasLink && (
-            <div className="project-link-row">
-              <span>{t.projects_view}</span>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M7 17L17 7M17 7H7M17 7V17"/>
-              </svg>
-            </div>
-          )}
-        </div>
-        <div className="project-border-glow"></div>
       </div>
-    );
+    </li>
+  );
+};
+
+var Projects = function() {
+  var sectionRef = useScrollAnimation();
+  var { t } = useLang();
+
+  // One open at a time: opening a project closes the one before it, so
+  // the section stays roughly the same height however many projects the
+  // list grows to.
+  var openState = useState(null);
+  var open = openState[0];
+  var setOpen = openState[1];
+
+  var statusLabel = {
+    live: t.projects_status_live,
+    progress: t.projects_status_progress,
   };
 
   return (
     <section id="projects" className="projects" ref={sectionRef}>
-      <div className="projects-content">
-        <div className="projects-header fade-in stagger-1">
-          <div className="section-tag">
-            <span className="tag-label">{t.projects_tag}</span>
-          </div>
-          <h2 className="projects-title">
-            {t.projects_title1} <span className="title-accent">{t.projects_title2}</span>
-          </h2>
-          <p className="projects-subtitle">{t.projects_subtitle}</p>
+      <div className="projects-inner">
+        <div className="section-tag fade-in stagger-1">
+          <span className="tag-label">{t.projects_tag}</span>
         </div>
 
-        <div className="projects-grid fade-in stagger-2" ref={gridRef}>
-          {loading ? (
-            <p style={{color: 'rgba(255,255,255,0.3)', gridColumn: '1/-1', textAlign: 'center'}}>{t.projects_loading}</p>
-          ) : loadError ? (
-            <p style={{color: 'rgba(255,100,100,0.6)', gridColumn: '1/-1', textAlign: 'center'}}>{t.projects_error_load}</p>
-          ) : (
-            projects.map(function(project, index) {
-              return renderProject(project, index);
-            })
-          )}
-        </div>
+        <h2 className="projects-claim fade-in stagger-1">
+          <span className="projects-claim-line">{t.projects_claim1}</span>
+          <span className="projects-claim-line stop">{t.projects_claim2}</span>
+        </h2>
 
-        {!loading && !loadError && projects.length > 1 && (
-          <div className="projects-slider-dots" role="tablist" aria-label="Projects">
-            {projects.map(function(project, index) {
-              return (
-                <button
-                  key={project.id || index}
-                  type="button"
-                  className={'slider-dot' + (index === activeSlide ? ' active' : '')}
-                  onClick={function() { scrollToSlide(index); }}
-                  aria-label={'Go to project ' + (index + 1)}
-                  aria-selected={index === activeSlide}
-                  role="tab"
-                />
-              );
-            })}
+        <p className="projects-lede fade-in stagger-2">{t.projects_lede}</p>
+
+        <ul className="wk-list">
+          {work.map(function(project, i) {
+            return (
+              <WorkRow
+                key={project.slug}
+                project={project}
+                index={i}
+                isOpen={open === project.slug}
+                onToggle={function() {
+                  setOpen(open === project.slug ? null : project.slug);
+                }}
+                statusLabel={statusLabel}
+                t={t}
+              />
+            );
+          })}
+        </ul>
+
+        {/* The list ends on an invitation rather than a filler row: an
+            empty slot sitting among real work reads as a gap in it. Set
+            the way the problem section turns - the page reads left
+            aligned the whole way down, then squares up to the middle for
+            the one thing that is not a statement about the work. */}
+        <div className="projects-outro fade-in stagger-2">
+          <p className="projects-outro-claim">
+            <span className="projects-outro-line">{t.projects_outro1}</span>
+            <span className="projects-outro-line stop">{t.projects_outro2}</span>
+          </p>
+          <div className="projects-outro-actions">
+            <a
+              className="btn-secondary"
+              href="https://github.com/baumyyy"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <GithubIcon />
+              {t.projects_github}
+            </a>
+            <a className="btn-primary" href="#contact">
+              {t.projects_cta}
+              <span className="btn-arrow">→</span>
+            </a>
           </div>
-        )}
-
-        <div className="projects-cta fade-in stagger-3">
-          <a
-            className="projects-github-btn"
-            href="https://github.com/baumyyy"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <GithubIcon />
-            <span>{t.projects_github}</span>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M5 12H19M19 12L12 5M19 12L12 19"/>
-            </svg>
-          </a>
         </div>
       </div>
     </section>

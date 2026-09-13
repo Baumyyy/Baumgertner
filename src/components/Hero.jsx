@@ -91,9 +91,6 @@ const Hero = ({ ready }) => {
           </a>
 
           <div className={'nav-links' + (menuOpen ? ' nav-open' : '')}>
-            <a href="#whatido" className={`nav-link ${activeSection === 'whatido' ? 'active' : ''}`} onClick={(e) => { handleClick(e, 'whatido'); setMenuOpen(false); }}>
-              {t.nav_whatido}
-            </a>
             <a href="#projects" className={`nav-link ${activeSection === 'projects' ? 'active' : ''}`} onClick={(e) => { handleClick(e, 'projects'); setMenuOpen(false); }}>
               {t.nav_projects}
             </a>

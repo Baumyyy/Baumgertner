@@ -1,8 +1,5 @@
 .projects {
-  padding: 5rem 6rem;
-  /* Flat below ~1923px viewport (same 1500px as before), then grows with
-     the viewport instead of leaving a fixed, ever-larger empty margin on
-     very wide screens. */
+  padding: 6rem 4rem;
   max-width: min(1900px, 96vw);
   margin: 0 auto;
   position: relative;
@@ -10,285 +7,563 @@
   isolation: isolate;
 }
 
-.projects-content { position: relative; }
-.projects-header { margin-bottom: 4rem; }
-
-
-.projects-title {
-  text-align: center;
-  font-size: clamp(2.8rem, 5vw, 4.5rem);
-  color: #ffffff;
-  font-family: var(--font-display);
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  line-height: 1.05;
-  margin-bottom: 0.8rem;
+.projects-inner {
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
-.projects-title .title-accent {
-  background: linear-gradient(135deg, #ffffff 30%, #00ff88 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  filter: drop-shadow(0 0 30px rgba(0, 255, 136, 0.15));
-}
-
-.projects-subtitle {
-  text-align: center;
-  font-size: 0.95rem;
-  color: rgba(255, 255, 255, 0.3);
-  font-family: 'Inter', sans-serif;
-  font-weight: 300;
-}
-
-.projects-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.2rem;
-  margin-bottom: 3rem;
-}
-
-.project-card {
-  position: relative;
-  background: rgba(255, 255, 255, 0.026);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 20px;
-  overflow: hidden;
-  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-a.project-card { cursor: pointer; text-decoration: none; }
-
-.project-card:hover {
-  border-color: rgba(0, 255, 136, 0.12);
-  transform: translateY(-8px);
-  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), 0 0 30px rgba(0, 255, 136, 0.03);
-}
-
-.project-card.dimmed { filter: blur(1px) brightness(0.4); transform: scale(0.98); }
-
-.project-border-glow {
-  position: absolute;
-  top: -1px;
-  left: 20px;
-  width: 0;
-  height: 2px;
-  background: linear-gradient(90deg, #00ff88, #00bb66);
-  transition: width 0.5s ease;
-  border-radius: 2px;
-  box-shadow: 0 0 15px rgba(0, 255, 136, 0.4);
-  z-index: 2;
-}
-
-.project-card:hover .project-border-glow { width: calc(100% - 40px); }
-
-.project-card.coming-soon { border-style: dashed; border-color: rgba(255, 255, 255, 0.05); }
-.project-card.coming-soon:hover { border-color: rgba(0, 255, 136, 0.1); border-style: dashed; }
-
-.project-preview {
-  position: relative;
-  height: 200px;
-  background: linear-gradient(160deg, rgba(0, 255, 136, 0.02), rgba(0, 50, 100, 0.02));
-  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-  overflow: hidden;
-}
-
-.preview-placeholder { width: 100%; height: 100%; display: flex; flex-direction: column; }
-
-.preview-content {
-  flex: 1;
-  display: flex;
-  align-items: center;
+/* The section head is centred - tag, claim and lede as one stack - while
+   the list below it stays left aligned. The rows are a table of things;
+   the head is an announcement about them. */
+.projects .section-tag {
   justify-content: center;
-  color: rgba(0, 255, 136, 0.08);
-  transition: color 0.3s ease;
 }
 
-.project-card:hover .preview-content { color: rgba(0, 255, 136, 0.2); }
-
-.project-status {
-  position: absolute;
-  top: 14px;
-  right: 14px;
+.projects-claim {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.3rem 0.8rem;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(10px);
-  border-radius: 50px;
-  font-size: 0.6rem;
-  color: #00ff88;
-  font-family: 'Inter', sans-serif;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-/* Scoped to this section. Hero uses the same class name for its
-   availability dot, and because this file is a lazy chunk it loaded
-   later and silently overrode the hero's. Same collision class as the
-   duplicated .section-tag rules removed in the previous task. */
-.projects .status-dot { width: 5px; height: 5px; background: #00ff88; border-radius: 50%; box-shadow: 0 0 8px rgba(0, 255, 136, 0.7); animation: statusPulse 2s ease-in-out infinite; }
-.projects .status-dot-pending { background: rgba(255, 200, 50, 0.7); box-shadow: 0 0 8px rgba(255, 200, 50, 0.5); }
-@keyframes statusPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-.coming-soon .project-status { color: rgba(255, 200, 50, 0.7); }
-
-.project-info { padding: 1.5rem; }
-
-.project-name {
-  font-size: 1.3rem;
-  color: #ffffff;
+  text-align: center;
   font-family: var(--font-display);
-  letter-spacing: 0.04em;
+  font-weight: var(--weight-display);
+  /* A step under the problem section's claim. That one is the argument
+     the page is making and should be the loudest; this one only labels
+     the list under it. */
+  font-size: min(5.6rem, 6vw);
+  line-height: 1.06;
+  letter-spacing: var(--track-display);
   text-transform: uppercase;
-  margin-bottom: 0.5rem;
-  transition: all 0.3s ease;
+  color: var(--text-primary);
+  margin-bottom: var(--s-4);
 }
 
-.project-card:hover .project-name {
-  background: linear-gradient(135deg, #ffffff 30%, #00ff88 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+.projects-claim-line { display: block; }
+
+.projects-lede {
+  font-size: var(--t-body-l);
+  line-height: 1.55;
+  color: var(--text-secondary);
+  max-width: 52ch;
+  margin: 0 auto var(--s-7);
+  text-align: center;
+  text-wrap: balance;
 }
 
-.project-desc {
-  font-size: 0.82rem;
-  color: rgba(255, 255, 255, 0.3);
-  font-family: 'Inter', sans-serif;
-  font-weight: 300;
-  line-height: 1.6;
-  margin-bottom: 1.2rem;
+/* ===== THE LIST =====
+   A list rather than a grid of cards, and one row open at a time. Ten
+   projects take the same space as three: the section stops growing once
+   the rows are collapsed, which is the whole reason for the pattern. */
+.wk-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--line);
 }
 
-.project-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 1rem; }
-
-.project-tag {
-  padding: 0.25rem 0.7rem;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 50px;
-  font-size: 0.65rem;
-  color: rgba(255, 255, 255, 0.25);
-  font-family: 'Inter', sans-serif;
-  font-weight: 500;
-  transition: all 0.3s ease;
+.wk-item {
+  position: relative;
+  border-bottom: 1px solid var(--line);
 }
 
-.project-card:hover .project-tag {
-  border-color: rgba(0, 255, 136, 0.12);
-  color: rgba(0, 255, 136, 0.6);
-  background: rgba(0, 255, 136, 0.04);
+.wk-heading {
+  font: inherit;
+  margin: 0;
 }
 
-.project-link-row {
+.wk-trigger {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: var(--s-5);
+  width: 100%;
+  padding: var(--s-5) 0;
+  background: none;
+  border: none;
+  border-radius: 0;
+  text-align: left;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: color var(--d-micro) var(--ease);
+}
+
+.wk-trigger:hover,
+.wk-item.is-open .wk-trigger {
+  color: var(--text-primary);
+}
+
+/* Whatever identifies the project: our own wordmark, a client's logo, or
+   the name as type when neither exists yet. All three occupy the same
+   slot so the rows stay on one vertical line. */
+/* Tall enough for the largest the name ever gets (2.4rem x 1.1), so a row
+   carrying a mark and a row carrying type are the same height. Without it
+   the list steps 82/90/90 down the page. */
+.wk-brand {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  font-size: 0.8rem;
-  color: rgba(0, 255, 136, 0.35);
-  font-family: 'Inter', sans-serif;
-  font-weight: 500;
-  transition: all 0.3s ease;
+  min-height: 42px;
 }
 
-.project-link-row svg { transition: transform 0.3s ease; opacity: 0; }
-.project-card:hover .project-link-row { color: #00ff88; }
-.project-card:hover .project-link-row svg { opacity: 1; transform: translate(3px, -3px); }
+/* The three brands in this list are a hairline wordmark, a client logo
+   with an icon, and a name set as type. Matching their bounding boxes
+   would be wrong - they are matched by how heavy they look instead, so
+   the list reads as three equals rather than one shouting name.
+   Sized by width: the wordmark is ~19.3:1 and must never be given a
+   height. */
+.wk-wordmark {
+  width: 260px;
+  height: auto;
+  color: currentColor;
+}
 
-.projects-cta { display: flex; justify-content: center; }
+/* Client logos arrive in their own colours. The section is black and
+   white, so the mark is flattened to a pure white silhouette:
+   brightness(0) takes every channel to black and invert(1) takes it to
+   white, both leaving alpha alone - so transparent cut-outs inside the
+   mark survive as cut-outs. The opacity matches --text-secondary against
+   the canvas, so the logo dims and lifts with the rest of the row. */
+.wk-logo-img {
+  max-height: 34px;
+  width: auto;
+  display: block;
+  filter: brightness(0) invert(1);
+  opacity: 0.72;
+  transition: opacity var(--d-micro) var(--ease);
+}
 
-.projects-github-btn {
+.wk-trigger:hover .wk-logo-img,
+.wk-item.is-open .wk-logo-img {
+  opacity: 1;
+}
+
+.wk-name {
+  font-family: var(--font-display);
+  font-weight: var(--weight-display);
+  font-size: min(1.9rem, 2.4vw);
+  line-height: 1.1;
+  letter-spacing: var(--track-heading);
+  text-transform: uppercase;
+  color: inherit;
+}
+
+/* The notification rides the pointer across a closed row. Absolutely
+   positioned and inert: it costs the row no layout, so nothing shifts
+   when it appears and it can never swallow the click it is inviting. */
+.wk-cursor-hint {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 3;
+  pointer-events: none;
+  transform: translate3d(var(--hx, 0px), var(--hy, 0px), 0);
+  /* Only enough to smooth the pointer samples into a glide. Any longer
+     and the chip visibly lags behind the cursor. */
+  transition: transform 80ms linear;
+}
+
+.wk-cursor-chip {
+  --cut: 8px;
+  display: block;
+  padding: var(--s-2) var(--s-3);
+  background: var(--signal);
+  color: var(--signal-on);
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  white-space: nowrap;
+  clip-path: polygon(
+    var(--cut) 0,
+    100% 0,
+    100% calc(100% - var(--cut)),
+    calc(100% - var(--cut)) 100%,
+    0 100%,
+    0 var(--cut)
+  );
+  opacity: 0;
+  transform: translateY(-50%) scale(0.9);
+  transition: opacity var(--d-micro) var(--ease),
+              transform var(--d-micro) var(--ease);
+}
+
+/* No focus-visible twin: a keyboard has no pointer to sit next to, and
+   the plus and aria-expanded already say what the row does. */
+@media (hover: hover) {
+  .wk-item:not(.is-open):hover .wk-cursor-chip {
+    opacity: 1;
+    transform: translateY(-50%) scale(1);
+  }
+}
+
+.wk-status {
   display: inline-flex;
   align-items: center;
-  gap: 0.8rem;
-  padding: 1rem 1.5rem;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 50px;
-  color: rgba(255, 255, 255, 0.35);
-  font-size: 0.9rem;
-  font-family: 'Inter', sans-serif;
-  font-weight: 500;
-  text-decoration: none;
-  transition: all 0.3s ease;
+  gap: var(--s-2);
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--text-muted);
+  white-space: nowrap;
 }
 
-.projects-github-btn svg:first-child { font-size: 1.3rem; }
-.projects-github-btn svg:last-child { opacity: 0; transition: all 0.3s ease; transform: translateX(-5px); }
-.projects-github-btn:hover { border-color: rgba(0, 255, 136, 0.2); color: #00ff88; background: rgba(0, 255, 136, 0.04); transform: translateY(-2px); }
-.projects-github-btn:hover svg:last-child { opacity: 1; transform: translateX(0); }
+.wk-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: transparent;
+  border: 1px solid var(--line-strong);
+}
 
-.preview-image-wrapper { width: 100%; height: 200px; overflow: hidden; transition: transform 0.5s ease; }
-.project-card:hover .preview-image-wrapper { transform: scale(1.05); }
+/* Red only for live. A live indicator is the one place the signal colour
+   means exactly what it means everywhere else. */
+.wk-status.is-live .wk-status-dot {
+  background: var(--signal);
+  border-color: var(--signal);
+}
 
+/* A plus that becomes a minus, drawn from two hairlines so it matches the
+   rules above and below it exactly. */
+.wk-sign {
+  position: relative;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
 
-.projects-slider-dots {
-  display: none;
-  justify-content: center;
+.wk-sign::before,
+.wk-sign::after {
+  content: '';
+  position: absolute;
+  inset: 50% 0 auto 0;
+  height: 1px;
+  background: currentColor;
+  transition: transform var(--d-standard) var(--ease);
+}
+
+.wk-sign::after { transform: rotate(90deg); }
+.wk-item.is-open .wk-sign::after { transform: rotate(0deg); }
+
+/* 0fr to 1fr is what makes this animate: height:auto cannot be
+   transitioned, and a max-height guess either clips the panel or eases
+   toward a number the content never reaches. visibility keeps a closed
+   panel out of the accessibility tree and the tab order. */
+.wk-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  visibility: hidden;
+  transition: grid-template-rows var(--d-standard) var(--ease),
+              visibility 0s linear var(--d-standard);
+}
+
+.wk-item.is-open .wk-panel {
+  grid-template-rows: 1fr;
+  visibility: visible;
+  transition: grid-template-rows var(--d-standard) var(--ease),
+              visibility 0s linear 0s;
+}
+
+.wk-panel-inner {
+  overflow: hidden;
+}
+
+/* ===== THE STAGE =====
+   No frame and no background of its own: the shots are the frame. The
+   stage only clips, so the slides either side can sit in the margins. */
+.wk-stage {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: var(--s-5);
+}
+
+/* A short band rather than the 16:7 the real shots use. Two of three
+   projects have no screenshots yet, and a full-size empty frame is a
+   worse answer than a small one - it pushes the case study half a screen
+   down to say nothing. */
+.wk-stage-empty {
+  min-height: 150px;
+  display: flex;
   align-items: center;
-  gap: 0.45rem;
-  margin: -1.5rem 0 2.5rem;
+  justify-content: center;
+  background: var(--surface-1);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
 }
 
-.slider-dot {
+.wk-stage-mark {
+  width: 56px;
+  height: auto;
+  color: var(--text-primary);
+  opacity: 0.08;
+}
+
+/* 76% slides, so 12% of the stage shows on each side. The offset centres
+   whichever slide is active: 12% brings the first one to the middle, and
+   every step after that is one slide width. */
+.wk-track {
+  display: flex;
+  transform: translateX(calc(12% - var(--i, 0) * 76%));
+  transition: transform var(--d-entrance) var(--ease);
+  touch-action: pan-y;
+  cursor: grab;
+}
+
+.wk-track:active { cursor: grabbing; }
+
+/* Used for the instant swap between a clone and its real twin. Without
+   this the jump would animate and the loop would be visible. */
+.wk-track.no-anim { transition: none; }
+
+.wk-slide {
+  flex: 0 0 76%;
+  padding: 0 var(--s-2);
+  opacity: 0.28;
+  transition: opacity var(--d-entrance) var(--ease);
+}
+
+.wk-slide.is-active {
+  opacity: 1;
+}
+
+/* Shorter than the shape the shots are captured at, cropped from the top:
+   a full-height screenshot pushes the information bar too far down the
+   page, and the top of a site is the part worth showing anyway. */
+.wk-slide img {
+  width: 100%;
+  aspect-ratio: 16 / 7;
+  object-fit: cover;
+  object-position: top center;
+  border-radius: var(--r-md);
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.wk-dots {
+  position: absolute;
+  left: 50%;
+  bottom: var(--s-4);
+  transform: translateX(-50%);
+  display: flex;
+  gap: var(--s-2);
+}
+
+.wk-dot {
   width: 6px;
   height: 6px;
   padding: 0;
   border: none;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.3);
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: background var(--d-micro) var(--ease),
+              width var(--d-micro) var(--ease);
 }
 
-.slider-dot.active {
-  width: 22px;
+.wk-dot.is-on {
+  background: var(--signal);
+  width: 18px;
   border-radius: 3px;
-  background: #00ff88;
-  box-shadow: 0 0 8px rgba(0, 255, 136, 0.5);
 }
 
-@media (max-width: 1200px) { .projects { padding: 6rem 4rem; } }
+/* ===== THE INFORMATION BAR ===== */
+.wk-meta {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr auto;
+  gap: var(--s-6);
+  padding-bottom: var(--s-6);
+}
+
+.wk-title {
+  font-size: var(--t-body-l);
+  line-height: 1.35;
+  color: var(--text-primary);
+  margin-bottom: var(--s-4);
+  max-width: 30ch;
+}
+
+.wk-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.wk-tag {
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: var(--s-1) var(--s-2);
+  border: 1px solid var(--line);
+}
+
+.wk-meta-body p {
+  font-size: var(--t-body-s);
+  line-height: 1.7;
+  color: var(--text-secondary);
+  max-width: 54ch;
+}
+
+.wk-meta-body p + p {
+  margin-top: var(--s-3);
+}
+
+/* The client's own words, set apart by a rule rather than quote marks -
+   a quotation mark at this size reads as decoration. */
+.wk-feedback {
+  margin: var(--s-5) 0 0 0;
+  padding-left: var(--s-4);
+  border-left: 2px solid var(--signal);
+}
+
+.wk-feedback blockquote {
+  margin: 0 0 var(--s-2) 0;
+  font-size: var(--t-body);
+  line-height: 1.6;
+  color: var(--text-primary);
+  max-width: 46ch;
+}
+
+.wk-feedback figcaption {
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.wk-facts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  margin: 0;
+  min-width: 140px;
+}
+
+.wk-fact dt {
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: var(--s-1);
+}
+
+.wk-fact dd {
+  margin: 0;
+  font-size: var(--t-body-s);
+  color: var(--text-primary);
+}
+
+.wk-fact dd a {
+  color: var(--text-primary);
+  text-decoration: none;
+  border-bottom: 1px solid var(--line-strong);
+  transition: border-color var(--d-micro) var(--ease);
+}
+
+.wk-fact dd a:hover {
+  border-color: var(--text-primary);
+}
+
+/* ===== THE CLOSE =====
+   Mirrors the turn in the problem section: small and centred, after a
+   page of left-aligned rows. The list above is the argument, so this is
+   set as an aside to it rather than as a second headline. */
+.projects-outro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--s-2);
+  padding-top: var(--s-7);
+}
+
+.projects-outro-claim {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-display);
+  font-weight: var(--weight-display);
+  font-size: var(--t-h3);
+  line-height: 1.1;
+  letter-spacing: var(--track-heading);
+  text-transform: uppercase;
+  color: var(--text-primary);
+}
+
+.projects-outro-line { display: block; }
+
+.projects-outro-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--s-3);
+  margin-top: var(--s-4);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wk-panel,
+  .wk-item.is-open .wk-panel,
+  .wk-sign::before,
+  .wk-sign::after,
+  .wk-track,
+  .wk-cursor-hint,
+  .wk-cursor-chip {
+    transition: none;
+  }
+}
 
 @media (max-width: 968px) {
-  .projects { padding: 5rem 2rem; }
+  .projects { padding: 4.5rem 2rem; }
 
-  .projects-grid {
-    display: flex;
-    gap: 1rem;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    margin: 0 -2rem 1.5rem 0;
-    padding: 0.5rem 2rem 1rem 0;
-    -webkit-mask-image: linear-gradient(90deg, black calc(100% - 40px), transparent);
-    mask-image: linear-gradient(90deg, black calc(100% - 40px), transparent);
+  .wk-meta {
+    grid-template-columns: 1fr;
+    gap: var(--s-5);
   }
 
-  .projects-grid::-webkit-scrollbar { display: none; }
+  .wk-title { max-width: none; }
+  .wk-facts { flex-direction: row; gap: var(--s-6); }
+}
 
-  .project-card {
-    flex: 0 0 78%;
-    scroll-snap-align: center;
+/* Its own breakpoint, above the one the rows use. The Finnish labels are
+   the longer pair and run out of room at 625px; letting them wrap at
+   their natural widths there, then jumping to full width 5px later, is a
+   worse seam than stacking both languages here. */
+@media (max-width: 660px) {
+  .projects-outro-actions {
+    flex-direction: column;
+    width: 100%;
   }
 
-  .projects-slider-dots { display: flex; }
+  .projects-outro-actions .btn-primary,
+  .projects-outro-actions .btn-secondary { width: 100%; }
+}
+
+@media (max-width: 620px) {
+  /* The status label goes rather than wrapping the row onto two lines;
+     the dot alone still carries it, and the label returns with the
+     panel open. */
+  .wk-trigger {
+    grid-template-columns: 1fr auto;
+    gap: var(--s-4);
+  }
+
+  .wk-status { display: none; }
+
+  /* The same optical match as on the desktop row, scaled down together -
+     shrinking the wordmark alone would leave the client logo shouting. */
+  .wk-wordmark { width: 190px; }
+  .wk-logo-img { max-height: 26px; }
+  .wk-name { font-size: 1.5rem; }
 }
 
 @media (max-width: 480px) {
-  .projects { padding: 3rem 1.2rem; }
-  .projects-header { margin-bottom: 2rem; }
-  .projects-title { font-size: 2.2rem; }
-  .projects-grid { margin-right: -1.2rem; padding-right: 1.2rem; }
-  .project-card { flex: 0 0 82%; }
-  .project-preview { height: 160px; }
-  .preview-image-wrapper { height: 160px; }
-  .project-info { padding: 1.2rem; }
-  .project-name { font-size: 1.1rem; }
-  .project-desc { font-size: 0.78rem; }
-  .project-tag { font-size: 0.6rem; padding: 0.2rem 0.5rem; }
-  .project-card { border-radius: 16px; }
+  .projects { padding: 3.5rem 1.2rem; }
+
+  /* Two-word names wrap onto a second line at this width and the row
+     stops matching its neighbours. */
+  .wk-name { font-size: 1.25rem; }
 }

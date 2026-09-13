@@ -1,7 +1,6 @@
 var fi = {
   // Nav
   nav_home: 'Etusivu',
-  nav_whatido: 'Taidot',
   nav_projects: 'Projektit',
   nav_testimonials: 'Suositukset',
   nav_contact: 'Yhteystiedot',
@@ -58,30 +57,22 @@ var fi = {
 
   services_proof: 'Jokainen näistä on käytössä tällä sivulla juuri nyt.',
   services_cta: 'Aloitetaan projekti',
-  // WhatIDo
-  whatido_tag: 'Taidot',
-  whatido_title1: 'Minun',
-  whatido_title2: 'Taidot',
-  whatido_subtitle: 'Yhdistelmä teknistä osaamista, johtajuutta ja halua kehittyä jatkuvasti',
-  whatido_s1_title: 'Kehittäjä',
-  whatido_s1_desc: 'Rakennan verkkosovelluksia ideasta valmiiksi tuotteeksi. Painotan siistiä, hyvin rakennettua koodia ja kehityn jokaisen projektin myötä',
-  whatido_s2_title: 'Projektinhallinta',
-  whatido_s2_desc: 'Vahva kokemus tiimien johtamisesta, työnkulkujen organisoinnista ja projektien viemisestä ideasta valmiiksi. Osaamisalueina ketterät menetelmät ja sidosryhmäviestintä',
-  whatido_s3_title: 'Jatkuva oppiminen',
-  whatido_s3_desc: 'Opiskelen tällä hetkellä (Software Engineering & Project Management) Turun ammattikorkeakoulussa. Syvennän osaamistani käytännön projektien, kurssien ja kokemusten avulla',
-  whatido_journey: 'Ammatillinen polku',
-  whatido_journey_desc: 'Seuraa uraani ja projektejani. Verkoistoidutaan ja kasvetaan yhdessä tech-alalla',
-  whatido_connect: 'Näe lisää LinkedInissä',
 
   // Projects
-  projects_tag: 'Portfolio',
-  projects_title1: 'Minun',
-  projects_title2: 'Projektit',
-  projects_subtitle: 'Katso mitä olen työstänyt',
-  projects_view: 'Katso projekti',
-  projects_github: 'Lisää GitHubissa',
-  projects_loading: 'Ladataan projekteja...',
-  projects_error_load: 'Projektien lataaminen epäonnistui.',
+  projects_tag: 'Työt',
+  projects_claim1: 'Todisteita',
+  projects_claim2: 'ei lupauksia',
+  projects_lede: 'Lista projekteista joiden parissa olen työskennellyt.',
+  projects_github: 'Katso lisää GitHubissa',
+  projects_status_live: 'Julkaistu',
+  projects_status_progress: 'Työn alla',
+  projects_open_hint: 'Avaa projekti',
+  projects_industry: 'Toimiala',
+  projects_live_site: 'Sivusto',
+  projects_outro1: 'Seuraava nimi',
+  projects_outro2: 'voi olla sinun',
+  projects_cta: 'Aloitetaan projekti',
+
 
   //Testimonials
 

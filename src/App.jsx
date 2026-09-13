@@ -11,7 +11,6 @@ import './App.css';
 
 const Problem      = lazy(() => import('./components/Problem'));
 const Services     = lazy(() => import('./components/Services'));
-const WhatIDo      = lazy(() => import('./components/WhatIDo'));
 const Projects     = lazy(() => import('./components/Projects'));
 const Testimonials = lazy(() => import('./components/Testimonials.jsx'));
 const Contact      = lazy(() => import('./components/Contact'));
@@ -41,7 +40,6 @@ function HomePage({ ready }) {
       <Hero ready={ready} />
       <Problem />
       <Services />
-      <WhatIDo />
       <Projects />
       <Testimonials />
       <Contact />

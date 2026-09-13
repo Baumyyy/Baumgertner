@@ -1,7 +1,6 @@
 var en = {
   // Nav
   nav_home: 'Home',
-  nav_whatido: 'Skills',
   nav_projects: 'Projects',
   nav_testimonials: 'Testimonials',
   nav_contact: 'Contact',
@@ -58,30 +57,22 @@ var en = {
 
   services_proof: 'Every one of these is running on this page right now.',
   services_cta: 'Start a project',
-  // WhatIDo
-  whatido_tag: 'Skills',
-  whatido_title1: 'My',
-  whatido_title2: 'Skills',
-  whatido_subtitle: 'A mix of technical skills, leadership and a hunger to keep growing',
-  whatido_s1_title: 'Developer',
-  whatido_s1_desc: 'Building web applications from idea to finished product. Focused on clean, well-structured code and growing a little more with every project',
-  whatido_s2_title: 'Project Management',
-  whatido_s2_desc: 'Solid experience in leading teams, organizing workflows and driving projects from concept to completion. Skilled in agile methodologies, stakeholder communication and keeping cross-functional teams aligned',
-  whatido_s3_title: 'Continuous Learning',
-  whatido_s3_desc: 'Currently studying Software Engineering and Project Management at Turku University of Applied Sciences. Deepening my skills through hands-on projects, coursework and real-world experience',
-  whatido_journey: 'Professional Journey',
-  whatido_journey_desc: 'Follow my career growth, projects and milestones. Lets connect and grow together in the tech industry',
-  whatido_connect: 'Connect on LinkedIn',
 
   // Projects
-  projects_tag: 'Portfolio',
-  projects_title1: 'My',
-  projects_title2: 'Projects',
-  projects_subtitle: 'Check out what I have been working on',
-  projects_view: 'View Project',
-  projects_github: 'See More on GitHub',
-  projects_loading: 'Loading projects...',
-  projects_error_load: 'Failed to load projects.',
+  projects_tag: 'Work',
+  projects_claim1: 'Proof',
+  projects_claim2: 'not promises',
+  projects_lede: 'A list of projects I have worked on.',
+  projects_github: 'See more on GitHub',
+  projects_status_live: 'Live',
+  projects_status_progress: 'In progress',
+  projects_open_hint: 'Open project',
+  projects_industry: 'Industry',
+  projects_live_site: 'Live site',
+  projects_outro1: 'The next name',
+  projects_outro2: 'could be yours',
+  projects_cta: 'Start a project',
+
 
   // Testimonials
   testimonials_tag: 'Testimonials',

@@ -3,7 +3,7 @@
   /* Flat below ~1923px viewport (same 1500px as before), then grows with
      the viewport instead of leaving a fixed, ever-larger empty margin on
      very wide screens. Centered on the section itself (not -content) so
-     the padding box centers the same way Projects/Contact/WhatIDo do -
+     the padding box centers the same way Projects and Contact do -
      centering only -content left this section a few px further left than
      its siblings since -content is already narrower than the max-width. */
   max-width: min(1900px, 96vw);
