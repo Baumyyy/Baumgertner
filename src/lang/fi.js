@@ -50,7 +50,6 @@ var fi = {
   services_6_body: 'Yksi yhteyshenkilö, selkeä suunnitelma, eikä arvailua siitä missä mennään.',
 
   services_proof: 'Jokainen näistä on käytössä tällä sivulla juuri nyt.',
-  services_cta: 'Aloitetaan projekti',
 
   // Projects
   projects_tag: 'Työt',

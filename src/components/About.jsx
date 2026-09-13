@@ -176,12 +176,12 @@ var About = function() {
           <span className="tag-label">{t.about_tag}</span>
         </div>
 
-        <h2 className="about-claim fade-in stagger-1">
-          <span className="about-claim-line">{t.about_claim1}</span>
-          <span className="about-claim-line stop">{t.about_claim2}</span>
+        <h2 className="section-claim about-claim fade-in stagger-1">
+          <span className="section-claim-line">{t.about_claim1}</span>
+          <span className="section-claim-line stop">{t.about_claim2}</span>
         </h2>
 
-        <p className="about-lede fade-in stagger-2">{t.about_lede}</p>
+        <p className="section-lede about-lede fade-in stagger-2">{t.about_lede}</p>
 
         <div className="about-body fade-in stagger-2">
           {/* The frame is drawn at the shape and size the photograph will

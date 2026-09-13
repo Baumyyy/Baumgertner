@@ -16,40 +16,18 @@
    stack, with the content below it left aligned. A step smaller than
    that one, because this claim is twice the string - at a matching size
    it reads as the louder of the two. */
-.about .section-tag {
-  justify-content: center;
-}
-
-.about-claim {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  font-family: var(--font-display);
-  font-weight: var(--weight-display);
-  font-size: min(4.4rem, 4.8vw);
-  line-height: 1.06;
-  letter-spacing: var(--track-display);
-  text-transform: uppercase;
-  color: var(--text-primary);
-  margin-bottom: var(--s-4);
-}
-
-.about-claim-line { display: block; }
 
 /* The same lede as the work section, down to the measure. A 44ch lede
    centred in this container happened to start at almost exactly the x
    the text column below it starts at, which is what made the two read
    as one running paragraph. At 52ch the two left edges are nowhere near
    each other. */
+
+/* The widest gap of the four: what follows is a centred lede sitting
+   directly above a left-aligned text column, and they read as one
+   running paragraph when the space between them is ordinary. */
 .about-lede {
-  font-size: var(--t-body-l);
-  line-height: 1.55;
-  color: var(--text-secondary);
-  max-width: 52ch;
-  margin: 0 auto var(--s-9);
-  text-align: center;
-  text-wrap: balance;
+  margin-bottom: var(--s-9);
 }
 
 /* ===== THE PERSON =====
@@ -343,6 +321,10 @@
 @media (max-width: 968px) {
   .about { padding: 4.5rem 2rem; }
 
+  /* Once the body stacks there is no column for the lede to run
+     into, and 96px of nothing on a phone is just a hole. */
+  .about-lede { margin-bottom: var(--s-7); }
+
   /* The figure goes under the answer rather than beside it, and moves to
      the left edge so it lines up with the text it belongs to. */
   .ap-body {
@@ -351,12 +333,6 @@
   }
 
   .ap-figure { justify-content: flex-start; }
-
-  /* The wide gap is there to keep the centred lede from running into
-     the text column beside the portrait. Once the body stacks there is
-     no column to run into, and 96px of nothing on a phone is just a
-     hole in the page. */
-  .about-lede { margin-bottom: var(--s-7); }
 
   /* The portrait stops earning a column of its own once the text beside
      it is down to a narrow measure. */

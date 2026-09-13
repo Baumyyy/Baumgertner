@@ -1,7 +1,6 @@
 import React from 'react';
 import './Services.css';
 import { useLang } from '../useLang';
-import { useContactPanel } from '../useContactPanel';
 import { useScrollAnimation } from '../hooks/useScrollAnimation';
 
 // Line icons drawn to the same rules as the rest of the identity:
@@ -75,7 +74,6 @@ const PlanIcon = () => (
 
 const Services = () => {
   const { t } = useLang();
-  const { open: openContact } = useContactPanel();
   const sectionRef = useScrollAnimation();
 
   const services = [
@@ -94,12 +92,12 @@ const Services = () => {
           <span className="tag-label">{t.services_tag}</span>
         </div>
 
-        <h2 className="services-claim fade-in stagger-1">
-          <span className="services-claim-line">{t.services_claim1}</span>
-          <span className="services-claim-line stop">{t.services_claim2}</span>
+        <h2 className="section-claim services-claim fade-in stagger-1">
+          <span className="section-claim-line">{t.services_claim1}</span>
+          <span className="section-claim-line stop">{t.services_claim2}</span>
         </h2>
 
-        <p className="services-lede fade-in stagger-2">{t.services_lede}</p>
+        <p className="section-lede services-lede fade-in stagger-2">{t.services_lede}</p>
 
         {/* Cut-corner cards, the same chamfer the buttons use, so the
             geometry of the identity shows up here too. */}
@@ -113,12 +111,12 @@ const Services = () => {
           ))}
         </ul>
 
+        {/* The closing statement only, centred like every other head on
+            the page. The call to action lives in the hero, at the end of
+            the work list and in the sticky button - a fourth one here
+            would be asking three times on one screen. */}
         <div className="services-close fade-in stagger-2">
           <p className="services-proof">{t.services_proof}</p>
-          <button type="button" className="btn-primary" onClick={openContact}>
-            {t.services_cta}
-            <span className="btn-arrow">→</span>
-          </button>
         </div>
       </div>
     </section>

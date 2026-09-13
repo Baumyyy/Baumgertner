@@ -94,12 +94,12 @@ const Problem = () => {
             <span className="tag-label">{t.problem_tag}</span>
           </div>
 
-          <h2 className="problem-claim fade-in stagger-1">
-            <span className="problem-claim-line">{t.problem_claim1}</span>
-            <span className="problem-claim-line stop">{t.problem_claim2}</span>
+          <h2 className="section-claim problem-claim fade-in stagger-1">
+            <span className="section-claim-line">{t.problem_claim1}</span>
+            <span className="section-claim-line stop">{t.problem_claim2}</span>
           </h2>
 
-          <p className="problem-lede fade-in stagger-2">{t.problem_lede}</p>
+          <p className="section-lede problem-lede fade-in stagger-2">{t.problem_lede}</p>
         </div>
 
         {/* A list, because these are three parallel items rather than a

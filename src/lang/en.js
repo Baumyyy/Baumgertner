@@ -50,7 +50,6 @@ var en = {
   services_6_body: 'One point of contact, a clear plan, and no guessing where things stand.',
 
   services_proof: 'Every one of these is running on this page right now.',
-  services_cta: 'Start a project',
 
   // Projects
   projects_tag: 'Work',

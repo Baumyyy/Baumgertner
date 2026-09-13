@@ -69,9 +69,12 @@ body {
    The brackets are drawn as pseudo-elements rather than written into the
    copy, so translators never have to carry punctuation and the marker
    cannot end up with one bracket in one language. */
+/* Every section centres its head, so this is the default rather than
+   something each one turns on for itself. */
 .section-tag {
   display: flex;
   align-items: center;
+  justify-content: center;
   margin-bottom: var(--s-5);
 }
 
@@ -382,4 +385,42 @@ body {
 .dg-mark {
   fill: var(--signal);
   opacity: 0.9;
+}
+
+/* ===== SECTION HEADS =====
+   Tag, claim and lede as one centred stack, with the content under them
+   left aligned. Everything that was identical in four section files
+   lives here, the size included. One size across four sections is what
+   makes them read as one page: a shorter claim simply takes less of the
+   measure, it does not get its own scale. The number is the one the
+   about section was already using - the page's longest claim sets the
+   proportion, and it leaves every other head room to breathe. */
+.section-claim {
+  display: flex;
+  font-size: min(4.4rem, 4.8vw);
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  font-family: var(--font-display);
+  font-weight: var(--weight-display);
+  line-height: 1.06;
+  letter-spacing: var(--track-display);
+  text-transform: uppercase;
+  color: var(--text-primary);
+  margin-bottom: var(--s-4);
+}
+
+.section-claim-line { display: block; }
+
+/* The gap under the lede is the one thing left to each section: what
+   follows differs, and a list needs less air above it than a two column
+   block does. */
+.section-lede {
+  font-size: var(--t-body-l);
+  line-height: 1.55;
+  color: var(--text-secondary);
+  max-width: 52ch;
+  margin: 0 auto;
+  text-align: center;
+  text-wrap: balance;
 }

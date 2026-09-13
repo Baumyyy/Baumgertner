@@ -22,30 +22,6 @@
   margin: 0 auto;
 }
 
-.problem-claim {
-  display: flex;
-  flex-direction: column;
-  font-family: var(--font-display);
-  font-weight: var(--weight-display);
-  font-size: min(6.4rem, 7vw);
-  line-height: 1.06;
-  letter-spacing: var(--track-display);
-  text-transform: uppercase;
-  color: var(--text-primary);
-  margin-bottom: var(--s-5);
-}
-
-.problem-claim-line {
-  display: block;
-}
-
-.problem-lede {
-  font-size: var(--t-body-l);
-  line-height: 1.55;
-  color: var(--text-secondary);
-  max-width: 58ch;
-}
-
 /* ===== THE THREE POINTS =====
    Shown together rather than behind a disclosure: three columns fit the
    whole argument in one pass, which is what collapsing them was trying to

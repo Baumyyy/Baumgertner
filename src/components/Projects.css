@@ -15,38 +15,9 @@
 /* The section head is centred - tag, claim and lede as one stack - while
    the list below it stays left aligned. The rows are a table of things;
    the head is an announcement about them. */
-.projects .section-tag {
-  justify-content: center;
-}
-
-.projects-claim {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  font-family: var(--font-display);
-  font-weight: var(--weight-display);
-  /* A step under the problem section's claim. That one is the argument
-     the page is making and should be the loudest; this one only labels
-     the list under it. */
-  font-size: min(5.6rem, 6vw);
-  line-height: 1.06;
-  letter-spacing: var(--track-display);
-  text-transform: uppercase;
-  color: var(--text-primary);
-  margin-bottom: var(--s-4);
-}
-
-.projects-claim-line { display: block; }
 
 .projects-lede {
-  font-size: var(--t-body-l);
-  line-height: 1.55;
-  color: var(--text-secondary);
-  max-width: 52ch;
-  margin: 0 auto var(--s-7);
-  text-align: center;
-  text-wrap: balance;
+  margin-bottom: var(--s-7);
 }
 
 /* ===== THE LIST =====

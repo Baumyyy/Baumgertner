@@ -172,12 +172,12 @@ var Projects = function() {
           <span className="tag-label">{t.projects_tag}</span>
         </div>
 
-        <h2 className="projects-claim fade-in stagger-1">
-          <span className="projects-claim-line">{t.projects_claim1}</span>
-          <span className="projects-claim-line stop">{t.projects_claim2}</span>
+        <h2 className="section-claim projects-claim fade-in stagger-1">
+          <span className="section-claim-line">{t.projects_claim1}</span>
+          <span className="section-claim-line stop">{t.projects_claim2}</span>
         </h2>
 
-        <p className="projects-lede fade-in stagger-2">{t.projects_lede}</p>
+        <p className="section-lede projects-lede fade-in stagger-2">{t.projects_lede}</p>
 
         <ul className="wk-list">
           {work.map(function(project, i) {
