@@ -1,6 +1,6 @@
 import React from 'react';
 
-// Minimal inline replacements for the 5 Font Awesome glyphs actually used on
+// Minimal inline replacements for the Font Awesome glyphs actually used on
 // the site. Sized via "1em" and colored via currentColor so they drop into
 // existing font-size/color-based CSS with no other changes needed.
 
@@ -36,10 +36,11 @@ export var HeartIcon = function(props) {
   );
 };
 
-export var ChevronUpIcon = function(props) {
+export var MailIcon = function(props) {
   return (
-    <svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ flexShrink: 0 }} {...props}>
-      <polyline points="18 15 12 9 6 15" />
+    <svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ flexShrink: 0 }} {...props}>
+      <rect x="2.5" y="4.5" width="19" height="15" rx="2" />
+      <path d="M3 6.5l9 6.5 9-6.5" />
     </svg>
   );
 };

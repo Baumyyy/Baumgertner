@@ -2,12 +2,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import './Hero.css';
 import { useLang } from '../useLang';
 import { Wordmark } from './BrandMark';
+import { useContactPanel } from '../useContactPanel';
 
 const Hero = ({ ready }) => {
   const [activeSection, setActiveSection] = useState('home');
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { t } = useLang();
+  const { open: openContact } = useContactPanel();
   const navRef = useRef(null);
   const progressBarRef = useRef(null);
 
@@ -97,15 +99,17 @@ const Hero = ({ ready }) => {
             <a href="#about" className={`nav-link ${activeSection === 'about' ? 'active' : ''}`} onClick={(e) => { handleClick(e, 'about'); setMenuOpen(false); }}>
               {t.nav_about}
             </a>
-            <a href="#contact" className={`nav-link ${activeSection === 'contact' ? 'active' : ''}`} onClick={(e) => { handleClick(e, 'contact'); setMenuOpen(false); }}>
+            {/* Not a link any more: there is no contact section to
+                scroll to, the form lives in a panel. */}
+            <button type="button" className="nav-link" onClick={() => { setMenuOpen(false); openContact(); }}>
               {t.nav_contact}
-            </a>
+            </button>
           </div>
 
           <div className="nav-end">
-            <a href="#contact" className="btn-primary nav-cta" onClick={(e) => handleClick(e, 'contact')}>
+            <button type="button" className="btn-primary nav-cta" onClick={openContact}>
               {t.hero_cta_primary}
-            </a>
+            </button>
             <button className="hamburger" onClick={function() { setMenuOpen(!menuOpen); }} aria-label={menuOpen ? 'Close menu' : 'Open menu'} aria-expanded={menuOpen}>
               <span className={'hamburger-line' + (menuOpen ? ' open' : '')}></span>
               <span className={'hamburger-line' + (menuOpen ? ' open' : '')}></span>
@@ -146,10 +150,10 @@ const Hero = ({ ready }) => {
           </p>
 
           <div className="hero-actions">
-            <a href="#contact" className="btn-primary" onClick={(e) => handleClick(e, 'contact')}>
+            <button type="button" className="btn-primary" onClick={openContact}>
               {t.hero_cta_primary}
               <span className="btn-arrow">→</span>
-            </a>
+            </button>
             <a href="#projects" className="btn-secondary" onClick={(e) => handleClick(e, 'projects')}>
               {t.hero_cta_secondary}
             </a>

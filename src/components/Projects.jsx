@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import './Projects.css';
 import { useScrollAnimation } from '../hooks/useScrollAnimation';
 import { useLang } from '../useLang';
+import { useContactPanel } from '../useContactPanel';
 import { GithubIcon } from './Icons';
 import { Wordmark } from './BrandMark';
 import WorkCarousel from './WorkCarousel';
@@ -150,6 +151,7 @@ var WorkRow = function({ project, isOpen, onToggle, statusLabel, t, index }) {
 var Projects = function() {
   var sectionRef = useScrollAnimation();
   var { t } = useLang();
+  var openContact = useContactPanel().open;
 
   // One open at a time: opening a project closes the one before it, so
   // the section stays roughly the same height however many projects the
@@ -215,10 +217,10 @@ var Projects = function() {
               <GithubIcon />
               {t.projects_github}
             </a>
-            <a className="btn-primary" href="#contact">
+            <button type="button" className="btn-primary" onClick={openContact}>
               {t.projects_cta}
               <span className="btn-arrow">→</span>
-            </a>
+            </button>
           </div>
         </div>
       </div>

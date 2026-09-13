@@ -1,0 +1,511 @@
+/* The panel and its scrim sit above everything, including the navbar.
+   The root itself is inert when closed so it cannot intercept clicks on
+   the page behind it. */
+.cp-root {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  pointer-events: none;
+}
+
+.cp-root.is-open {
+  pointer-events: auto;
+}
+
+.cp-scrim {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  cursor: default;
+  /* Dark enough that the page stops competing with the form. A blur on
+     top of this was measured at the same brightness - on a page that is
+     already near black it buys nothing for the compositing it costs. */
+  background: rgba(0, 0, 0, 0.88);
+  opacity: 0;
+  transition: opacity var(--d-standard) var(--ease);
+}
+
+.cp-root.is-open .cp-scrim {
+  opacity: 1;
+}
+
+/* Off to the right and hidden when closed: visibility keeps the form out
+   of the tab order and the accessibility tree without display:none,
+   which cannot be transitioned. The chamfer is cut from the two corners
+   that face the page. */
+.cp-panel {
+  --cut: 28px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: min(620px, 100%);
+  /* The outline cannot be a border: clip-path takes the border away with
+     everything else it cuts, so a bordered panel would lose its line on
+     exactly the chamfered corner. Instead the panel's background IS the
+     line and the ::before, inset by a pixel, is the fill - both carrying
+     the same shape, so the red runs the whole perimeter and turns the
+     cut corner with it.
+     The scrolling had to move inside for this: an absolutely positioned
+     ::before in a scroll container scrolls away with the content. */
+  background: var(--signal);
+  overflow: hidden;
+  visibility: hidden;
+  transform: translateX(100%);
+  transition: transform var(--d-entrance) var(--ease),
+              visibility 0s linear var(--d-entrance);
+  clip-path: polygon(
+    var(--cut) 0,
+    100% 0,
+    100% 100%,
+    0 100%,
+    0 var(--cut)
+  );
+}
+
+.cp-root.is-open .cp-panel {
+  visibility: visible;
+  transform: translateX(0);
+  transition: transform var(--d-entrance) var(--ease),
+              visibility 0s linear 0s;
+}
+
+.cp-panel::before {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  background: var(--surface-1);
+  clip-path: polygon(
+    calc(var(--cut) - 1px) 0,
+    100% 0,
+    100% 100%,
+    0 100%,
+    0 calc(var(--cut) - 1px)
+  );
+}
+
+/* The scroller, and positioned so it paints above the fill behind it. */
+.cp-inner {
+  position: relative;
+  height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: var(--s-7) var(--s-7) var(--s-8);
+  display: flex;
+  flex-direction: column;
+}
+
+.cp-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--s-4);
+  margin-bottom: var(--s-6);
+}
+
+.cp-tag {
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--signal-text);
+}
+
+/* An X built from the same two hairlines as the plus in the lists, just
+   turned. One drawing technique for every sign on the site. */
+.cp-close {
+  position: relative;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  padding: 0;
+  background: none;
+  border: 1px solid var(--line);
+  border-radius: 0;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: color var(--d-micro) var(--ease),
+              border-color var(--d-micro) var(--ease);
+}
+
+.cp-close:hover,
+.cp-close:focus-visible {
+  color: var(--text-primary);
+  border-color: var(--line-strong);
+}
+
+.cp-close-mark::before,
+.cp-close-mark::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 25%;
+  width: 50%;
+  height: 1px;
+  background: currentColor;
+}
+
+.cp-close-mark::before { transform: rotate(45deg); }
+.cp-close-mark::after  { transform: rotate(-45deg); }
+
+.cp-claim {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-display);
+  font-weight: var(--weight-display);
+  font-size: clamp(1.75rem, 6vw, 2.75rem);
+  line-height: 1.08;
+  letter-spacing: var(--track-display);
+  text-transform: uppercase;
+  color: var(--text-primary);
+  margin-bottom: var(--s-4);
+}
+
+.cp-claim-line { display: block; }
+
+.cp-intro {
+  font-size: var(--t-body-s);
+  line-height: 1.7;
+  color: var(--text-secondary);
+  margin-bottom: var(--s-6);
+}
+
+/* ===== SERVICES ===== */
+.cp-services {
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.cp-hint {
+  font-size: var(--t-label);
+  line-height: 1.5;
+  color: var(--text-muted);
+  margin: var(--s-1) 0 var(--s-3);
+}
+
+.cp-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+}
+
+/* The same cut corners as the buttons, at the size a chip can carry. */
+.cp-chip {
+  --cut: 8px;
+  padding: var(--s-2) var(--s-3);
+  background: var(--line);
+  border: none;
+  border-radius: 0;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  clip-path: polygon(
+    var(--cut) 0,
+    100% 0,
+    100% calc(100% - var(--cut)),
+    calc(100% - var(--cut)) 100%,
+    0 100%,
+    0 var(--cut)
+  );
+  transition: background var(--d-micro) var(--ease),
+              color var(--d-micro) var(--ease);
+}
+
+.cp-chip:hover {
+  background: var(--line-strong);
+  color: var(--text-primary);
+}
+
+.cp-chip.is-on {
+  background: var(--signal);
+  color: var(--signal-on);
+}
+
+/* ===== THE FORM ===== */
+.cp-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+}
+
+.cp-honeypot {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+.cp-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+
+.cp-label {
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* A rule under the field rather than a box around it: a box at this size
+   reads as a button waiting to be pressed. */
+.cp-input {
+  width: 100%;
+  padding: var(--s-2) 0;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  font-family: var(--font-body);
+  font-size: var(--t-body);
+  line-height: 1.5;
+  color: var(--text-primary);
+  transition: border-color var(--d-micro) var(--ease);
+}
+
+.cp-input:hover {
+  border-bottom-color: var(--line-strong);
+}
+
+.cp-input:focus {
+  outline: none;
+  border-bottom-color: var(--signal);
+}
+
+.cp-textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+/* The marker and the note that explains it. Red because it is the same
+   thing the consent line is: something the visitor has to act on. */
+.cp-req {
+  color: var(--signal-text);
+  margin-left: 2px;
+}
+
+.cp-required-note {
+  font-size: var(--t-label);
+  line-height: 1.5;
+  color: var(--text-muted);
+  margin-bottom: calc(var(--s-2) * -1);
+}
+
+/* A field the form has just rejected. The label already says which one,
+   so this only has to be visible, not loud. */
+.cp-input[aria-invalid='true'] {
+  border-bottom-color: var(--signal);
+}
+
+.cp-error {
+  font-size: var(--t-body-s);
+  line-height: 1.5;
+  color: var(--signal-text);
+}
+
+.cp-submit {
+  width: 100%;
+}
+
+.cp-submit:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ===== CONSENT ===== */
+.cp-consent {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-3);
+  cursor: pointer;
+}
+
+/* The native checkbox still exists and still does the work - it is only
+   moved under the box that is painted in its place, so the keyboard and
+   assistive technology keep the control they know. */
+.cp-consent-input {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.cp-consent-box {
+  --cut: 5px;
+  position: relative;
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  background: var(--line-strong);
+  clip-path: polygon(
+    var(--cut) 0,
+    100% 0,
+    100% calc(100% - var(--cut)),
+    calc(100% - var(--cut)) 100%,
+    0 100%,
+    0 var(--cut)
+  );
+  transition: background var(--d-micro) var(--ease);
+}
+
+.cp-consent-box::before {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  background: var(--surface-1);
+  clip-path: polygon(
+    calc(var(--cut) - 1px) 0,
+    100% 0,
+    100% calc(100% - var(--cut) + 1px),
+    calc(100% - var(--cut) + 1px) 100%,
+    0 100%,
+    0 calc(var(--cut) - 1px)
+  );
+  transition: background var(--d-micro) var(--ease);
+}
+
+.cp-consent:hover .cp-consent-box {
+  background: var(--text-secondary);
+}
+
+.cp-consent-input:checked + .cp-consent-box {
+  background: var(--signal);
+}
+
+.cp-consent-input:checked + .cp-consent-box::before {
+  background: var(--signal);
+}
+
+/* The tick, drawn rather than set as a glyph so it lines up with the
+   chamfer instead of sitting on a font's baseline. */
+.cp-consent-box::after {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 3px;
+  width: 5px;
+  height: 9px;
+  border-right: 2px solid var(--signal-on);
+  border-bottom: 2px solid var(--signal-on);
+  transform: rotate(45deg) scale(0);
+  transition: transform var(--d-micro) var(--ease);
+}
+
+.cp-consent-input:checked + .cp-consent-box::after {
+  transform: rotate(45deg) scale(1);
+}
+
+.cp-consent-input:focus-visible + .cp-consent-box {
+  outline: 2px solid var(--signal-text);
+  outline-offset: 2px;
+}
+
+.cp-consent-text {
+  font-size: var(--t-label);
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+/* Red: this is the one line in the form the visitor has to act on
+   before anything can be sent. */
+.cp-consent-text a {
+  color: var(--signal-text);
+  text-decoration: none;
+  border-bottom: 1px solid currentColor;
+}
+
+.cp-consent-text a:hover {
+  color: var(--signal-on);
+}
+
+/* ===== SENT ===== */
+.cp-sent {
+  padding: var(--s-6) 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.cp-sent-title {
+  font-family: var(--font-display);
+  font-weight: var(--weight-display);
+  font-size: var(--t-h4);
+  letter-spacing: var(--track-heading);
+  text-transform: uppercase;
+  color: var(--text-primary);
+  margin-bottom: var(--s-3);
+}
+
+.cp-sent-body {
+  font-size: var(--t-body-s);
+  line-height: 1.7;
+  color: var(--text-secondary);
+  margin-bottom: var(--s-5);
+}
+
+/* ===== DIRECT ===== */
+.cp-direct {
+  margin-top: auto;
+  padding-top: var(--s-7);
+}
+
+.cp-direct-label {
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: var(--s-2);
+}
+
+.cp-direct-link {
+  font-size: var(--t-body);
+  color: var(--text-primary);
+  text-decoration: none;
+  border-bottom: 1px solid var(--line-strong);
+  transition: border-color var(--d-micro) var(--ease);
+}
+
+.cp-direct-link:hover {
+  border-bottom-color: var(--signal);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cp-scrim,
+  .cp-panel {
+    transition: none;
+  }
+}
+
+/* Matched to the panel's own width, not a round number: below this it
+   fills the screen, and a full-screen panel should stop wearing the
+   border and the deep chamfer of a floating one. */
+@media (max-width: 620px) {
+  .cp-panel {
+    --cut: 20px;
+    width: 100%;
+    /* Full screen here, and a red line tracing all four screen edges
+       reads as a warning rather than a frame. */
+    background: var(--surface-1);
+  }
+
+  .cp-panel::before { display: none; }
+
+  .cp-inner {
+    padding: var(--s-6) var(--s-5) var(--s-7);
+  }
+}

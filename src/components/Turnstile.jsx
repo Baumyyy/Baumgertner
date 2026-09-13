@@ -4,8 +4,8 @@ var TURNSTILE_SRC = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
 var scriptPromise = null;
 
 // Loads the Turnstile script once and shares the same promise across every
-// widget instance on the page, so mounting both the Contact and
-// Testimonials forms in the same session doesn't inject the script twice.
+// widget instance, so a second form mounted in the same session does not
+// inject the script twice.
 function loadTurnstile() {
   if (window.turnstile) return Promise.resolve(window.turnstile);
   if (scriptPromise) return scriptPromise;

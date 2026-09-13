@@ -1,6 +1,7 @@
 import React from 'react';
 import './Services.css';
 import { useLang } from '../useLang';
+import { useContactPanel } from '../useContactPanel';
 import { useScrollAnimation } from '../hooks/useScrollAnimation';
 
 // Line icons drawn to the same rules as the rest of the identity:
@@ -74,6 +75,7 @@ const PlanIcon = () => (
 
 const Services = () => {
   const { t } = useLang();
+  const { open: openContact } = useContactPanel();
   const sectionRef = useScrollAnimation();
 
   const services = [
@@ -113,10 +115,10 @@ const Services = () => {
 
         <div className="services-close fade-in stagger-2">
           <p className="services-proof">{t.services_proof}</p>
-          <a href="#contact" className="btn-primary">
+          <button type="button" className="btn-primary" onClick={openContact}>
             {t.services_cta}
             <span className="btn-arrow">→</span>
-          </a>
+          </button>
         </div>
       </div>
     </section>

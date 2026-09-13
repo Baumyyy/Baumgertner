@@ -245,7 +245,11 @@ var authLimiter = rateLimit({
 
 var messageLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,
-  max: IS_PROD ? 3 : 200,
+  // Four, not three: a client who double-taps send on a flaky connection
+  // and then spots a typo in their own address needs a third attempt, and
+  // being locked out for an hour at that point reads as the site being
+  // broken.
+  max: IS_PROD ? 4 : 200,
   message: { error: 'Too many messages, try again later' },
   handler: rateLimitHandler
 });

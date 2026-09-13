@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { LanguageProvider } from './LanguageContext';
+import { ContactPanelProvider } from './ContactPanelProvider';
 import { useLang } from './useLang';
 import { useHomeSeo } from './hooks/useHomeSeo';
 import AuroraBackground from './components/AuroraBackground';
@@ -13,12 +14,12 @@ const Problem      = lazy(() => import('./components/Problem'));
 const Services     = lazy(() => import('./components/Services'));
 const Projects     = lazy(() => import('./components/Projects'));
 const About        = lazy(() => import('./components/About'));
-const Contact      = lazy(() => import('./components/Contact'));
 const Footer       = lazy(() => import('./components/Footer'));
 const Admin        = lazy(() => import('./components/Admin'));
 const NotFound     = lazy(() => import('./components/NotFound'));
 const PrivacyPolicy = lazy(() => import('./components/PrivacyPolicy'));
 const TermsOfUse = lazy(() => import('./components/TermsOfUse'));
+const ContactPanel = lazy(() => import('./components/ContactPanel'));
 
 // "/" carries no language of its own, so search engines have exactly one
 // canonical URL per language (/en, /fi) to index instead of duplicate
@@ -42,7 +43,6 @@ function HomePage({ ready }) {
       <Services />
       <Projects />
       <About />
-      <Contact />
       <Footer />
     </AuroraBackground>
   );
@@ -66,21 +66,28 @@ function App() {
   return (
     <BrowserRouter>
       <LanguageProvider>
-        <a href="#home" className="skip-link">Skip to main content</a>
-        {loading && <LoadingScreen onFinished={handleLoadingFinished} />}
-        <ErrorBoundary>
-          <Suspense fallback={null}>
-            <Routes>
-              <Route path="/baumi-dashboard" element={<Admin />} />
-              <Route path="/privacy" element={<PrivacyPolicy />} />
-              <Route path="/terms" element={<TermsOfUse />} />
-              <Route path="/" element={<RootRedirect />} />
-              <Route path="/en" element={<HomePage ready={!loading} />} />
-              <Route path="/fi" element={<HomePage ready={!loading} />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </Suspense>
-        </ErrorBoundary>
+        <ContactPanelProvider>
+          <a href="#home" className="skip-link">Skip to main content</a>
+          {loading && <LoadingScreen onFinished={handleLoadingFinished} />}
+          <ErrorBoundary>
+            <Suspense fallback={null}>
+              <Routes>
+                <Route path="/baumi-dashboard" element={<Admin />} />
+                <Route path="/privacy" element={<PrivacyPolicy />} />
+                <Route path="/terms" element={<TermsOfUse />} />
+                <Route path="/" element={<RootRedirect />} />
+                <Route path="/en" element={<HomePage ready={!loading} />} />
+                <Route path="/fi" element={<HomePage ready={!loading} />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+
+              {/* Outside the router: the panel opens from every page, and
+                  it is position:fixed so it must not sit inside the
+                  scroll container. */}
+              <ContactPanel />
+            </Suspense>
+          </ErrorBoundary>
+        </ContactPanelProvider>
       </LanguageProvider>
     </BrowserRouter>
   );

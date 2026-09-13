@@ -63,42 +63,53 @@
   background: var(--line-strong);
 }
 
-.scroll-top-btn {
+/* The sticky call to action. It borrows .btn-primary for its look, so
+   the chamfer and the red are defined in exactly one place - but every
+   rule here is written as a compound selector. App.css loads after this
+   file, so a bare .sticky-cta would lose every tie to .btn-primary,
+   including the transition this needs to fade in with. */
+.sticky-cta.btn-primary {
   position: fixed;
+  /* Square and icon-sized. .btn's own padding would make this as wide as
+     a sentence, which is too much for a control that never leaves. */
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  --cut: 10px;
   bottom: calc(var(--s-6) + env(safe-area-inset-bottom));
   right: var(--s-6);
   z-index: 200;
-  width: 44px;
-  height: 44px;
-  padding: 0;
-  border-radius: 50%;
-  background: var(--surface-1);
-  border: 1px solid var(--line);
-  color: var(--text-secondary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
   opacity: 0;
   transform: translateY(12px);
   pointer-events: none;
   transition: opacity var(--d-standard) var(--ease),
               transform var(--d-standard) var(--ease),
-              border-color var(--d-standard) var(--ease),
-              color var(--d-standard) var(--ease);
+              filter var(--d-micro) var(--ease);
 }
 
-.scroll-top-btn.visible {
+.sticky-cta.btn-primary.visible {
   opacity: 1;
   transform: translateY(0);
   pointer-events: auto;
 }
 
-/* Separation on black comes from the hairline and a brightness shift,
-   never from a shadow - a shadow has nothing to fall on. */
-.scroll-top-btn:hover {
-  border-color: var(--line-strong);
-  color: var(--text-primary);
-  transform: translateY(-2px);
+.sticky-cta.btn-primary:hover {
+  filter: brightness(1.12);
+}
+
+/* The lock leaves the scrollbar's width behind as padding, so opening
+   the panel does not shunt the page sideways. */
+.aurora-container.scroll-locked {
+  padding-right: var(--lock-pad, 0px);
+}
+
+.sticky-cta-icon {
+  width: 20px;
+  height: 20px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sticky-cta.btn-primary { transition: none; }
 }
 
 @media (max-width: 768px) {
@@ -108,7 +119,7 @@
 }
 
 @media (max-width: 480px) {
-  .scroll-top-btn {
+  .sticky-cta.btn-primary {
     bottom: calc(var(--s-4) + env(safe-area-inset-bottom));
     right: var(--s-4);
   }

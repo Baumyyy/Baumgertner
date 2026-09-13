@@ -4,6 +4,7 @@ import './Footer.css';
 import { useScrollAnimation } from '../hooks/useScrollAnimation';
 import { api } from '../api';
 import { useLang } from '../useLang';
+import { useContactPanel } from '../useContactPanel';
 import { HeartIcon } from './Icons';
 
 var Footer = function() {
@@ -13,6 +14,7 @@ var Footer = function() {
   var available = availableState[0];
   var setAvailable = availableState[1];
   var { t } = useLang();
+  var openContact = useContactPanel().open;
 
   useEffect(function() {
     api.getAvailability().then(function(data) {
@@ -58,7 +60,7 @@ var Footer = function() {
               <h4 className="footer-links-title">{t.footer_navigate}</h4>
               <button className="footer-link footer-nav-btn" onClick={function() { scrollTo('home'); }}>{t.nav_home}</button>
               <button className="footer-link footer-nav-btn" onClick={function() { scrollTo('projects'); }}>{t.nav_projects}</button>
-              <button className="footer-link footer-nav-btn" onClick={function() { scrollTo('contact'); }}>{t.nav_contact}</button>
+              <button className="footer-link footer-nav-btn" onClick={openContact}>{t.nav_contact}</button>
             </div>
 
             <div className="footer-links-col">

@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import './About.css';
 import { useScrollAnimation } from '../hooks/useScrollAnimation';
 import { useLang } from '../useLang';
-import { GithubIcon, LinkedinIcon, InstagramIcon } from './Icons';
+import { GithubIcon, LinkedinIcon, InstagramIcon, MailIcon } from './Icons';
 import { Mark } from './BrandMark';
 import { about } from '../content/about';
 
 // Keyed off the entry's id so the content file stays free of components.
 var socialIcons = {
+  email: MailIcon,
   github: GithubIcon,
   linkedin: LinkedinIcon,
   instagram: InstagramIcon,
@@ -94,13 +95,16 @@ var About = function() {
               <ul className="about-social-list">
                 {about.socials.map(function(social) {
                   var Icon = socialIcons[social.id];
+                  // mailto: hands off to a mail client, so a new tab and
+                  // a noopener relationship mean nothing there.
+                  var external = social.href.indexOf('http') === 0;
                   return (
                     <li key={social.id}>
                       <a
                         className="about-social-link"
                         href={social.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                        target={external ? '_blank' : undefined}
+                        rel={external ? 'noopener noreferrer' : undefined}
                       >
                         {Icon ? <Icon /> : null}
                         {/* The handle alone does not say which platform
