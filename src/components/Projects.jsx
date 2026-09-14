@@ -6,12 +6,13 @@ import { useContactPanel } from '../useContactPanel';
 import { GithubIcon } from './Icons';
 import { Wordmark } from './BrandMark';
 import WorkCarousel from './WorkCarousel';
-import { work } from '../content/work';
+import { work, pick } from '../content/work';
 
 // How far from the pointer the notification sits.
 var HINT_X = 20;
 
-var WorkRow = function({ project, isOpen, onToggle, statusLabel, t, index }) {
+var WorkRow = function({ project, isOpen, onToggle, statusLabel, t, lang, index }) {
+  var name = pick(project.name, lang);
   var itemRef = useRef(null);
   var hintRef = useRef(null);
   var panelId = 'wk-panel-' + project.slug;
@@ -59,13 +60,13 @@ var WorkRow = function({ project, isOpen, onToggle, statusLabel, t, index }) {
               there is not. The name is always present as text for screen
               readers either way. */}
           <span className="wk-brand">
-            <span className="sr-only">{project.name}</span>
+            <span className="sr-only">{name}</span>
             {project.logo === 'wordmark' ? (
               <Wordmark className="wk-wordmark" decorative />
             ) : project.logo ? (
               <img className="wk-logo-img" src={project.logo} alt="" />
             ) : (
-              <span className="wk-name" aria-hidden="true">{project.name}</span>
+              <span className="wk-name" aria-hidden="true">{name}</span>
             )}
           </span>
 
@@ -95,40 +96,47 @@ var WorkRow = function({ project, isOpen, onToggle, statusLabel, t, index }) {
         aria-labelledby={buttonId}
       >
         <div className="wk-panel-inner">
-          <WorkCarousel shots={project.shots} active={isOpen} label={project.name} />
+          <WorkCarousel shots={project.shots} active={isOpen} label={name} />
 
           {/* The information bar under the images: what it is on the left,
               why it matters in the middle, the hard facts on the right. */}
           <div className="wk-meta">
             <div className="wk-meta-main">
-              <p className="wk-title">{project.title}</p>
+              <p className="wk-title">{pick(project.title, lang)}</p>
               <ul className="wk-tags">
-                {project.tags.map(function(tag) {
+                {pick(project.tags, lang).map(function(tag) {
                   return <li className="wk-tag" key={tag}>{tag}</li>;
                 })}
               </ul>
             </div>
 
             <div className="wk-meta-body">
-              {project.body.map(function(para) {
+              {pick(project.body, lang).map(function(para) {
                 return <p key={para.slice(0, 32)}>{para}</p>;
               })}
 
               {project.feedback && (
                 <figure className="wk-feedback">
-                  <blockquote>{project.feedback.quote}</blockquote>
+                  <blockquote>{pick(project.feedback.quote, lang)}</blockquote>
                   <figcaption>
                     {project.feedback.name}
-                    {project.feedback.role ? ' · ' + project.feedback.role : ''}
+                    {project.feedback.role ? ' · ' + pick(project.feedback.role, lang) : ''}
                   </figcaption>
                 </figure>
               )}
             </div>
 
             <dl className="wk-facts">
+              {project.year && (
+                <div className="wk-fact">
+                  <dt>{t.projects_year}</dt>
+                  <dd>{project.year}</dd>
+                </div>
+              )}
+
               <div className="wk-fact">
                 <dt>{t.projects_industry}</dt>
-                <dd>{project.industry}</dd>
+                <dd>{pick(project.industry, lang)}</dd>
               </div>
               {project.site && (
                 <div className="wk-fact">
@@ -150,7 +158,7 @@ var WorkRow = function({ project, isOpen, onToggle, statusLabel, t, index }) {
 
 var Projects = function() {
   var sectionRef = useScrollAnimation();
-  var { t } = useLang();
+  var { t, lang } = useLang();
   var openContact = useContactPanel().open;
 
   // One open at a time: opening a project closes the one before it, so
@@ -192,6 +200,7 @@ var Projects = function() {
                 }}
                 statusLabel={statusLabel}
                 t={t}
+                lang={lang}
               />
             );
           })}

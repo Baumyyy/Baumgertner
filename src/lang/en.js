@@ -59,6 +59,7 @@ var en = {
   projects_status_live: 'Live',
   projects_status_progress: 'In progress',
   projects_open_hint: 'Open project',
+  projects_year: 'Year',
   projects_industry: 'Industry',
   projects_live_site: 'Live site',
   projects_outro1: 'The next name',
