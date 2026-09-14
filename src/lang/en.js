@@ -16,7 +16,7 @@ var en = {
   problem_tag: 'The problem',
   problem_claim1: 'Cheap sites',
   problem_claim2: 'cost more',
-  problem_lede: 'A template is cheap on day one. Then it is slow, invisible, and identical to a thousand others — and you are still paying for it every month.',
+  problem_lede: 'Cheap on day one. Then slow, invisible, indistinguishable — and you still pay for it every month.',
   problem_1_caption: 'The same layout, sold a thousand times over.',
   problem_2_caption: 'Every feature you never asked for, loading anyway.',
   problem_3_caption: 'Your site, inside someone else’s platform.',

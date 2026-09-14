@@ -16,7 +16,7 @@ var fi = {
   problem_tag: 'Ongelma',
   problem_claim1: 'Halvat sivut',
   problem_claim2: 'maksavat enemmän',
-  problem_lede: 'Mallipohja on halpa ensimmäisenä päivänä. Sitten se on hidas, näkymätön ja täysin samanlainen kuin tuhat muuta — ja maksat siitä edelleen joka kuukausi.',
+  problem_lede: 'Halpa ensimmäisenä päivänä. Sitten hidas, näkymätön ja erottumaton — ja maksat siitä yhä joka kuukausi.',
   problem_1_caption: 'Sama asettelu, myytynä tuhat kertaa.',
   problem_2_caption: 'Jokainen ominaisuus jota et pyytänyt, latautuu silti.',
   problem_3_caption: 'Sinun sivusi, jonkun toisen alustan sisällä.',
