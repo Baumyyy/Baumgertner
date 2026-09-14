@@ -50,3 +50,33 @@ export const Wordmark = ({ className, title = 'Baumgertner', decorative = false 
     decorative={decorative}
   />
 );
+
+// The wordmark as a hole rather than a shape: a field of colour with the
+// letters knocked out of it. Scaling this up carries the viewer through
+// the letters onto the page behind, which is the site's opening.
+//
+// The rect is enormous in viewBox units so the field still covers the
+// screen while the svg's own box is only as big as the wordmark - and it
+// has to be only that big, because that is what keeps the holes
+// registered with the drawn mark sitting behind them. The mask needs an
+// explicit userSpaceOnUse region for the same reason: left to default it
+// would clip the field back to the wordmark's bounding box.
+const KNOCKOUT_FIELD = { x: -20000, y: -20000, width: 40000, height: 40000 };
+
+export const WordmarkKnockout = ({ className }) => (
+  <svg
+    className={className}
+    viewBox="0 0 1927.24 100"
+    xmlns="http://www.w3.org/2000/svg"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <defs>
+      <mask id="wordmark-knockout" maskUnits="userSpaceOnUse" {...KNOCKOUT_FIELD}>
+        <rect {...KNOCKOUT_FIELD} fill="#fff" />
+        <path d={WORDMARK_PATH} fill="#000" />
+      </mask>
+    </defs>
+    <rect {...KNOCKOUT_FIELD} fill="currentColor" mask="url(#wordmark-knockout)" />
+  </svg>
+);
