@@ -42,6 +42,7 @@ const AuroraBackground = ({ children }) => {
 
   useSmoothScroll(containerRef, contentRef);
   const [showCta, setShowCta] = useState(false);
+  const [nearEnd, setNearEnd] = useState(false);
   const { t } = useLang();
   const { open, isOpen } = useContactPanel();
 
@@ -55,6 +56,11 @@ const AuroraBackground = ({ children }) => {
       const atEnd = container.scrollTop + container.clientHeight
         > container.scrollHeight - FOOTER_CLEARANCE;
       setShowCta(past && !atEnd);
+      // The same end of the page, for the same reason. Down there the
+      // footer's own last line sits inside the blurred band, and a
+      // copyright and two legal links that can never be read sharply are
+      // not an effect, they are a defect.
+      setNearEnd(atEnd);
     };
     container.addEventListener('scroll', onScroll);
     return () => container.removeEventListener('scroll', onScroll);
@@ -68,6 +74,20 @@ const AuroraBackground = ({ children }) => {
           {children}
         </div>
       </div>
+      {/* The page does not stop at the bottom of the window, it softens
+          into it. Below the sticky call to action and the navigation, so
+          both of those stay sharp on top of it, and above the page so
+          there is something for it to blur. */}
+      <div
+        className={'page-blur' + (nearEnd ? ' is-clear' : '')}
+        aria-hidden="true"
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+
       {/* An icon rather than the label, because this one follows the
           reader down the whole page and a word-wide button at that
           persistence turns into a thing to get around. The label is

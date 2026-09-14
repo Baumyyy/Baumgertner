@@ -70,6 +70,69 @@
    rule here is written as a compound selector. App.css loads after this
    file, so a bare .sticky-cta would lose every tie to .btn-primary,
    including the transition this needs to fade in with. */
+/* ===== THE BOTTOM EDGE =====
+   One layer cannot do this. backdrop-filter takes a single radius, so a
+   masked one gives a blur of one strength that fades out, not a blur that
+   gets stronger toward the edge - the difference between text dissolving
+   into the bottom of the screen and text sitting behind a pane of frosted
+   glass with a soft border.
+
+   Four layers instead. Each blurs the result of the one behind it, and
+   each is masked to begin lower than the last, so the strength climbs in
+   four steps that are small enough to read as a gradient. Radii and stops
+   are the ones the reference site uses.
+
+   Nothing here reacts to anything, so it is inert for assistive
+   technology and for the pointer. */
+.page-blur {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 128px;
+  /* Over the page, under the two things that have to stay readable at the
+     bottom of the window: the call to action and, when it is open, the
+     contact panel. */
+  z-index: 5;
+  pointer-events: none;
+  transition: opacity var(--d-standard) var(--ease);
+}
+
+/* At the foot of the page the band would be sitting on the footer's own
+   last line. It goes, rather than the footer being pushed clear of it:
+   there is nothing left below to soften into, and at zero opacity the
+   browser can skip the whole stack of filters for the part of the page
+   people stop on. */
+.page-blur.is-clear {
+  opacity: 0;
+}
+
+.page-blur span {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+
+.page-blur span:nth-child(1) {
+  backdrop-filter: blur(1px);
+  mask-image: linear-gradient(180deg, transparent 0%, #000 25%);
+}
+
+.page-blur span:nth-child(2) {
+  backdrop-filter: blur(4px);
+  mask-image: linear-gradient(180deg, transparent 25%, #000 50%);
+}
+
+.page-blur span:nth-child(3) {
+  backdrop-filter: blur(6px);
+  mask-image: linear-gradient(180deg, transparent 50%, #000 75%);
+}
+
+.page-blur span:nth-child(4) {
+  backdrop-filter: blur(12px);
+  mask-image: linear-gradient(180deg, transparent 76%, #000 100%);
+}
+
 .sticky-cta.btn-primary {
   position: fixed;
   /* Square and icon-sized. .btn's own padding would make this as wide as
