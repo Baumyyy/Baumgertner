@@ -424,3 +424,39 @@ body {
   text-align: center;
   text-wrap: balance;
 }
+
+
+/* ===== THE SHEET =====
+   The page below the hero, travelling as one surface. Opaque, because it
+   has to hide the hero completely as it passes over it - anything less
+   and two images are legible through each other at once. Above the hero
+   in the stack for the same reason. */
+.page-sheet {
+  position: relative;
+  z-index: 1;
+  background: var(--canvas);
+  /* An edge and a shadow, so the sheet arrives as a surface with a near
+     side rather than as black creeping up the photograph. Both are only
+     ever seen during the pass over the hero - after that the top edge is
+     above the viewport for the rest of the page. */
+  border-top: 1px solid var(--line);
+  box-shadow: 0 -30px 60px rgba(0, 0, 0, 0.55);
+}
+
+/* The light the sheet would otherwise cover up. Held against the top of
+   the viewport the way a fixed layer would be, but in flow and therefore
+   unable to escape the sheet - a fixed layer here would sit over the hero
+   as well, which is the one place on the page that already has its own
+   light. The negative margin keeps it out of the layout: it is a surface,
+   not a row. */
+.page-sheet-glow {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100dvh;
+  margin-bottom: -100vh;
+  margin-bottom: -100dvh;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}

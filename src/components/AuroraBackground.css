@@ -45,7 +45,9 @@
   height: 100vh;
   height: 100dvh;
   overflow-y: auto;
-  scroll-behavior: smooth;
+  /* No scroll-behavior here. The smooth scrolling is driven in
+     JavaScript, and a native scroll animation on the same element would
+     be a second thing writing scrollTop for the length of every jump. */
 }
 
 .aurora-container.scroll-locked {

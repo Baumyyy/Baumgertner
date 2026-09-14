@@ -3,6 +3,22 @@ import './Hero.css';
 import { useLang } from '../useLang';
 import { Wordmark } from './BrandMark';
 import { useContactPanel } from '../useContactPanel';
+import { scrollPageTo } from '../smoothScroll';
+
+// Where a section sits inside the scroll container. offsetTop was the
+// obvious answer and was correct until the sections moved inside the
+// sheet that travels over the hero: offsetTop is measured from the
+// nearest positioned ancestor, so with the sheet in between every
+// section read a full hero height short and the navigation landed
+// eight hundred pixels above where it should. Measured against the
+// container instead - the thing actually being scrolled - which no
+// amount of rearranging the markup can put out of step.
+// The container's own position is passed in rather than read here: this
+// runs once per section on every scroll event, and reading it inside
+// would measure the same unchanging number five times a frame.
+var sectionTopIn = function(el, containerTop, scrollTop) {
+  return el.getBoundingClientRect().top - containerTop + scrollTop;
+};
 
 const Hero = ({ ready }) => {
   const [activeSection, setActiveSection] = useState('home');
@@ -21,10 +37,11 @@ const Hero = ({ ready }) => {
       const handleScroll = () => {
         const scrollTop = container.scrollTop;
         const windowHeight = container.clientHeight;
+        const containerTop = container.getBoundingClientRect().top;
         setScrolled(scrollTop > 60);
         let current = 'home';
         sections.forEach((section) => {
-          const sectionTop = section.offsetTop - windowHeight * 0.4;
+          const sectionTop = sectionTopIn(section, containerTop, scrollTop) - windowHeight * 0.4;
           if (scrollTop >= sectionTop) {
             current = section.getAttribute('id');
           }
@@ -70,12 +87,13 @@ const Hero = ({ ready }) => {
     setMenuOpen(false);
     var container = document.querySelector('.aurora-container');
     if (targetId === 'home') {
-      if (container) container.scrollTo({ top: 0, behavior: 'smooth' });
+      scrollPageTo(container, 0);
     } else {
       var element = document.getElementById(targetId);
       if (element && container) {
-        var elementTop = element.offsetTop - 60;
-        container.scrollTo({ top: elementTop, behavior: 'smooth' });
+        var elementTop = sectionTopIn(
+          element, container.getBoundingClientRect().top, container.scrollTop) - 60;
+        scrollPageTo(container, elementTop);
       }
     }
   };
@@ -119,7 +137,7 @@ const Hero = ({ ready }) => {
         </div>
       </nav>
 
-      <section id="home" className="hero">
+      <section id="home" className={'hero' + (ready ? ' hero-ready' : '')}>
         {/* Decorative backdrop. The portrait crop is served below 768px so
             phones get a frame composed for their shape rather than a
             centre-cropped landscape. */}

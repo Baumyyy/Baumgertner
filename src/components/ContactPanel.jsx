@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import './ContactPanel.css';
+import { pauseScrolling, resumeScrolling } from '../smoothScroll';
 import { api } from '../api';
 import { useLang } from '../useLang';
 import { useContactPanel } from '../useContactPanel';
@@ -129,10 +130,19 @@ var ContactPanel = function() {
       var bar = container.offsetWidth - container.clientWidth;
       container.style.setProperty('--lock-pad', bar + 'px');
       container.classList.add('scroll-locked');
+      // Hiding the overflow stops the container being scrollable, but the
+      // smooth-scroll loop keeps a position of its own and would go on
+      // taking wheel events - so the page would have moved by the time
+      // the panel closes. It is stopped rather than fought.
+      pauseScrolling();
     } else {
       container.classList.remove('scroll-locked');
+      resumeScrolling();
     }
-    return function() { container.classList.remove('scroll-locked'); };
+    return function() {
+      container.classList.remove('scroll-locked');
+      resumeScrolling();
+    };
   }, [isOpen]);
 
   var handleChange = function(e) {

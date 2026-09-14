@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './Footer.css';
+import { scrollPageTo } from '../smoothScroll';
 import { useLang } from '../useLang';
 import { Wordmark } from './BrandMark';
 import { GithubIcon, LinkedinIcon, InstagramIcon, MailIcon } from './Icons';
@@ -23,7 +24,7 @@ var Footer = function() {
 
   var toTop = function() {
     var container = document.querySelector('.aurora-container');
-    if (container) container.scrollTo({ top: 0, behavior: 'smooth' });
+    scrollPageTo(container, 0);
   };
 
   return (

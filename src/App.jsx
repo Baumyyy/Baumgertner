@@ -4,7 +4,7 @@ import { LanguageProvider } from './LanguageContext';
 import { ContactPanelProvider } from './ContactPanelProvider';
 import { useLang } from './useLang';
 import { useHomeSeo } from './hooks/useHomeSeo';
-import AuroraBackground from './components/AuroraBackground';
+import AuroraBackground, { BackdropGlow } from './components/AuroraBackground';
 import Hero from './components/Hero';
 import LoadingScreen from './components/LoadingScreen.jsx';
 import ErrorBoundary from './components/ErrorBoundary.jsx';
@@ -39,11 +39,26 @@ function HomePage({ ready }) {
   return (
     <AuroraBackground>
       <Hero ready={ready} />
-      <Problem />
-      <Services />
-      <Projects />
-      <About />
-      <Footer />
+
+      {/* Everything after the hero travels as one sheet, because that is
+          what it is on screen: the hero stays where it is and the rest of
+          the page arrives over the top of it. One wrapper rather than a
+          background on each section - the sheet needs a single unbroken
+          surface and a single edge, and five separately painted sections
+          would give it neither. */}
+      <div className="page-sheet">
+        {/* Sticky rather than fixed, which is the whole point: it holds
+            still against the viewport like the layer it replaces, but it
+            cannot leave the sheet, so it never reaches the hero the sheet
+            is covering. */}
+        <BackdropGlow className="page-sheet-glow" />
+
+        <Problem />
+        <Services />
+        <Projects />
+        <About />
+        <Footer />
+      </div>
     </AuroraBackground>
   );
 }

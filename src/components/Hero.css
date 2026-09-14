@@ -150,8 +150,15 @@
   align-items: center;
   justify-content: center;
   padding: 7rem 4rem 4rem 4rem;
-  position: relative;
-  z-index: 1;
+  /* Stays where it is while the rest of the page arrives over it. Sticky
+     rather than fixed: fixed would take it out of flow and the page would
+     start a screen too high. It stays pinned for the whole document, but
+     the sheet above is opaque and taller than the viewport, so from the
+     moment it is covered it is never seen again until it is scrolled
+     back to. */
+  position: sticky;
+  top: 0;
+  z-index: 0;
   overflow: hidden;
   isolation: isolate;
 }
@@ -166,12 +173,34 @@
   overflow: hidden;
 }
 
+/* The opening leaves the viewer travelling forward through the mark, so
+   the landscape has to come to rest rather than simply be there - stop
+   the motion dead at the handover and the whole sequence reads as two
+   animations instead of one.
+
+   It starts slightly large rather than growing into it. By the time the
+   loading screen is opening, this is already on screen: it is what shows
+   through the letters. Beginning the move here would mean a visible jump
+   at the moment the mark leaves, so the photograph is already where the
+   move begins and only ever settles from it.
+
+   Decelerating, because what it continues from was accelerating - but
+   only gently. A sharply front-weighted curve here is over inside four
+   hundred milliseconds and the remaining second of it moves by half a
+   percent, which is a snap followed by nothing rather than a settle. */
 .hero-bg img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: center;
   display: block;
+  transform: scale(1.18);
+  will-change: transform;
+}
+
+.hero-ready .hero-bg img {
+  transform: scale(1);
+  transition: transform 2200ms cubic-bezier(.22, .61, .36, 1);
 }
 
 /* Deliberately light. The photograph should read as a photograph, so the
@@ -384,6 +413,12 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .hero-bg img {
+    transform: none !important;
+    transition: none !important;
+    will-change: auto;
+  }
+
   .hero-claim,
   .hero-lede,
   .hero-actions,

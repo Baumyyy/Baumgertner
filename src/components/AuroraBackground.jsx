@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useSmoothScroll } from '../hooks/useSmoothScroll';
 import './AuroraBackground.css';
 import { useLang } from '../useLang';
 import { useContactPanel } from '../useContactPanel';
@@ -21,8 +22,25 @@ import { MailIcon } from './Icons';
 // the whole of it rather than only once it has already overlapped.
 const FOOTER_CLEARANCE = 160;
 
+// The two corner glows. Exported because they are needed twice: once
+// behind the whole page, and once inside the sheet that travels over the
+// hero - the sheet has to be opaque to hide the hero, which means it also
+// hides the layer below it, so it carries its own copy of the light.
+// Same markup and same CSS both times, so the two cannot drift apart.
+export const BackdropGlow = ({ className }) => (
+  <div className={className} aria-hidden="true">
+    <div className="bg-glow bg-glow-primary" />
+    <div className="bg-glow bg-glow-secondary" />
+  </div>
+);
+
 const AuroraBackground = ({ children }) => {
   const containerRef = useRef(null);
+  // Named separately because the smooth scrolling needs both ends: the
+  // box that scrolls, and the box whose height decides how far it can.
+  const contentRef = useRef(null);
+
+  useSmoothScroll(containerRef, contentRef);
   const [showCta, setShowCta] = useState(false);
   const { t } = useLang();
   const { open, isOpen } = useContactPanel();
@@ -44,12 +62,11 @@ const AuroraBackground = ({ children }) => {
 
   return (
     <>
-      <div className="bg-layer" aria-hidden="true">
-        <div className="bg-glow bg-glow-primary" />
-        <div className="bg-glow bg-glow-secondary" />
-      </div>
+      <BackdropGlow className="bg-layer" />
       <div className="aurora-container" ref={containerRef}>
-        {children}
+        <div className="aurora-content" ref={contentRef}>
+          {children}
+        </div>
       </div>
       {/* An icon rather than the label, because this one follows the
           reader down the whole page and a word-wide button at that
