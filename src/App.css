@@ -220,26 +220,39 @@ body {
 }
 
 /* ===== SCROLL ANIMATIONS =====
-   Fade plus a small rise. No scale, no overshoot. */
+   Fade, a rise, and a settle from very slightly too large - the same move
+   the hero photograph makes when the loading screen opens, so arriving on
+   the page and arriving in a section are recognisably the same gesture.
+
+   The scale is 1.5%, which is nothing on its own and everything next to a
+   plain fade: it is what stops the block reading as a label being turned
+   on and makes it read as something coming to rest. Text is only ever
+   scaled on the way in and lands at exactly 1, so nothing is left soft.
+
+   No overshoot. The curve decelerates into place and stops there. */
 .fade-in {
   opacity: 0;
-  transform: translateY(12px);
-  transition: opacity var(--d-entrance) var(--ease),
-              transform var(--d-entrance) var(--ease);
+  transform: translateY(26px) scale(1.015);
+  transition: opacity var(--d-reveal) cubic-bezier(.22, .61, .36, 1),
+              transform var(--d-reveal) cubic-bezier(.22, .61, .36, 1);
 }
 
 /* Set by useScrollAnimation as an attribute, not a class - see the note
    there for why a class cannot survive a re-render on these elements. */
 .fade-in[data-visible] {
   opacity: 1;
-  transform: translateY(0);
+  transform: translateY(0) scale(1);
 }
 
+/* Wider steps than before, because the move itself is longer. At the old
+   eighty milliseconds against a seven hundred millisecond move, three
+   staggered items are ninety per cent on top of each other and the
+   sequence reads as one block again. */
 .stagger-1 { transition-delay: 0s; }
-.stagger-2 { transition-delay: 0.08s; }
-.stagger-3 { transition-delay: 0.16s; }
-.stagger-4 { transition-delay: 0.24s; }
-.stagger-5 { transition-delay: 0.32s; }
+.stagger-2 { transition-delay: 0.11s; }
+.stagger-3 { transition-delay: 0.22s; }
+.stagger-4 { transition-delay: 0.33s; }
+.stagger-5 { transition-delay: 0.44s; }
 
 @media (prefers-reduced-motion: reduce) {
   .fade-in {

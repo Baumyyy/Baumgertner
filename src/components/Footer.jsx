@@ -6,6 +6,7 @@ import { useLang } from '../useLang';
 import { Wordmark } from './BrandMark';
 import { GithubIcon, LinkedinIcon, InstagramIcon, MailIcon } from './Icons';
 import { about } from '../content/about';
+import { useScrollAnimation } from '../hooks/useScrollAnimation';
 
 // No band, no rules across the page, no surface of its own - the footer
 // sits on the same black as everything above it. What marks it as the
@@ -20,6 +21,7 @@ var socialIcons = {
 
 var Footer = function() {
   var currentYear = new Date().getFullYear();
+  var sectionRef = useScrollAnimation();
   var { t } = useLang();
 
   var toTop = function() {
@@ -28,9 +30,9 @@ var Footer = function() {
   };
 
   return (
-    <footer className="footer">
+    <footer className="footer" ref={sectionRef}>
       <div className="footer-inner">
-        <div className="ft-row">
+        <div className="ft-row fade-in stagger-1">
           <button type="button" className="ft-brand" onClick={toTop}>
             <span className="sr-only">Baumgertner</span>
             <Wordmark className="ft-wordmark" decorative />
@@ -63,6 +65,9 @@ var Footer = function() {
           </div>
         </div>
 
+        {/* No entrance on this one: it sets an opacity of its own,
+            which wins over the one the entrance animates, so it would
+            slide in without ever fading. */}
         <p className="ft-copy">&copy; {currentYear} Anthony Baumgertner</p>
       </div>
     </footer>

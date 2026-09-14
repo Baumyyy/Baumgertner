@@ -91,6 +91,10 @@
   --d-micro:    160ms;
   --d-standard: 240ms;
   --d-entrance: 420ms;
+  /* Longer than an entrance that happens on arrival, because this one
+     happens while the reader is already moving: it has to be slow enough
+     to be seen finishing rather than caught halfway and left behind. */
+  --d-reveal: 720ms;
   --ease: cubic-bezier(.2, .6, .2, 1);
 }
 
@@ -99,5 +103,6 @@
     --d-micro:    1ms;
     --d-standard: 1ms;
     --d-entrance: 1ms;
+    --d-reveal:   1ms;
   }
 }

@@ -25,6 +25,14 @@ export const useScrollAnimation = () => {
       {
         threshold: 0.1,
         root: container || null
+        // No negative bottom margin here, tempting as it is. Holding the
+        // trigger back past the blurred band at the foot of the window
+        // sounds like an improvement and creates a dead zone: anything
+        // that never rises above that band - the footer row, the
+        // copyright line - never intersects, never fires, and stays at
+        // opacity 0 for good. Measured: two elements permanently
+        // invisible at the bottom of the page. An entrance that begins
+        // slightly blurred is a far smaller price.
       }
     );
 
