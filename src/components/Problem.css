@@ -3,7 +3,7 @@
    reads better on nothing. */
 .problem {
   padding: 8rem 4rem;
-  max-width: min(1900px, 96vw);
+  max-width: min(114rem, 96vw);
   margin: 0 auto;
   position: relative;
   z-index: 1;

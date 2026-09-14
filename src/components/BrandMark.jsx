@@ -53,15 +53,26 @@ export const Wordmark = ({ className, title = 'Baumgertner', decorative = false 
 
 // The wordmark as a hole rather than a shape: a field of colour with the
 // letters knocked out of it. Scaling this up carries the viewer through
-// the letters onto the page behind, which is the site's opening.
+// the letters onto the page behind, which is the site opening.
 //
-// The rect is enormous in viewBox units so the field still covers the
-// screen while the svg's own box is only as big as the wordmark - and it
-// has to be only that big, because that is what keeps the holes
-// registered with the drawn mark sitting behind them. The mask needs an
-// explicit userSpaceOnUse region for the same reason: left to default it
-// would clip the field back to the wordmark's bounding box.
-const KNOCKOUT_FIELD = { x: -20000, y: -20000, width: 40000, height: 40000 };
+// One path with an even-odd fill, not a mask. A mask forces the browser
+// to rasterise a separate buffer, and this element is scaled two hundred
+// and fifty times - at that size the browser intermittently gives up on
+// the buffer and paints the field solid, which is a black screen instead
+// of an opening. Measured at 2560 wide: it happened on two runs out of
+// five, at every zoom level, so it was the mask rather than the travel.
+//
+// Even-odd does the same job with no buffer at all. A point inside the
+// field alone is crossed once and fills; inside the field and a letter,
+// twice, and drops out; inside a counter as well - the enclosed middle
+// of a B - three times, and fills again, which is exactly right, because
+// a counter is background too.
+//
+// The field is enormous in viewBox units so it still covers the screen
+// while the svg box is only as big as the wordmark, and it has to be
+// only that big: that is what keeps the holes registered with the drawn
+// mark sitting behind them.
+const KNOCKOUT_FIELD = 'M-20000 -20000L20000 -20000L20000 20000L-20000 20000Z';
 
 export const WordmarkKnockout = ({ className }) => (
   <svg
@@ -71,12 +82,10 @@ export const WordmarkKnockout = ({ className }) => (
     aria-hidden="true"
     focusable="false"
   >
-    <defs>
-      <mask id="wordmark-knockout" maskUnits="userSpaceOnUse" {...KNOCKOUT_FIELD}>
-        <rect {...KNOCKOUT_FIELD} fill="#fff" />
-        <path d={WORDMARK_PATH} fill="#000" />
-      </mask>
-    </defs>
-    <rect {...KNOCKOUT_FIELD} fill="currentColor" mask="url(#wordmark-knockout)" />
+    <path
+      d={KNOCKOUT_FIELD + WORDMARK_PATH}
+      fill="currentColor"
+      fillRule="evenodd"
+    />
   </svg>
 );

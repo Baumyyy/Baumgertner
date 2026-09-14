@@ -307,46 +307,10 @@
   50% { opacity: 0.65; }
 }
 
-/* Anchored to the hero itself rather than to a sibling block, so it
-   survives whatever content sits above it. */
-.hero-scroll-cue {
-  position: absolute;
-  left: 50%;
-  bottom: calc(var(--s-7) + env(safe-area-inset-bottom));
-  transform: translateX(-50%);
-  display: flex;
-  justify-content: center;
-  pointer-events: none;
-}
-
-.hero-scroll-chevron {
-  width: 16px;
-  height: 16px;
-  border-right: 2px solid var(--text-muted);
-  border-bottom: 2px solid var(--text-muted);
-  transform: rotate(45deg);
-  opacity: 0;
-  animation: arrowReveal 0.6s var(--ease) forwards 1.1s,
-             floatUpDown 2.4s ease-in-out infinite 1.1s;
-  animation-play-state: paused;
-}
-
-.hero-scroll-cue.hero-ready .hero-scroll-chevron {
-  animation-play-state: running;
-}
-
-@keyframes arrowReveal {
-  from { opacity: 0; }
-  to { opacity: 0.9; }
-}
-
-/* The chevron is a rotated square, so the drift has to be composed with
-   its rotation - a bare translateY would cancel the 45deg out. After
-   rotate(45deg), translate(t, t) resolves to straight down on screen. */
-@keyframes floatUpDown {
-  0%, 100% { transform: rotate(45deg) translate(0, 0); }
-  50%      { transform: rotate(45deg) translate(3px, 3px); }
-}
+/* The scroll cue that used to sit at the foot of the hero is gone. The
+   bottom of the window is blurred now, which is where it lived - a hint
+   that has to be squinted at is worse than no hint, and the page moving
+   under the reader says the same thing without asking for a corner. */
 
 
 @keyframes iconPop {
@@ -422,7 +386,6 @@
   .hero-claim,
   .hero-lede,
   .hero-actions,
-  .hero-scroll-chevron,
   .navbar {
     animation: none !important;
     opacity: 1 !important;

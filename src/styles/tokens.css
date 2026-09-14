@@ -75,16 +75,20 @@
   --r-lg: 20px;
 
   /* Space ----------------------------------------------------------- */
-  --s-1:  4px;
-  --s-2:  8px;
-  --s-3:  12px;
-  --s-4:  16px;
-  --s-5:  24px;
-  --s-6:  32px;
-  --s-7:  48px;
-  --s-8:  64px;
-  --s-9:  96px;
-  --s-10: 128px;
+  /* In rem, not px, so the spacing grows with the page on a large
+     screen instead of staying laptop-sized inside it. The values are the
+     same as the pixel ones they replace at the default text size, so
+     nothing below a laptop moves by even one pixel. */
+  --s-1:  0.25rem;
+  --s-2:  0.5rem;
+  --s-3:  0.75rem;
+  --s-4:  1rem;
+  --s-5:  1.5rem;
+  --s-6:  2rem;
+  --s-7:  3rem;
+  --s-8:  4rem;
+  --s-9:  6rem;
+  --s-10: 8rem;
 
   /* Motion ----------------------------------------------------------
      Fade plus a small rise. No scale bounce, no spring overshoot. */

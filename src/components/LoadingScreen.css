@@ -58,7 +58,14 @@
    that starts fast and settles reads as a panel sliding away instead. */
 .loading-inner {
   position: relative;
-  width: min(880px, 92vw);
+  /* In rem, so the mark grows with the screen exactly as the page
+     does. It has to: the travel below is a ratio between the screen and
+     one stroke of one letter, so a mark that stays laptop-sized on a big
+     monitor needs a longer journey than the ceiling allows - measured,
+     that left 87 % of a 2560 screen still black when the opening ended.
+     Scaling both keeps the ratio, and the travel, constant. 55rem is the
+     880px it replaces at the default text size. */
+  width: min(55rem, 92vw);
   transform: scale(1);
   /* Not the centre of the mark: the centre of the stroke the viewer goes
      through. Which stroke is the best one to go through depends on the

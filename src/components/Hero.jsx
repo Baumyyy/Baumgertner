@@ -178,13 +178,6 @@ const Hero = ({ ready }) => {
           </div>
 
         </div>
-
-        {/* Scroll cue. Used to be drawn as a pseudo-element on the social
-            links, which meant it disappeared with them - it gets its own
-            element so it is anchored to the section, not to a sibling. */}
-        <div className={'hero-scroll-cue' + (ready ? ' hero-ready' : '')} aria-hidden="true">
-          <span className="hero-scroll-chevron"></span>
-        </div>
       </section>
     </>
   );

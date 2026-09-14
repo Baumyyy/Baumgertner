@@ -141,20 +141,17 @@ var About = function() {
   var sectionRef = useScrollAnimation();
   var { t } = useLang();
 
-  // Several at once rather than one at a time. These are short answers
-  // people compare against each other, and closing the one you just read
-  // to open the next is a cost with nothing bought by it - unlike the
-  // project list, where the panels are tall enough to matter.
-  var openState = useState([]);
+  // One at a time. Opening the next closes the one before it, so the list
+  // never grows into a wall of open answers and the one being read is the
+  // only one on screen. A single id rather than a set of them - with one
+  // open at most there is nothing to keep a set for, and the reopening
+  // case is then just an equality check.
+  var openState = useState(null);
   var open = openState[0];
   var setOpen = openState[1];
 
   var toggle = function(id) {
-    setOpen(function(prev) {
-      return prev.indexOf(id) === -1
-        ? prev.concat([id])
-        : prev.filter(function(x) { return x !== id; });
-    });
+    setOpen(function(prev) { return prev === id ? null : id; });
   };
 
   // Ordered the way a client meets them: what happens, how it happens,
@@ -252,7 +249,7 @@ var About = function() {
 
           <ul className="ap-list">
             {questions.map(function(item) {
-              var isOpen = open.indexOf(item.id) !== -1;
+              var isOpen = open === item.id;
               var panelId = 'ap-panel-' + item.id;
               var buttonId = 'ap-button-' + item.id;
 

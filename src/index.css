@@ -5,7 +5,22 @@
    Vite's purple ended up as the default link colour on a site that has
    never had a purple in its palette. src/tests/base.test.js keeps it out. */
 
+/* The page scales with the screen above a laptop, rather than staying
+   the size it was and floating in the middle of a large monitor. Every
+   size on the site is expressed in rem or in tokens built on rem, so
+   moving this one number moves the type, the spacing and the column
+   widths together - the page gets bigger, it does not get roomier.
+
+   The floor is 1rem, which is whatever the reader has set as their
+   browser's default: below a laptop nothing changes at all, and a person
+   who has chosen large text keeps it. A flat px floor here would quietly
+   override that choice, which is why there is not one.
+
+   Measured, not guessed: at 2560 the content filled 69 % of the window
+   and the section heading had been stuck at 70px since 1467. */
 :root {
+  font-size: clamp(1rem, 0.6rem + 0.45vw, 1.35rem);
+
   font-family: var(--font-body);
   line-height: 1.6;
   font-weight: 400;
