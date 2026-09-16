@@ -1,8 +1,14 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Mark } from './BrandMark';
+import Lightbox from './Lightbox';
+import { useLang } from '../useLang';
 
 var AUTO_MS = 5000;
 var DRAG_THRESHOLD = 48;
+
+// Below this a pointer has not moved; it has been pressed. Hands and
+// trackpads wobble by a pixel or two.
+var DRAG_SLOP = 8;
 
 // The shots for one project, looping in both directions.
 //
@@ -17,6 +23,12 @@ var DRAG_THRESHOLD = 48;
 // animating something nobody can see.
 var WorkCarousel = function({ shots, active, label }) {
   var count = shots.length;
+  var { t } = useLang();
+
+  // null when closed, otherwise the index of the shot being looked at.
+  var zoomState = useState(null);
+  var zoom = zoomState[0];
+  var setZoom = zoomState[1];
 
   // DOM positions: 0 is the clone of the last, 1..count the real shots,
   // count+1 the clone of the first.
@@ -38,22 +50,25 @@ var WorkCarousel = function({ shots, active, label }) {
   }, [count, setPos, setAnimate]);
 
   // Reset when the panel closes, so reopening starts from the first shot.
+  // The enlarged view goes with it: a row closing under an open picture
+  // leaves a picture belonging to nothing.
   useEffect(function() {
     if (!active) {
       setAnimate(false);
       setPos(1);
+      setZoom(null);
     }
-  }, [active, setPos, setAnimate]);
+  }, [active, setPos, setAnimate, setZoom]);
 
   useEffect(function() {
-    if (!active || paused || count < 2) return;
+    if (!active || paused || zoom !== null || count < 2) return;
     var reduce = window.matchMedia
       && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reduce) return;
 
     var id = setInterval(function() { step(1); }, AUTO_MS);
     return function() { clearInterval(id); };
-  }, [active, paused, count, step]);
+  }, [active, paused, zoom, count, step]);
 
   // The silent part of the loop: land on a clone, then swap to its real
   // twin with animation off. Same pixels, so nothing is visible.
@@ -69,8 +84,24 @@ var WorkCarousel = function({ shots, active, label }) {
 
   var onPointerDown = function(e) {
     if (count < 2) return;
-    dragRef.current = { startX: e.clientX, dragging: true };
+    dragRef.current = { startX: e.clientX, dragging: true, moved: false };
     setPaused(true);
+  };
+
+  // The capture is taken here rather than on pointerdown, and only once
+  // the pointer has actually travelled.
+  //
+  // Capturing on press sends every later pointer event to this track, and
+  // the click that follows is then dispatched to the track too - so the
+  // button wrapping the shot never saw it and the picture would not open.
+  // Waiting for movement means a plain click never captures anything,
+  // while a drag still gets the capture it needs to carry on when the
+  // pointer leaves the strip.
+  var onPointerMove = function(e) {
+    var d = dragRef.current;
+    if (!d.dragging || d.moved) return;
+    if (Math.abs(e.clientX - d.startX) <= DRAG_SLOP) return;
+    d.moved = true;
     e.currentTarget.setPointerCapture(e.pointerId);
   };
 
@@ -78,6 +109,10 @@ var WorkCarousel = function({ shots, active, label }) {
     if (!dragRef.current.dragging) return;
     var dx = e.clientX - dragRef.current.startX;
     dragRef.current.dragging = false;
+    // A drag that travelled is a drag, not a click. The shot is a button
+    // now, and without this the click that ends every swipe would open
+    // the picture the reader was swiping away from.
+    dragRef.current.moved = Math.abs(dx) > DRAG_SLOP;
     if (Math.abs(dx) > DRAG_THRESHOLD) step(dx < 0 ? 1 : -1);
     setPaused(false);
   };
@@ -108,27 +143,54 @@ var WorkCarousel = function({ shots, active, label }) {
         style={{ '--i': pos }}
         onTransitionEnd={onTransitionEnd}
         onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
         onPointerCancel={onPointerUp}
       >
         {slides.map(function(src, i) {
+          var onkoAktiivinen = i === pos;
           return (
             <div
-              className={'wk-slide' + (i === pos ? ' is-active' : '')}
+              className={'wk-slide' + (onkoAktiivinen ? ' is-active' : '')}
               key={i}
-              aria-hidden={i !== pos}
+              aria-hidden={!onkoAktiivinen}
             >
-              <img
-                src={src}
-                alt={label + ' — ' + (current + 1) + '/' + count}
-                loading="lazy"
-                decoding="async"
-                draggable="false"
-              />
+              {/* Only the shot in the middle opens. The two in the
+                  margins are there to say the set continues; a click on
+                  one of those should bring it to the middle, which is
+                  what the drag already does. */}
+              <button
+                type="button"
+                className="wk-open"
+                onClick={function() {
+                  if (!onkoAktiivinen || dragRef.current.moved) return;
+                  setZoom(current);
+                }}
+                tabIndex={onkoAktiivinen ? 0 : -1}
+                aria-label={onkoAktiivinen ? t.projects_zoom_hint + ': ' + label : undefined}
+              >
+                <img
+                  src={src}
+                  alt={label + ' \u2014 ' + (current + 1) + '/' + count}
+                  loading="lazy"
+                  decoding="async"
+                  draggable="false"
+                />
+              </button>
             </div>
           );
         })}
       </div>
+
+      {zoom !== null && (
+        <Lightbox
+          shots={shots}
+          index={zoom}
+          label={label}
+          onClose={function() { setZoom(null); }}
+          onStep={setZoom}
+        />
+      )}
 
       {count > 1 && (
         <div className="wk-dots">

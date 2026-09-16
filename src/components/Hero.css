@@ -30,8 +30,16 @@
   border-radius: 999px;
   background: rgba(10, 10, 10, 0.72);
   border: 1px solid var(--line);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  /* No backdrop-filter here, deliberately. A blurred element becomes the
+     containing block for position:fixed descendants, and the mobile menu
+     is one - with the filter on the pill the full-screen overlay was
+     confined to the pill's own 364x42 box and the page showed straight
+     through it. The blur is re-applied below, where there is no menu to
+     break.
+
+     Note also: only the standard property anywhere. Writing the -webkit-
+     one by hand made the build emit that alone, and Chrome has no such
+     alias, so this bar sat unblurred for as long as both were here. */
   transition: background var(--d-standard) var(--ease),
               border-color var(--d-standard) var(--ease);
 }
@@ -39,26 +47,6 @@
 .navbar.scrolled .nav-pill {
   background: rgba(10, 10, 10, 0.9);
   border-color: var(--line-strong);
-}
-
-.nav-progress-bar {
-  display: none;
-}
-
-@media (max-width: 768px) {
-  .nav-progress-bar {
-    display: block;
-    position: absolute;
-    left: var(--s-5);
-    right: var(--s-5);
-    bottom: 2px;
-    height: 2px;
-    border-radius: 999px;
-    background: var(--text-primary);
-    transform: scaleX(0);
-    transform-origin: left;
-    will-change: transform;
-  }
 }
 
 .nav-links {
@@ -74,6 +62,10 @@
   font-family: var(--font-body);
   font-size: 0.875rem;
   font-weight: 450;
+  /* Contact is a button rather than a link, and a button's default
+     line-height is normal, not the page's. Left alone it measured 17px
+     tall beside the links' 23 and sat visibly off their line. */
+  line-height: inherit;
   color: var(--text-secondary);
   text-decoration: none;
   white-space: nowrap;
@@ -89,6 +81,14 @@
   color: var(--text-primary);
 }
 
+/* Wide screens only: there is no full-screen menu there, so nothing
+   fixed lives inside the pill and the filter is free to do its job. */
+@media (min-width: 769px) {
+  .nav-pill {
+    backdrop-filter: blur(20px);
+  }
+}
+
 .nav-logo {
   text-decoration: none;
   cursor: pointer;
@@ -101,6 +101,19 @@
   display: flex;
   align-items: center;
   gap: var(--s-3);
+}
+
+/* Phone only: the wide pill has room for the sentence on .nav-cta, and
+   the language control belongs with whatever settings end up beside it
+   there rather than squeezed in on its own.
+
+   Written through .nav-links because .btn-primary sets its own display
+   in App.css: one class each, and the later file wins, so a bare
+   .nav-mail rule loses and the button turns up in the middle of the wide
+   navigation next to the sentence that already says the same thing. */
+.nav-menu-tools,
+.nav-links .nav-mail {
+  display: none;
 }
 
 /* The one button on the site that is not chamfered. A cut rectangle
@@ -144,8 +157,15 @@
 
 /* ===== HERO ===== */
 .hero {
+  /* The large viewport, not the small one. svh is the height with the
+     address bar showing, so the moment that bar slides away - which it
+     now does, because the document scrolls again - the visible area
+     grows and a hero sized to svh leaves a strip of bare canvas under
+     the photograph. lvh is the height with the bar gone, so the picture
+     fills the screen in both states and carries on behind the bar while
+     it is there. */
   min-height: 100vh;
-  min-height: 100svh;
+  min-height: 100lvh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -195,7 +215,10 @@
   object-position: center;
   display: block;
   transform: scale(1.18);
-  will-change: transform;
+  /* No will-change. The settle runs once, at load, and promoting a
+     full-screen image to its own layer for the life of the page costs a
+     frame's work on every scroll for an animation that is already over -
+     measured, 38fps against 49. */
 }
 
 .hero-ready .hero-bg img {
@@ -215,6 +238,32 @@
   background:
     radial-gradient(ellipse 100% 85% at 50% 45%, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.05) 55%, rgba(0, 0, 0, 0.34) 100%),
     linear-gradient(to bottom, rgba(0, 0, 0, 0.32) 0%, rgba(0, 0, 0, 0) 26%, rgba(0, 0, 0, 0) 78%, rgba(0, 0, 0, 0.42) 100%);
+}
+
+/* The first and last strip of the picture, taken to solid black.
+
+   The page already paints to the very edge of the screen - measured, the
+   photograph reaches row 0 and row 843 - so the black bands above and
+   below are the browser's own bars, and whether a browser draws a page
+   behind them is its decision, not ours. What we can decide is whether
+   the join shows. The page's top row measured 8.7 out of 255 against a
+   bar of flat 0, and that small step is exactly what reads as a band.
+
+   Phone only: on a desktop there are no such bars to meet. */
+@media (max-width: 768px) {
+  .hero-scrim {
+    background:
+      radial-gradient(ellipse 100% 85% at 50% 45%, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.05) 55%, rgba(0, 0, 0, 0.34) 100%),
+      linear-gradient(to bottom,
+        rgba(0, 0, 0, 1) 0,
+        rgba(0, 0, 0, 1) calc(env(safe-area-inset-top) + 8px),
+        rgba(0, 0, 0, 0.32) calc(env(safe-area-inset-top) + 64px),
+        rgba(0, 0, 0, 0) 26%,
+        rgba(0, 0, 0, 0) 74%,
+        rgba(0, 0, 0, 0.42) calc(100% - env(safe-area-inset-bottom) - 72px),
+        rgba(0, 0, 0, 1) calc(100% - env(safe-area-inset-bottom) - 8px),
+        rgba(0, 0, 0, 1) 100%);
+  }
 }
 
 /* Centred: the valley opens in the middle of the frame, so the type sits
@@ -255,6 +304,34 @@
 .hero-claim-line {
   display: block;
   white-space: nowrap;
+}
+
+/* On a phone the two rules above fight each other and the type loses.
+   A line that may not break has to fit the width it is given, so on a
+   390px screen the claim was solving for "WHAT A WEBSITE CAN BE" in one
+   line and arriving at 21px - against 14px body text, which is no
+   hierarchy at all.
+
+   Below this width the writing's own line break stops being worth its
+   price. The lines are allowed to wrap and the size gets a floor, so the
+   headline is a headline again. Measured: 21px to 35px. */
+@media (max-width: 768px) {
+  .hero-claim {
+    /* Raised again from 9vw. At 9 the claim measured larger than the
+       lede and the buttons, but it did not look it: two full-width red
+       controls carry more weight on a phone than four lines of type, so
+       the number that matters is not the font size but which element the
+       eye lands on first. */
+    font-size: clamp(2.4rem, 11vw, 4rem);
+  }
+
+  .hero-claim-line {
+    white-space: normal;
+    /* Balanced, not just wrapped. Left to itself the break put "BE" alone
+       on a fourth line, and a one-word last line reads as a mistake
+       rather than as a line. */
+    text-wrap: balance;
+  }
 }
 
 /* Each sentence is its own line, as written - the second one is the turn,
@@ -432,9 +509,113 @@
     animation: none !important;
   }
 
-  .nav-pill { padding: var(--s-2) var(--s-2) var(--s-2) var(--s-4); }
+  /* Denser than the wide layout: without the blur behind it, 72 % lets
+     the mountain through and the mark sits in the middle of a photograph
+     rather than on a surface. */
+  .nav-pill {
+    padding: var(--s-2) var(--s-2) var(--s-2) var(--s-4);
+    background: rgba(10, 10, 10, 0.92);
+  }
 
-  .nav-logo-mark { width: 128px; }
+  /* The full wordmark rather than a monogram, but not filling the bar.
+     It is 19:1, so width is the only thing that sets its weight: at 128px
+     it stood under seven pixels tall and read as a hairline, at the full
+     290 it stood fifteen and shouted louder than anything under it. The
+     cap below puts it at around nine - the same scale it has on a wide
+     screen. */
+  .nav-logo { flex: 1; min-width: 0; }
+
+  .nav-logo-mark {
+    width: 100%;
+    max-width: 200px;
+  }
+
+  /* The foot of the open menu. */
+  .nav-menu-tools {
+    display: flex;
+    align-items: center;
+    gap: var(--s-3);
+    margin-top: var(--s-7);
+  }
+
+  .nav-menu-tools .nav-lang,
+  .nav-links .nav-mail {
+    --cut: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 52px;
+    height: 52px;
+    padding: 0;
+    cursor: pointer;
+    /* The chamfer every other control on the site carries. Nothing here
+       is a capsule. */
+    clip-path: polygon(
+      var(--cut) 0,
+      100% 0,
+      100% calc(100% - var(--cut)),
+      calc(100% - var(--cut)) 100%,
+      0 100%,
+      0 var(--cut)
+    );
+  }
+
+  /* Outlined rather than filled: it is a setting, and a setting that
+     looked like the call to action beside it would be competing with it.
+
+     clip-path cuts a border away along with everything else, so the line
+     cannot be a border - the background IS the line and the ::before,
+     inset by a pixel, is the fill. Both carry the same shape, which is
+     how the hairline follows the cut corners the whole way round. This
+     is the same construction the service cards and the portrait frame
+     use. */
+  .nav-menu-tools .nav-lang {
+    position: relative;
+    isolation: isolate;
+    background: var(--line-strong);
+    border: none;
+    font-family: var(--font-mono);
+    font-size: var(--t-label);
+    letter-spacing: var(--track-label);
+    color: var(--text-secondary);
+    transition: background var(--d-micro) var(--ease),
+                color var(--d-micro) var(--ease);
+  }
+
+  .nav-menu-tools .nav-lang::before {
+    content: '';
+    position: absolute;
+    inset: 1px;
+    z-index: -1;
+    background: var(--canvas);
+    clip-path: polygon(
+      calc(var(--cut) - 1px) 0,
+      100% 0,
+      100% calc(100% - var(--cut) + 1px),
+      calc(100% - var(--cut) + 1px) 100%,
+      0 100%,
+      0 calc(var(--cut) - 1px)
+    );
+  }
+
+  .nav-menu-tools .nav-lang:hover,
+  .nav-menu-tools .nav-lang:focus-visible {
+    background: var(--text-primary);
+    color: var(--text-primary);
+  }
+
+  /* The tracking is trailing space on the last letter, and it pushes two
+     centred letters off to the left. This takes it back. */
+  .nav-lang-label {
+    display: block;
+    text-indent: var(--track-label);
+  }
+
+  .nav-mail-icon {
+    width: 21px;
+    height: 21px;
+  }
 
   .hamburger { display: flex; }
 
@@ -444,22 +625,32 @@
      .btn-primary, which sets display and loads later. */
   .nav-pill .nav-cta { display: none; }
 
+  /* Opaque, not 97 %. Three per cent of a hero headline still reads
+     straight through the menu and lands on top of the links - the page
+     behind was legible enough to collide with the thing covering it. */
   .nav-links {
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.97);
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--canvas);
     flex-direction: column;
-    align-items: center;
+    align-items: stretch;
     justify-content: center;
-    gap: 2.5rem;
+    gap: 0;
+    /* Clear of the pill at the top and of the phone's own gesture bar at
+       the bottom, so the first row is not sitting under the wordmark. */
+    padding: calc(5rem + env(safe-area-inset-top)) var(--s-5)
+             calc(var(--s-6) + env(safe-area-inset-bottom));
+    /* The page behind is frozen while this is open, so this is the only
+       thing left that can scroll if the list ever outgrows a short
+       window - and contain stops that scroll reaching the page. */
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    counter-reset: navi;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.3s ease;
+    transition: opacity var(--d-standard) var(--ease);
     z-index: 9998;
   }
 
@@ -468,12 +659,88 @@
     pointer-events: all;
   }
 
-  .nav-link {
-    font-size: 1.3rem;
-    color: rgba(255, 255, 255, 0.5);
+  /* Full-width rows rather than three words floating in the middle. The
+     row is the target, so the whole width of the screen is tappable and
+     the list reads as a list. */
+  .nav-links .nav-link {
+    display: flex;
+    align-items: baseline;
+    gap: var(--s-4);
+    width: 100%;
+    padding: var(--s-5) 0;
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+    text-transform: uppercase;
+    letter-spacing: var(--track-heading);
+    text-align: left;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--line);
   }
 
-  .nav-link.active { color: var(--text-primary); }
+  /* Numbered, in the same mono the section markers use. It costs one
+     pseudo-element and no markup, and it turns five words stacked in a
+     column into an ordered list of what this site contains. */
+  .nav-links .nav-link::before {
+    counter-increment: navi;
+    content: counter(navi, decimal-leading-zero);
+    flex-shrink: 0;
+    font-family: var(--font-mono);
+    font-size: var(--t-label);
+    letter-spacing: var(--track-label);
+    color: var(--signal-text);
+    opacity: 0.75;
+  }
+
+  .nav-links .nav-link:first-child { border-top: 1px solid var(--line); }
+
+  .nav-links .nav-link.active { color: var(--text-primary); }
+
+  /* The row the reader is standing in, marked the way the wide layout
+     marks it - except a colour change alone is hard to find in a column
+     of six, so the number goes solid too. */
+  .nav-links .nav-link.active::before { opacity: 1; }
+
+  /* The rows arrive after the panel does, one behind the next. The whole
+     menu fading in as one flat sheet was the part that read as unfinished:
+     nothing in it moved, so nothing in it looked built. */
+  .nav-links.nav-open .nav-link,
+  .nav-links.nav-open .nav-menu-tools {
+    animation: nav-rivi var(--d-entrance) var(--ease) backwards;
+  }
+
+  .nav-links.nav-open .nav-link:nth-child(1) { animation-delay: 60ms; }
+  .nav-links.nav-open .nav-link:nth-child(2) { animation-delay: 110ms; }
+  .nav-links.nav-open .nav-link:nth-child(3) { animation-delay: 160ms; }
+  .nav-links.nav-open .nav-link:nth-child(4) { animation-delay: 210ms; }
+  .nav-links.nav-open .nav-link:nth-child(5) { animation-delay: 260ms; }
+  .nav-links.nav-open .nav-menu-tools { animation-delay: 320ms; }
+
+  @keyframes nav-rivi {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nav-links.nav-open .nav-link,
+    .nav-links.nav-open .nav-menu-tools { animation: none; }
+  }
+
+  /* Above the menu it opens over, so the reader can still see whose site
+     this is and where the close control is. */
+  .nav-logo { position: relative; z-index: 9999; }
+
+  /* The claim carries the page on a phone, so what sits under it has to
+     give way. At 18px against a 43px claim the supporting line read
+     almost as loud as the thing it supports; on a desktop the same pair
+     is 18 against 79, which is why it never looked wrong there.
+
+     This has to live in a media block that comes after .hero-lede itself
+     - the one higher up the file is overridden by it, same specificity,
+     later rule wins. */
+  .hero-lede {
+    font-size: 1rem;
+    line-height: 1.45;
+  }
 
   .hero-actions {
     flex-direction: column;

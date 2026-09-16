@@ -19,16 +19,29 @@ function prefersReducedMotion() {
     && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 }
 
+// Where the page currently is. One place to ask, so nothing has to know
+// whether the document or some element is the thing that moves.
+export function pageScrollTop() {
+  return window.scrollY;
+}
+
+// Where an element sits in the page, independent of the current scroll
+// position. Rect plus scroll rather than offsetTop, which is measured
+// from the nearest positioned ancestor and quietly goes wrong the moment
+// one is introduced between the element and the page.
+export function pageOffsetOf(el) {
+  return el.getBoundingClientRect().top + window.scrollY;
+}
+
 // Jump to a position in the page. Falls back to the browser's own
 // scrolling when there is no instance - which is the case with reduced
 // motion, and for the moment between first paint and the hook mounting.
-export function scrollPageTo(container, top) {
+export function scrollPageTo(top) {
   if (instance) {
     instance.scrollTo(top);
     return;
   }
-  if (!container) return;
-  container.scrollTo({ top: top, behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
+  window.scrollTo({ top: top, behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
 }
 
 // Held while the contact panel is open. The container's overflow is

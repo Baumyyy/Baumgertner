@@ -21,6 +21,13 @@
    the buttons use, so the geometry of the identity carries through to the
    surfaces rather than living only on the controls.
 
+   Six cards side by side on a wide screen, and a scrolled stack on a
+   phone - the stack lives in the media query near the bottom of this
+   file, not here. On a screen this wide all six are legible at once and
+   there is nothing for a stack to reveal; it only earns its place where
+   the cards are already in one column and the reader is already moving
+   down through them.
+
    clip-path clips a border along with everything else, so an outlined
    chamfered card cannot simply be clipped - the line would vanish on the
    two cut edges. The card's background IS the outline, and a ::before
@@ -142,18 +149,89 @@
   text-wrap: balance;
 }
 
+/* ===== THE STACK =====
+   Phone only. The cards are already in one column here and the reader is
+   already travelling down through them, so each one parks a step lower
+   than the last: a card reaching its offset stays put while the next
+   slides up over it and comes to rest just below its top edge. Six
+   cards, six resting positions, one growing pile. Going back up runs the
+   same thing in reverse for free, which is the half a scroll-driven
+   animation usually gets wrong.
+
+   The mechanism is position: sticky and nothing else. No JavaScript, no
+   scroll listener, no transform per frame - the browser does it on the
+   compositor, which is the only reason it is affordable on a phone.
+
+   Two things this depends on, both easy to break later:
+   - no ancestor may have an overflow other than visible, or sticky stops
+     working and the cards just sit in a list;
+   - the fill has to be opaque, or the stack is see-through and every
+     card under the top one shows through. That is --surface-1, which is
+     #0B0B0D rather than a tint of white for exactly this reason. */
 @media (max-width: 968px) {
   .services { padding: 4.5rem 2rem; }
+
   .svc-grid {
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: none;
+    --pino-alku: 5.5rem;
+    --pino-askel: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    margin-inline: 0;
   }
-  .svc-card { grid-row: auto; display: flex; flex-direction: column; }
+
+  .svc-card {
+    grid-row: auto;
+    grid-template-rows: none;
+    grid-template-columns: 1fr;
+    position: sticky;
+    top: calc(var(--pino-alku) + var(--i, 0) * var(--pino-askel));
+  }
+
+  /* The reveal translates the card up into place, and a transform on a
+     sticky element is applied after it has been stuck - so a card caught
+     mid-reveal was drawn 26px from where it had parked. Once it has
+     arrived there is nothing left to fight over, so the fade alone does
+     the work here. */
+  .svc-card.fade-in,
+  .svc-card.fade-in[data-visible],
+  .svc-card:hover {
+    transform: none;
+  }
+
+  /* The room the finished stack stands in.
+
+     A sticky element cannot leave the box that contains it, so when the
+     list runs out the whole pile is dragged off the top at once - and
+     since the cards are the same size and the last one paints over the
+     rest, the finished stack was on screen for about ten pixels of
+     scrolling before it collapsed into a single card.
+
+     This has to be content and not padding. A flex item's sticky range
+     is bounded by its container's CONTENT box, so padding-bottom bought
+     nothing: with 405px of it the first card still came unstuck in
+     exactly the same place it did with none. An empty flex item is
+     inside the content box, so it counts.
+
+     Nothing is drawn here. It is scroll distance during which every card
+     has parked and none has been pushed out yet. */
+  .svc-grid::after {
+    content: '';
+    display: block;
+    flex: 0 0 26vh;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .svc-card { position: relative; top: auto; }
+    .svc-grid::after { display: none; }
+  }
+}
+
+/* Phone only, and vertical only - see the note in Problem.css. */
+@media (max-width: 768px) {
+  .services { padding-block: 5.5rem; }
 }
 
 @media (max-width: 560px) {
-  .svc-grid { grid-template-columns: 1fr; }
-
   .services-close {
     flex-direction: column;
     align-items: flex-start;
@@ -163,5 +241,5 @@
 }
 
 @media (max-width: 480px) {
-  .services { padding: 3.5rem 1.2rem; }
+  .services { padding-inline: 1.2rem; }
 }

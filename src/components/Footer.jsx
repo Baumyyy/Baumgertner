@@ -25,8 +25,7 @@ var Footer = function() {
   var { t } = useLang();
 
   var toTop = function() {
-    var container = document.querySelector('.aurora-container');
-    scrollPageTo(container, 0);
+    scrollPageTo(0);
   };
 
   return (

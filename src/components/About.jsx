@@ -245,7 +245,13 @@ var About = function() {
             announce a new section, which is exactly what these questions
             are not - they are the rest of the same introduction. */}
         <div className="about-approach fade-in stagger-3">
-          <p className="about-approach-label">{t.about_approach_tag}</p>
+          {/* The same bracketed marker every other section head uses,
+              borrowed wholesale rather than restyled: one treatment means
+              one thing, and this names the list below it exactly the way
+              [ ABOUT ] names the section. */}
+          <p className="about-approach-label">
+            <span className="tag-label">{t.about_approach_tag}</span>
+          </p>
 
           <ul className="ap-list">
             {questions.map(function(item) {

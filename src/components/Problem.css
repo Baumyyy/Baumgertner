@@ -237,6 +237,19 @@
   .problem-point:last-child .problem-figure { max-width: 340px; }
 }
 
+/* Phone only, and vertical only. A section on a wide screen is read
+   across as well as down, so the white space around it does part of the
+   separating; stacked in one column there is nothing but the gap left to
+   say where one section ends and the next begins. 3.5rem each side put
+   112px between two sections that were otherwise indistinguishable.
+
+   Written as padding-block so the horizontal padding stays wherever the
+   narrower query below sets it, rather than being reset by a shorthand
+   that only meant to change the sides. */
+@media (max-width: 768px) {
+  .problem { padding-block: 6rem; }
+}
+
 @media (max-width: 640px) {
   .problem-points {
     grid-template-columns: 1fr;
@@ -247,6 +260,6 @@
 }
 
 @media (max-width: 480px) {
-  .problem { padding: 4rem 1.2rem; }
+  .problem { padding-inline: 1.2rem; }
   .problem-point { padding-left: var(--s-4); }
 }

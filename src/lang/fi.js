@@ -1,5 +1,7 @@
 var fi = {
   // Nav
+  nav_problem: 'Ongelma',
+  nav_services: 'Palvelut',
   nav_projects: 'Projektit',
   nav_about: 'Minusta',
   nav_contact: 'Yhteystiedot',
@@ -60,6 +62,7 @@ var fi = {
   projects_status_progress: 'Työn alla',
   projects_open_hint: 'Avaa projekti',
   projects_year: 'Vuosi',
+  projects_zoom_hint: 'Katso',
   projects_industry: 'Toimiala',
   projects_live_site: 'Sivusto',
   projects_outro1: 'Seuraava nimi',

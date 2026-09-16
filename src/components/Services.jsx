@@ -100,10 +100,17 @@ const Services = () => {
         <p className="section-lede services-lede fade-in stagger-2">{t.services_lede}</p>
 
         {/* Cut-corner cards, the same chamfer the buttons use, so the
-            geometry of the identity shows up here too. */}
+            geometry of the identity shows up here too.
+
+            Each card carries its own index as a custom property. That is
+            the whole mechanism behind the stack: the index times a step
+            is the card's sticky offset, so each one parks a little lower
+            than the one before it and the pile builds itself. Doing it in
+            CSS with nth-child would mean six rules that have to be kept
+            in step with an array of six. */}
         <ul className="svc-grid">
           {services.map((s, i) => (
-            <li className={`svc-card fade-in stagger-${(i % 3) + 1}`} key={s.title}>
+            <li className={`svc-card fade-in stagger-${(i % 3) + 1}`} key={s.title} style={{ '--i': i }}>
               {s.icon}
               <h3 className="svc-name">{s.title}</h3>
               <p className="svc-line">{s.body}</p>

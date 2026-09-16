@@ -31,12 +31,20 @@
 }
 
 /* ===== THE PERSON =====
-   A fixed column for the portrait and the rest for the words. The
-   portrait column is capped rather than fluid: a face that grows with the
-   viewport ends up larger than the name it belongs to. */
+   A fixed column for the portrait and a fixed one for the words, the pair
+   centred under the centred head above them.
+
+   Both columns used to be open-ended: the text track was 1fr, so it grew
+   to 833px, while the paragraph inside it stopped at its 62ch measure of
+   631. The 200px left over was not empty space anyone had chosen - it was
+   the difference between a track and a measure, and the rules under the
+   text ran the full 833 and made it visible. Naming the measure as the
+   track width closes that gap and lets the whole block sit centred, which
+   is what the head and lede above it already do. */
 .about-body {
   display: grid;
-  grid-template-columns: minmax(0, 360px) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 320px) minmax(0, 620px);
+  justify-content: center;
   gap: var(--s-8);
   align-items: start;
 }
@@ -90,29 +98,38 @@
   display: block;
 }
 
-/* Stands in for the photograph without pretending to be one. */
+/* Stands in for the photograph without pretending to be one. Sized as a
+   share of the frame rather than in pixels: at a fixed 76px it filled a
+   quarter of the width on a wide screen and the frame read as an empty
+   box with a speck in it rather than as a portrait not yet taken. */
 .about-portrait-mark {
-  width: 76px;
+  width: 34%;
   height: auto;
   color: var(--text-primary);
-  opacity: 0.1;
+  opacity: 0.12;
 }
 
+/* The track is the measure now, so a second cap here would only
+   reintroduce the gap the track width was chosen to remove. */
 .about-para {
   font-size: var(--t-body);
   line-height: 1.75;
   color: var(--text-secondary);
-  max-width: 62ch;
 }
 
 .about-para + .about-para {
   margin-top: var(--s-4);
 }
 
+/* Sized to their contents rather than to half the row each. As two 1fr
+   columns the second label started 428px after the first, with nothing in
+   between: two facts reading as one pair need to be near enough to be
+   read as one. */
 .about-facts {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--s-5);
+  grid-template-columns: repeat(2, minmax(0, auto));
+  justify-content: start;
+  gap: var(--s-5) var(--s-8);
   margin: var(--s-7) 0 0;
   padding-top: var(--s-5);
   border-top: 1px solid var(--line);
@@ -179,17 +196,19 @@
    the top, no gap wide enough to read as a break - a quiet label and a
    list, so the questions land as the rest of this introduction rather
    than as a new one. */
+/* The same width as the body above it, written as the sum of its tracks
+   so the two cannot drift apart when either is changed. */
 .about-approach {
-  margin-top: var(--s-8);
+  max-width: calc(320px + var(--s-8) + 620px);
+  margin: var(--s-8) auto 0;
 }
 
+/* Centred on every width. The marker itself is .tag-label, shared with
+   every other section head, so the brackets and their spacing are drawn
+   in one place. */
 .about-approach-label {
-  font-family: var(--font-mono);
-  font-size: var(--t-label);
-  letter-spacing: var(--track-label);
-  text-transform: uppercase;
-  color: var(--signal-text);
-  margin-bottom: var(--s-4);
+  text-align: center;
+  margin-bottom: var(--s-5);
 }
 
 .ap-list {
@@ -341,9 +360,38 @@
     gap: var(--s-6);
   }
 
+  /* Nothing to line up with once the body is one column, and the cap is
+     wider than the viewport here anyway. */
+  .about-approach { max-width: none; }
+
+  /* Centred here and only here. Stacked, the portrait sits on the middle
+     axis under a centred tag, claim and lede, and a left-aligned column
+     of text under all four of them reads as a fifth thing that did not
+     get the message. On a wide screen the text has a portrait beside it
+     to align to, which is why it stays flush left there. */
+  .about-text { text-align: center; }
+
+  .about-facts { justify-content: center; text-align: center; }
+
+  .about-social-list { justify-content: center; }
+
+  .about-facts { gap: var(--s-5) var(--s-6); }
+
+  /* Centred, not stretched-then-capped. A grid item with a max-width
+     keeps the start edge of its track, so the portrait sat flush against
+     the left margin with the leftover 36px all on the right. */
   .about-portrait {
-    max-width: 300px;
+    /* Explicit width, not just a cap. A centred grid item sizes to its
+       content, and this one contains a placeholder mark - left to itself
+       it collapsed to 76px. */
+    width: min(100%, 260px);
+    justify-self: center;
   }
+}
+
+/* Phone only, and vertical only - see the note in Problem.css. */
+@media (max-width: 768px) {
+  .about { padding-block: 5.5rem; }
 }
 
 @media (max-width: 620px) {
@@ -354,5 +402,5 @@
 }
 
 @media (max-width: 480px) {
-  .about { padding: 3.5rem 1.2rem; }
+  .about { padding-inline: 1.2rem; }
 }

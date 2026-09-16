@@ -503,6 +503,11 @@
    the longer pair and run out of room at 625px; letting them wrap at
    their natural widths there, then jumping to full width 5px later, is a
    worse seam than stacking both languages here. */
+/* Phone only, and vertical only - see the note in Problem.css. */
+@media (max-width: 768px) {
+  .projects { padding-block: 5.5rem; }
+}
+
 @media (max-width: 660px) {
   .projects-outro-actions {
     flex-direction: column;
@@ -514,25 +519,51 @@
 }
 
 @media (max-width: 620px) {
-  /* The status label goes rather than wrapping the row onto two lines;
-     the dot alone still carries it, and the label returns with the
-     panel open. */
+  /* The status stays. It used to be dropped here to keep the row on one
+     line - the comment claimed the dot still carried it, but the rule
+     hid the dot too, so a phone lost the one thing that says which of
+     these is finished and which is not.
+
+     The room comes out of the marks instead. Both are scaled together:
+     shrinking the wordmark alone would leave a client's logo shouting
+     next to it. Measured at 360px, the narrowest phone tested, the row
+     still fits with the label in full. */
   .wk-trigger {
-    grid-template-columns: 1fr auto;
-    gap: var(--s-4);
+    grid-template-columns: 1fr auto auto;
+    gap: var(--s-3);
   }
 
-  .wk-status { display: none; }
+  /* A flex box will not shrink below its content unless told to, so
+     without this the 1fr column cannot give way and a long name pushes
+     the whole row past the screen edge - Finnish "VENESÄHKÖTYÖT"
+     overflowed a 360px phone by 29px. */
+  .wk-brand { min-width: 0; }
 
-  /* The same optical match as on the desktop row, scaled down together -
-     shrinking the wordmark alone would leave the client logo shouting. */
-  .wk-wordmark { width: 190px; }
-  .wk-logo-img { max-height: 26px; }
-  .wk-name { font-size: 1.5rem; }
+  .wk-wordmark { width: 150px; }
+  .wk-logo-img { max-height: 22px; }
+  .wk-name { font-size: 1.15rem; }
 }
 
 @media (max-width: 480px) {
-  .projects { padding: 3.5rem 1.2rem; }
+  /* The status drops to its own line here rather than being squeezed
+     next to the name. A name can be a single unbreakable word - Finnish
+     "VENESÄHKÖTYÖT" is one - so no amount of wrapping or shrinking makes
+     it share a line politely: measured, it was overlapping the status by
+     41px at 360px wide. Two lines cannot break, whatever a future client
+     is called. */
+  .wk-trigger {
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "brand  sign"
+      "status status";
+    row-gap: var(--s-2);
+  }
+
+  .wk-brand  { grid-area: brand; }
+  .wk-sign   { grid-area: sign; }
+  .wk-status { grid-area: status; }
+
+  .projects { padding-inline: 1.2rem; }
 
   /* Two-word names wrap onto a second line at this width and the row
      stops matching its neighbours. */

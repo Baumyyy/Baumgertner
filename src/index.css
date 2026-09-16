@@ -35,11 +35,16 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* min-height, never height. A fixed height plus an inner overflow is
+   what traps scrolling inside an element and leaves a phone's address
+   bar on screen for good; a minimum lets the document grow and scroll,
+   which is what the browser watches. svh is the viewport with the bar
+   showing, so the first screen is never taller than what can be seen. */
 body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  min-height: 100dvh;
+  min-height: 100svh;
   background-color: var(--canvas);
 }
 
@@ -86,3 +91,20 @@ button {
   outline-offset: 3px;
   border-radius: var(--r-sm);
 }
+
+/* Why there is no theme-color meta tag
+   -----------------------------------
+   Declaring one tells a mobile browser to paint its own status bar and
+   toolbar as solid bands in that colour, and the page then stops at
+   their edges instead of running underneath them. Leaving it out lets
+   the browser go edge to edge - which is how a page like Google's has
+   content behind the address pill and nothing above the clock.
+
+   It was not about matching: #000000 matched --canvas exactly and the
+   bands were still there, because producing bands is what the tag does.
+   viewport-fit=cover in index.html is what lets the page reach into
+   those areas once the browser allows it, and the navigation keeps clear
+   of the notch with env(safe-area-inset-top).
+
+   manifest.json keeps its theme_color: that one applies to the installed
+   app, where there is no browser chrome to blend with. */

@@ -1,6 +1,6 @@
-html {
-  scroll-behavior: smooth;
-}
+/* No scroll-behavior. The smooth scrolling is driven in JavaScript, and
+   a native scroll animation on the same element would be a second thing
+   writing the scroll position for the length of every jump. */
 
 * {
   margin: 0;
@@ -8,12 +8,29 @@ html {
   box-sizing: border-box;
 }
 
+/* No height: 100% here. That is the rule that capped the document at one
+   viewport and left the real scrolling to an element inside it, which is
+   why a phone's address bar never went away - measured, the document's
+   height equalled the window's exactly while the content below it ran to
+   seven thousand pixels. Height comes from content now. */
 body, html, #root {
   margin: 0;
   padding: 0;
   width: 100%;
-  height: 100%;
-  overflow-x: hidden;
+  /* No overflow of any kind here, deliberately.
+
+     Any overflow value other than visible on the root makes it a scroll
+     container. That breaks two things at once: a sticky descendant then
+     positions against it instead of the page, and a mobile browser stops
+     treating the document as the thing being scrolled - which is what
+     makes it collapse its own toolbar. Ours stayed expanded, and an
+     expanded toolbar is what the black band at the foot of the screen
+     actually was.
+
+     hidden was here from the start as a guard against sideways overflow;
+     clip replaced it to rescue the sticky hero, and both turn out to cost
+     more than they are worth. There is nothing to guard against: measured
+     across fifteen widths in two languages, nothing overflows sideways. */
 }
 
 body {
@@ -424,6 +441,15 @@ body {
 }
 
 .section-claim-line { display: block; }
+
+/* Same floor as the hero, for the same reason: min() with a vw term and
+   no minimum collapses on a narrow screen, and 19px is not a section
+   heading. These lines already wrap, so only the size needed fixing. */
+@media (max-width: 768px) {
+  .section-claim {
+    font-size: clamp(1.75rem, 8vw, 3rem);
+  }
+}
 
 /* The gap under the lede is the one thing left to each section: what
    follows differs, and a list needs less air above it than a two column

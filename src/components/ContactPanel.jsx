@@ -119,28 +119,27 @@ var ContactPanel = function() {
     };
   }, [isOpen, close]);
 
-  // The page scrolls inside .aurora-container, not on <body>, so that is
-  // what has to be frozen. Hiding its overflow also removes its
-  // scrollbar, so the width it occupied is handed back as padding -
-  // otherwise the whole page shifts sideways as the panel opens.
+  // The document is what scrolls, so the document is what has to be
+  // frozen. Hiding its overflow also removes the scrollbar, so the width
+  // it occupied is handed back as padding - otherwise the whole page
+  // shifts sideways as the panel opens.
   useEffect(function() {
-    var container = document.querySelector('.aurora-container');
-    if (!container) return;
+    var body = document.body;
     if (isOpen) {
-      var bar = container.offsetWidth - container.clientWidth;
-      container.style.setProperty('--lock-pad', bar + 'px');
-      container.classList.add('scroll-locked');
-      // Hiding the overflow stops the container being scrollable, but the
+      var bar = window.innerWidth - document.documentElement.clientWidth;
+      body.style.setProperty('--lock-pad', bar + 'px');
+      body.classList.add('scroll-locked');
+      // Hiding the overflow stops the page being scrollable, but the
       // smooth-scroll loop keeps a position of its own and would go on
       // taking wheel events - so the page would have moved by the time
       // the panel closes. It is stopped rather than fought.
       pauseScrolling();
     } else {
-      container.classList.remove('scroll-locked');
+      body.classList.remove('scroll-locked');
       resumeScrolling();
     }
     return function() {
-      container.classList.remove('scroll-locked');
+      body.classList.remove('scroll-locked');
       resumeScrolling();
     };
   }, [isOpen]);
@@ -244,7 +243,10 @@ var ContactPanel = function() {
         aria-labelledby="cp-title"
       >
         {(isOpen || hasMounted) && (
-          <div className="cp-inner">
+          <div className="cp-inner" data-lenis-prevent>
+            {/* Lenis drives touch scrolling now, and it drives the
+                document. Without the attribute above it swallows the
+                finger here too and the form cannot be scrolled at all. */}
             <div className="cp-head">
               <p className="cp-tag">{t.cp_tag}</p>
               <button type="button" className="cp-close" onClick={close}>

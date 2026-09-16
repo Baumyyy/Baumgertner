@@ -4,7 +4,6 @@ export const useScrollAnimation = () => {
   var ref = useRef(null);
 
   useEffect(function() {
-    var container = document.querySelector('.aurora-container');
     
     var observer = new IntersectionObserver(
       function(entries) {
@@ -24,7 +23,8 @@ export const useScrollAnimation = () => {
       },
       {
         threshold: 0.1,
-        root: container || null
+        // The viewport, which is now also what scrolls.
+        root: null
         // No negative bottom margin here, tempting as it is. Holding the
         // trigger back past the blurred band at the foot of the window
         // sounds like an improvement and creates a dead zone: anything

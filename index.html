@@ -24,6 +24,13 @@
     <meta name="twitter:image" content="https://baumgertner.fi/og-image.png" />
 
     <!-- Theme & Favicon -->
+    <!-- Back, and for a measured reason. Removing it did not remove the
+         bars - the browser painted them anyway - it only stopped us
+         choosing their colour. The page's own top row measures 8.7 out of
+         255, so a bar of pure black above it reads as a separate band.
+         Pinning both to the same black is what makes the seam disappear.
+         See the hero scrim in Hero.css, which flattens the page's edges
+         to match. -->
     <meta name="theme-color" content="#000000" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />

@@ -2,11 +2,16 @@
    top. What ends the page here is scale rather than contrast - a small
    mark, icons where the sections use words, and one short rule over the
    copyright. */
+/* The last thing on the page, so it is the one that has to clear the
+   system's own furniture: the home indicator on iOS and the gesture bar
+   on Android sit inside the viewport, not below it. The inset resolves
+   to zero everywhere else, so nothing moves on a desktop. */
 .footer {
   position: relative;
   z-index: 1;
   margin-top: var(--s-9);
   padding: var(--s-7) 4rem var(--s-6);
+  padding-bottom: calc(var(--s-6) + env(safe-area-inset-bottom));
 }
 
 .footer-inner {

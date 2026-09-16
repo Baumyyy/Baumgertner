@@ -2,32 +2,17 @@ import React, { useState, useEffect, useRef } from 'react';
 import './Hero.css';
 import { useLang } from '../useLang';
 import { Wordmark } from './BrandMark';
+import { MailIcon } from './Icons';
 import { useContactPanel } from '../useContactPanel';
-import { scrollPageTo } from '../smoothScroll';
-
-// Where a section sits inside the scroll container. offsetTop was the
-// obvious answer and was correct until the sections moved inside the
-// sheet that travels over the hero: offsetTop is measured from the
-// nearest positioned ancestor, so with the sheet in between every
-// section read a full hero height short and the navigation landed
-// eight hundred pixels above where it should. Measured against the
-// container instead - the thing actually being scrolled - which no
-// amount of rearranging the markup can put out of step.
-// The container's own position is passed in rather than read here: this
-// runs once per section on every scroll event, and reading it inside
-// would measure the same unchanging number five times a frame.
-var sectionTopIn = function(el, containerTop, scrollTop) {
-  return el.getBoundingClientRect().top - containerTop + scrollTop;
-};
+import { scrollPageTo, pageOffsetOf, pauseScrolling, resumeScrolling } from '../smoothScroll';
 
 const Hero = ({ ready }) => {
   const [activeSection, setActiveSection] = useState('home');
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const { t } = useLang();
+  const { t, lang, toggleLang } = useLang();
   const { open: openContact } = useContactPanel();
   const navRef = useRef(null);
-  const progressBarRef = useRef(null);
 
   useEffect(() => {
     const checkSections = () => {
@@ -35,42 +20,56 @@ const Hero = ({ ready }) => {
       if (!container) return;
       const sections = container.querySelectorAll('section[id]');
       const handleScroll = () => {
-        const scrollTop = container.scrollTop;
-        const windowHeight = container.clientHeight;
-        const containerTop = container.getBoundingClientRect().top;
+        const scrollTop = window.scrollY;
+        const windowHeight = window.innerHeight;
         setScrolled(scrollTop > 60);
         let current = 'home';
         sections.forEach((section) => {
-          const sectionTop = sectionTopIn(section, containerTop, scrollTop) - windowHeight * 0.4;
+          const sectionTop = pageOffsetOf(section) - windowHeight * 0.4;
           if (scrollTop >= sectionTop) {
             current = section.getAttribute('id');
           }
         });
         setActiveSection(current);
       };
-      container.addEventListener('scroll', handleScroll);
+      window.addEventListener('scroll', handleScroll, { passive: true });
       handleScroll();
-      return () => container.removeEventListener('scroll', handleScroll);
+      return () => window.removeEventListener('scroll', handleScroll);
     };
     const timeout = setTimeout(checkSections, 100);
     return () => clearTimeout(timeout);
   }, []);
 
-  useEffect(() => {
-    const container = document.querySelector('.aurora-container');
-    if (!container) return;
-    let rafId;
-    const updateProgressBar = () => {
-      const scrollable = container.scrollHeight - container.clientHeight;
-      const progress = scrollable > 0 ? Math.min(1, container.scrollTop / scrollable) : 0;
-      if (progressBarRef.current) {
-        progressBarRef.current.style.transform = 'scaleX(' + progress + ')';
-      }
-      rafId = requestAnimationFrame(updateProgressBar);
+  // Two things outside this component have to know the menu is open: the
+  // sticky call to action and the blur band, both rendered by
+  // AuroraBackground. A class on the body is the smallest way to say so
+  // across that gap.
+  //
+  // The menu covers the window, so the page behind it is frozen for the
+  // same reasons the contact panel freezes it: a covered page that still
+  // scrolls has moved by the time the cover comes off, and on a phone
+  // every swipe aimed at the menu lands on the page instead. Same lock,
+  // same scrollbar compensation, same stop to the smooth-scroll loop -
+  // which keeps a position of its own and would go on taking wheel
+  // events whatever the overflow says.
+  useEffect(function() {
+    var body = document.body;
+    body.classList.toggle('menu-open', menuOpen);
+    if (menuOpen) {
+      var bar = window.innerWidth - document.documentElement.clientWidth;
+      body.style.setProperty('--lock-pad', bar + 'px');
+      body.classList.add('scroll-locked');
+      pauseScrolling();
+    } else {
+      body.classList.remove('scroll-locked');
+      resumeScrolling();
+    }
+    return function() {
+      body.classList.remove('menu-open');
+      body.classList.remove('scroll-locked');
+      resumeScrolling();
     };
-    rafId = requestAnimationFrame(updateProgressBar);
-    return () => cancelAnimationFrame(rafId);
-  }, []);
+  }, [menuOpen]);
 
   useEffect(() => {
     const handleOutsideClick = (e) => {
@@ -84,18 +83,33 @@ const Hero = ({ ready }) => {
 
   const handleClick = (e, targetId) => {
     e.preventDefault();
-    setMenuOpen(false);
-    var container = document.querySelector('.aurora-container');
-    if (targetId === 'home') {
-      scrollPageTo(container, 0);
-    } else {
-      var element = document.getElementById(targetId);
-      if (element && container) {
-        var elementTop = sectionTopIn(
-          element, container.getBoundingClientRect().top, container.scrollTop) - 60;
-        scrollPageTo(container, elementTop);
-      }
+
+    // The lock comes off in an effect, and effects run after this handler
+    // has returned - so a jump started here was handed to a page whose
+    // overflow was still hidden and to a smooth-scroll loop that was
+    // still stopped, and nothing moved at all. Releasing it by hand is
+    // what lets the jump and the closing menu happen in the same tick.
+    if (menuOpen) {
+      document.body.classList.remove('scroll-locked');
+      resumeScrolling();
+      setMenuOpen(false);
     }
+
+    if (targetId === 'home') {
+      scrollPageTo(0);
+      return;
+    }
+
+    var element = document.getElementById(targetId);
+    if (!element) return;
+
+    // Measured off the pill rather than guessed. A fixed 60px offset left
+    // the top of the section under the navigation on a wide screen, where
+    // the pill's bottom edge is at 82, and left a gap on a phone, where it
+    // is at 54.
+    var pill = document.querySelector('.nav-pill');
+    var alku = pill ? pill.getBoundingClientRect().bottom + 16 : 60;
+    scrollPageTo(pageOffsetOf(element) - alku);
   };
 
   return (
@@ -104,13 +118,18 @@ const Hero = ({ ready }) => {
           the visible chrome is the pill inside it, so the navigation reads
           as an object sitting on the page rather than a band across it. */}
       <nav className={'navbar' + (scrolled ? ' scrolled' : '') + (menuOpen ? ' menu-open' : '')} ref={navRef}>
-        <div className="nav-progress-bar" ref={progressBarRef}></div>
         <div className="nav-pill">
           <a href="#" className="nav-logo" onClick={function(e) { handleClick(e, 'home'); }}>
             <Wordmark className="nav-logo-mark" />
           </a>
 
-          <div className={'nav-links' + (menuOpen ? ' nav-open' : '')}>
+          <div className={'nav-links' + (menuOpen ? ' nav-open' : '')} data-lenis-prevent>
+            <a href="#problem" className={`nav-link ${activeSection === 'problem' ? 'active' : ''}`} onClick={(e) => { handleClick(e, 'problem'); setMenuOpen(false); }}>
+              {t.nav_problem}
+            </a>
+            <a href="#services" className={`nav-link ${activeSection === 'services' ? 'active' : ''}`} onClick={(e) => { handleClick(e, 'services'); setMenuOpen(false); }}>
+              {t.nav_services}
+            </a>
             <a href="#projects" className={`nav-link ${activeSection === 'projects' ? 'active' : ''}`} onClick={(e) => { handleClick(e, 'projects'); setMenuOpen(false); }}>
               {t.nav_projects}
             </a>
@@ -122,6 +141,36 @@ const Hero = ({ ready }) => {
             <button type="button" className="nav-link" onClick={() => { setMenuOpen(false); openContact(); }}>
               {t.nav_contact}
             </button>
+
+            {/* Under the list rather than in the bar. The bar has room for
+                the mark and the menu control and nothing else, and these
+                two are not navigation - one is a setting and one is the
+                offer. They belong at the end of the list, after what the
+                site contains. */}
+            <div className="nav-menu-tools">
+              {/* Names the language it switches to, not the one being
+                  read. A control says what it does. */}
+              <button
+                type="button"
+                className="nav-lang"
+                onClick={toggleLang}
+                aria-label={lang === 'en' ? 'Vaihda suomeksi' : 'Switch to English'}
+              >
+                <span className="nav-lang-label">{lang === 'en' ? 'FI' : 'EN'}</span>
+              </button>
+
+              {/* The same control as the one at the foot of the page:
+                  same fill, same cut, same icon. */}
+              <button
+                type="button"
+                className="btn-primary nav-mail"
+                onClick={() => { setMenuOpen(false); openContact(); }}
+                aria-label={t.cp_tag}
+                title={t.cp_tag}
+              >
+                <MailIcon className="nav-mail-icon" />
+              </button>
+            </div>
           </div>
 
           <div className="nav-end">

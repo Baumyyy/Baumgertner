@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSmoothScroll } from '../hooks/useSmoothScroll';
 import './AuroraBackground.css';
 import { useLang } from '../useLang';
@@ -35,26 +35,20 @@ export const BackdropGlow = ({ className }) => (
 );
 
 const AuroraBackground = ({ children }) => {
-  const containerRef = useRef(null);
-  // Named separately because the smooth scrolling needs both ends: the
-  // box that scrolls, and the box whose height decides how far it can.
-  const contentRef = useRef(null);
-
-  useSmoothScroll(containerRef, contentRef);
+  useSmoothScroll();
   const [showCta, setShowCta] = useState(false);
   const [nearEnd, setNearEnd] = useState(false);
   const { t } = useLang();
   const { open, isOpen } = useContactPanel();
 
   useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
     // Hidden again at the very bottom: down there it covers the footer's
     // own links, and the footer already offers the same thing in text.
     const onScroll = () => {
-      const past = container.scrollTop > 400;
-      const atEnd = container.scrollTop + container.clientHeight
-        > container.scrollHeight - FOOTER_CLEARANCE;
+      const top = window.scrollY;
+      const past = top > 400;
+      const atEnd = top + window.innerHeight
+        > document.documentElement.scrollHeight - FOOTER_CLEARANCE;
       setShowCta(past && !atEnd);
       // The same end of the page, for the same reason. Down there the
       // footer's own last line sits inside the blurred band, and a
@@ -62,15 +56,16 @@ const AuroraBackground = ({ children }) => {
       // not an effect, they are a defect.
       setNearEnd(atEnd);
     };
-    container.addEventListener('scroll', onScroll);
-    return () => container.removeEventListener('scroll', onScroll);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   return (
     <>
       <BackdropGlow className="bg-layer" />
-      <div className="aurora-container" ref={containerRef}>
-        <div className="aurora-content" ref={contentRef}>
+      <div className="aurora-container">
+        <div className="aurora-content">
           {children}
         </div>
       </div>

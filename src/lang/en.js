@@ -1,5 +1,7 @@
 var en = {
   // Nav
+  nav_problem: 'The problem',
+  nav_services: 'Services',
   nav_projects: 'Projects',
   nav_about: 'About',
   nav_contact: 'Contact',
@@ -60,6 +62,7 @@ var en = {
   projects_status_progress: 'In progress',
   projects_open_hint: 'Open project',
   projects_year: 'Year',
+  projects_zoom_hint: 'View',
   projects_industry: 'Industry',
   projects_live_site: 'Live site',
   projects_outro1: 'The next name',

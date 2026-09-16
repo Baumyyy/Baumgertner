@@ -17,7 +17,11 @@
 .bg-glow {
   position: absolute;
   border-radius: 50%;
-  filter: blur(100px);
+  /* No blur filter. These are radial gradients, which are already soft at
+     the edge - putting a hundred-pixel blur on top of one buys almost
+     nothing visually and costs a fixed, full-size filter pass on every
+     scrolled frame: measured, 38fps against 43 with it gone. The stops
+     below carry the softness instead. */
 }
 
 .bg-glow-primary {
@@ -25,7 +29,7 @@
   height: 1100px;
   top: -420px;
   right: -220px;
-  background: radial-gradient(circle, var(--glow-strong) 0%, transparent 70%);
+  background: radial-gradient(circle, var(--glow-strong) 0%, transparent 72%);
 }
 
 .bg-glow-secondary {
@@ -33,35 +37,53 @@
   height: 760px;
   bottom: -280px;
   left: -180px;
-  background: radial-gradient(circle, var(--glow-soft) 0%, transparent 70%);
+  background: radial-gradient(circle, var(--glow-soft) 0%, transparent 72%);
 }
 
-/* The page scroll container. Not decorative - removing this breaks
-   scrolling for the entire site. */
+/* A wrapper, not a scroller. It used to own the scrolling - fixed
+   height, overflow-y: auto - and that is precisely why a phone's address
+   bar never went away: browsers hide their own chrome when the DOCUMENT
+   scrolls, and the document never moved. Measured on a 390px phone: after
+   a full swipe the document's scrollTop was still 0 while this element's
+   was 525.
+
+   Scrolling now belongs to the document, which is also what every other
+   piece of this page expects by default - the sticky hero, the
+   observers, the smooth scrolling and the anchors all read the viewport
+   instead of an element, and there is one less thing to keep in step. */
 .aurora-container {
   position: relative;
   z-index: 1;
   width: 100%;
-  height: 100vh;
-  height: 100dvh;
-  overflow-y: auto;
-  /* No scroll-behavior here. The smooth scrolling is driven in
-     JavaScript, and a native scroll animation on the same element would
-     be a second thing writing scrollTop for the length of every jump. */
 }
 
-.aurora-container.scroll-locked {
+/* The document is what freezes now, for the same reason it is what
+   scrolls.
+
+   touch-action is checked up the whole ancestor chain, not just on the
+   element under the finger - so "none" here does not only stop the page
+   being dragged, it stops every scrollable thing inside it too. The
+   contact panel is inside it. Anything that is meant to scroll while
+   this lock is on has to say so for itself, which is what pan-y below
+   does. */
+body.scroll-locked {
   overflow: hidden;
   touch-action: none;
 }
 
-.aurora-container::-webkit-scrollbar       { width: 5px; }
-.aurora-container::-webkit-scrollbar-track { background: transparent; }
-.aurora-container::-webkit-scrollbar-thumb {
+body.scroll-locked .cp-inner,
+body.scroll-locked .nav-links {
+  touch-action: pan-y;
+  overscroll-behavior: contain;
+}
+
+html::-webkit-scrollbar       { width: 5px; }
+html::-webkit-scrollbar-track { background: transparent; }
+html::-webkit-scrollbar-thumb {
   background: var(--line);
   border-radius: var(--r-md);
 }
-.aurora-container::-webkit-scrollbar-thumb:hover {
+html::-webkit-scrollbar-thumb:hover {
   background: var(--line-strong);
 }
 
@@ -152,6 +174,20 @@
               filter var(--d-micro) var(--ease);
 }
 
+/* An open menu covers the page; a button hovering over it is offering
+   the same thing the menu already offers, twice. */
+body.menu-open .sticky-cta.btn-primary {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* The band softens the foot of the page into the page. With the menu
+   over it there is no page down there to soften - it just smears the
+   bottom two rows of the menu, which are a list meant to be read. */
+body.menu-open .page-blur {
+  opacity: 0;
+}
+
 .sticky-cta.btn-primary.visible {
   opacity: 1;
   transform: translateY(0);
@@ -164,7 +200,7 @@
 
 /* The lock leaves the scrollbar's width behind as padding, so opening
    the panel does not shunt the page sideways. */
-.aurora-container.scroll-locked {
+body.scroll-locked {
   padding-right: var(--lock-pad, 0px);
 }
 

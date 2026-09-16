@@ -1,0 +1,198 @@
+/* ===== LIGHTBOX =====
+   Above everything: the navigation pill, the blur band and the sticky
+   call to action all sit in the 5-9999 range, and a picture opened for
+   inspection has to be over all of them. */
+.lb-root {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: grid;
+  /* minmax(0, 1fr), not 1fr. A 1fr track is minmax(auto, 1fr), and
+     that automatic minimum lets the row grow to whatever is inside it -
+     so the shot set the height of the row that was supposed to be
+     limiting the shot. */
+  grid-template-rows: minmax(0, 1fr) auto;
+  align-items: center;
+  justify-items: center;
+  padding: max(var(--s-6), env(safe-area-inset-top)) var(--s-5)
+           max(var(--s-5), env(safe-area-inset-bottom));
+  animation: lb-tulo var(--d-standard) var(--ease);
+}
+
+@keyframes lb-tulo {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Not quite black. The page behind is black, and a black-on-black scrim
+   gives no sense that something has opened over something else. */
+.lb-scrim {
+  position: absolute;
+  inset: 0;
+  border: none;
+  padding: 0;
+  background: rgba(0, 0, 0, 0.94);
+  cursor: zoom-out;
+}
+
+/* Capped against its own grid row, not against its contents.
+   align-items: center sizes a grid item to what is inside it, so
+   without the cap the frame grew to the natural height of the shot and
+   pushed it off the top of the window - measured, the image sat at
+   y=-15 on a 900px screen. */
+.lb-frame {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: min(100%, 100rem);
+  min-height: 0;
+  /* A real height, not a cap. max-height alone left this box the right
+     size and the image inside it the wrong one: a percentage max-height
+     only resolves against a parent whose height is definite, and a
+     capped auto height is not. So the frame measured 776 and the shot
+     inside it 871, hanging 15px above the top of the window. */
+  height: 100%;
+}
+
+/* Fits the window in both directions. A shot is 16:10 and a phone held
+   upright is not, so height is the constraint on one and width on the
+   other - capping only one of them crops or overflows depending on which
+   way the device is turned. */
+.lb-shot {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border: 1px solid var(--line);
+  /* The drag is a swipe between shots, so the browser must not also
+     treat it as a request to pan the image. */
+  touch-action: pan-y;
+  user-select: none;
+}
+
+.lb-bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--s-5);
+  margin-top: var(--s-5);
+}
+
+.lb-step {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: none;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: border-color var(--d-micro) var(--ease),
+              background var(--d-micro) var(--ease);
+}
+
+.lb-step:hover,
+.lb-step:focus-visible {
+  border-color: var(--line-strong);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* Two hairlines rotated into a chevron, the same way the plus in the
+   approach list is drawn - no icon font, no second asset. */
+.lb-arrow {
+  width: 9px;
+  height: 9px;
+  border-top: 1px solid var(--text-primary);
+  border-right: 1px solid var(--text-primary);
+}
+
+.lb-arrow-right { transform: translateX(-2px) rotate(45deg); }
+.lb-arrow-left  { transform: translateX(2px) rotate(-135deg); }
+
+.lb-count {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4em;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: var(--track-label);
+  color: var(--text-muted);
+}
+
+.lb-count-now { color: var(--signal-text); }
+
+.lb-close {
+  position: absolute;
+  top: max(var(--s-5), env(safe-area-inset-top));
+  right: var(--s-5);
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* Two hairlines crossed, drawn the way the plus in the approach list is
+   drawn: a box with both strokes placed against it.
+
+   The first attempt put one stroke on the span and the second on its
+   ::before. That makes the 18x1 stroke the containing block for the one
+   inside it, so the second line started at the end of the first instead
+   of at its middle, and the mark came out as a Y. */
+.lb-close-mark {
+  position: relative;
+  width: 18px;
+  height: 18px;
+}
+
+.lb-close-mark::before,
+.lb-close-mark::after {
+  content: '';
+  position: absolute;
+  inset: 50% 0 auto 0;
+  height: 1px;
+  background: var(--text-primary);
+}
+
+.lb-close-mark::before { transform: rotate(45deg); }
+.lb-close-mark::after  { transform: rotate(-45deg); }
+
+@media (prefers-reduced-motion: reduce) {
+  .lb-root { animation: none; }
+}
+
+/* ===== THE WAY IN =====
+   The carousel's active shot becomes a control. Only the active one:
+   the neighbours in the margins are there to say the set continues, and
+   a click on those should step the carousel, not open a shot the reader
+   cannot properly see. */
+.wk-slide.is-active .wk-open {
+  cursor: zoom-in;
+}
+
+.wk-open {
+  display: block;
+  width: 100%;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: default;
+}
+
+.wk-open img {
+  display: block;
+  width: 100%;
+}
+
+@media (max-width: 560px) {
+  .lb-root { padding-inline: var(--s-3); }
+  .lb-close { right: var(--s-3); }
+}
