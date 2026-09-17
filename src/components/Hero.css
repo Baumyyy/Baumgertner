@@ -25,6 +25,13 @@
   pointer-events: auto;
   display: flex;
   align-items: center;
+  /* A bar, not a badge. With the links gone the pill sized itself to a
+     mark and a menu control and came out 290px wide in the middle of a
+     1440px window, which reads as a chip floating on the page rather
+     than as the navigation. The width is the page's own measure, so it
+     lines up with everything under it. */
+  width: min(44rem, 92vw);
+  justify-content: space-between;
   gap: var(--s-6);
   padding: var(--s-2) var(--s-2) var(--s-2) var(--s-5);
   border-radius: 999px;
@@ -81,13 +88,11 @@
   color: var(--text-primary);
 }
 
-/* Wide screens only: there is no full-screen menu there, so nothing
-   fixed lives inside the pill and the filter is free to do its job. */
-@media (min-width: 769px) {
-  .nav-pill {
-    backdrop-filter: blur(20px);
-  }
-}
+/* No backdrop-filter on the pill at any width now. A filter makes an
+   element the containing block for its fixed descendants, and the menu
+   is a fixed descendant - with the blur on, it was confined to the
+   pill's own 364x42 box instead of covering the window. The pill is
+   opaque enough on its own. */
 
 .nav-logo {
   text-decoration: none;
@@ -398,7 +403,7 @@
 
 /* Hamburger */
 .hamburger {
-  display: none;
+  display: flex;
   flex-direction: column;
   gap: 5px;
   cursor: pointer;
@@ -487,8 +492,8 @@
 @media (max-width: 968px) {
   .navbar { padding: var(--s-3); padding-top: calc(var(--s-3) + env(safe-area-inset-top)); }
 
-  /* The pill spans the strip on small screens - a centred capsule with
-     nothing either side of it looks stranded once the links collapse. */
+  /* The pill spans the strip on a phone - a centred capsule with nothing
+     either side of it looks stranded at this width. */
   .nav-pill {
     width: 100%;
     justify-content: space-between;
@@ -500,235 +505,298 @@
 
 @media (max-width: 480px) {
   .hero { padding: 5rem 1.2rem 3rem 1.2rem; }
+}
 
-  .navbar {
-    padding: var(--s-3);
-    padding-top: calc(var(--s-3) + env(safe-area-inset-top));
-    z-index: 9998;
-    opacity: 1 !important;
-    animation: none !important;
-  }
+/* ===== NAVIGATION =====
+   One navigation at every width: a mark, a menu control, and a menu that
+   covers the window.
 
-  /* Denser than the wide layout: without the blur behind it, 72 % lets
-     the mountain through and the mark sits in the middle of a photograph
-     rather than on a surface. */
-  .nav-pill {
-    padding: var(--s-2) var(--s-2) var(--s-2) var(--s-4);
-    background: rgba(10, 10, 10, 0.92);
-  }
+   It used to be two. A row of links on a wide screen and this menu below
+   480px, which left everything in between with neither: measured at
+   520px the links ran 387px wide inside a 496px pill and the last of
+   them, plus the call to action, were simply outside it. That is the
+   width a small laptop window is.
 
-  /* The full wordmark rather than a monogram, but not filling the bar.
-     It is 19:1, so width is the only thing that sets its weight: at 128px
-     it stood under seven pixels tall and read as a hairline, at the full
-     290 it stood fifteen and shouted louder than anything under it. The
-     cap below puts it at around nine - the same scale it has on a wide
-     screen. */
-  .nav-logo { flex: 1; min-width: 0; }
+   The row had also stopped fitting what it was carrying. Five sections,
+   a language control and an offer is more than a bar can hold without
+   becoming a list of everything, which is what a menu is for.
 
-  .nav-logo-mark {
-    width: 100%;
-    max-width: 200px;
-  }
+   Nothing here is behind a media query. The differences between a phone
+   and a desktop are sizes, and those are at the bottom of this file. */
 
-  /* The foot of the open menu. */
-  .nav-menu-tools {
-    display: flex;
-    align-items: center;
-    gap: var(--s-3);
-    margin-top: var(--s-7);
-  }
+.navbar {
+  padding: var(--s-3);
+  padding-top: calc(var(--s-3) + env(safe-area-inset-top));
+  z-index: 9998;
+  opacity: 1 !important;
+  animation: none !important;
+}
 
-  .nav-menu-tools .nav-lang,
-  .nav-links .nav-mail {
-    --cut: 12px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    width: 52px;
-    height: 52px;
-    padding: 0;
-    cursor: pointer;
-    /* The chamfer every other control on the site carries. Nothing here
-       is a capsule. */
-    clip-path: polygon(
-      var(--cut) 0,
-      100% 0,
-      100% calc(100% - var(--cut)),
-      calc(100% - var(--cut)) 100%,
-      0 100%,
-      0 var(--cut)
-    );
-  }
+/* Denser than the wide layout: without the blur behind it, 72 % lets
+   the mountain through and the mark sits in the middle of a photograph
+   rather than on a surface. */
+.nav-pill {
+  padding: var(--s-2) var(--s-2) var(--s-2) var(--s-4);
+  background: rgba(10, 10, 10, 0.92);
+}
 
-  /* Outlined rather than filled: it is a setting, and a setting that
-     looked like the call to action beside it would be competing with it.
+/* The full wordmark rather than a monogram, but not filling the bar.
+   It is 19:1, so width is the only thing that sets its weight: at 128px
+   it stood under seven pixels tall and read as a hairline, at the full
+   290 it stood fifteen and shouted louder than anything under it. The
+   cap below puts it at around nine - the same scale it has on a wide
+   screen. */
+.nav-logo { flex: 1; min-width: 0; }
 
-     clip-path cuts a border away along with everything else, so the line
-     cannot be a border - the background IS the line and the ::before,
-     inset by a pixel, is the fill. Both carry the same shape, which is
-     how the hairline follows the cut corners the whole way round. This
-     is the same construction the service cards and the portrait frame
-     use. */
-  .nav-menu-tools .nav-lang {
-    position: relative;
-    isolation: isolate;
-    background: var(--line-strong);
-    border: none;
-    font-family: var(--font-mono);
-    font-size: var(--t-label);
-    letter-spacing: var(--track-label);
-    color: var(--text-secondary);
-    transition: background var(--d-micro) var(--ease),
-                color var(--d-micro) var(--ease);
-  }
+.nav-logo-mark {
+  width: 100%;
+  max-width: 200px;
+}
 
-  .nav-menu-tools .nav-lang::before {
-    content: '';
-    position: absolute;
-    inset: 1px;
-    z-index: -1;
-    background: var(--canvas);
-    clip-path: polygon(
-      calc(var(--cut) - 1px) 0,
-      100% 0,
-      100% calc(100% - var(--cut) + 1px),
-      calc(100% - var(--cut) + 1px) 100%,
-      0 100%,
-      0 calc(var(--cut) - 1px)
-    );
-  }
+/* The foot of the open menu. */
+.nav-menu-tools {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  margin-top: var(--s-7);
+}
 
-  .nav-menu-tools .nav-lang:hover,
-  .nav-menu-tools .nav-lang:focus-visible {
-    background: var(--text-primary);
-    color: var(--text-primary);
-  }
+.nav-menu-tools .nav-lang,
+.nav-links .nav-mail {
+  --cut: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  padding: 0;
+  cursor: pointer;
+  /* The chamfer every other control on the site carries. Nothing here
+     is a capsule. */
+  clip-path: polygon(
+    var(--cut) 0,
+    100% 0,
+    100% calc(100% - var(--cut)),
+    calc(100% - var(--cut)) 100%,
+    0 100%,
+    0 var(--cut)
+  );
+}
 
-  /* The tracking is trailing space on the last letter, and it pushes two
-     centred letters off to the left. This takes it back. */
-  .nav-lang-label {
-    display: block;
-    text-indent: var(--track-label);
-  }
+/* Outlined rather than filled: it is a setting, and a setting that
+   looked like the call to action beside it would be competing with it.
 
-  .nav-mail-icon {
-    width: 21px;
-    height: 21px;
-  }
+   clip-path cuts a border away along with everything else, so the line
+   cannot be a border - the background IS the line and the ::before,
+   inset by a pixel, is the fill. Both carry the same shape, which is
+   how the hairline follows the cut corners the whole way round. This
+   is the same construction the service cards and the portrait frame
+   use. */
+.nav-menu-tools .nav-lang {
+  position: relative;
+  isolation: isolate;
+  background: var(--line-strong);
+  border: none;
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: var(--track-label);
+  color: var(--text-secondary);
+  transition: background var(--d-micro) var(--ease),
+              color var(--d-micro) var(--ease);
+}
 
-  .hamburger { display: flex; }
+.nav-menu-tools .nav-lang::before {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  z-index: -1;
+  background: var(--canvas);
+  clip-path: polygon(
+    calc(var(--cut) - 1px) 0,
+    100% 0,
+    100% calc(100% - var(--cut) + 1px),
+    calc(100% - var(--cut) + 1px) 100%,
+    0 100%,
+    0 calc(var(--cut) - 1px)
+  );
+}
 
-  /* The call to action lives in the opened menu on small screens - the
-     pill has room for the mark, the language toggle and the menu control,
-     and not much else. Needs the parent in the selector to outrank
-     .btn-primary, which sets display and loads later. */
-  .nav-pill .nav-cta { display: none; }
+.nav-menu-tools .nav-lang:hover,
+.nav-menu-tools .nav-lang:focus-visible {
+  background: var(--text-primary);
+  color: var(--text-primary);
+}
 
-  /* Opaque, not 97 %. Three per cent of a hero headline still reads
-     straight through the menu and lands on top of the links - the page
-     behind was legible enough to collide with the thing covering it. */
+/* The tracking is trailing space on the last letter, and it pushes two
+   centred letters off to the left. This takes it back. */
+.nav-lang-label {
+  display: block;
+  text-indent: var(--track-label);
+}
+
+.nav-mail-icon {
+  width: 21px;
+  height: 21px;
+}
+
+/* The call to action lives in the opened menu, beside the language
+   control. The pill carries the mark and the way into the menu, and
+   nothing else. Needs the parent in the selector to outrank
+   .btn-primary, which sets display and loads later. */
+.nav-pill .nav-cta { display: none; }
+
+/* Opaque, not 97 %. Three per cent of a hero headline still reads
+   straight through the menu and lands on top of the links - the page
+   behind was legible enough to collide with the thing covering it. */
+.nav-links {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--canvas);
+  flex-direction: column;
+  align-items: stretch;
+  /* safe, not plain centre. A centred flex column that does not fit
+     overflows at BOTH ends, and the end that goes past the start edge
+     cannot be scrolled back to - on a 700px-tall window the first row
+     sat 24px above the pill with no way to reach it. safe falls back to
+     flex-start the moment the content stops fitting, which is when
+     scrolling takes over. */
+  justify-content: safe center;
+  gap: 0;
+  /* Clear of the pill at the top and of the phone's own gesture bar at
+     the bottom, so the first row is not sitting under the wordmark. */
+  padding: calc(5rem + env(safe-area-inset-top)) var(--s-5)
+           calc(var(--s-6) + env(safe-area-inset-bottom));
+  /* The page behind is frozen while this is open, so this is the only
+     thing left that can scroll if the list ever outgrows a short
+     window - and contain stops that scroll reaching the page. */
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  counter-reset: navi;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--d-standard) var(--ease);
+  z-index: 9998;
+}
+
+.nav-links.nav-open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* Full-width rows rather than three words floating in the middle. The
+   row is the target, so the whole width of the screen is tappable and
+   the list reads as a list. */
+.nav-links .nav-link {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-4);
+  width: 100%;
+  padding: var(--s-5) 0;
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  text-transform: uppercase;
+  letter-spacing: var(--track-heading);
+  text-align: left;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--line);
+}
+
+/* Numbered, in the same mono the section markers use. It costs one
+   pseudo-element and no markup, and it turns five words stacked in a
+   column into an ordered list of what this site contains. */
+.nav-links .nav-link::before {
+  counter-increment: navi;
+  content: counter(navi, decimal-leading-zero);
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: var(--track-label);
+  color: var(--signal-text);
+  opacity: 0.75;
+}
+
+.nav-links .nav-link:first-child { border-top: 1px solid var(--line); }
+
+.nav-links .nav-link.active { color: var(--text-primary); }
+
+/* The row the reader is standing in, marked the way the wide layout
+   marks it - except a colour change alone is hard to find in a column
+   of six, so the number goes solid too. */
+.nav-links .nav-link.active::before { opacity: 1; }
+
+/* The rows arrive after the panel does, one behind the next. The whole
+   menu fading in as one flat sheet was the part that read as unfinished:
+   nothing in it moved, so nothing in it looked built. */
+.nav-links.nav-open .nav-link,
+.nav-links.nav-open .nav-menu-tools {
+  animation: nav-rivi var(--d-entrance) var(--ease) backwards;
+}
+
+.nav-links.nav-open .nav-link:nth-child(1) { animation-delay: 60ms; }
+.nav-links.nav-open .nav-link:nth-child(2) { animation-delay: 110ms; }
+.nav-links.nav-open .nav-link:nth-child(3) { animation-delay: 160ms; }
+.nav-links.nav-open .nav-link:nth-child(4) { animation-delay: 210ms; }
+.nav-links.nav-open .nav-link:nth-child(5) { animation-delay: 260ms; }
+.nav-links.nav-open .nav-menu-tools { animation-delay: 320ms; }
+
+/* ===== THE MENU ON A WIDE SCREEN =====
+   Same menu, given the room it has. At the phone size it was 28px type
+   with hairlines running the full 1440, which reads as a phone menu
+   stretched rather than as a menu.
+
+   The rows are capped and centred on the same axis as the pill above
+   them, so the list has edges instead of running off both sides. */
+@media (min-width: 769px) {
+  /* Scales with the window's height as well as its width: a laptop is
+     often 1440 wide and only 700 tall, and the fixed 8rem was a third of
+     what was left after the rows. */
   .nav-links {
-    position: fixed;
-    inset: 0;
+    padding-top: calc(clamp(5rem, 11vh, 8rem) + env(safe-area-inset-top));
+  }
+
+  .nav-links .nav-link,
+  .nav-menu-tools {
     width: 100%;
-    height: 100%;
-    background: var(--canvas);
-    flex-direction: column;
-    align-items: stretch;
-    justify-content: center;
-    gap: 0;
-    /* Clear of the pill at the top and of the phone's own gesture bar at
-       the bottom, so the first row is not sitting under the wordmark. */
-    padding: calc(5rem + env(safe-area-inset-top)) var(--s-5)
-             calc(var(--s-6) + env(safe-area-inset-bottom));
-    /* The page behind is frozen while this is open, so this is the only
-       thing left that can scroll if the list ever outgrows a short
-       window - and contain stops that scroll reaching the page. */
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    counter-reset: navi;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity var(--d-standard) var(--ease);
-    z-index: 9998;
+    max-width: min(72rem, 86vw);
+    margin-inline: auto;
   }
 
-  .nav-links.nav-open {
-    opacity: 1;
-    pointer-events: all;
-  }
-
-  /* Full-width rows rather than three words floating in the middle. The
-     row is the target, so the whole width of the screen is tappable and
-     the list reads as a list. */
+  /* Width sets the size, height caps it. Six rows of 56px type need
+     760px of window, and plenty of laptops do not have it. */
   .nav-links .nav-link {
-    display: flex;
-    align-items: baseline;
-    gap: var(--s-4);
-    width: 100%;
-    padding: var(--s-5) 0;
-    font-family: var(--font-display);
-    font-size: 1.75rem;
-    text-transform: uppercase;
-    letter-spacing: var(--track-heading);
-    text-align: left;
-    color: var(--text-secondary);
-    border-bottom: 1px solid var(--line);
+    font-size: min(clamp(2.25rem, 4vw, 3.5rem), 6.5vh);
+    gap: var(--s-6);
+    padding: clamp(var(--s-2), 1.6vh, var(--s-4)) 0;
   }
 
-  /* Numbered, in the same mono the section markers use. It costs one
-     pseudo-element and no markup, and it turns five words stacked in a
-     column into an ordered list of what this site contains. */
+  /* The number scales with the row it marks - at the label size it
+     disappeared entirely beside 56px type. */
   .nav-links .nav-link::before {
-    counter-increment: navi;
-    content: counter(navi, decimal-leading-zero);
-    flex-shrink: 0;
-    font-family: var(--font-mono);
-    font-size: var(--t-label);
-    letter-spacing: var(--track-label);
-    color: var(--signal-text);
-    opacity: 0.75;
+    font-size: var(--t-body-s);
   }
 
-  .nav-links .nav-link:first-child { border-top: 1px solid var(--line); }
+  .nav-menu-tools { margin-top: clamp(var(--s-5), 4vh, var(--s-8)); }
+}
 
-  .nav-links .nav-link.active { color: var(--text-primary); }
+@keyframes nav-rivi {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 
-  /* The row the reader is standing in, marked the way the wide layout
-     marks it - except a colour change alone is hard to find in a column
-     of six, so the number goes solid too. */
-  .nav-links .nav-link.active::before { opacity: 1; }
-
-  /* The rows arrive after the panel does, one behind the next. The whole
-     menu fading in as one flat sheet was the part that read as unfinished:
-     nothing in it moved, so nothing in it looked built. */
+@media (prefers-reduced-motion: reduce) {
   .nav-links.nav-open .nav-link,
-  .nav-links.nav-open .nav-menu-tools {
-    animation: nav-rivi var(--d-entrance) var(--ease) backwards;
-  }
+  .nav-links.nav-open .nav-menu-tools { animation: none; }
+}
 
-  .nav-links.nav-open .nav-link:nth-child(1) { animation-delay: 60ms; }
-  .nav-links.nav-open .nav-link:nth-child(2) { animation-delay: 110ms; }
-  .nav-links.nav-open .nav-link:nth-child(3) { animation-delay: 160ms; }
-  .nav-links.nav-open .nav-link:nth-child(4) { animation-delay: 210ms; }
-  .nav-links.nav-open .nav-link:nth-child(5) { animation-delay: 260ms; }
-  .nav-links.nav-open .nav-menu-tools { animation-delay: 320ms; }
+/* Above the menu it opens over, so the reader can still see whose site
+   this is and where the close control is. */
+.nav-logo { position: relative; z-index: 9999; }
 
-  @keyframes nav-rivi {
-    from { opacity: 0; transform: translateY(14px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .nav-links.nav-open .nav-link,
-    .nav-links.nav-open .nav-menu-tools { animation: none; }
-  }
-
-  /* Above the menu it opens over, so the reader can still see whose site
-     this is and where the close control is. */
-  .nav-logo { position: relative; z-index: 9999; }
-
+/* ===== HERO, PHONE ONLY ===== */
+@media (max-width: 480px) {
   /* The claim carries the page on a phone, so what sits under it has to
      give way. At 18px against a 43px claim the supporting line read
      almost as loud as the thing it supports; on a desktop the same pair

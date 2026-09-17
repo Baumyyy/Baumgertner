@@ -33,71 +33,102 @@
   opacity: 1;
 }
 
-/* Off to the right and hidden when closed: visibility keeps the form out
-   of the tab order and the accessibility tree without display:none,
-   which cannot be transitioned. The chamfer is cut from the two corners
-   that face the page. */
+/* The whole window, the same way the navigation menu takes it.
+
+   This used to be a 620px panel sliding in from the right, and for a
+   single form that was right. It is four questions now, and three of
+   them hold two lines and four options - in a tall narrow column that
+   left most of the panel black, with the button stranded in the middle
+   of it, while two thirds of the screen sat behind a scrim doing
+   nothing. A menu already takes the whole window on this site; the
+   thing that actually starts a project should not ask for less.
+
+   visibility keeps the form out of the tab order and the accessibility
+   tree when closed without display:none, which cannot be transitioned. */
 .cp-panel {
-  --cut: 28px;
   position: absolute;
-  top: 0;
-  right: 0;
+  inset: 0;
+  width: 100%;
   height: 100%;
-  width: min(620px, 100%);
-  /* The outline cannot be a border: clip-path takes the border away with
-     everything else it cuts, so a bordered panel would lose its line on
-     exactly the chamfered corner. Instead the panel's background IS the
-     line and the ::before, inset by a pixel, is the fill - both carrying
-     the same shape, so the red runs the whole perimeter and turns the
-     cut corner with it.
-     The scrolling had to move inside for this: an absolutely positioned
-     ::before in a scroll container scrolls away with the content. */
-  background: var(--signal);
+  background: var(--canvas);
   overflow: hidden;
   visibility: hidden;
-  transform: translateX(100%);
-  transition: transform var(--d-entrance) var(--ease),
+  opacity: 0;
+  transition: opacity var(--d-entrance) var(--ease),
               visibility 0s linear var(--d-entrance);
-  clip-path: polygon(
-    var(--cut) 0,
-    100% 0,
-    100% 100%,
-    0 100%,
-    0 var(--cut)
-  );
 }
 
 .cp-root.is-open .cp-panel {
   visibility: visible;
-  transform: translateX(0);
-  transition: transform var(--d-entrance) var(--ease),
+  opacity: 1;
+  transition: opacity var(--d-entrance) var(--ease),
               visibility 0s linear 0s;
 }
 
-.cp-panel::before {
-  content: '';
-  position: absolute;
-  inset: 1px;
-  background: var(--surface-1);
-  clip-path: polygon(
-    calc(var(--cut) - 1px) 0,
-    100% 0,
-    100% 100%,
-    0 100%,
-    0 calc(var(--cut) - 1px)
-  );
-}
-
-/* The scroller, and positioned so it paints above the fill behind it. */
+/* The scroller. Everything inside is capped to the page's own measure
+   and centred, so the form lines up with the sections behind it rather
+   than running edge to edge. */
 .cp-inner {
   position: relative;
   height: 100%;
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding: var(--s-7) var(--s-7) var(--s-8);
+  padding: clamp(var(--s-5), 5vh, var(--s-7)) var(--s-6)
+           calc(var(--s-6) + env(safe-area-inset-bottom));
   display: flex;
   flex-direction: column;
+  gap: clamp(var(--s-4), 3vh, var(--s-6));
 }
+
+.cp-head,
+.cp-progress,
+.cp-body {
+  width: 100%;
+  max-width: 72rem;
+  margin-inline: auto;
+}
+
+/* ===== TWO COLUMNS =====
+   The question on the left, the answers on the right. The question is
+   two lines and a hint; the answers are four rows. Side by side they
+   fill the width between them, and the reader's eye goes left to right
+   once instead of down a long thin column. */
+/* Takes what is left under the marker and the progress bar, and sits
+   in the middle of it. Three of the four steps are short, and left at
+   the top they hung under the progress bar with half a window of black
+   below them. safe, so the long fourth step overflows downward into the
+   scroll rather than off the top where it cannot be reached - the same
+   trap the navigation menu fell into. */
+.cp-body {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  gap: var(--s-6) var(--s-8);
+  align-content: safe center;
+}
+
+@media (min-width: 900px) {
+  .cp-body {
+    /* Wide enough for the longest line of the four questions to stay
+       on one line. At 22rem 'What do you' broke after 'do', and a
+       display heading hyphenating itself across three ragged lines is
+       the loudest thing on the screen going wrong. */
+    grid-template-columns: minmax(0, 26rem) minmax(0, 1fr);
+    gap: var(--s-8);
+    align-items: start;
+  }
+
+  /* The question stays put while the answers change under it: on a
+     screen this size the whole exchange is visible at once, and a
+     heading that jumps every time an answer is given is the one thing
+     in it that should not move. */
+  .cp-ask {
+    position: sticky;
+    top: 0;
+  }
+}
+
+.cp-answer { min-width: 0; }
 
 .cp-head {
   display: flex;
@@ -224,9 +255,26 @@
   color: var(--text-primary);
 }
 
+/* Chosen reads as white, not as red.
+
+   Red is the loudest thing this design system has, and on this panel it
+   was doing ten jobs at once: the outline, the marker, the progress, the
+   step number, the full stop, every chosen chip, the button, the focused
+   field's underline, the asterisks and the privacy link. Ten reds is no
+   red at all - nothing stands out because everything does.
+
+   It keeps three: where you are (progress), what this does (the button)
+   and the panel's own edge. Choosing something is answered in white,
+   which is just as unmistakable against black and does not compete with
+   the one control that actually sends anything. */
 .cp-chip.is-on {
-  background: var(--signal);
-  color: var(--signal-on);
+  background: var(--text-primary);
+  color: var(--canvas);
+}
+
+.cp-chip.is-on:hover {
+  background: var(--text-primary);
+  filter: brightness(0.9);
 }
 
 /* ===== THE FORM ===== */
@@ -279,8 +327,15 @@
   border-bottom-color: var(--line-strong);
 }
 
+/* White on focus, red only when something is actually wrong. A field
+   that turns red the moment it is touched is telling the person they
+   have made a mistake by starting to type in it. */
 .cp-input:focus {
   outline: none;
+  border-bottom-color: var(--text-primary);
+}
+
+.cp-input[aria-invalid='true'] {
   border-bottom-color: var(--signal);
 }
 
@@ -291,8 +346,9 @@
 
 /* The marker and the note that explains it. Red because it is the same
    thing the consent line is: something the visitor has to act on. */
+/* Quiet. It marks a field, it does not warn about one. */
 .cp-req {
-  color: var(--signal-text);
+  color: var(--text-muted);
   margin-left: 2px;
 }
 
@@ -434,56 +490,6 @@
 }
 
 /* ===== SENT ===== */
-.cp-sent {
-  padding: var(--s-6) 0;
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
-}
-
-.cp-sent-title {
-  font-family: var(--font-display);
-  font-weight: var(--weight-display);
-  font-size: var(--t-h4);
-  letter-spacing: var(--track-heading);
-  text-transform: uppercase;
-  color: var(--text-primary);
-  margin-bottom: var(--s-3);
-}
-
-.cp-sent-body {
-  font-size: var(--t-body-s);
-  line-height: 1.7;
-  color: var(--text-secondary);
-  margin-bottom: var(--s-5);
-}
-
-/* ===== DIRECT ===== */
-.cp-direct {
-  margin-top: auto;
-  padding-top: var(--s-7);
-}
-
-.cp-direct-label {
-  font-family: var(--font-mono);
-  font-size: var(--t-label);
-  letter-spacing: var(--track-label);
-  text-transform: uppercase;
-  color: var(--text-muted);
-  margin-bottom: var(--s-2);
-}
-
-.cp-direct-link {
-  font-size: var(--t-body);
-  color: var(--text-primary);
-  text-decoration: none;
-  border-bottom: 1px solid var(--line-strong);
-  transition: border-color var(--d-micro) var(--ease);
-}
-
-.cp-direct-link:hover {
-  border-bottom-color: var(--signal);
-}
-
 @media (prefers-reduced-motion: reduce) {
   .cp-scrim,
   .cp-panel {
@@ -508,4 +514,490 @@
   .cp-inner {
     padding: var(--s-6) var(--s-5) var(--s-7);
   }
+}
+
+/* ===== THE FOUR QUESTIONS =====
+   The form asks one thing at a time. What is on screen at any moment is
+   one question and one set of answers; everything else is hidden with
+   the `hidden` attribute rather than unmounted, so a field filled in on
+   step four survives a trip back to step one. */
+
+.cp-progress {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  margin-bottom: var(--s-5);
+}
+
+.cp-progress-count {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35em;
+  margin: 0;
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: var(--track-label);
+  color: var(--text-muted);
+}
+
+.cp-progress-now { color: var(--signal-text); }
+
+/* Four segments, not one filling bar. The reader is counting questions,
+   and a bar at 25% does not say "one of four" - it says "a quarter of
+   something", which is a different and less useful thing to know. */
+.cp-progress-track {
+  display: flex;
+  gap: var(--s-2);
+  flex: 1;
+  min-width: 0;
+}
+
+.cp-progress-seg {
+  flex: 1;
+  height: 2px;
+  background: var(--line);
+  transition: background var(--d-standard) var(--ease);
+}
+
+.cp-progress-seg.is-on { background: var(--signal); }
+
+/* The question itself is the heading, so the step needs no second one.
+   Hidden steps take no space and are skipped by assistive technology -
+   that is what the attribute is for. */
+.cp-form [hidden] { display: none; }
+
+/* ===== MOVING BETWEEN QUESTIONS =====
+   Answering should feel like turning a page, not like text being
+   swapped out underneath you.
+
+   The mechanism is display: none. An element coming back from it is new
+   to the render tree, and a CSS animation on a new element runs - so
+   simply un-hiding a step plays its entrance, with no state to track and
+   no transition to co-ordinate. The heading gets the same treatment
+   through a React key, because it is the one part that stays put. */
+@keyframes cp-vaihe {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes cp-vaihe-sivulta {
+  from { opacity: 0; transform: translateX(18px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.cp-ask {
+  animation: cp-vaihe var(--d-entrance) var(--ease) backwards;
+}
+
+.cp-services:not([hidden]),
+.cp-options:not([hidden]),
+.cp-step-fields:not([hidden]) {
+  animation: cp-vaihe-sivulta var(--d-entrance) var(--ease) backwards;
+  animation-delay: 60ms;
+}
+
+/* The answers arrive one behind the next, in the order they are read.
+   Cheap: one property on four elements, none of which is laid out
+   again. */
+.cp-options:not([hidden]) .cp-option,
+.cp-services:not([hidden]) .cp-chip {
+  animation: cp-vaihe var(--d-standard) var(--ease) backwards;
+}
+
+.cp-options:not([hidden]) .cp-option:nth-of-type(1),
+.cp-services:not([hidden]) .cp-chip:nth-of-type(1) { animation-delay: 110ms; }
+.cp-options:not([hidden]) .cp-option:nth-of-type(2),
+.cp-services:not([hidden]) .cp-chip:nth-of-type(2) { animation-delay: 155ms; }
+.cp-options:not([hidden]) .cp-option:nth-of-type(3),
+.cp-services:not([hidden]) .cp-chip:nth-of-type(3) { animation-delay: 200ms; }
+.cp-options:not([hidden]) .cp-option:nth-of-type(4),
+.cp-services:not([hidden]) .cp-chip:nth-of-type(4) { animation-delay: 245ms; }
+.cp-services:not([hidden]) .cp-chip:nth-of-type(5) { animation-delay: 290ms; }
+.cp-services:not([hidden]) .cp-chip:nth-of-type(6) { animation-delay: 335ms; }
+
+/* The segment that just lit fills from the left rather than appearing
+   whole - it is the one thing on screen that says progress was made. */
+.cp-progress-seg.is-on {
+  transform-origin: left center;
+  animation: cp-palkki var(--d-standard) var(--ease);
+}
+
+@keyframes cp-palkki {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cp-ask,
+  .cp-services:not([hidden]),
+  .cp-options:not([hidden]),
+  .cp-step-fields:not([hidden]),
+  .cp-options:not([hidden]) .cp-option,
+  .cp-services:not([hidden]) .cp-chip,
+  .cp-progress-seg.is-on {
+    animation: none;
+  }
+}
+
+.cp-step-fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+}
+
+/* ===== SINGLE-CHOICE ANSWERS =====
+   Whole rows, not dots with labels beside them. A row is a target a
+   thumb can hit, and at this size the answer text is the control.
+
+   The native radio is kept and only its painting is replaced: it is
+   what carries the checked state to assistive technology, what makes
+   arrow keys move between the options, and what makes the set behave as
+   one control instead of four. */
+.cp-options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.cp-option {
+  --cut: 10px;
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  padding: var(--s-4);
+  cursor: pointer;
+  background: var(--line);
+  position: relative;
+  isolation: isolate;
+  transition: background var(--d-micro) var(--ease);
+  clip-path: polygon(
+    var(--cut) 0,
+    100% 0,
+    100% calc(100% - var(--cut)),
+    calc(100% - var(--cut)) 100%,
+    0 100%,
+    0 var(--cut)
+  );
+}
+
+/* Outline construction, the same one the service cards use: clip-path
+   cuts a border away with everything else, so the background is the line
+   and the ::before, inset by a pixel, is the fill. */
+.cp-option::before {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  z-index: -1;
+  background: var(--surface-1);
+  transition: background var(--d-micro) var(--ease);
+  clip-path: polygon(
+    calc(var(--cut) - 1px) 0,
+    100% 0,
+    100% calc(100% - var(--cut) + 1px),
+    calc(100% - var(--cut) + 1px) 100%,
+    0 100%,
+    0 calc(var(--cut) - 1px)
+  );
+}
+
+.cp-option:hover { background: var(--line-strong); }
+
+/* Same as the chips: the chosen row is outlined in white rather than
+   filled with red. The row it is in stays dark, so four options do not
+   turn into one large red block the moment one of them is picked. */
+.cp-option.is-on { background: var(--text-primary); }
+
+.cp-option-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.cp-option-mark {
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  transition: border-color var(--d-micro) var(--ease),
+              box-shadow var(--d-micro) var(--ease);
+}
+
+/* Filled from the inside by an inset shadow rather than by a second
+   element - one property to animate and nothing to position. */
+.cp-option.is-on .cp-option-mark {
+  border-color: var(--text-primary);
+  box-shadow: inset 0 0 0 4px var(--text-primary);
+}
+
+.cp-option-text {
+  font-size: var(--t-body-s);
+  line-height: 1.4;
+  color: var(--text-secondary);
+}
+
+.cp-option.is-on .cp-option-text { color: var(--text-primary); }
+
+/* The keyboard has to be able to see where it is. The input is hidden,
+   so the row wearing it takes the ring. */
+.cp-option:focus-within {
+  outline: 2px solid var(--signal-text);
+  outline-offset: 2px;
+}
+
+/* ===== STEP NAVIGATION =====
+   Forward sits right whether or not there is a back button beside it,
+   which is what the auto margin is for: on the first step there is no
+   back, and the single button should not slide over to the left. */
+.cp-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  margin-top: var(--s-2);
+}
+
+/* Sized to what it says, not to the panel. .cp-submit is 100% wide
+   from when it was the only button on a single-screen form; in a row
+   with Back beside it that makes one control the width of the panel and
+   the other a whisper next to it. */
+.cp-nav .cp-submit {
+  width: auto;
+  margin-left: auto;
+  min-width: 12rem;
+}
+
+/* A real control, not a footnote. It was set in muted grey at label
+   size beside a red button the width of the panel, which made going back
+   look like something the form would rather you did not do. */
+.cp-nav-back {
+  padding: var(--s-3) var(--s-4);
+  background: none;
+  border: 1px solid var(--line);
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  transition: color var(--d-micro) var(--ease),
+              border-color var(--d-micro) var(--ease);
+}
+
+.cp-nav-back:hover,
+.cp-nav-back:focus-visible {
+  color: var(--text-primary);
+  border-color: var(--line-strong);
+}
+
+@media (max-width: 560px) {
+  .cp-nav .cp-submit { min-width: 0; flex: 1; }
+}
+
+
+/* ===== THE PANEL'S OWN RHYTHM =====
+   Three of the four steps hold two lines and a handful of controls, and
+   on a 900px-tall panel that left the button floating in the middle with
+   half a screen of black under it - and in a different place on every
+   step, so the one control the reader is looking for moved each time
+   they answered.
+
+   The answers grow downward from the heading and the button is pinned to
+   the foot of the panel, where it is the same distance from the thumb on
+   every step. */
+/* No growing. The form used to be the thing that filled the panel and
+   pushed the buttons to the floor; the step is centred as a whole now,
+   so a form that stretches only puts distance between the answers and
+   the button that follows them. */
+.cp-form {
+  min-height: 0;
+}
+
+/* Under the answers, in the same column as them: it is the end of the
+   thing the reader has just been doing, not a toolbar belonging to the
+   window. Pinning it to the floor made sense when the answers were in a
+   narrow panel that did not fill it; with the step centred there is
+   nothing left for it to be stranded in. */
+.cp-nav {
+  margin-top: var(--s-6);
+}
+
+/* Bigger again now that it has a column of its own rather than the
+   full width of a narrow panel: at 22rem it is the question, and the
+   question is what the step is about. */
+.cp-claim {
+  font-size: clamp(1.75rem, 3.2vw, 2.75rem);
+}
+
+/* ===== THE LAST STEP =====
+   The only step with more than one thing to fill in, so it is the only
+   one that needs its fields drawn closer together than the questions
+   before it. */
+.cp-step-fields {
+  gap: var(--s-4);
+}
+
+/* ===== THE RECEIPT =====
+   What replaces "Thanks, I will be in touch soon".
+
+   That sentence is on every form on the internet and it gives the person
+   who just typed their details nothing: no record of what they sent, and
+   no idea what soon means. This gives both. The answers come back, and
+   the reply gets a date - three working days, calculated, not promised.
+
+   Set as a definition list because that is what it is: labels and the
+   values against them. It reads as a record rather than as a message,
+   which is the point. */
+.cp-done {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+  animation: cp-vaihe var(--d-reveal) var(--ease) backwards;
+}
+
+.cp-receipt {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 0;
+  border-top: 1px solid var(--line);
+}
+
+.cp-receipt-row {
+  display: grid;
+  grid-template-columns: minmax(0, 10rem) minmax(0, 1fr);
+  gap: var(--s-4);
+  align-items: baseline;
+  padding: var(--s-4) 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.cp-receipt-row dt {
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.cp-receipt-row dd {
+  margin: 0;
+  font-size: var(--t-body-s);
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+/* The date is the only commitment on this panel, so it is the only line
+   set at a size that carries. Everything else here is a record of what
+   already happened; this one is about what happens next. */
+.cp-receipt-row.is-lead dd {
+  font-family: var(--font-display);
+  font-weight: var(--weight-display);
+  font-size: var(--t-h4);
+  letter-spacing: var(--track-heading);
+  text-transform: uppercase;
+  color: var(--signal-text);
+}
+
+.cp-receipt-sep { color: var(--text-muted); }
+
+/* Not filled in. Grey rather than absent, so the record is complete:
+   the reader can see that a question was left open rather than wonder
+   whether the answer went missing. */
+.cp-receipt-row dd.is-empty { color: var(--text-muted); }
+
+.cp-receipt-message {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.cp-receipt-note {
+  font-size: var(--t-label);
+  line-height: 1.6;
+  color: var(--text-muted);
+  max-width: 48ch;
+}
+
+.cp-receipt-label {
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--signal-text);
+  margin-top: var(--s-3);
+}
+
+.cp-done-close {
+  align-self: flex-start;
+  min-width: 14rem;
+  margin-top: var(--s-3);
+}
+
+@media (max-width: 560px) {
+  /* Stacked: two columns of ten characters each is not a table, it is
+     two columns of hyphenation. */
+  .cp-receipt-row {
+    grid-template-columns: 1fr;
+    gap: var(--s-1);
+  }
+
+  .cp-done-close { align-self: stretch; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cp-done { animation: none; }
+}
+
+/* ===== ONE COLUMN, ON THE MIDDLE AXIS =====
+   Below the two-column breakpoint everything stacks, and stacked it was
+   all still flush left - the question, the answers and the buttons in a
+   single column pressed against one edge with the whole right side of
+   the screen empty. On a wide screen the left alignment is what pairs
+   the question with the answers beside it; with nothing beside it there
+   is nothing to pair with, and the middle is where a single column
+   belongs.
+
+   The fields in the last step are the exception: text being typed into
+   a centred input jumps a character at a time, so they keep their left
+   edge. Their heading is centred with everything else, which is the
+   ordinary arrangement for a form under a title. */
+@media (max-width: 899px) {
+  .cp-ask { text-align: center; }
+
+  /* Stacked, because the bar is flex: 1 and would eat the whole row
+     and leave the count pinned to the left of it. Count over bar, both
+     on the middle axis. */
+  .cp-progress {
+    flex-direction: column;
+    align-items: center;
+    gap: var(--s-3);
+  }
+
+  .cp-progress-track { width: 100%; }
+
+  .cp-chips { justify-content: center; }
+
+  /* The rows themselves are already the full width, so there is nothing
+     to centre - and centring what is inside them put every dot at a
+     different x depending on how long its label happened to be, which
+     is a list you cannot run your eye down. The dots stay in a line. */
+
+  .cp-nav { justify-content: center; }
+
+  /* The auto margin is what pushes the button right when Back is beside
+     it; centred, it would push it off the middle again. */
+  .cp-nav .cp-submit { margin-left: 0; }
+
+  .cp-receipt-note,
+  .cp-done-close {
+    margin-inline: auto;
+  }
+
+  .cp-receipt-note,
+  .cp-receipt-label { text-align: center; }
 }
