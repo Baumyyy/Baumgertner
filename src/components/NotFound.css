@@ -1,0 +1,217 @@
+/* ===== 404 =====
+   Centred, on the same black, with the same marker, hairlines and
+   chamfer as everything else. A 404 is the one page a visitor reaches
+   by accident, and the fastest way to tell them they are still on the
+   right site is for it to look like the right site. */
+.nf {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Scales with the window height as well as its width. A laptop is
+     often 1440 wide and only 700 tall, and at a flat 18vh the page
+     overflowed by 90px there - a 404 that has to be scrolled is asking
+     for work from someone who is already lost. */
+  padding: clamp(var(--s-7), 12vh, var(--s-9)) var(--s-6) var(--s-7);
+  background: var(--canvas);
+  overflow: hidden;
+}
+
+/* The mark, and the way back. There is no navigation on this page, so
+   this is both. */
+.nf-brand {
+  position: absolute;
+  top: max(var(--s-6), env(safe-area-inset-top));
+  left: 50%;
+  transform: translateX(-50%);
+  display: block;
+  width: min(200px, 44vw);
+  color: var(--text-primary);
+  opacity: 0.55;
+  transition: opacity var(--d-micro) var(--ease);
+}
+
+.nf-brand:hover,
+.nf-brand:focus-visible { opacity: 1; }
+
+.nf-brand-mark {
+  display: block;
+  width: 100%;
+}
+
+.nf-inner {
+  position: relative;
+  width: 100%;
+  max-width: 44rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: clamp(var(--s-3), 2.4vh, var(--s-5));
+}
+
+/* The number at the size it deserves, behind the number at the size it
+   is worth reading. It is scenery, not information - the real one is in
+   the record below - so it sits under everything at an opacity that
+   reads as texture rather than as text, and never takes a click. */
+.nf-ghost {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -58%);
+  z-index: -1;
+  font-family: var(--font-display);
+  font-weight: var(--weight-display);
+  font-size: min(42rem, 92vw);
+  line-height: 0.8;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  opacity: 0.045;
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.nf-tag { margin: 0; }
+
+.nf-claim {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: var(--weight-display);
+  /* Two short sentences, so it can carry a size close to the section
+     headings on the site itself. */
+  font-size: min(clamp(2rem, 5.6vw, 4rem), 9vh);
+  line-height: 1.02;
+  letter-spacing: var(--track-heading);
+  text-transform: uppercase;
+  color: var(--text-primary);
+}
+
+/* Each line breaks evenly rather than leaving one word stranded:
+   "THIS PAGE DOES / NOT." put the full stop on a line of its own. */
+.nf-claim-line {
+  display: block;
+  text-wrap: balance;
+}
+
+.nf-lede {
+  margin: 0;
+  font-size: var(--t-body);
+  line-height: 1.7;
+  color: var(--text-secondary);
+  max-width: 44ch;
+}
+
+/* ===== THE RECORD =====
+   Borrowed from the contact receipt. A page that has gone wrong should
+   say what it knows.
+
+   In a chamfered frame here rather than on plain hairlines: centred on
+   an otherwise empty screen it needs an edge of its own, or it reads as
+   two stray lines of text under the heading. The outline is built the
+   way every other outlined chamfer on this site is - the background is
+   the line and the ::before, inset by a pixel, is the fill, because
+   clip-path cuts a border away at exactly the corners it cuts. */
+.nf-record {
+  --cut: 14px;
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  margin: var(--s-2) 0 0;
+  padding: var(--s-2) var(--s-6);
+  background: var(--line);
+  clip-path: polygon(
+    var(--cut) 0,
+    100% 0,
+    100% calc(100% - var(--cut)),
+    calc(100% - var(--cut)) 100%,
+    0 100%,
+    0 var(--cut)
+  );
+}
+
+.nf-record::before {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  z-index: -1;
+  background: var(--canvas);
+  clip-path: polygon(
+    calc(var(--cut) - 1px) 0,
+    100% 0,
+    100% calc(100% - var(--cut) + 1px),
+    calc(100% - var(--cut) + 1px) 100%,
+    0 100%,
+    0 calc(var(--cut) - 1px)
+  );
+}
+
+/* Left-aligned inside a centred page: a label and its value are a pair
+   to be read across, and centring them puts a different gap between
+   every one. */
+.nf-record-row {
+  display: grid;
+  grid-template-columns: minmax(0, 10rem) minmax(0, 1fr);
+  gap: var(--s-4);
+  align-items: baseline;
+  padding: var(--s-4) 0;
+  text-align: left;
+}
+
+.nf-record-row + .nf-record-row {
+  border-top: 1px solid var(--line);
+}
+
+.nf-record-row dt {
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.nf-record-row dd {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--t-body-s);
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+/* A path is one unbroken token and can be any length a stranger types,
+   so it breaks wherever it has to rather than pushing the page sideways. */
+.nf-path {
+  overflow-wrap: anywhere;
+  color: var(--signal-text);
+}
+
+.nf-home {
+  margin-top: var(--s-3);
+  min-width: 14rem;
+}
+
+@media (max-width: 560px) {
+  .nf { padding: clamp(var(--s-6), 11vh, var(--s-8)) var(--s-5) var(--s-6); }
+
+  .nf-record { padding-inline: var(--s-5); }
+
+  /* Ten characters of label beside ten of value is not two columns, it
+     is two columns of hyphenation. */
+  .nf-record-row {
+    grid-template-columns: 1fr;
+    gap: var(--s-1);
+  }
+
+  .nf-home {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nf-brand { transition: none; }
+}

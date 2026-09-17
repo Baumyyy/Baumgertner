@@ -285,7 +285,12 @@
 .wk-track.no-anim { transition: none; }
 
 .wk-slide {
-  flex: 0 0 76%;
+  /* 76% suited the 16:7 crop: at that shape a slide this wide came out
+     410px tall. The mock-ups are 3:2, and the same width put them at
+     625 - over two thirds of a laptop window for one preview, before
+     the information bar under it. The preview is a preview; the full
+     size is one click away. */
+  flex: 0 0 58%;
   padding: 0 var(--s-2);
   opacity: 0.28;
   transition: opacity var(--d-entrance) var(--ease);
@@ -295,14 +300,20 @@
   opacity: 1;
 }
 
-/* Shorter than the shape the shots are captured at, cropped from the top:
-   a full-height screenshot pushes the information bar too far down the
-   page, and the top of a site is the part worth showing anyway. */
+/* 3:2, cropped from the middle.
+
+   It was 16:7 from the top, which suited full-page screenshots: the top
+   of a site is the part worth showing, and the rest only pushed the
+   information bar down the page. The shots are device mock-ups now, and
+   the subject of one of those sits in the middle - at 16:7 from the top
+   the laptop lost its base and the phone beside it lost its screen. 3:2
+   is close enough to the shape they arrive in that the crop takes floor
+   and backdrop rather than hardware. */
 .wk-slide img {
   width: 100%;
-  aspect-ratio: 16 / 7;
+  aspect-ratio: 3 / 2;
   object-fit: cover;
-  object-position: top center;
+  object-position: center;
   border-radius: var(--r-md);
   display: block;
   user-select: none;
@@ -489,6 +500,13 @@
 
 @media (max-width: 968px) {
   .projects { padding: 4.5rem 2rem; }
+
+  /* The other way round here. The narrow slide exists so the next and
+     previous shots show in the margins instead of the space being
+     wasted; on a phone those margins are 40px of a thumbnail nobody can
+     make out, and the shot itself drops to 179px wide. Better to give
+     the width to the one being looked at. */
+  .wk-slide { flex: 0 0 88%; }
 
   .wk-meta {
     grid-template-columns: 1fr;

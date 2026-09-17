@@ -156,6 +156,16 @@ var en = {
   cp_q4_hint: 'I read every message myself and come back to you within a few days.',
   cp_error_empty: 'Tell me something about the project, or pick an answer above.',
   cp_error_pick: 'Pick one to carry on. Not sure yet is an answer.',
+
+  notfound_tag: '404',
+  // The second line carries no full stop of its own: .stop adds the
+  // red one after it.
+  notfound_claim1: 'Ghosts may exist.',
+  notfound_claim2: 'This page does not',
+  notfound_lede: 'There is more evidence for one of them.',
+  notfound_asked: 'You asked for',
+  notfound_status: 'Status',
+  notfound_home: 'Back to the site',
   cp_svc_website: 'Website',
   cp_svc_logo: 'Logo',
   cp_svc_branding: 'Branding',
@@ -186,8 +196,6 @@ var en = {
   footer_terms: 'Terms of Use',
 
   //Error 404
-  notfound_text: 'The page you are looking for does not exist or has been moved.',
-  notfound_home: 'Back to Home',
 
 };
 

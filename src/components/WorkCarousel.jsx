@@ -132,6 +132,16 @@ var WorkCarousel = function({ shots, active, label }) {
   // Which real shot is showing, for the dots.
   var current = ((pos - 1) % count + count) % count;
 
+  // Where the active slide sits in the track.
+  //
+  // pos starts at 1 because position 0 is the clone of the last shot.
+  // With a single shot there are no clones, so the only slide is at 0
+  // and nothing ever matched pos - the project opened with no active
+  // slide at all: no full-opacity image, and nothing to click to enlarge
+  // it. A one-shot carousel is not a special case worth a branch of its
+  // own; it is this line.
+  var aktiivinen = count > 1 ? pos : 0;
+
   return (
     <div className="wk-stage">
       {/* The neighbours stay on screen at the edges rather than being
@@ -140,7 +150,7 @@ var WorkCarousel = function({ shots, active, label }) {
           previous shots into the margins instead of wasting them. */}
       <div
         className={'wk-track' + (animate ? '' : ' no-anim')}
-        style={{ '--i': pos }}
+        style={{ '--i': aktiivinen }}
         onTransitionEnd={onTransitionEnd}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
@@ -148,7 +158,7 @@ var WorkCarousel = function({ shots, active, label }) {
         onPointerCancel={onPointerUp}
       >
         {slides.map(function(src, i) {
-          var onkoAktiivinen = i === pos;
+          var onkoAktiivinen = i === aktiivinen;
           return (
             <div
               className={'wk-slide' + (onkoAktiivinen ? ' is-active' : '')}

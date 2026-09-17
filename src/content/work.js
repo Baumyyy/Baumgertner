@@ -51,12 +51,14 @@ export const work = [
     },
     industry: { en: 'Portfolio', fi: 'Portfolio' },
     site: { label: 'baumgertner.fi', href: 'https://baumgertner.fi' },
-    shots: [
-      '/work/portfolio-1.webp',
-      '/work/portfolio-2.webp',
-      '/work/portfolio-3.webp',
-      '/work/portfolio-4.webp',
-    ],
+    // Empty on purpose, which is what the carousel reads as "show the
+    // mark instead" - the same placeholder the two unfinished projects
+    // below are showing.
+    //
+    // The mock-up is still in the repo at
+    // /work/Baumgertner/BaumgertnerSnapshot.jpg. Putting it back is one
+    // line: add it to this array.
+    shots: [],
     body: {
       en: [
         'Built from nothing rather than assembled from a theme: the identity, the interface, the API behind it and the server it runs on.',

@@ -155,6 +155,15 @@ var fi = {
   cp_q4_hint: 'Luen jokaisen viestin itse ja vastaan muutaman päivän sisällä.',
   cp_error_empty: 'Kerro projektista jotain, tai valitse jokin vaihtoehto ylempää.',
   cp_error_pick: 'Valitse jokin päästäksesi eteenpäin. En vielä tiedä on vastaus.',
+
+  notfound_tag: '404',
+  // Toisessa rivissa ei ole omaa pistetta: .stop lisaa punaisen.
+  notfound_claim1: 'Aaveita saattaa olla olemassa.',
+  notfound_claim2: 'Tätä sivua ei',
+  notfound_lede: 'Toisesta on enemmän näyttöä.',
+  notfound_asked: 'Pyysit sivua',
+  notfound_status: 'Tila',
+  notfound_home: 'Takaisin sivustolle',
   cp_services_hint: 'Valitse niin monta kuin sopii. ”En tiedä vielä” on ihan kelpo vastaus.',
   cp_svc_website: 'Verkkosivut',
   cp_svc_logo: 'Logo',
@@ -186,8 +195,6 @@ var fi = {
   footer_terms: 'Käyttöehdot',
 
   //Error 404
-  notfound_text: 'Sivua, jota etsit, ei löydy tai se on siirretty.',
-  notfound_home: 'Takaisin etusivulle',
 
 };
 
