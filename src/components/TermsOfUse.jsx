@@ -4,23 +4,37 @@ import './PrivacyPolicy.css';
 import { useLang } from '../useLang';
 import { usePageMeta } from '../hooks/usePageMeta';
 
+// A note for when the business side changes, because two things below
+// are written for how it stands today:
+//
+//   1. "The scope, schedule and price of any work are always agreed
+//      separately and in writing". Once prices are published on the
+//      site, that sentence has to be revisited - a published price is
+//      closer to an offer than a portfolio is, and the terms should
+//      then say which parts are binding and which are indicative.
+//
+//   2. The privacy policy names Anthony Baumgertner, a private
+//      individual, as the data controller. When a business name is
+//      registered the controller becomes that business, and its
+//      registration number belongs in the policy.
 var content = {
   en: {
     title: 'Terms of Use',
-    updated: 'Last updated: 10 August 2026',
+    updated: 'Last updated: 17 September 2026',
     intro: 'These terms apply to your use of this website (baumgertner.fi), run by Anthony Baumgertner as a personal portfolio. By using this site, you agree to the terms below. For how your personal data is handled, see the Privacy Policy.',
     sections: [
       {
         heading: 'Using this site',
         body: [
-          'If you submit a testimonial, you confirm it\'s your genuine opinion and grant Anthony Baumgertner the right to display your submitted name, role, company, message, rating and optional photo on this site until you request removal. Submissions are reviewed before publishing. Please don\'t submit illegal, abusive, spam, or automated/bulk content through the contact or testimonial forms.',
-          'The site\'s design and code belong to Anthony Baumgertner; testimonial authors retain ownership of their own words.'
+          'You are welcome to read this site, and to use the contact form to get in touch about work. Please do not send illegal, abusive, automated or bulk content through it.',
+          'The design, text and code of this site belong to Anthony Baumgertner. Anything you write in the contact form stays yours; it is read in order to answer you and is not published anywhere.'
         ]
       },
       {
-        heading: 'Liability',
+        heading: 'Content and liability',
         body: [
-          'This site is provided "as is", without guarantees of uninterrupted availability or error-free content. To the extent permitted by law, Anthony Baumgertner is not liable for damages arising from your use of this site — this does not affect your mandatory rights as a consumer under Finnish law.'
+          'This site is a personal portfolio. Its content — the projects shown, the service descriptions and any timelines — are examples of work already done, not an offer and not a promise of what any particular project will include. The scope, schedule and price of any work are always agreed separately and in writing.',
+          'The site is provided as is, and uninterrupted availability is not guaranteed. This does not limit your mandatory rights under consumer protection law.'
         ]
       },
       {
@@ -34,20 +48,21 @@ var content = {
   },
   fi: {
     title: 'Käyttöehdot',
-    updated: 'Päivitetty viimeksi: 10.8.2026',
+    updated: 'Päivitetty viimeksi: 17.9.2026',
     intro: 'Nämä ehdot koskevat tämän verkkosivuston (baumgertner.fi) käyttöä, jota ylläpitää Anthony Baumgertner henkilökohtaisena portfoliona. Käyttämällä sivustoa hyväksyt alla olevat ehdot. Henkilötietojesi käsittelystä kerrotaan tietosuojaselosteessa.',
     sections: [
       {
         heading: 'Sivuston käyttö',
         body: [
-          'Jos lähetät suosittelun, vahvistat että se on aito mielipiteesi ja myönnät Anthony Baumgertnerille oikeuden näyttää antamaasi nimeä, roolia, yritystä, viestiä, arvosanaa ja valinnaista kuvaa tällä sivustolla, kunnes pyydät sen poistamista. Suosittelut tarkistetaan ennen julkaisua. Älä lähetä yhteydenotto- tai suositteluformin kautta laitonta, loukkaavaa, roskapostia tai automatisoitua/massasisältöä.',
-          'Sivuston ulkoasu ja koodi kuuluvat Anthony Baumgertnerille; suosittelujen kirjoittajat säilyttävät omistusoikeuden omiin sanoihinsa.'
+          'Sivustoa saa lukea vapaasti, ja yhteydenottolomakkeella saa ottaa yhteyttä työn merkeissä. Älä lähetä sen kautta laitonta, loukkaavaa, automatisoitua tai massana tuotettua sisältöä.',
+          'Sivuston ulkoasu, tekstit ja koodi kuuluvat Anthony Baumgertnerille. Se, mitä kirjoitat yhteydenottolomakkeeseen, pysyy sinun: se luetaan, jotta sinulle voidaan vastata, eikä sitä julkaista missään.'
         ]
       },
       {
-        heading: 'Vastuunrajoitus',
+        heading: 'Sisältö ja vastuu',
         body: [
-          'Tämä sivusto tarjotaan "sellaisenaan" ilman takuita keskeytyksettömästä saatavuudesta tai virheettömästä sisällöstä. Lain sallimissa rajoissa Anthony Baumgertner ei ole vastuussa vahingoista jotka aiheutuvat sivuston käytöstä — tämä ei vaikuta kuluttajansuojalain mukaisiin pakottaviin oikeuksiisi.'
+          'Tämä sivusto on henkilökohtainen portfolio. Sen sisältö — esitellyt projektit, palvelukuvaukset ja aikataulut — on esimerkkejä jo tehdystä työstä, ei tarjous eikä lupaus siitä, mitä jokin tietty projekti sisältää. Työn laajuudesta, aikataulusta ja hinnasta sovitaan aina erikseen kirjallisesti.',
+          'Sivusto tarjotaan sellaisena kuin se on, eikä sen keskeytymätöntä saatavuutta taata. Tämä ei rajoita pakottavan kuluttajansuojalainsäädännön mukaisia oikeuksiasi.'
         ]
       },
       {
@@ -67,7 +82,7 @@ var TermsOfUse = function() {
 
   usePageMeta(
     'Terms of Use | Anthony Baumgertner',
-    'Terms of use for baumgertner.fi - testimonial submission rules, acceptable use, and liability.'
+    'Terms of use for baumgertner.fi - acceptable use, ownership and liability.'
   );
 
   return (

@@ -1,84 +1,114 @@
+/* ===== LEGAL PAGES =====
+   Shared by the privacy policy and the terms of use.
+
+   Rebuilt on the site's own tokens. It was the last thing still wearing
+   the previous identity: a #050a14 background, #00ff88 headings and a
+   white-to-green gradient title, none of which exist anywhere else any
+   more. Someone who lands here from the footer should not feel they have
+   left the site.
+
+   These two pages are long-form reading, so they are the one place where
+   measure matters more than anything else on the site: 68 characters, a
+   1.75 line height, and nothing in the margins competing for attention. */
 .privacy-page {
   min-height: 100vh;
-  background: #050a14;
-  padding: 4rem 1.5rem 6rem;
+  min-height: 100dvh;
+  background: var(--canvas);
+  padding: var(--s-8) var(--s-6) var(--s-10);
   display: flex;
   justify-content: center;
 }
 
 .privacy-content {
   width: 100%;
-  max-width: 720px;
+  max-width: 44rem;
 }
 
+/* The only way back, since these pages carry no navigation. Mono and
+   uppercase, the same treatment every other small control on the site
+   gets. */
 .privacy-back {
   display: inline-block;
-  color: rgba(0, 255, 136, 0.7);
+  margin-bottom: var(--s-7);
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--text-muted);
   text-decoration: none;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.85rem;
-  letter-spacing: 0.05em;
-  margin-bottom: 2.5rem;
-  transition: color 0.2s ease;
+  transition: color var(--d-micro) var(--ease);
 }
 
-.privacy-back:hover {
-  color: #00ff88;
+.privacy-back:hover,
+.privacy-back:focus-visible {
+  color: var(--text-primary);
 }
 
 .privacy-title {
+  margin: 0 0 var(--s-3);
   font-family: var(--font-display);
-  font-size: clamp(2.5rem, 7vw, 4rem);
-  letter-spacing: 0.04em;
-  background: linear-gradient(135deg, #ffffff 30%, #00ff88 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  margin: 0 0 0.5rem;
+  font-weight: var(--weight-display);
+  font-size: clamp(2rem, 5.6vw, 3.5rem);
+  line-height: 1.04;
+  letter-spacing: var(--track-heading);
+  text-transform: uppercase;
+  color: var(--text-primary);
 }
 
 .privacy-updated {
-  color: rgba(255, 255, 255, 0.35);
-  font-family: 'Inter', sans-serif;
-  font-size: 0.8rem;
-  letter-spacing: 0.05em;
-  margin: 0 0 2rem;
+  margin: 0 0 var(--s-6);
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--signal-text);
 }
 
 .privacy-intro {
-  color: rgba(255, 255, 255, 0.6);
-  font-family: 'Inter', sans-serif;
-  font-size: 1rem;
+  margin: 0 0 var(--s-8);
+  font-size: var(--t-body-l);
   line-height: 1.7;
-  margin: 0 0 3rem;
+  color: var(--text-secondary);
 }
 
 .privacy-section {
-  margin-bottom: 2.2rem;
-  padding-bottom: 2.2rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  margin-bottom: var(--s-7);
+  padding-bottom: var(--s-7);
+  border-bottom: 1px solid var(--line);
 }
 
 .privacy-section:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
   border-bottom: none;
 }
 
 .privacy-heading {
+  margin: 0 0 var(--s-4);
   font-family: var(--font-display);
-  font-size: 1.4rem;
-  letter-spacing: 0.05em;
-  color: #00ff88;
-  margin: 0 0 1rem;
+  font-weight: var(--weight-display);
+  font-size: var(--t-h4);
+  line-height: 1.2;
+  letter-spacing: var(--track-heading);
+  text-transform: uppercase;
+  color: var(--text-primary);
 }
 
+/* Capped at a readable measure rather than at the container width. These
+   are the longest paragraphs on the site and the only ones somebody has
+   to read carefully. */
 .privacy-paragraph {
-  color: rgba(255, 255, 255, 0.55);
-  font-family: 'Inter', sans-serif;
-  font-size: 0.95rem;
-  line-height: 1.7;
-  margin: 0 0 0.9rem;
+  margin: 0 0 var(--s-4);
+  font-size: var(--t-body);
+  line-height: 1.75;
+  color: var(--text-secondary);
+  max-width: 68ch;
 }
 
 .privacy-paragraph:last-child {
   margin-bottom: 0;
+}
+
+@media (max-width: 560px) {
+  .privacy-page { padding: var(--s-7) var(--s-5) var(--s-8); }
 }

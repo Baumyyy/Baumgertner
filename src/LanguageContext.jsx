@@ -6,12 +6,17 @@ import { LanguageContext } from './languageContextObject';
 
 var languages = { en: en, fi: fi };
 
-// Only /en and /fi carry a language in the URL (search engines need a
-// distinct URL per language to index both - see useHomeSeo). Every other
-// route (privacy, terms, admin, 404) has no language segment, so it just
-// falls back to 'en' here rather than losing state on navigation.
+// /en and /fi carry a language in the URL, and so do the legal pages
+// beneath them (/fi/privacy, /en/terms and so on) - search engines need
+// a distinct URL per language to index both, see useHomeSeo.
+//
+// Matched on '/fi' exactly or '/fi/' as a prefix rather than on '/fi'
+// alone: the looser test would read a future '/finland' as Finnish.
+//
+// Anything else (the bare /privacy, admin, 404) has no language segment
+// and falls back to English rather than losing state on navigation.
 var getLangFromPath = function(pathname) {
-  return pathname.indexOf('/fi') === 0 ? 'fi' : 'en';
+  return pathname === '/fi' || pathname.indexOf('/fi/') === 0 ? 'fi' : 'en';
 };
 
 export var LanguageProvider = function({ children }) {

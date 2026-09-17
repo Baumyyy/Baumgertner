@@ -726,7 +726,7 @@ var ContactPanel = function() {
                   <span className="cp-consent-box" aria-hidden="true"></span>
                   <span className="cp-consent-text">
                     {t.cp_consent_pre}{' '}
-                    <Link to="/privacy" onClick={close}>{t.privacy_link_inline}</Link>
+                    <Link to={'/' + lang + '/privacy'} onClick={close}>{t.privacy_link_inline}</Link>
                     {t.cp_consent_post}
                   </span>
                 </label>

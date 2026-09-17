@@ -7,17 +7,17 @@ var pool = require('../db');
 // top-level describes in file order, so any block using `pool` has to come
 // before it.
 describe('Message / testimonial retention', function() {
-  it('purges messages and unpublished testimonials past 45 days, but never a published testimonial', async function() {
+  it('purges messages and unpublished testimonials past six months, but never a published testimonial', async function() {
     await pool.query(
-      "INSERT INTO messages (name, email, message, created_at) VALUES ($1,$2,$3, NOW() - INTERVAL '46 days')",
+      "INSERT INTO messages (name, email, message, created_at) VALUES ($1,$2,$3, NOW() - INTERVAL '7 months')",
       ['Jest Old Message', 'jest-old-message@test.com', 'old message']
     );
     await pool.query(
-      "INSERT INTO testimonials (name, message, visible, created_at) VALUES ($1,$2,false, NOW() - INTERVAL '46 days')",
+      "INSERT INTO testimonials (name, message, visible, created_at) VALUES ($1,$2,false, NOW() - INTERVAL '7 months')",
       ['Jest Old Unpublished', 'old unpublished testimonial']
     );
     await pool.query(
-      "INSERT INTO testimonials (name, message, visible, created_at) VALUES ($1,$2,true, NOW() - INTERVAL '46 days')",
+      "INSERT INTO testimonials (name, message, visible, created_at) VALUES ($1,$2,true, NOW() - INTERVAL '7 months')",
       ['Jest Old Published', 'old published testimonial']
     );
 

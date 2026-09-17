@@ -935,9 +935,12 @@ var MESSAGE_RETENTION_INTERVAL = 24 * 60 * 60 * 1000;
 // which is fine since each query still catches its own error internally.
 function cleanupOldMessages() {
   return Promise.all([
-    pool.query("DELETE FROM messages WHERE created_at < NOW() - INTERVAL '45 days'")
+    // Six months, and the privacy policy says six months. If one of
+    // these two changes the other has to change with it - a retention
+    // period is a promise, and this query is the only thing that keeps it.
+    pool.query("DELETE FROM messages WHERE created_at < NOW() - INTERVAL '6 months'")
       .catch(function(err) { console.error('Message cleanup failed:', err.message); }),
-    pool.query("DELETE FROM testimonials WHERE visible = false AND created_at < NOW() - INTERVAL '45 days'")
+    pool.query("DELETE FROM testimonials WHERE visible = false AND created_at < NOW() - INTERVAL '6 months'")
       .catch(function(err) { console.error('Unpublished testimonial cleanup failed:', err.message); })
   ]);
 }

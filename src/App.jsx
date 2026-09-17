@@ -88,8 +88,25 @@ function App() {
             <Suspense fallback={null}>
               <Routes>
                 <Route path="/baumi-dashboard" element={<Admin />} />
+                {/* Both languages, because these are the two pages a
+                    visitor is most likely to need in their own.
+
+                    They used to exist only without a language segment,
+                    which meant getLangFromPath fell back to English for
+                    them - so someone reading the site in Finnish, who
+                    ticked a consent box written in Finnish, followed the
+                    link beside it and landed on an English privacy
+                    policy. The Finnish text had been written the whole
+                    time; there was simply no route that could reach it.
+
+                    The bare paths are kept so older links and anything
+                    already indexed still resolve. */}
                 <Route path="/privacy" element={<PrivacyPolicy />} />
                 <Route path="/terms" element={<TermsOfUse />} />
+                <Route path="/en/privacy" element={<PrivacyPolicy />} />
+                <Route path="/fi/privacy" element={<PrivacyPolicy />} />
+                <Route path="/en/terms" element={<TermsOfUse />} />
+                <Route path="/fi/terms" element={<TermsOfUse />} />
                 <Route path="/" element={<RootRedirect />} />
                 <Route path="/en" element={<HomePage ready={!loading} />} />
                 <Route path="/fi" element={<HomePage ready={!loading} />} />

@@ -22,7 +22,7 @@ var socialIcons = {
 var Footer = function() {
   var currentYear = new Date().getFullYear();
   var sectionRef = useScrollAnimation();
-  var { t } = useLang();
+  var { t, lang } = useLang();
 
   var toTop = function() {
     scrollPageTo(0);
@@ -59,8 +59,8 @@ var Footer = function() {
           </ul>
 
           <div className="ft-legal">
-            <Link className="ft-link" to="/privacy">{t.footer_privacy}</Link>
-            <Link className="ft-link" to="/terms">{t.footer_terms}</Link>
+            <Link className="ft-link" to={'/' + lang + '/privacy'}>{t.footer_privacy}</Link>
+            <Link className="ft-link" to={'/' + lang + '/terms'}>{t.footer_terms}</Link>
           </div>
         </div>
 
