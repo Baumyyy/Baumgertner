@@ -4,7 +4,6 @@ var passport = require('passport');
 var GitHubStrategy = require('passport-github2').Strategy;
 var session = require('express-session');
 var PgSession = require('connect-pg-simple')(session);
-var multer = require('multer');
 var path = require('path');
 var fs = require('fs');
 var crypto = require('crypto');
@@ -32,66 +31,12 @@ app.use(compression());
 app.set('trust proxy', 1);
 var PORT = process.env.PORT || 3001;
 
-// Uploads folder
-var uploadsDir = path.join(__dirname, 'uploads');
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir);
-}
 
-// Deletes a previously uploaded file given its public "/uploads/xyz.webp" URL.
-// Only ever touches files inside uploadsDir, and only if the URL isn't reused
-// elsewhere, so replacing/removing an image doesn't leave the old file behind.
-var deleteUploadedFile = function(url) {
-  if (!url || typeof url !== 'string' || url.indexOf('/uploads/') !== 0) return;
-  var filename = path.basename(url);
-  var filePath = path.join(uploadsDir, filename);
-  if (path.dirname(filePath) !== uploadsDir) return;
-  fs.unlink(filePath, function() {});
-};
-
-var ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
-var MIME_EXTENSIONS = {
-  'image/jpeg': '.jpg',
-  'image/png': '.png',
-  'image/webp': '.webp',
-  'image/gif': '.gif'
-};
-
-var storage = multer.diskStorage({
-  destination: function(req, file, cb) {
-    cb(null, uploadsDir);
-  },
-  filename: function(req, file, cb) {
-    // Extension is derived from the (already fileFilter-validated) mimetype,
-    // never from the client-supplied originalname - otherwise a spoofed
-    // Content-Type + a name like "evil.html" would land in the publicly
-    // served uploads dir under an attacker-chosen extension. A random UUID
-    // also removes the old Date.now() collision risk for same-millisecond
-    // uploads.
-    var ext = MIME_EXTENSIONS[file.mimetype] || '.bin';
-    cb(null, 'upload-' + crypto.randomUUID() + ext);
-  }
-});
-
-var upload = multer({
-  storage: storage,
-  limits: { fileSize: 5 * 1024 * 1024 },
-  fileFilter: function(req, file, cb) {
-    if (ALLOWED_IMAGE_TYPES.indexOf(file.mimetype) === -1) {
-      return cb(new Error('Only image files are allowed'));
-    }
-    cb(null, true);
-  }
-});
 
 // Input validation helpers
 var EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 var isValidLength = function(str, max) {
   return typeof str === 'string' && str.length > 0 && str.length <= max;
-};
-var UPLOAD_PATH_REGEX = /^\/uploads\/[a-zA-Z0-9_.-]+$/;
-var isValidUploadPath = function(url) {
-  return url == null || url === '' || UPLOAD_PATH_REGEX.test(url);
 };
 var isValidExternalLink = function(url) {
   if (url == null || url === '') return true;
@@ -254,19 +199,7 @@ var messageLimiter = rateLimit({
   handler: rateLimitHandler
 });
 
-var testimonialLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000,
-  max: IS_PROD ? 3 : 200,
-  message: { error: 'Too many submissions, try again later' },
-  handler: rateLimitHandler
-});
 
-var uploadPublicLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000,
-  max: IS_PROD ? 3 : 200,
-  message: { error: 'Too many uploads, try again later' },
-  handler: rateLimitHandler
-});
 
 var pageviewLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -281,7 +214,6 @@ app.use(cors({
   credentials: true
 }));
 app.use(express.json({ limit: '1mb' }));
-app.use('/uploads', express.static(uploadsDir));
 app.use('/api', apiLimiter);
 
 // Session
@@ -382,142 +314,6 @@ app.post('/api/auth/logout', function(req, res) {
   });
 });
 
-// ===== PROFILE (public) =====
-app.get('/api/profile', async function(req, res) {
-  try {
-    var result = await pool.query('SELECT name, role, bio, email, location, timezone, available, avatar FROM profile LIMIT 1');
-    res.json(result.rows[0] || {});
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Something went wrong. Please try again later.' });
-  }
-});
-
-// ===== PROFILE (admin) =====
-app.put('/api/profile', auth, async function(req, res) {
-  try {
-    var { name, role, bio, email, location, timezone, available, avatar } = req.body;
-    if (!isValidUploadPath(avatar)) {
-      return res.status(400).json({ error: 'Invalid avatar path' });
-    }
-    var existing = await pool.query('SELECT avatar FROM profile WHERE id=1');
-    var result = await pool.query(
-      'UPDATE profile SET name=$1, role=$2, bio=$3, email=$4, location=$5, timezone=$6, available=$7, avatar=$8, updated_at=NOW() WHERE id=1 RETURNING *',
-      [name, role, bio, email, location, timezone, available, avatar]
-    );
-    var oldAvatar = existing.rows[0] && existing.rows[0].avatar;
-    if (oldAvatar && oldAvatar !== avatar) deleteUploadedFile(oldAvatar);
-    res.json(result.rows[0]);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Something went wrong. Please try again later.' });
-  }
-});
-
-// ===== AVAILABILITY =====
-app.get('/api/availability', async function(req, res) {
-  try {
-    var result = await pool.query('SELECT available FROM profile LIMIT 1');
-    res.json(result.rows[0] || { available: true });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Something went wrong. Please try again later.' });
-  }
-});
-
-app.put('/api/availability', auth, async function(req, res) {
-  try {
-    var { available } = req.body;
-    var result = await pool.query(
-      'UPDATE profile SET available=$1, updated_at=NOW() WHERE id=1 RETURNING available',
-      [available]
-    );
-    res.json(result.rows[0]);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Something went wrong. Please try again later.' });
-  }
-});
-
-// ===== PROJECTS (public) =====
-app.get('/api/projects', async function(req, res) {
-  try {
-    var result = await pool.query('SELECT * FROM projects ORDER BY sort_order ASC');
-    res.json(result.rows);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Something went wrong. Please try again later.' });
-  }
-});
-
-// ===== PROJECTS (admin) =====
-app.post('/api/projects', auth, async function(req, res) {
-  try {
-    var { title, description, tags, status, link, image, image_position, image_zoom, sort_order } = req.body;
-    if (!isValidUploadPath(image)) {
-      return res.status(400).json({ error: 'Invalid image path' });
-    }
-    if (!isValidExternalLink(link)) {
-      return res.status(400).json({ error: 'Invalid project link' });
-    }
-    if (!isValidImagePosition(image_position)) {
-      return res.status(400).json({ error: 'Invalid image position' });
-    }
-    if (!isValidImageZoom(image_zoom)) {
-      return res.status(400).json({ error: 'Invalid image zoom' });
-    }
-    var result = await pool.query(
-      'INSERT INTO projects (title, description, tags, status, link, image, image_position, image_zoom, sort_order) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *',
-      [title, description, tags || '{}', status || 'Live', link, image, image_position || '50% 50%', image_zoom || 100, sort_order || 0]
-    );
-    res.json(result.rows[0]);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Something went wrong. Please try again later.' });
-  }
-});
-
-app.put('/api/projects/:id', auth, async function(req, res) {
-  try {
-    var { title, description, tags, status, link, image, image_position, image_zoom, sort_order } = req.body;
-    if (!isValidUploadPath(image)) {
-      return res.status(400).json({ error: 'Invalid image path' });
-    }
-    if (!isValidExternalLink(link)) {
-      return res.status(400).json({ error: 'Invalid project link' });
-    }
-    if (!isValidImagePosition(image_position)) {
-      return res.status(400).json({ error: 'Invalid image position' });
-    }
-    if (!isValidImageZoom(image_zoom)) {
-      return res.status(400).json({ error: 'Invalid image zoom' });
-    }
-    var existing = await pool.query('SELECT image FROM projects WHERE id=$1', [req.params.id]);
-    var result = await pool.query(
-      'UPDATE projects SET title=$1, description=$2, tags=$3, status=$4, link=$5, image=$6, image_position=$7, image_zoom=$8, sort_order=$9 WHERE id=$10 RETURNING *',
-      [title, description, tags, status, link, image, image_position || '50% 50%', image_zoom || 100, sort_order, req.params.id]
-    );
-    var oldImage = existing.rows[0] && existing.rows[0].image;
-    if (oldImage && oldImage !== image) deleteUploadedFile(oldImage);
-    res.json(result.rows[0]);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Something went wrong. Please try again later.' });
-  }
-});
-
-app.delete('/api/projects/:id', auth, async function(req, res) {
-  try {
-    var existing = await pool.query('SELECT image FROM projects WHERE id=$1', [req.params.id]);
-    await pool.query('DELETE FROM projects WHERE id=$1', [req.params.id]);
-    if (existing.rows[0] && existing.rows[0].image) deleteUploadedFile(existing.rows[0].image);
-    res.json({ deleted: true });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Something went wrong. Please try again later.' });
-  }
-});
-
 // ===== MESSAGES (public: send) =====
 app.post('/api/messages', messageLimiter, async function(req, res) {
   try {
@@ -585,118 +381,6 @@ app.delete('/api/messages/:id', auth, async function(req, res) {
   }
 });
 
-// ===== TESTIMONIALS (public) =====
-app.get('/api/testimonials', async function(req, res) {
-  try {
-    var result = await pool.query('SELECT id, name, role, company, message, avatar, rating FROM testimonials WHERE visible=true ORDER BY sort_order ASC');
-    res.json(result.rows);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Something went wrong. Please try again later.' });
-  }
-});
-
-app.post('/api/testimonials/submit', testimonialLimiter, async function(req, res) {
-  try {
-    var { name, role, company, message, rating, avatar, website, consent, turnstileToken } = req.body;
-    if (website) {
-      return res.json({ success: true, message: 'Thank you! Your testimonial will be reviewed.' });
-    }
-    if (!(await verifyTurnstile(turnstileToken, req.ip))) {
-      return res.status(400).json({ error: 'CAPTCHA verification failed' });
-    }
-    if (!name || !message) {
-      return res.status(400).json({ error: 'Name and message are required' });
-    }
-    if (consent !== true) {
-      return res.status(400).json({ error: 'Consent to publish is required' });
-    }
-    if (!isValidLength(name, 100) || !isValidLength(message, 2000) ||
-        (role && !isValidLength(role, 100)) || (company && !isValidLength(company, 100)) ||
-        (avatar && !isValidLength(avatar, 500))) {
-      return res.status(400).json({ error: 'One or more fields exceed the maximum length' });
-    }
-    if (!isValidUploadPath(avatar)) {
-      return res.status(400).json({ error: 'Invalid avatar path' });
-    }
-    var ratingNum = rating === undefined ? 5 : parseInt(rating, 10);
-    if (isNaN(ratingNum) || ratingNum < 1 || ratingNum > 5) {
-      return res.status(400).json({ error: 'Rating must be between 1 and 5' });
-    }
-    await pool.query(
-      'INSERT INTO testimonials (name, role, company, message, rating, avatar, visible, sort_order, consent_at) VALUES ($1,$2,$3,$4,$5,$6,false,0,NOW()) RETURNING *',
-      [name, role || '', company || '', message, ratingNum, avatar || null]
-    );
-
-    // No per-submission email here - see sendDigestNotification below.
-
-    res.json({ success: true, message: 'Thank you! Your testimonial will be reviewed.' });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Something went wrong. Please try again later.' });
-  }
-});
-
-// ===== TESTIMONIALS (admin) =====
-app.get('/api/admin/testimonials', auth, async function(req, res) {
-  try {
-    var result = await pool.query('SELECT * FROM testimonials ORDER BY sort_order ASC LIMIT 500');
-    res.json(result.rows);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Something went wrong. Please try again later.' });
-  }
-});
-
-app.post('/api/testimonials', auth, async function(req, res) {
-  try {
-    var { name, role, company, message, avatar, rating, visible, sort_order } = req.body;
-    if (!isValidUploadPath(avatar)) {
-      return res.status(400).json({ error: 'Invalid avatar path' });
-    }
-    var result = await pool.query(
-      'INSERT INTO testimonials (name, role, company, message, avatar, rating, visible, sort_order) VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *',
-      [name, role, company, message, avatar, rating || 5, visible !== false, sort_order || 0]
-    );
-    res.json(result.rows[0]);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Something went wrong. Please try again later.' });
-  }
-});
-
-app.put('/api/testimonials/:id', auth, async function(req, res) {
-  try {
-    var { name, role, company, message, avatar, rating, visible, sort_order } = req.body;
-    if (!isValidUploadPath(avatar)) {
-      return res.status(400).json({ error: 'Invalid avatar path' });
-    }
-    var existing = await pool.query('SELECT avatar FROM testimonials WHERE id=$1', [req.params.id]);
-    var result = await pool.query(
-      'UPDATE testimonials SET name=$1, role=$2, company=$3, message=$4, avatar=$5, rating=$6, visible=$7, sort_order=$8 WHERE id=$9 RETURNING *',
-      [name, role, company, message, avatar, rating, visible, sort_order, req.params.id]
-    );
-    var oldAvatar = existing.rows[0] && existing.rows[0].avatar;
-    if (oldAvatar && oldAvatar !== avatar) deleteUploadedFile(oldAvatar);
-    res.json(result.rows[0]);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Something went wrong. Please try again later.' });
-  }
-});
-
-app.delete('/api/testimonials/:id', auth, async function(req, res) {
-  try {
-    var existing = await pool.query('SELECT avatar FROM testimonials WHERE id=$1', [req.params.id]);
-    await pool.query('DELETE FROM testimonials WHERE id=$1', [req.params.id]);
-    if (existing.rows[0] && existing.rows[0].avatar) deleteUploadedFile(existing.rows[0].avatar);
-    res.json({ deleted: true });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Something went wrong. Please try again later.' });
-  }
-});
-
 // ===== IMAGE PROCESSING CONCURRENCY LIMIT =====
 // Sharp's decode/resize is CPU-bound and this box has a single vCPU, so a
 // couple of large images processed at once pin the only core and stall
@@ -726,72 +410,18 @@ var runImageJob = async function(fn) {
   }
 };
 
-// ===== PUBLIC UPLOAD (testimonial avatars) =====
-app.post('/api/upload-public', uploadPublicLimiter, upload.single('image'), async function(req, res) {
-  if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
-  if (activeImageJobs >= MAX_CONCURRENT_IMAGE_JOBS) {
-    fs.unlink(req.file.path, function() {});
-    return res.status(503).json({ error: 'Server busy, try again shortly' });
-  }
-  try {
-    var filename = 'avatar-' + crypto.randomUUID() + '.webp';
-    var outputPath = path.join(uploadsDir, filename);
-    await runImageJob(function() {
-      return sharp(req.file.path, { limitInputPixels: 50000000 })
-        .resize(200, 200, { fit: 'cover' })
-        .webp({ quality: 75 })
-        .toFile(outputPath);
-    });
-    fs.unlink(req.file.path, function() {});
-    res.json({ url: '/uploads/' + filename });
-  } catch (err) {
-    console.error('Image processing failed:', err.message);
-    fs.unlink(req.file.path, function() {});
-    res.status(400).json({ error: 'Invalid image file' });
-  }
-});
-
-// ===== UPLOAD (admin) =====
-app.post('/api/upload', auth, upload.single('image'), async function(req, res) {
-  if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
-  if (activeImageJobs >= MAX_CONCURRENT_IMAGE_JOBS) {
-    fs.unlink(req.file.path, function() {});
-    return res.status(503).json({ error: 'Server busy, try again shortly' });
-  }
-  try {
-    var filename = 'project-' + crypto.randomUUID() + '.webp';
-    var outputPath = path.join(uploadsDir, filename);
-    await runImageJob(function() {
-      return sharp(req.file.path, { limitInputPixels: 50000000 })
-        .resize(1200, 800, { fit: 'inside', withoutEnlargement: true })
-        .webp({ quality: 80 })
-        .toFile(outputPath);
-    });
-    fs.unlink(req.file.path, function() {});
-    res.json({ url: '/uploads/' + filename });
-  } catch (err) {
-    console.error('Image processing failed:', err.message);
-    fs.unlink(req.file.path, function() {});
-    res.status(400).json({ error: 'Invalid image file' });
-  }
-});
-
 // ===== DASHBOARD STATS (admin) =====
 app.get('/api/admin/stats', auth, async function(req, res) {
   try {
-    var projects = await pool.query('SELECT COUNT(*) FROM projects');
+    // Messages only. The project, testimonial and profile counts that
+    // used to be here read tables the public site never touches, so the
+    // dashboard reported numbers that could not change and did not
+    // correspond to anything a visitor would see.
     var messages = await pool.query('SELECT COUNT(*) FROM messages');
     var unread = await pool.query('SELECT COUNT(*) FROM messages WHERE read=false');
-    var profile = await pool.query('SELECT available FROM profile LIMIT 1');
-    var testimonials = await pool.query('SELECT COUNT(*) FROM testimonials');
-    var pendingTestimonials = await pool.query('SELECT COUNT(*) FROM testimonials WHERE visible=false');
     res.json({
-      totalProjects: parseInt(projects.rows[0].count),
       totalMessages: parseInt(messages.rows[0].count),
-      unreadMessages: parseInt(unread.rows[0].count),
-      totalTestimonials: parseInt(testimonials.rows[0].count),
-      pendingTestimonials: parseInt(pendingTestimonials.rows[0].count),
-      available: profile.rows[0] ? profile.rows[0].available : true
+      unreadMessages: parseInt(unread.rows[0].count)
     });
   } catch (err) {
     console.error(err);
@@ -890,12 +520,10 @@ app.get('/api/admin/security', auth, async function(req, res) {
   }
 });
 
-// ===== ERROR HANDLING (e.g. multer file-type/size rejections) =====
+// ===== ERROR HANDLING =====
+// Catch-all for anything a route throws without handling itself.
 app.use(function(err, req, res, next) {
   if (!err) return next();
-  if (err instanceof multer.MulterError || err.message === 'Only image files are allowed') {
-    return res.status(400).json({ error: err.message });
-  }
   console.error('Unhandled request error:', err.message);
   res.status(400).json({ error: 'Request error' });
 });
@@ -996,38 +624,6 @@ function sendDigestNotification() {
   }).catch(function(err) { console.error('Digest notification check failed:', err.message); });
 }
 
-// ===== UPLOAD RETENTION =====
-// Safety net for files that end up unreferenced (e.g. a testimonial photo
-// uploaded but the form was never submitted) - also the thing that clears
-// out anything an abuser pushes through the upload routes. Checking hourly
-// instead of daily shrinks that window from a full day to an hour; the 24h
-// mtime cutoff below (unchanged) still protects an upload mid-flow from
-// being deleted out from under a pending submit.
-var UPLOAD_CLEANUP_INTERVAL = 60 * 60 * 1000;
-function cleanupOrphanedUploads() {
-  Promise.all([
-    pool.query('SELECT image AS url FROM projects WHERE image IS NOT NULL'),
-    pool.query('SELECT avatar AS url FROM testimonials WHERE avatar IS NOT NULL'),
-    pool.query('SELECT avatar AS url FROM profile WHERE avatar IS NOT NULL')
-  ]).then(function(results) {
-    var referenced = new Set();
-    results.forEach(function(r) {
-      r.rows.forEach(function(row) { referenced.add(path.basename(row.url)); });
-    });
-    fs.readdir(uploadsDir, function(err, files) {
-      if (err) return;
-      var cutoff = Date.now() - 24 * 60 * 60 * 1000;
-      files.forEach(function(file) {
-        if (referenced.has(file)) return;
-        var filePath = path.join(uploadsDir, file);
-        fs.stat(filePath, function(statErr, stats) {
-          if (statErr || stats.mtimeMs > cutoff) return;
-          fs.unlink(filePath, function() {});
-        });
-      });
-    });
-  }).catch(function(err) { console.error('Upload cleanup failed:', err.message); });
-}
 
 // ===== START =====
 // Guarded so requiring this file (e.g. from tests) doesn't also start a
@@ -1039,8 +635,6 @@ if (require.main === module) {
   setInterval(cleanupOldSecurityEvents, SECURITY_EVENT_RETENTION_INTERVAL);
   cleanupOldMessages();
   setInterval(cleanupOldMessages, MESSAGE_RETENTION_INTERVAL);
-  cleanupOrphanedUploads();
-  setInterval(cleanupOrphanedUploads, UPLOAD_CLEANUP_INTERVAL);
   sendDigestNotification();
   setInterval(sendDigestNotification, DIGEST_INTERVAL);
 

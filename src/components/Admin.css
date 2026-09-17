@@ -1,30 +1,44 @@
+/* ===== ADMIN =====
+   Built on the site's own tokens rather than on the previous identity's
+   green. Nothing here is seen by a visitor, but a dashboard that looks
+   like a different product is one more thing to hold in your head.
+
+   The greens were not decoration - each one marked something: the active
+   tab, a positive figure, a live status. They are red now, which is the
+   one accent this design system has. Blue and amber are kept where they
+   carry a distinct meaning (unread, needs attention), because collapsing
+   those into red as well would leave the palette saying only "important"
+   and never saying which kind. */
+
 /* ===== BUTTON RESETS ===== */
 .admin-tab,
-.mobile-menu-btn,
 .dash-status-pill {
   font-family: inherit;
   cursor: pointer;
 }
 
+/* Sized to its label. width: 100% made sense when these were stacked
+   in a 240px column; in a row it made the last one 1376px wide and
+   pushed the page 559px past the window. */
 .admin-tab {
   background: none;
   border: none;
   outline: none;
-  width: 100%;
-  text-align: left;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .dash-status-pill {
-  background: rgba(0, 255, 136, 0.06);
-  border: 1px solid rgba(0, 255, 136, 0.15);
+  background: rgba(229, 36, 42, 0.06);
+  border: 1px solid rgba(229, 36, 42, 0.15);
 }
 
 /* ===== PROFILE SAVED ===== */
 .profile-saved-msg {
-  color: #00ff88;
+  color: var(--signal);
   font-size: 0.85rem;
-  background: rgba(0, 255, 136, 0.07);
-  border: 1px solid rgba(0, 255, 136, 0.2);
+  background: rgba(229, 36, 42, 0.07);
+  border: 1px solid rgba(229, 36, 42, 0.2);
   border-radius: 8px;
   padding: 0.6rem 1rem;
   text-align: center;
@@ -81,8 +95,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #0a0f1c;
-  background-image: radial-gradient(ellipse at 50% 0%, rgba(0, 255, 136, 0.03) 0%, transparent 60%);
+  background: var(--canvas);
+  background-image: radial-gradient(ellipse at 50% 0%, rgba(229, 36, 42, 0.03) 0%, transparent 60%);
 }
 
 .login-card {
@@ -142,53 +156,51 @@
 /* ===== ADMIN LAYOUT ===== */
 .admin {
   display: flex;
+  flex-direction: column;
   min-height: 100vh;
-  background: #0a0f1c;
+  background: var(--canvas);
   color: #fff;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
-.admin-sidebar {
-  width: 240px;
-  background: rgba(255, 255, 255, 0.015);
-  border-right: 1px solid rgba(255, 255, 255, 0.06);
-  padding: 1.5rem 0;
-  flex-shrink: 0;
-  position: fixed;
+/* A bar across the top rather than a column down the side. Three tabs
+   never needed 240px of the left edge, and everything in here - charts,
+   tables, message rows - reads better with the width back. */
+.admin-bar {
+  position: sticky;
   top: 0;
-  left: 0;
-  bottom: 0;
-  display: flex;
-  flex-direction: column;
   z-index: 100;
-  overflow-y: auto;
+  background: rgba(10, 10, 10, 0.92);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.admin-user {
+.admin-bar-inner {
   display: flex;
   align-items: center;
-  gap: 0.8rem;
-  padding: 0.5rem 1.5rem 1.5rem 1.5rem;
-  margin-bottom: 0.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  gap: 1.5rem;
+  max-width: 96rem;
+  margin: 0 auto;
+  padding: 0.7rem 2rem;
 }
 
-.admin-username {
+/* The tabs take the middle, the user on one side and the way out on the
+   other, so neither of the two things that are not navigation sits in
+   the middle of the navigation. */
+.admin-tabs {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  color: rgba(255, 255, 255, 0.75);
-  font-size: 0.85rem;
-  font-weight: 600;
+  gap: 0.25rem;
+  margin-right: auto;
 }
 
-.admin-user-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #00ff88;
-  box-shadow: 0 0 6px rgba(0, 255, 136, 0.6);
+/* The wordmark is ~19.3:1, so it is sized by width and the height
+   follows. Never set a height on it. */
+.admin-logo {
+  display: block;
   flex-shrink: 0;
+  width: clamp(112px, 13vw, 150px);
+  height: auto;
+  color: rgba(255, 255, 255, 0.82);
 }
 
 .admin-tab {
@@ -211,24 +223,24 @@
 }
 
 .admin-tab.active {
-  color: #00ff88;
-  background: rgba(0, 255, 136, 0.08);
+  color: var(--signal);
+  background: rgba(229, 36, 42, 0.08);
 }
 
+/* Underline rather than a bar down the left: in a horizontal row the
+   marker belongs on the edge the row runs along. */
 .admin-tab.active::before {
   content: '';
   position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 3px;
-  height: 60%;
-  background: #00ff88;
-  border-radius: 0 3px 3px 0;
+  left: 0.75rem;
+  right: 0.75rem;
+  bottom: -0.7rem;
+  height: 2px;
+  background: var(--signal);
 }
 
 .admin-tab.logout {
-  margin-top: auto;
+  flex-shrink: 0;
   color: rgba(255, 100, 100, 0.5);
 }
 
@@ -238,8 +250,8 @@
 }
 
 .tab-badge {
-  background: #00ff88;
-  color: #0a0f1c;
+  background: var(--signal);
+  color: var(--canvas);
   font-size: 0.6rem;
   font-weight: 700;
   padding: 0.15rem 0.5rem;
@@ -252,11 +264,11 @@
 /* Main */
 .admin-main {
   flex: 1;
-  margin-left: 240px;
-  padding: 2rem 2.5rem;
-  overflow-y: auto;
-  min-height: 100vh;
-  background-image: radial-gradient(ellipse at 80% 10%, rgba(0, 255, 136, 0.02) 0%, transparent 50%);
+  width: 100%;
+  max-width: 96rem;
+  margin: 0 auto;
+  padding: 2rem;
+  background-image: radial-gradient(ellipse at 80% 10%, rgba(229, 36, 42, 0.02) 0%, transparent 50%);
 }
 
 .admin-title {
@@ -323,7 +335,7 @@
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.3), transparent);
+  background: linear-gradient(90deg, transparent, rgba(229, 36, 42, 0.3), transparent);
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -342,8 +354,8 @@
 }
 
 .stat-card.available {
-  border-color: rgba(0, 255, 136, 0.15);
-  background: rgba(0, 255, 136, 0.02);
+  border-color: rgba(229, 36, 42, 0.15);
+  background: rgba(229, 36, 42, 0.02);
 }
 
 .stat-card.busy {
@@ -355,7 +367,7 @@
   display: block;
   font-size: 2.2rem;
   font-family: var(--font-display);
-  color: #00ff88;
+  color: var(--signal);
   margin-bottom: 0.3rem;
   line-height: 1;
 }
@@ -417,8 +429,8 @@
 }
 
 .status-live {
-  background: rgba(0, 255, 136, 0.1);
-  color: #00ff88;
+  background: rgba(229, 36, 42, 0.1);
+  color: var(--signal);
 }
 
 .status-soon {
@@ -434,10 +446,10 @@
 /* Buttons */
 .add-btn, .save-btn {
   padding: 0.6rem 1.3rem;
-  background: rgba(0, 255, 136, 0.12);
-  border: 1px solid rgba(0, 255, 136, 0.25);
+  background: rgba(229, 36, 42, 0.12);
+  border: 1px solid rgba(229, 36, 42, 0.25);
   border-radius: 10px;
-  color: #00ff88;
+  color: var(--signal);
   font-size: 0.85rem;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -446,9 +458,9 @@
 }
 
 .add-btn:hover, .save-btn:hover {
-  background: rgba(0, 255, 136, 0.2);
+  background: rgba(229, 36, 42, 0.2);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 255, 136, 0.1);
+  box-shadow: 0 4px 12px rgba(229, 36, 42, 0.1);
 }
 
 .edit-btn {
@@ -532,8 +544,8 @@
 }
 
 .edit-input:focus {
-  border-color: rgba(0, 255, 136, 0.4);
-  box-shadow: 0 0 0 3px rgba(0, 255, 136, 0.05);
+  border-color: rgba(229, 36, 42, 0.4);
+  box-shadow: 0 0 0 3px rgba(229, 36, 42, 0.05);
 }
 
 .edit-textarea {
@@ -561,8 +573,8 @@
 }
 
 .message-card.unread {
-  border-left: 3px solid #00ff88;
-  background: rgba(0, 255, 136, 0.02);
+  border-left: 3px solid var(--signal);
+  background: rgba(229, 36, 42, 0.02);
 }
 
 .message-header {
@@ -593,11 +605,17 @@
   border-radius: 6px;
 }
 
+/* The quiz answers travel inside the message body as their own lines
+   - "Services: ...", "Stage: ...", "Scope: ..." - and without this they
+   collapse into one run-on sentence with the visitor's own words glued
+   to the end of it. */
 .message-body {
   color: rgba(255, 255, 255, 0.5);
   font-size: 0.85rem;
   line-height: 1.6;
   margin-bottom: 0.8rem;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 .message-actions {
@@ -625,17 +643,17 @@
 
 .read-btn {
   padding: 0.4rem 0.9rem;
-  background: rgba(0, 255, 136, 0.08);
-  border: 1px solid rgba(0, 255, 136, 0.2);
+  background: rgba(229, 36, 42, 0.08);
+  border: 1px solid rgba(229, 36, 42, 0.2);
   border-radius: 8px;
-  color: #00ff88;
+  color: var(--signal);
   font-size: 0.78rem;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .read-btn:hover {
-  background: rgba(0, 255, 136, 0.15);
+  background: rgba(229, 36, 42, 0.15);
 }
 
 .empty-text {
@@ -692,7 +710,7 @@
   bottom: 0;
   left: 50%;
   width: 1px;
-  background: rgba(0, 255, 136, 0.6);
+  background: rgba(229, 36, 42, 0.6);
   transform: translateX(-50%);
 }
 
@@ -702,7 +720,7 @@
   right: 0;
   top: 50%;
   height: 1px;
-  background: rgba(0, 255, 136, 0.6);
+  background: rgba(229, 36, 42, 0.6);
   transform: translateY(-50%);
 }
 
@@ -715,7 +733,7 @@
 
 .image-position-sliders input[type="range"] {
   width: 100%;
-  accent-color: #00ff88;
+  accent-color: var(--signal);
 }
 
 .file-input {
@@ -735,9 +753,9 @@
 }
 
 .file-input::file-selector-button:hover {
-  background: rgba(0, 255, 136, 0.08);
-  border-color: rgba(0, 255, 136, 0.25);
-  color: #00ff88;
+  background: rgba(229, 36, 42, 0.08);
+  border-color: rgba(229, 36, 42, 0.25);
+  color: var(--signal);
 }
 
 .avatar-preview {
@@ -745,7 +763,7 @@
   height: 80px;
   object-fit: cover;
   border-radius: 50%;
-  border: 2px solid rgba(0, 255, 136, 0.25);
+  border: 2px solid rgba(229, 36, 42, 0.25);
 }
 
 /* Dashboard Charts */
@@ -797,15 +815,15 @@
 
 .mini-chart-bar {
   width: 100%;
-  background: linear-gradient(180deg, #00ff88, rgba(0, 255, 136, 0.3));
+  background: linear-gradient(180deg, var(--signal), rgba(229, 36, 42, 0.3));
   border-radius: 3px 3px 0 0;
   min-height: 2px;
   transition: height 0.3s ease;
 }
 
 .mini-chart-bar-wrapper:hover .mini-chart-bar {
-  background: linear-gradient(180deg, #00ff88, rgba(0, 255, 136, 0.5));
-  box-shadow: 0 0 8px rgba(0, 255, 136, 0.3);
+  background: linear-gradient(180deg, var(--signal), rgba(229, 36, 42, 0.5));
+  box-shadow: 0 0 8px rgba(229, 36, 42, 0.3);
 }
 
 .mini-chart-date {
@@ -841,7 +859,7 @@
 .overview-value {
   font-size: 1.1rem;
   font-family: var(--font-display);
-  color: #00ff88;
+  color: var(--signal);
 }
 
 .overview-pending {
@@ -871,17 +889,17 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 1.2rem;
-  background: rgba(0, 255, 136, 0.06);
-  border: 1px solid rgba(0, 255, 136, 0.15);
+  background: rgba(229, 36, 42, 0.06);
+  border: 1px solid rgba(229, 36, 42, 0.15);
   border-radius: 50px;
   font-size: 0.75rem;
-  color: rgba(0, 255, 136, 0.7);
+  color: rgba(229, 36, 42, 0.7);
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .dash-status-pill:hover {
-  background: rgba(0, 255, 136, 0.12);
+  background: rgba(229, 36, 42, 0.12);
   transform: translateY(-1px);
 }
 
@@ -894,10 +912,10 @@
 .dash-status-dot {
   width: 7px;
   height: 7px;
-  background: #00ff88;
+  background: var(--signal);
   border-radius: 50%;
   animation: statusBlink 2s ease-in-out infinite;
-  box-shadow: 0 0 6px rgba(0, 255, 136, 0.5);
+  box-shadow: 0 0 6px rgba(229, 36, 42, 0.5);
 }
 
 .dash-status-dot.dot-busy {
@@ -938,7 +956,7 @@
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.2), transparent);
+  background: linear-gradient(90deg, transparent, rgba(229, 36, 42, 0.2), transparent);
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -960,7 +978,7 @@
   justify-content: center;
 }
 
-.kpi-views { background: rgba(0, 255, 136, 0.08); color: #00ff88; }
+.kpi-views { background: rgba(229, 36, 42, 0.08); color: var(--signal); }
 .kpi-messages { background: rgba(0, 150, 255, 0.08); color: rgba(0, 150, 255, 0.8); }
 .kpi-projects { background: rgba(160, 100, 255, 0.08); color: rgba(160, 100, 255, 0.8); }
 .kpi-testimonials { background: rgba(255, 200, 50, 0.08); color: rgba(255, 200, 50, 0.8); }
@@ -989,7 +1007,7 @@
   border-top: 1px solid rgba(255, 255, 255, 0.03);
 }
 
-.kpi-trend-up { color: rgba(0, 255, 136, 0.5); }
+.kpi-trend-up { color: rgba(229, 36, 42, 0.5); }
 
 .kpi-alert {
   color: rgba(255, 200, 50, 0.7);
@@ -997,9 +1015,12 @@
 }
 
 /* Charts Row */
+/* One chart now, so it takes the row. The second one plotted a handful
+   of messages a week - a number already shown as a KPI above it, and a
+   bar chart of "3" says less than the 3 does. */
 .dash-charts-row {
   display: grid;
-  grid-template-columns: 1.5fr 1fr;
+  grid-template-columns: 1fr;
   gap: 1rem;
   margin-bottom: 1.5rem;
 }
@@ -1045,7 +1066,7 @@
 .dcs-value {
   font-size: 1.3rem;
   font-family: var(--font-display);
-  color: #00ff88;
+  color: var(--signal);
 }
 
 .dcs-label {
@@ -1056,9 +1077,11 @@
 }
 
 /* Bottom Grid */
+/* Top Pages alone here since Quick Overview went: every line in it was
+   a number already on the screen, most of them twice. */
 .dash-bottom-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 1rem;
   margin-bottom: 1.5rem;
 }
@@ -1109,7 +1132,7 @@
 
 .dash-page-bar-fill {
   height: 100%;
-  background: linear-gradient(90deg, #00ff88, rgba(0, 255, 136, 0.4));
+  background: linear-gradient(90deg, var(--signal), rgba(229, 36, 42, 0.4));
   border-radius: 2px;
   transition: width 0.5s ease;
 }
@@ -1135,7 +1158,7 @@
   border-radius: 50%;
 }
 
-.doi-green { background: #00ff88; box-shadow: 0 0 4px rgba(0, 255, 136, 0.4); }
+.doi-green { background: var(--signal); box-shadow: 0 0 4px rgba(229, 36, 42, 0.4); }
 .doi-yellow { background: rgba(255, 200, 50, 0.8); box-shadow: 0 0 4px rgba(255, 200, 50, 0.3); }
 .doi-blue { background: rgba(0, 150, 255, 0.8); box-shadow: 0 0 4px rgba(0, 150, 255, 0.3); }
 
@@ -1147,7 +1170,7 @@
 .doi-value {
   font-size: 1rem;
   font-family: var(--font-display);
-  color: #00ff88;
+  color: var(--signal);
 }
 
 .doi-val-yellow { color: rgba(255, 200, 50, 0.8); }
@@ -1179,33 +1202,27 @@
 }
 
 @media (max-width: 768px) {
-  .admin-sidebar {
-    position: fixed;
-    left: -260px;
-    width: 260px;
-    transition: left 0.3s ease;
-    box-shadow: none;
-    z-index: 1000;
-  }
-
-  .admin-sidebar.sidebar-open {
-    left: 0;
-    box-shadow: 10px 0 40px rgba(0, 0, 0, 0.5);
-  }
-
+  /* The bar is in the flow now, so no room needs reserving above the
+     content the way the fixed hamburger used to need. */
   .admin-main {
-    margin-left: 0;
     padding: 1.5rem 1.2rem;
-    padding-top: 4rem;
   }
 
-  .mobile-menu-btn {
-    display: flex;
+  /* Four tabs plus a mark do not fit a phone in one line, so the row
+     scrolls sideways rather than wrapping into a second line that
+     pushes the content down on every screen. */
+  .admin-bar-inner {
+    gap: 0.9rem;
+    padding: 0.6rem 1.2rem;
+    overflow-x: auto;
+    scrollbar-width: none;
   }
 
-  .sidebar-overlay {
-    display: block;
-  }
+  .admin-bar-inner::-webkit-scrollbar { display: none; }
+
+  .admin-logo { width: 104px; }
+
+  .admin-tab { padding: 0.6rem 0.9rem; }
 
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -1265,52 +1282,8 @@
   .dashboard-charts {
     grid-template-columns: 1fr;
   }
-}
 
-.mobile-menu-btn {
-  display: none;
-  position: fixed;
-  top: 1rem;
-  left: 1rem;
-  z-index: 999;
-  width: 40px;
-  height: 40px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 1.2rem;
-  transition: all 0.2s ease;
 }
-
-.mobile-menu-btn:hover {
-  background: rgba(0, 255, 136, 0.1);
-  border-color: rgba(0, 255, 136, 0.3);
-  color: #00ff88;
-}
-
-.sidebar-overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 999;
-  backdrop-filter: blur(4px);
-}
-
-.sidebar-overlay.overlay-visible {
-  display: block;
-}
-
-@media (max-width: 768px) {
-  .mobile-menu-btn {
-    display: flex;
-  }
-}
-
 /* Toast */
 .admin-toast {
   position: fixed;
@@ -1346,8 +1319,8 @@
 
 .admin-toast.toast-success {
   background: rgba(0, 20, 10, 0.95);
-  border: 1px solid rgba(0, 255, 136, 0.3);
-  color: #00ff88;
+  border: 1px solid rgba(229, 36, 42, 0.3);
+  color: var(--signal);
 }
 
 .admin-toast-close {

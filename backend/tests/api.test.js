@@ -6,35 +6,34 @@ var pool = require('../db');
 // afterAll closes the shared pool once its own tests finish, and Jest runs
 // top-level describes in file order, so any block using `pool` has to come
 // before it.
-describe('Message / testimonial retention', function() {
-  it('purges messages and unpublished testimonials past six months, but never a published testimonial', async function() {
+describe('Message retention', function() {
+  it('purges messages past six months', async function() {
     await pool.query(
       "INSERT INTO messages (name, email, message, created_at) VALUES ($1,$2,$3, NOW() - INTERVAL '7 months')",
       ['Jest Old Message', 'jest-old-message@test.com', 'old message']
-    );
-    await pool.query(
-      "INSERT INTO testimonials (name, message, visible, created_at) VALUES ($1,$2,false, NOW() - INTERVAL '7 months')",
-      ['Jest Old Unpublished', 'old unpublished testimonial']
-    );
-    await pool.query(
-      "INSERT INTO testimonials (name, message, visible, created_at) VALUES ($1,$2,true, NOW() - INTERVAL '7 months')",
-      ['Jest Old Published', 'old published testimonial']
     );
 
     await app.cleanupOldMessages();
 
     var message = await pool.query('SELECT * FROM messages WHERE email = $1', ['jest-old-message@test.com']);
     expect(message.rows.length).toBe(0);
+  });
 
-    var unpublished = await pool.query('SELECT * FROM testimonials WHERE name = $1', ['Jest Old Unpublished']);
-    expect(unpublished.rows.length).toBe(0);
+  // The retention period is a promise the privacy policy makes in words
+  // and this query keeps in fact. If they ever disagree, the policy is
+  // wrong - so a message inside the window has to survive.
+  it('keeps a message that is still inside the window', async function() {
+    await pool.query(
+      "INSERT INTO messages (name, email, message, created_at) VALUES ($1,$2,$3, NOW() - INTERVAL '5 months')",
+      ['Jest Recent Message', 'jest-recent-message@test.com', 'recent message']
+    );
 
-    var published = await pool.query('SELECT * FROM testimonials WHERE name = $1', ['Jest Old Published']);
-    expect(published.rows.length).toBe(1);
+    await app.cleanupOldMessages();
 
-    // The published testimonial deliberately survives cleanupOldMessages()
-    // (that's the point of this test) - clean it up ourselves.
-    await pool.query('DELETE FROM testimonials WHERE name = $1', ['Jest Old Published']);
+    var message = await pool.query('SELECT * FROM messages WHERE email = $1', ['jest-recent-message@test.com']);
+    expect(message.rows.length).toBe(1);
+
+    await pool.query('DELETE FROM messages WHERE email = $1', ['jest-recent-message@test.com']);
   });
 });
 
@@ -44,59 +43,19 @@ describe('Public API Endpoints', function() {
     await pool.end();
   });
 
-  // Profile
-  describe('GET /api/profile', function() {
-    it('should return profile data', async function() {
-      var res = await request(app).get('/api/profile');
-      expect(res.status).toBe(200);
-      expect(res.body).toHaveProperty('name');
-      expect(res.body).toHaveProperty('email');
-    });
-
-    it('should contain required fields', async function() {
-      var res = await request(app).get('/api/profile');
-      expect(res.body.name).toBeDefined();
-      expect(res.body.role).toBeDefined();
-    });
-  });
-
-  // Projects
-  describe('GET /api/projects', function() {
-    it('should return an array', async function() {
-      var res = await request(app).get('/api/projects');
-      expect(res.status).toBe(200);
-      expect(Array.isArray(res.body)).toBe(true);
-    });
-
-    it('should have project properties', async function() {
-      var res = await request(app).get('/api/projects');
-      if (res.body.length > 0) {
-        expect(res.body[0]).toHaveProperty('title');
-        expect(res.body[0]).toHaveProperty('description');
-        expect(res.body[0]).toHaveProperty('status');
-      }
-    });
-
-    it('should return projects in order', async function() {
-      var res = await request(app).get('/api/projects');
-      if (res.body.length > 1) {
-        expect(res.body[0].sort_order).toBeLessThanOrEqual(res.body[1].sort_order);
-      }
-    });
-  });
-
-  // Availability
-  describe('GET /api/availability', function() {
-    it('should return availability status', async function() {
-      var res = await request(app).get('/api/availability');
-      expect(res.status).toBe(200);
-      expect(res.body).toHaveProperty('available');
-      expect(typeof res.body.available).toBe('boolean');
-    });
-  });
-
-  // Messages
   describe('POST /api/messages', function() {
+    // These cover validation, not the CAPTCHA, so they run with Turnstile
+    // off. Without this they pass or fail depending on whether the machine
+    // running them happens to have TURNSTILE_SECRET in its .env - which is
+    // how 'should send a message successfully' came to fail locally while
+    // the code it tests was fine. The CAPTCHA has its own describe below.
+    var alkuperainenSecret = process.env.TURNSTILE_SECRET;
+
+    beforeAll(function() { delete process.env.TURNSTILE_SECRET; });
+    afterAll(function() {
+      if (alkuperainenSecret !== undefined) process.env.TURNSTILE_SECRET = alkuperainenSecret;
+    });
+
     it('should send a message successfully', async function() {
       var res = await request(app)
         .post('/api/messages')
@@ -155,45 +114,6 @@ describe('Public API Endpoints', function() {
     });
   });
 
-  describe('POST /api/testimonials/submit', function() {
-    it('should reject a submission without consent, and not store it', async function() {
-      var res = await request(app)
-        .post('/api/testimonials/submit')
-        .send({ name: 'Jest No Consent', message: 'Great to work with!' });
-      expect(res.status).toBe(400);
-
-      var check = await pool.query('SELECT * FROM testimonials WHERE name = $1', ['Jest No Consent']);
-      expect(check.rows.length).toBe(0);
-    });
-
-    it('should reject a submission where consent is not exactly true', async function() {
-      var res = await request(app)
-        .post('/api/testimonials/submit')
-        .send({ name: 'Jest Falsy Consent', message: 'Great to work with!', consent: 'yes' });
-      expect(res.status).toBe(400);
-
-      var check = await pool.query('SELECT * FROM testimonials WHERE name = $1', ['Jest Falsy Consent']);
-      expect(check.rows.length).toBe(0);
-    });
-
-    it('should accept a submission with consent and record consent_at', async function() {
-      var res = await request(app)
-        .post('/api/testimonials/submit')
-        .send({ name: 'Jest With Consent', message: 'Great to work with!', consent: true });
-      expect(res.status).toBe(200);
-
-      var check = await pool.query('SELECT consent_at FROM testimonials WHERE name = $1', ['Jest With Consent']);
-      expect(check.rows.length).toBe(1);
-      expect(check.rows[0].consent_at).not.toBeNull();
-
-      // Cleanup
-      await pool.query('DELETE FROM testimonials WHERE name = $1', ['Jest With Consent']);
-    });
-  });
-
-  // With TURNSTILE_SECRET unset (as in every test above), verifyTurnstile
-  // fails open - these exercise the other side, where it's actually
-  // enforced. siteverify is mocked rather than hitting Cloudflare for real.
   describe('Turnstile CAPTCHA verification (TURNSTILE_SECRET set)', function() {
     var originalSecret = process.env.TURNSTILE_SECRET;
     var originalFetch = global.fetch;
@@ -217,16 +137,6 @@ describe('Public API Endpoints', function() {
       expect(res.status).toBe(400);
 
       var check = await pool.query('SELECT * FROM messages WHERE email = $1', ['no-token@test.com']);
-      expect(check.rows.length).toBe(0);
-    });
-
-    it('should reject a testimonial with no Turnstile token, and not store it', async function() {
-      var res = await request(app)
-        .post('/api/testimonials/submit')
-        .send({ name: 'Jest No Token', message: 'Great to work with!', consent: true });
-      expect(res.status).toBe(400);
-
-      var check = await pool.query('SELECT * FROM testimonials WHERE name = $1', ['Jest No Token']);
       expect(check.rows.length).toBe(0);
     });
 
@@ -264,34 +174,19 @@ describe('Public API Endpoints', function() {
 
 describe('Protected Endpoints', function() {
 
-  it('GET /api/profile should be public', async function() {
-    var res = await request(app).get('/api/profile');
-    expect(res.status).not.toBe(401);
-  });
-
-  it('GET /api/projects should be public', async function() {
-    var res = await request(app).get('/api/projects');
-    expect(res.status).not.toBe(401);
-  });
-
   // Every route wired up with the `auth` middleware must reject an
   // unauthenticated request with 401 - this is the actual security
   // boundary of the admin dashboard, so it must be exercised directly
   // rather than assumed from the public routes working.
+  //
+  // The list is short now because the site reads its content from the
+  // repo: the project, testimonial, profile and upload routes were
+  // removed along with the admin tabs that drove them, since nothing
+  // public ever read the tables behind them.
   var protectedRoutes = [
-    { method: 'put', path: '/api/profile' },
-    { method: 'put', path: '/api/availability' },
-    { method: 'post', path: '/api/projects' },
-    { method: 'put', path: '/api/projects/1' },
-    { method: 'delete', path: '/api/projects/1' },
     { method: 'get', path: '/api/messages' },
     { method: 'put', path: '/api/messages/1/read' },
     { method: 'delete', path: '/api/messages/1' },
-    { method: 'get', path: '/api/admin/testimonials' },
-    { method: 'post', path: '/api/testimonials' },
-    { method: 'put', path: '/api/testimonials/1' },
-    { method: 'delete', path: '/api/testimonials/1' },
-    { method: 'post', path: '/api/upload' },
     { method: 'get', path: '/api/admin/stats' },
     { method: 'get', path: '/api/admin/analytics' },
     { method: 'get', path: '/api/admin/pageviews' },
@@ -302,6 +197,26 @@ describe('Protected Endpoints', function() {
     it(route.method.toUpperCase() + ' ' + route.path + ' should require authentication', async function() {
       var res = await request(app)[route.method](route.path);
       expect(res.status).toBe(401);
+    });
+  });
+
+  // Routes that were removed should be gone, not quietly reachable.
+  var removedRoutes = [
+    { method: 'get', path: '/api/profile' },
+    { method: 'put', path: '/api/profile' },
+    { method: 'get', path: '/api/availability' },
+    { method: 'get', path: '/api/projects' },
+    { method: 'post', path: '/api/projects' },
+    { method: 'get', path: '/api/testimonials' },
+    { method: 'post', path: '/api/testimonials/submit' },
+    { method: 'post', path: '/api/upload' },
+    { method: 'post', path: '/api/upload-public' }
+  ];
+
+  removedRoutes.forEach(function(route) {
+    it(route.method.toUpperCase() + ' ' + route.path + ' should no longer exist', async function() {
+      var res = await request(app)[route.method](route.path);
+      expect(res.status).toBe(404);
     });
   });
 });
