@@ -124,6 +124,20 @@
   margin-bottom: var(--s-2);
 }
 
+/* Reserves two lines for every title so the body copy starts at the same
+   height right across a row. Without it the one title that wraps - the
+   Finnish "Haku- ja tekoälynäkyvyys" - drops its own paragraph a line below
+   the two cards beside it, and the row reads as misaligned rather than as
+   one title simply being longer.
+
+   Only from the width where the cards sit side by side. Stacked, there is
+   no neighbour to line up with and the reserved line is just a gap. */
+@media (min-width: 700px) {
+  .svc-name {
+    min-height: calc(2 * 1.2em);
+  }
+}
+
 .svc-line {
   font-size: var(--t-body-s);
   line-height: 1.55;

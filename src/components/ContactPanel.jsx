@@ -22,7 +22,7 @@ var SERVICES = [
   { id: 'logo', key: 'cp_svc_logo', name: 'Logo' },
   { id: 'branding', key: 'cp_svc_branding', name: 'Branding' },
   { id: 'performance', key: 'cp_svc_performance', name: 'Performance' },
-  { id: 'seo', key: 'cp_svc_seo', name: 'SEO' },
+  { id: 'seo', key: 'cp_svc_seo', name: 'SEO & GEO' },
   { id: 'launch', key: 'cp_svc_launch', name: 'Launch' },
 ];
 
