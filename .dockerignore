@@ -12,6 +12,7 @@ dist
 # single-vCPU build from copying/hashing files it never touches.
 backend
 scripts
+!scripts/prerender.js
 docker-compose.yml
 Caddyfile
 README.md

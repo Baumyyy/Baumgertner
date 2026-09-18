@@ -20,10 +20,19 @@ import { usePageMeta } from '../hooks/usePageMeta';
 //   backend/server.js  cleanupOldSecurityEvents  retention, 30 days
 //   backend/server.js  sendDigestNotification what leaves the server
 //   src/components/ContactPanel.jsx  what the form asks for
+//   vite.config.js  cloudflareAnalytics     whether the beacon ships at all
+//
+// Cloudflare Web Analytics is gated on VITE_CF_BEACON_TOKEN. With no token
+// no tag is emitted, and the two paragraphs describing it are then
+// describing something that is not running - which is the failure mode
+// this file exists to avoid. If the token is ever dropped for good, those
+// paragraphs come out with it.
 var content = {
   en: {
     title: 'Privacy Policy',
-    updated: 'Last updated: 17 September 2026',
+    metaTitle: 'Privacy Policy | Anthony Baumgertner',
+    metaDescription: 'What personal data baumgertner.fi collects, why, how long it is kept and what rights you have.',
+    updated: 'Last updated: 18 September 2026',
     intro: 'This page explains what personal data this website (baumgertner.fi) collects, why, and what rights you have. The data controller is Anthony Baumgertner, a private individual running this site as a personal portfolio.',
     sections: [
       {
@@ -31,8 +40,9 @@ var content = {
         body: [
           'Contact form: your name, email address and message. The form asks four questions before the message, and your answers to them — which services you are interested in, what stage your project is at, how large it is, and the address of your current website if you gave one — are stored as part of that message.',
           'Basic page-view analytics: the page you visited and your browser’s user-agent string. This is first-party, uses no cookies and no tracking identifier, records no IP address, and is not linked to your name or email.',
+          'Cloudflare Web Analytics: the page you opened, the site you arrived from, your browser and device type, and the country your connection resolves to. It sets no cookie and no persistent identifier, and it cannot follow you to another website. Your IP address is used to work out the country and is not stored.',
           'Security logs: if you trigger one of the rate limits — for example by sending an unusually high number of requests — your IP address and the requested route are logged.',
-          'Nothing else is collected. There is no advertising, no profiling and no third-party analytics on this site.'
+          'Nothing else is collected. There is no advertising and no profiling on this site, and nothing here builds a profile of you across visits or across other sites.'
         ]
       },
       {
@@ -46,13 +56,15 @@ var content = {
       {
         heading: 'Where the data is kept',
         body: [
-          'The site and its database run on a server located in the EU. Your message, the analytics rows and the security logs are stored there and nowhere else.'
+          'The site and its database run on a server located in the EU. Your message, the first-party analytics rows and the security logs are stored there and nowhere else.',
+          'Cloudflare Web Analytics is the exception: those counts are held by Cloudflare rather than on this server. They are aggregate figures with nothing in them that identifies you.'
         ]
       },
       {
         heading: 'Third parties',
         body: [
           'Cloudflare Turnstile — the bot check on the contact form. When you load the form and when you send it, your IP address and browser signals are shared with Cloudflare to confirm you are not a bot. It does not track you across other websites.',
+          'Cloudflare Web Analytics — the visitor counts described above. Cloudflare receives the request that carries them. It is the same company as the bot check, chosen partly for that reason: one processor rather than two.',
           'Resend — used to send one notification when new messages have arrived. That notification is deliberately generic: it says how many messages there are and nothing else. Your name, your email address and the contents of your message are never included in it and never leave the server this way.',
           'GitHub — used only for the site owner’s own admin login (OAuth). It has no part in anything a visitor does.'
         ]
@@ -67,7 +79,7 @@ var content = {
       {
         heading: 'Cookies',
         body: [
-          'This site sets no cookies for ordinary visitors. There is no cookie banner because there is nothing to consent to.',
+          'This site sets no cookies for ordinary visitors. There is no cookie banner because there is nothing to consent to. The analytics described above were chosen on exactly that basis — they set no cookie, so nothing needs your permission first.',
           'A session cookie is created only if someone attempts to log in to the admin area, which is the site owner alone.',
           'Cloudflare Turnstile may set its own technical identifier on the page carrying the contact form. It is used to tell a person from a bot and is not a tracking cookie.'
         ]
@@ -112,7 +124,9 @@ var content = {
   },
   fi: {
     title: 'Tietosuojaseloste',
-    updated: 'Päivitetty viimeksi: 17.9.2026',
+    metaTitle: 'Tietosuojaseloste | Anthony Baumgertner',
+    metaDescription: 'Mitä henkilötietoja baumgertner.fi kerää, miksi, kuinka kauan niitä säilytetään ja mitkä ovat oikeutesi.',
+    updated: 'Päivitetty viimeksi: 18.9.2026',
     intro: 'Tämä sivu kertoo, mitä henkilötietoja tämä verkkosivusto (baumgertner.fi) kerää, miksi, ja mitä oikeuksia sinulla on. Rekisterinpitäjä on Anthony Baumgertner, yksityishenkilö, joka ylläpitää sivustoa henkilökohtaisena portfoliona.',
     sections: [
       {
@@ -120,8 +134,9 @@ var content = {
         body: [
           'Yhteydenottolomake: nimesi, sähköpostiosoitteesi ja viestisi. Lomake kysyy ennen viestiä neljä kysymystä, ja vastauksesi niihin — mistä palveluista olet kiinnostunut, missä vaiheessa projektisi on, kuinka laaja se on ja nykyisen sivustosi osoite, jos annoit sellaisen — tallennetaan osana tuota viestiä.',
           'Perustason sivukäyntitilastot: käyttämäsi sivu ja selaimesi user-agent-tunniste. Tämä on ensimmäisen osapuolen tilastointia, ei käytä evästeitä eikä seurantatunnistetta, ei tallenna IP-osoitetta eikä sitä yhdistetä nimeesi tai sähköpostiisi.',
+          'Cloudflare Web Analytics: avaamasi sivu, sivusto jolta saavuit, selaimesi ja laitetyyppisi sekä maa johon yhteytesi paikantuu. Se ei aseta evästettä eikä pysyvää tunnistetta, eikä se voi seurata sinua toiselle sivustolle. IP-osoitettasi käytetään maan päättelyyn eikä sitä tallenneta.',
           'Turvalokit: jos laukaiset jonkin pyyntörajoituksista — esimerkiksi lähettämällä poikkeuksellisen suuren määrän pyyntöjä — IP-osoitteesi ja pyydetty reitti tallennetaan.',
-          'Muuta ei kerätä. Sivustolla ei ole mainontaa, profilointia eikä kolmannen osapuolen analytiikkaa.'
+          'Muuta ei kerätä. Sivustolla ei ole mainontaa eikä profilointia, eikä mikään täällä rakenna sinusta profiilia käyntien välillä tai muiden sivustojen kanssa.'
         ]
       },
       {
@@ -135,13 +150,15 @@ var content = {
       {
         heading: 'Missä tiedot säilytetään',
         body: [
-          'Sivusto ja sen tietokanta toimivat EU:ssa sijaitsevalla palvelimella. Viestisi, tilastorivit ja turvalokit säilytetään siellä eikä missään muualla.'
+          'Sivusto ja sen tietokanta toimivat EU:ssa sijaitsevalla palvelimella. Viestisi, oman tilastoinnin rivit ja turvalokit säilytetään siellä eikä missään muualla.',
+          'Cloudflare Web Analytics on poikkeus: ne luvut ovat Cloudflarella eivätkä tällä palvelimella. Kyse on koostetuista luvuista, joissa ei ole mitään sinua yksilöivää.'
         ]
       },
       {
         heading: 'Kolmannet osapuolet',
         body: [
           'Cloudflare Turnstile — yhteydenottolomakkeen bottitarkistus. Kun lataat lomakkeen ja kun lähetät sen, IP-osoitteesi ja selaimen tiedot välitetään Cloudflarelle sen varmistamiseksi, ettet ole botti. Se ei seuraa sinua muilla verkkosivustoilla.',
+          'Cloudflare Web Analytics — edellä kuvatut kävijäluvut. Cloudflare vastaanottaa pyynnön joka ne kuljettaa. Kyse on samasta yhtiöstä kuin bottitarkistuksessa, mikä oli osasyy valintaan: yksi käsittelijä kahden sijaan.',
           'Resend — käytetään yhden ilmoituksen lähettämiseen, kun uusia viestejä on saapunut. Ilmoitus on tarkoituksella yleisluontoinen: se kertoo viestien määrän eikä mitään muuta. Nimesi, sähköpostiosoitteesi ja viestisi sisältö eivät koskaan sisälly siihen eivätkä poistu palvelimelta tätä kautta.',
           'GitHub — käytetään ainoastaan sivuston ylläpitäjän omaan hallintakirjautumiseen (OAuth). Sillä ei ole osuutta mihinkään, mitä kävijä tekee.'
         ]
@@ -156,7 +173,7 @@ var content = {
       {
         heading: 'Evästeet',
         body: [
-          'Sivusto ei aseta evästeitä tavallisille kävijöille. Evästebanneria ei ole, koska mihinkään ei tarvitse suostua.',
+          'Sivusto ei aseta evästeitä tavallisille kävijöille. Evästebanneria ei ole, koska mihinkään ei tarvitse suostua. Edellä kuvattu analytiikka valittiin juuri tällä perusteella — se ei aseta evästettä, joten mihinkään ei tarvitse pyytää lupaa etukäteen.',
           'Istuntoeväste luodaan ainoastaan, jos joku yrittää kirjautua hallintapaneeliin, eli sivuston ylläpitäjä.',
           'Cloudflare Turnstile voi asettaa oman teknisen tunnisteensa sivulle, jolla yhteydenottolomake on. Sitä käytetään ihmisen erottamiseen botista, eikä se ole seurantaeväste.'
         ]
@@ -206,10 +223,7 @@ var PrivacyPolicy = function() {
   var lang = langCtx.lang;
   var c = content[lang] || content.en;
 
-  usePageMeta(
-    'Privacy Policy | Anthony Baumgertner',
-    'What personal data baumgertner.fi collects, why, how long it is kept and what rights you have.'
-  );
+  usePageMeta(c.metaTitle, c.metaDescription);
 
   return (
     <div className="privacy-page">

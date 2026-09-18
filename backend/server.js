@@ -4,11 +4,7 @@ var passport = require('passport');
 var GitHubStrategy = require('passport-github2').Strategy;
 var session = require('express-session');
 var PgSession = require('connect-pg-simple')(session);
-var path = require('path');
-var fs = require('fs');
-var crypto = require('crypto');
 var pool = require('./db');
-var sharp = require('sharp');
 var { Resend } = require('resend');
 var compression = require('compression');
 require('dotenv').config();
@@ -31,32 +27,11 @@ app.use(compression());
 app.set('trust proxy', 1);
 var PORT = process.env.PORT || 3001;
 
-
-
 // Input validation helpers
 var EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 var isValidLength = function(str, max) {
   return typeof str === 'string' && str.length > 0 && str.length <= max;
 };
-var isValidExternalLink = function(url) {
-  if (url == null || url === '') return true;
-  try {
-    var parsed = new URL(url);
-    return parsed.protocol === 'http:' || parsed.protocol === 'https:';
-  } catch {
-    return false;
-  }
-};
-var IMAGE_POSITION_REGEX = /^(100|[1-9]?[0-9])% (100|[1-9]?[0-9])%$/;
-var isValidImagePosition = function(pos) {
-  return pos == null || pos === '' || IMAGE_POSITION_REGEX.test(pos);
-};
-var isValidImageZoom = function(zoom) {
-  if (zoom == null || zoom === '') return true;
-  var n = Number(zoom);
-  return Number.isInteger(n) && n >= 50 && n <= 300;
-};
-
 // Verifies a Cloudflare Turnstile token against the siteverify endpoint.
 // Fails open (returns true without making a request) when TURNSTILE_SECRET
 // isn't set, so the contact/testimonial forms keep working in local dev
@@ -199,8 +174,6 @@ var messageLimiter = rateLimit({
   handler: rateLimitHandler
 });
 
-
-
 var pageviewLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: IS_PROD ? 20 : 500,
@@ -214,6 +187,28 @@ app.use(cors({
   credentials: true
 }));
 app.use(express.json({ limit: '1mb' }));
+
+// Deliberately above the rate limiter: Docker polls this every 15s, and a
+// health check that can be rate-limited reports the service as down at
+// exactly the moment the service is busiest.
+//
+// It checks the database rather than just answering, because this is what
+// docker-compose gates the frontend container on - a backend that is
+// listening but cannot reach Postgres is not ready to be depended on.
+//
+// The compose healthcheck used to call /api/profile, which was removed
+// with the profile routes. Nothing failed at the time because nothing
+// redeployed; the next deploy would have hung with the backend stuck
+// unhealthy and the frontend waiting on it forever.
+app.get('/api/health', async function(req, res) {
+  try {
+    await pool.query('SELECT 1');
+    res.json({ status: 'ok' });
+  } catch {
+    res.status(503).json({ status: 'unavailable' });
+  }
+});
+
 app.use('/api', apiLimiter);
 
 // Session
@@ -380,35 +375,6 @@ app.delete('/api/messages/:id', auth, async function(req, res) {
     res.status(500).json({ error: 'Something went wrong. Please try again later.' });
   }
 });
-
-// ===== IMAGE PROCESSING CONCURRENCY LIMIT =====
-// Sharp's decode/resize is CPU-bound and this box has a single vCPU, so a
-// couple of large images processed at once pin the only core and stall
-// every other request on the site, not just uploads. Cap how many run
-// concurrently and reject new ones past that instead of letting them queue
-// up and starve unrelated traffic.
-//
-// limitInputPixels below (50MP) is the other half of that same defense -
-// it was originally set much lower (12MP) but that rejected completely
-// ordinary phone photos (e.g. a stock 4032x3024 shot is 12.19MP, just over
-// the old limit), breaking real uploads. The concurrency cap above is what
-// actually protects the single vCPU from being pinned by decoding several
-// large images at once; the pixel limit only needs to catch genuinely
-// extreme outliers (crafted decompression bombs, huge scans), so it can
-// afford to be far more generous without giving that up.
-var MAX_CONCURRENT_IMAGE_JOBS = 2;
-var activeImageJobs = 0;
-
-// Wraps a Sharp job so the counter always comes back down, including when
-// the job throws (invalid/corrupt image, decode failure, etc).
-var runImageJob = async function(fn) {
-  activeImageJobs++;
-  try {
-    return await fn();
-  } finally {
-    activeImageJobs--;
-  }
-};
 
 // ===== DASHBOARD STATS (admin) =====
 app.get('/api/admin/stats', auth, async function(req, res) {
@@ -623,7 +589,6 @@ function sendDigestNotification() {
     );
   }).catch(function(err) { console.error('Digest notification check failed:', err.message); });
 }
-
 
 // ===== START =====
 // Guarded so requiring this file (e.g. from tests) doesn't also start a

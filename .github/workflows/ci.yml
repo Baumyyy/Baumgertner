@@ -21,6 +21,10 @@ jobs:
       # Matches the production Dockerfile, which needs --legacy-peer-deps
       # for the same dependency tree.
       - run: npm ci --legacy-peer-deps
+
+      # npm run build ends with the prerender step, which needs a browser.
+      - run: npx playwright install --with-deps chromium
+
       - run: npm run lint
       - run: npm run build
       - run: npm test

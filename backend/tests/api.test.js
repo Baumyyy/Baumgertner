@@ -37,6 +37,33 @@ describe('Message retention', function() {
   });
 });
 
+// Placed before 'Public API Endpoints' for the same reason as the block
+// above: that describe's afterAll closes the pool, and /api/health queries
+// it.
+describe('Health check', function() {
+  it('answers 200 when the database is reachable', async function() {
+    var res = await request(app).get('/api/health');
+    expect(res.status).toBe(200);
+    expect(res.body.status).toBe('ok');
+  });
+
+  // The real bug this guards: docker-compose polled /api/profile, which was
+  // deleted with the profile routes. The suite below even asserts that path
+  // now 404s - the tests knew the route was gone while the thing that
+  // depends on it did not. compose gates the frontend container on this
+  // check, so a stale path means the next deploy hangs with the backend
+  // stuck unhealthy and nothing serving the site.
+  it('is the path docker-compose actually polls', function() {
+    var fs = require('fs');
+    var path = require('path');
+    var compose = fs.readFileSync(path.join(__dirname, '..', '..', 'docker-compose.yml'), 'utf8');
+
+    var osuma = compose.match(/http:\/\/localhost:3001(\/api\/[a-z0-9/-]*)/i);
+    expect(osuma).not.toBeNull();
+    expect(osuma[1]).toBe('/api/health');
+  });
+});
+
 describe('Public API Endpoints', function() {
 
   afterAll(async function() {

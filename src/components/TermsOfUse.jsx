@@ -20,6 +20,8 @@ import { usePageMeta } from '../hooks/usePageMeta';
 var content = {
   en: {
     title: 'Terms of Use',
+    metaTitle: 'Terms of Use | Anthony Baumgertner',
+    metaDescription: 'Terms of use for baumgertner.fi - acceptable use, ownership and liability.',
     updated: 'Last updated: 17 September 2026',
     intro: 'These terms apply to your use of this website (baumgertner.fi), run by Anthony Baumgertner as a personal portfolio. By using this site, you agree to the terms below. For how your personal data is handled, see the Privacy Policy.',
     sections: [
@@ -48,6 +50,8 @@ var content = {
   },
   fi: {
     title: 'Käyttöehdot',
+    metaTitle: 'Käyttöehdot | Anthony Baumgertner',
+    metaDescription: 'Sivuston baumgertner.fi käyttöehdot – sallittu käyttö, omistusoikeus ja vastuu.',
     updated: 'Päivitetty viimeksi: 17.9.2026',
     intro: 'Nämä ehdot koskevat tämän verkkosivuston (baumgertner.fi) käyttöä, jota ylläpitää Anthony Baumgertner henkilökohtaisena portfoliona. Käyttämällä sivustoa hyväksyt alla olevat ehdot. Henkilötietojesi käsittelystä kerrotaan tietosuojaselosteessa.',
     sections: [
@@ -80,10 +84,7 @@ var TermsOfUse = function() {
   var { lang } = useLang();
   var c = content[lang] || content.en;
 
-  usePageMeta(
-    'Terms of Use | Anthony Baumgertner',
-    'Terms of use for baumgertner.fi - acceptable use, ownership and liability.'
-  );
+  usePageMeta(c.metaTitle, c.metaDescription);
 
   return (
     <div className="privacy-page">
