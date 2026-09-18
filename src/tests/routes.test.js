@@ -83,6 +83,19 @@ describe('every client route is actually served', function () {
     expect(direktiivit).not.toContain('try_files $uri $uri/ /index.html');
   });
 
+  // Found by running the real nginx, not by reading the config: with
+  // `try_files $uri $uri/`, nginx notices it has matched a directory and
+  // answers 301 to the same address with a trailing slash. /en redirected
+  // to /en/ while the page's canonical and the sitemap both said /en.
+  // Naming index.html explicitly serves it without the redirect.
+  it('serves prerendered routes without a trailing-slash redirect', function () {
+    var direktiivit = nginx.split('\n')
+      .filter(function (rivi) { return rivi.trim().indexOf('#') !== 0; })
+      .join('\n');
+    expect(direktiivit).toContain('try_files $uri $uri/index.html');
+    expect(direktiivit).not.toMatch(/try_files \$uri \$uri\/\s/);
+  });
+
   it('allows the analytics beacon through the content security policy', function () {
     // Both hosts, or Cloudflare Web Analytics is blocked in the browser and
     // reports nothing, without an error anywhere.
