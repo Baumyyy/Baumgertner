@@ -11,8 +11,20 @@ dist
 # either way, but keeping it out of this build stage's context keeps a
 # single-vCPU build from copying/hashing files it never touches.
 backend
-scripts
-!scripts/prerender.js
+
+# scripts/ holds two kinds of thing. The shell scripts run on the server
+# from cron and have no business in a frontend build; the .js files are
+# part of `npm run build` and have to be here or the build fails.
+#
+# Excluding the directory and re-admitting one file by name is what broke
+# this once already: prerender.js was listed alone, then grew imports of
+# schema.js and llms.js, and the Docker build started failing on a module
+# it could not resolve while everything still worked locally. Excluding by
+# what a file *is* rather than by name means the next build script added
+# here needs no second edit.
+scripts/*.sh
+scripts/test-backups*
+
 docker-compose.yml
 Caddyfile
 README.md

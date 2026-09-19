@@ -14,6 +14,15 @@ COPY . .
 # runtime - so this has to arrive as a build arg, not a docker-compose
 # `environment:` entry (which would only be visible to the running nginx
 # process, too late to matter). See docker-compose.yml.
+#
+# `docker build` warns SecretsUsedInArgOrEnv on both of these because of
+# the words "key" and "token". Neither is a secret: a Turnstile *site* key
+# and a Web Analytics beacon token are both served to every visitor in the
+# page source by design - their private counterparts are TURNSTILE_SECRET
+# in the backend and nothing at all, respectively. The warning is correct
+# as a general rule and wrong here; do not "fix" it by moving these to a
+# runtime env var, because Vite has already inlined them by then and the
+# features would silently stop working.
 ARG VITE_TURNSTILE_SITE_KEY
 ENV VITE_TURNSTILE_SITE_KEY=$VITE_TURNSTILE_SITE_KEY
 ARG VITE_CF_BEACON_TOKEN

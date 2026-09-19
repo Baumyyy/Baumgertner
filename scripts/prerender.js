@@ -20,7 +20,7 @@
 import { createServer } from 'node:http';
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
-import { join, extname, dirname } from 'node:path';
+import { join, extname, dirname, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright';
 import { rakennaSkeema, skeemaTagiksi } from './schema.js';
@@ -83,6 +83,23 @@ function palvele(portti) {
   const palvelin = createServer(async function (pyynto, vastaus) {
     const polku = decodeURIComponent(new URL(pyynto.url, 'http://localhost').pathname);
     let tiedosto = join(DIST, polku);
+
+    // The decode happens after the URL parser has normalised the path, so
+    // an encoded slash survives as data and only becomes a separator here:
+    // "/..%2f..%2fpackage.json" parses unchanged, then decodes to
+    // "/../../package.json" and joins its way out of dist. A literal
+    // "../../" is normalised away by the parser, which is why this looks
+    // safe and is not.
+    //
+    // Nothing untrusted can reach this server - it binds loopback, lives
+    // for the seconds a build takes, and its only client is the headless
+    // browser fetching a fixed list of routes. The check is here because
+    // a small static file server is the kind of thing that gets copied
+    // somewhere with real clients, and the bug would travel with it.
+    if (tiedosto !== DIST && !tiedosto.startsWith(DIST + sep)) {
+      vastaus.writeHead(403).end('forbidden');
+      return;
+    }
 
     // Unknown path means a client route, so hand back the shell the way
     // nginx would. Reading it fresh each time matters: this script also
