@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
-var DEFAULT_TITLE = 'Anthony Baumgertner | Software Engineer & Project Manager';
-var DEFAULT_DESCRIPTION = 'Portfolio of Anthony Baumgertner - Software Engineering student, Project Manager, and Developer based in Turku, Finland.';
+var DEFAULT_TITLE = 'Baumgertner | Custom websites, designed and built in Turku';
+var DEFAULT_DESCRIPTION = 'Custom-built websites for businesses that refuse to look templated. Design, code, hosting and launch — one person, one point of contact.';
 
 export var usePageMeta = function(title, description) {
   useEffect(function() {

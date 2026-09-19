@@ -14,6 +14,7 @@ SETUP-NOTES.md
 DEPLOY.md
 docs/specs/
 docs/plans/
+docs/internal/
 
 node_modules
 dist
@@ -31,3 +32,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Brand source material. 84 files, 4.1 MB of masters that are never
+# deployed - the site uses the renders in public/. Kept on disk, out of
+# the public repository: source assets are weight, not evidence of work.
+# Provenance is recorded in docs/internal/brand-assets-provenance.md.
+brand/

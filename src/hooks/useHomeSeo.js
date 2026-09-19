@@ -1,12 +1,12 @@
 import { useEffect } from 'react';
 
 var TITLES = {
-  en: 'Anthony Baumgertner | Software Engineer & Project Manager',
-  fi: 'Anthony Baumgertner | Ohjelmistokehittäjä & Projektipäällikkö'
+  en: 'Baumgertner | Custom websites, designed and built in Turku',
+  fi: 'Baumgertner | Räätälöidyt verkkosivut, Turku'
 };
 var DESCRIPTIONS = {
-  en: 'Portfolio of Anthony Baumgertner - Software Engineering student, Project Manager, and Developer based in Turku, Finland.',
-  fi: 'Anthony Baumgertnerin portfolio - ohjelmistotekniikan opiskelija, projektipäällikkö ja kehittäjä Turusta, Suomesta.'
+  en: 'Custom-built websites for businesses that refuse to look templated. Design, code, hosting and launch — one person, one point of contact.',
+  fi: 'Räätälöidyt verkkosivut yrityksille, jotka eivät halua näyttää sapluunalta. Suunnittelu, koodi, palvelin ja julkaisu — yksi tekijä.'
 };
 
 var setMeta = function(selector, attr, value) {
