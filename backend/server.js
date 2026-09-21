@@ -425,7 +425,15 @@ app.get('/api/admin/pageviews', auth, async function(req, res) {
     );
     var total = await pool.query('SELECT COUNT(*) FROM page_views');
     var perDay = await pool.query(
-      "SELECT DATE(created_at) as date, COUNT(*) as count FROM page_views WHERE created_at > NOW() - INTERVAL '30 days' GROUP BY DATE(created_at) ORDER BY date ASC"
+      // generate_series, not GROUP BY alone: grouping only returns days
+      // that HAVE a view, so a month with five busy days came back as five
+      // rows. The chart then drew five evenly spaced points and read as
+      // five consecutive days of steady traffic - the quiet days simply
+      // vanished instead of showing as the zeroes they are.
+      "SELECT d.day::date AS date, COUNT(pv.id) AS count " +
+      "FROM generate_series(CURRENT_DATE - INTERVAL '29 days', CURRENT_DATE, INTERVAL '1 day') AS d(day) " +
+      "LEFT JOIN page_views pv ON pv.created_at >= d.day AND pv.created_at < d.day + INTERVAL '1 day' " +
+      "GROUP BY d.day ORDER BY d.day ASC"
     );
     var topPages = await pool.query(
       "SELECT page, COUNT(*) as count FROM page_views WHERE created_at > NOW() - INTERVAL '30 days' GROUP BY page ORDER BY count DESC LIMIT 5"

@@ -3,33 +3,10 @@ import './Admin.css';
 import { usePageMeta } from '../hooks/usePageMeta';
 import { GithubIcon } from './Icons';
 import { Wordmark } from './BrandMark';
+import TrafficChart from './TrafficChart';
+import './TrafficChart.css';
 
 var API_URL = '/api';
-
-var MiniChart = function(props) {
-  var data = props.data || [];
-  if (data.length === 0) return null;
-
-  var max = Math.max.apply(null, data.map(function(d) { return parseInt(d.count); }));
-  if (max === 0) max = 1;
-
-  return (
-    <div className="mini-chart">
-      <div className="mini-chart-bars">
-        {data.map(function(d, i) {
-          var height = (parseInt(d.count) / max) * 100;
-          var dateStr = new Date(d.date).toLocaleDateString('en', { day: 'numeric', month: 'short' });
-          return (
-            <div className="mini-chart-bar-wrapper" key={i} title={dateStr + ': ' + d.count}>
-              <div className="mini-chart-bar" style={{ height: height + '%' }}></div>
-              <span className="mini-chart-date">{dateStr}</span>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-};
 
 // What to show of a message in a three-line preview.
 //
@@ -277,11 +254,7 @@ var Admin = function() {
                   <h3 className="dash-chart-title">Visitor Traffic</h3>
                   <span className="dash-chart-period">Last 30 days</span>
                 </div>
-                {pageviews.perDay && pageviews.perDay.length > 0 ? (
-                  <MiniChart data={pageviews.perDay} />
-                ) : (
-                  <p className="chart-empty">No visitor data yet</p>
-                )}
+                <TrafficChart data={pageviews.perDay} />
               </div>
 
             </div>
