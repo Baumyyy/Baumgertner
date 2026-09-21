@@ -51,15 +51,11 @@ export const work = [
     },
     industry: { en: 'Portfolio', fi: 'Portfolio' },
     site: { label: 'baumgertner.fi', href: 'https://baumgertner.fi' },
-    // Empty on purpose, which is what the carousel reads as "show the
-    // mark instead" - the same placeholder the two unfinished projects
-    // below are showing.
-    //
-    // The old mock-up that used to sit here has been deleted rather than
-    // left in the repository unreferenced: 422 KB shipped in every image
-    // to keep a note alive. Whatever goes in this array next should be a
-    // real screenshot of the finished site.
-    shots: [],
+    // The 2400px master lives in brand/mockupit/, which is gitignored -
+    // what ships is a 1600px WebP at 52 KB. The source PNG was 1.7 MB, and
+    // a project about pages that open before anyone gets bored cannot be
+    // illustrated by a 1.7 MB image.
+    shots: ['/work/Baumgertner/baumgertner-lappari-puhelin.webp'],
     body: {
       en: [
         'Built from nothing rather than assembled from a theme: the identity, the interface, the API behind it and the server it runs on.',

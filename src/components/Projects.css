@@ -270,9 +270,19 @@
 /* 76% slides, so 12% of the stage shows on each side. The offset centres
    whichever slide is active: 12% brings the first one to the middle, and
    every step after that is one slide width. */
+/* One number, three uses. The slide width, the step between slides and the
+   offset that centres the active one are all the same measurement, and
+   they were not: the width moved from 76% to 58% for the device mock-ups
+   and the transform below kept the old figures. A single shot then sat
+   9% left of centre, and with several the track would have drifted 18%
+   further off with every step. Derived, so they cannot disagree again. */
+.wk-stage {
+  --slide-w: 58%;
+}
+
 .wk-track {
   display: flex;
-  transform: translateX(calc(12% - var(--i, 0) * 76%));
+  transform: translateX(calc((100% - var(--slide-w)) / 2 - var(--i, 0) * var(--slide-w)));
   transition: transform var(--d-entrance) var(--ease);
   touch-action: pan-y;
   cursor: grab;
@@ -289,8 +299,11 @@
      410px tall. The mock-ups are 3:2, and the same width put them at
      625 - over two thirds of a laptop window for one preview, before
      the information bar under it. The preview is a preview; the full
-     size is one click away. */
-  flex: 0 0 58%;
+     size is one click away.
+
+     Set on .wk-stage as --slide-w so the track's transform stays in step
+     with it - see the note there. */
+  flex: 0 0 var(--slide-w);
   padding: 0 var(--s-2);
   opacity: 0.28;
   transition: opacity var(--d-entrance) var(--ease);
