@@ -395,25 +395,6 @@ app.get('/api/admin/stats', auth, async function(req, res) {
   }
 });
 
-// ===== DASHBOARD ANALYTICS =====
-app.get('/api/admin/analytics', auth, async function(req, res) {
-  try {
-    var messagesPerDay = await pool.query(
-      "SELECT DATE(created_at) as date, COUNT(*) as count FROM messages WHERE created_at > NOW() - INTERVAL '30 days' GROUP BY DATE(created_at) ORDER BY date ASC"
-    );
-    var testimonialsByStatus = await pool.query(
-      "SELECT visible, COUNT(*) as count FROM testimonials GROUP BY visible"
-    );
-    res.json({
-      messagesPerDay: messagesPerDay.rows,
-      testimonialsByStatus: testimonialsByStatus.rows
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Something went wrong. Please try again later.' });
-  }
-});
-
 // ===== ANALYTICS =====
 app.post('/api/pageview', pageviewLimiter, async function(req, res) {
   try {
@@ -533,13 +514,11 @@ function cleanupOldMessages() {
     // these two changes the other has to change with it - a retention
     // period is a promise, and this query is the only thing that keeps it.
     pool.query("DELETE FROM messages WHERE created_at < NOW() - INTERVAL '6 months'")
-      .catch(function(err) { console.error('Message cleanup failed:', err.message); }),
-    pool.query("DELETE FROM testimonials WHERE visible = false AND created_at < NOW() - INTERVAL '6 months'")
-      .catch(function(err) { console.error('Unpublished testimonial cleanup failed:', err.message); })
+      .catch(function(err) { console.error('Message cleanup failed:', err.message); })
   ]);
 }
 
-// ===== MESSAGE / TESTIMONIAL DIGEST NOTIFICATIONS =====
+// ===== MESSAGE DIGEST NOTIFICATIONS =====
 // POST /api/messages and /api/testimonials/submit used to email on every
 // single submission. The rate limit on those routes is per-IP (3/hour), so
 // a botnet or a handful of proxies could each stay under it while still
@@ -563,31 +542,26 @@ var lastDigestNotifiedAt = new Date(Date.now() - DIGEST_STARTUP_LOOKBACK);
 function sendDigestNotification() {
   var since = lastDigestNotifiedAt;
   var checkedAt = new Date();
-  Promise.all([
-    pool.query('SELECT COUNT(*) FROM messages WHERE created_at > $1', [since]),
-    pool.query('SELECT COUNT(*) FROM testimonials WHERE created_at > $1', [since])
-  ]).then(function(results) {
-    var newMessages = parseInt(results[0].rows[0].count, 10);
-    var newTestimonials = parseInt(results[1].rows[0].count, 10);
-    if (newMessages === 0 && newTestimonials === 0) return;
+  pool.query('SELECT COUNT(*) FROM messages WHERE created_at > $1', [since])
+    .then(function(result) {
+      var newMessages = parseInt(result.rows[0].count, 10);
+      if (newMessages === 0) return;
 
-    var parts = [];
-    if (newMessages > 0) parts.push(newMessages + ' new message' + (newMessages === 1 ? '' : 's'));
-    if (newTestimonials > 0) parts.push(newTestimonials + ' new testimonial' + (newTestimonials === 1 ? '' : 's'));
-    var summary = parts.join(' and ');
+      var summary = newMessages + ' new message' + (newMessages === 1 ? '' : 's');
 
-    // Only advance the watermark once something is actually reported, so a
-    // quiet period never causes a gap - the next check just looks further back.
-    lastDigestNotifiedAt = checkedAt;
+      // Only advance the watermark once something is actually reported, so a
+      // quiet period never causes a gap - the next check just looks further back.
+      lastDigestNotifiedAt = checkedAt;
 
-    // Deliberately generic - no submitted names/emails/message bodies here,
-    // so this can't become a way to smuggle unescaped user input into an
-    // email client. Anyone who wants details opens the admin panel.
-    sendNotification(
-      summary + ' — check the admin panel',
-      '<h3>New activity on your site</h3><p>' + summary + ' since the last update. Open the admin panel to review.</p>'
-    );
-  }).catch(function(err) { console.error('Digest notification check failed:', err.message); });
+      // Deliberately generic - no submitted names/emails/message bodies here,
+      // so this can't become a way to smuggle unescaped user input into an
+      // email client. Anyone who wants details opens the admin panel.
+      sendNotification(
+        summary + ' — check the admin panel',
+        '<h3>New activity on your site</h3><p>' + summary + ' since the last update. Open the admin panel to review.</p>'
+      );
+    })
+    .catch(function(err) { console.error('Digest notification check failed:', err.message); });
 }
 
 // ===== START =====

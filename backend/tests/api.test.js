@@ -215,7 +215,6 @@ describe('Protected Endpoints', function() {
     { method: 'put', path: '/api/messages/1/read' },
     { method: 'delete', path: '/api/messages/1' },
     { method: 'get', path: '/api/admin/stats' },
-    { method: 'get', path: '/api/admin/analytics' },
     { method: 'get', path: '/api/admin/pageviews' },
     { method: 'get', path: '/api/admin/security' }
   ];
@@ -237,7 +236,8 @@ describe('Protected Endpoints', function() {
     { method: 'get', path: '/api/testimonials' },
     { method: 'post', path: '/api/testimonials/submit' },
     { method: 'post', path: '/api/upload' },
-    { method: 'post', path: '/api/upload-public' }
+    { method: 'post', path: '/api/upload-public' },
+    { method: 'get', path: '/api/admin/analytics' }
   ];
 
   removedRoutes.forEach(function(route) {

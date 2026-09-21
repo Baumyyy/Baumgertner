@@ -55,9 +55,10 @@ export const work = [
     // mark instead" - the same placeholder the two unfinished projects
     // below are showing.
     //
-    // The mock-up is still in the repo at
-    // /work/Baumgertner/BaumgertnerSnapshot.jpg. Putting it back is one
-    // line: add it to this array.
+    // The old mock-up that used to sit here has been deleted rather than
+    // left in the repository unreferenced: 422 KB shipped in every image
+    // to keep a note alive. Whatever goes in this array next should be a
+    // real screenshot of the finished site.
     shots: [],
     body: {
       en: [
