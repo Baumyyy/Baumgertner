@@ -260,8 +260,13 @@
   border-radius: var(--r-md);
 }
 
+/* 56px suited the old B, which was near enough square and so stood 54px
+   tall at that width. The signal mark is 2.26:1, so the same number left
+   it 25px high - a detail floating in a 150px band. 110px puts it back at
+   roughly the height the B had, which is the weight the empty stage was
+   designed around; 160px overshot and read as a logo wall. */
 .wk-stage-mark {
-  width: 56px;
+  width: 110px;
   height: auto;
   color: var(--text-primary);
   opacity: 0.08;

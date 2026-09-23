@@ -51,11 +51,26 @@ export const work = [
     },
     industry: { en: 'Portfolio', fi: 'Portfolio' },
     site: { label: 'baumgertner.fi', href: 'https://baumgertner.fi' },
-    // The 2400px master lives in brand/mockupit/, which is gitignored -
-    // what ships is a 1600px WebP at 52 KB. The source PNG was 1.7 MB, and
-    // a project about pages that open before anyone gets bored cannot be
-    // illustrated by a 1.7 MB image.
-    shots: ['/work/Baumgertner/baumgertner-lappari-puhelin.webp'],
+    // Masters live in brand/mockupit/, which is gitignored; what ships is
+    // 1600px WebP. The device shot came from a 1.7 MB PNG and is 52 KB
+    // here - a project about pages that open before anyone gets bored
+    // cannot be illustrated by a 1.7 MB image.
+    //
+    // Order is the argument: the site as it runs, then the geometry the
+    // mark is built on, then the five versions it resolves into. Outcome
+    // first, craft behind it.
+    //
+    // The two brand-book pages were padded to 3:2 before export. The
+    // carousel crops to that ratio, and unlike the device shot - whose
+    // edges are empty backdrop - these carry the section label and the
+    // signal right at the margins, which the crop would have taken. The
+    // padding is pure black, the same colour the pages already sit on, so
+    // it is invisible.
+    shots: [
+      '/work/Baumgertner/baumgertner-lappari-puhelin.webp',
+      '/work/Baumgertner/baumgertner-brandikirja-rakenne.webp',
+      '/work/Baumgertner/baumgertner-brandikirja-logoversiot.webp'
+    ],
     body: {
       en: [
         'Built from nothing rather than assembled from a theme: the identity, the interface, the API behind it and the server it runs on.',

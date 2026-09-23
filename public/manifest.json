@@ -1,7 +1,7 @@
 {
-  "name": "Anthony Baumgertner",
+  "name": "Baumgertner",
   "short_name": "Baumgertner",
-  "description": "Portfolio of Anthony Baumgertner - Software Engineer & Project Manager",
+  "description": "Custom-built websites for businesses that refuse to look templated.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#000000",
@@ -16,6 +16,12 @@
       "src": "/icon-512.png",
       "sizes": "512x512",
       "type": "image/png"
+    },
+    {
+      "src": "/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }

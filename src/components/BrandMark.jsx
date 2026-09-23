@@ -4,13 +4,25 @@
 // that also removes the whole class of "wrong variant on wrong
 // background" bugs.
 //
-// Geometry is copied verbatim from brand/svg/. Do not redraw or reformat
-// these paths; a test asserts they still match the vector masters.
+// The Lockup below is the one two-colour piece: its signal is red by
+// definition, so that half is pinned to var(--signal) while the wordmark
+// half still takes currentColor. The principle holds - the part that can
+// change with the background does, the part that cannot is stated once.
+//
+// Geometry is copied verbatim from brand/Baumgertner-logo-v2/01-logo/.
+// Do not redraw or reformat these paths; a test asserts they still match
+// the vector masters.
 
-// The B mark - brand/svg/b-merkki-musta.svg
-const MARK_PATH = 'M0 0L79 0A20 20 0 0 1 99 20L99 33A20 20 0 0 1 95.343 44.528A20 20 0 0 1 104 61L104 80A20 20 0 0 1 84 100L0 100L0 0ZM12 12L12 41L79 41A8 8 0 0 0 87 33L87 20A8 8 0 0 0 79 12L12 12ZM12 53L12 88L84 88A8 8 0 0 0 92 80L92 61A8 8 0 0 0 84 53L12 53Z';
+// The signal mark, compact cut - 03-merkki/baumgertner-merkki-kompakti.
+// Replaced the B in the v2 identity. Note the proportions changed with
+// it: the B was 104x100, near enough square, and this is 588x260. Any
+// box that was sized for the old one needs looking at.
+const MARK_PATH = 'M188.637 86.000 124.637 86.000 223.041 260.000 287.041 260.000ZM64.000 0.000L31.936 0.000A18.628 18.628 0 0 0 15.721 27.798L147.041 260.000L211.041 260.000L64.000 0.000ZM301.041 260.000 365.041 260.000 463.445 86.000 399.445 86.000ZM377.041 260.000L441.041 260.000L572.361 27.798A18.628 18.628 0 0 0 556.146 0.000L524.082 0.000L377.041 260.000Z';
 
-// The wordmark - brand/svg/baumgertner-musta.svg
+// The wordmark - 04-sanamerkki/baumgertner-sanamerkki. Unchanged from
+// v1, byte for byte, which is why every existing use of it still stands.
+// The Lockup reuses this same constant rather than carrying a second
+// copy of 1830 characters that could drift out of step.
 // Aspect ratio is roughly 19.3:1, so always size it by width and let
 // height follow. Never set a height on it.
 const WORDMARK_PATH = 'M0 0L79 0A20 20 0 0 1 99 20L99 33A20 20 0 0 1 95.343 44.528A20 20 0 0 1 104 61L104 80A20 20 0 0 1 84 100L0 100L0 0ZM12 12L12 41L79 41A8 8 0 0 0 87 33L87 20A8 8 0 0 0 79 12L12 12ZM12 53L12 88L84 88A8 8 0 0 0 92 80L92 61A8 8 0 0 0 84 53L12 53ZM222.547 0L236.333 0L292.88 100L279.094 100L229.44 12.19L179.786 100L166 100L222.547 0ZM374.88 88L438.88 88A8 8 0 0 0 446.88 80L446.88 0L458.88 0L458.88 80A20 20 0 0 1 438.88 100L374.88 100A20 20 0 0 1 354.88 80L354.88 0L366.88 0L366.88 80A8 8 0 0 0 374.88 88ZM540.88 0L554.726 0L605.36 87.972L655.994 0L669.84 0L669.84 100L657.84 100L657.84 20.849L612.283 100L598.437 100L552.88 20.849L552.88 100L540.88 100L540.88 0ZM771.84 0L861.04 0L861.04 12L771.84 12A8 8 0 0 0 763.84 20L763.84 80A8 8 0 0 0 771.84 88L841.04 88A8 8 0 0 0 849.04 80L849.04 62L811.9 62L811.9 50L861.04 50L861.04 80A20 20 0 0 1 841.04 100L771.84 100A20 20 0 0 1 751.84 80L751.84 20A20 20 0 0 1 771.84 0ZM940.04 0L1035.72 0L1035.72 12L952.04 12L952.04 44L1026.152 44L1026.152 56L952.04 56L952.04 88L1035.72 88L1035.72 100L940.04 100L940.04 0ZM1101.72 0L1182.525 0L1202.04 19.515L1202.04 33.485L1185.679 49.846L1214.04 100L1200.254 100L1173.677 53L1101.72 53L1101.72 41L1177.555 41L1190.04 28.515L1190.04 24.485L1177.555 12L1101.72 12L1101.72 0ZM1286.04 0L1390.04 0L1390.04 12L1344.04 12L1344.04 100L1332.04 100L1332.04 12L1286.04 12L1286.04 0ZM1462.04 0L1478.413 0L1559.24 87.073L1559.24 0L1571.24 0L1571.24 100L1554.867 100L1474.04 12.927L1474.04 100L1462.04 100L1462.04 0ZM1653.24 0L1748.92 0L1748.92 12L1665.24 12L1665.24 44L1739.352 44L1739.352 56L1665.24 56L1665.24 88L1748.92 88L1748.92 100L1653.24 100L1653.24 0ZM1814.92 0L1895.725 0L1915.24 19.515L1915.24 33.485L1898.879 49.846L1927.24 100L1913.454 100L1886.877 53L1814.92 53L1814.92 41L1890.755 41L1903.24 28.515L1903.24 24.485L1890.755 12L1814.92 12L1814.92 0Z';
@@ -33,7 +45,7 @@ const BrandSvg = ({ viewBox, path, className, title, decorative }) => (
 
 export const Mark = ({ className, title = 'Baumgertner', decorative = false }) => (
   <BrandSvg
-    viewBox="0 0 104 100"
+    viewBox="0 0 588.082 260"
     path={MARK_PATH}
     className={className}
     title={title}
@@ -49,6 +61,32 @@ export const Wordmark = ({ className, title = 'Baumgertner', decorative = false 
     title={title}
     decorative={decorative}
   />
+);
+
+// The horizontal lockup - 01-vaaka/baumgertner-vaaka-signaali.
+//
+// Two groups with the transforms the master ships: the signal scaled to
+// 0.9 at the origin, the wordmark moved to sit beside it. Aspect is
+// 17.3:1 against the bare wordmark's 19.3:1, so a container tuned for one
+// is not tuned for the other - size it by width and let height follow.
+const SIGNAL_PATH = 'M133.277 50.000 85.277 50.000 141.831 150.000 189.831 150.000ZM48.000 0.000L23.952 0.000A13.971 13.971 0 0 0 11.791 20.849L84.831 150.000L132.831 150.000L48.000 0.000ZM203.831 150.000 251.831 150.000 308.386 50.000 260.386 50.000ZM260.831 150.000L308.831 150.000L381.872 20.849A13.971 13.971 0 0 0 369.711 0.000L345.663 0.000L260.831 150.000Z';
+
+export const Lockup = ({ className, title = 'Baumgertner', decorative = false }) => (
+  <svg
+    className={className}
+    viewBox="0 0 2333.36 135"
+    xmlns="http://www.w3.org/2000/svg"
+    {...(decorative
+      ? { 'aria-hidden': 'true', focusable: 'false' }
+      : { role: 'img', 'aria-label': title })}
+  >
+    <g transform="translate(0 0) scale(0.9)">
+      <path fill="var(--signal)" d={SIGNAL_PATH} />
+    </g>
+    <g transform="translate(406.12 35)">
+      <path fill="currentColor" d={WORDMARK_PATH} />
+    </g>
+  </svg>
 );
 
 // The wordmark as a hole rather than a shape: a field of colour with the
