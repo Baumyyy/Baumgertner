@@ -68,7 +68,6 @@ function henkilo(teksti, kieli) {
     name: 'Anthony Baumgertner',
     jobTitle: kieli === 'fi' ? 'Ohjelmistokehittäjä ja projektipäällikkö' : 'Software Engineer & Project Manager',
     url: KOTISIVU,
-    image: KOTISIVU + '/avatar.jpg',
     sameAs: SOSIAALINEN,
     address: {
       '@type': 'PostalAddress',

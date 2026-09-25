@@ -30,6 +30,14 @@ const JUURI = join(dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = join(JUURI, 'dist');
 const KOTISIVU = 'https://baumgertner.fi';
 
+// Read aloud by screen readers, and shown by some clients when the image
+// itself fails to load - so it says what the card says, in the card's
+// language, rather than describing the file.
+const OG_ALT = {
+  en: 'Baumgertner — a website can be more',
+  fi: 'Baumgertner — verkkosivu voi olla enemmän'
+};
+
 /**
  * The admin panel is deliberately absent: robots.txt disallows it and it
  * is behind a login, so a static copy of its shell would be noise at
@@ -157,6 +165,12 @@ function korjaaOsoitteet(html, reitti, alkupera, meta) {
     .replace(/<meta property="og:description"[^>]*>/, '<meta property="og:description" content="' + htmlTurva(meta.kuvaus) + '"/>')
     .replace(/<meta name="twitter:title"[^>]*>/, '<meta name="twitter:title" content="' + htmlTurva(meta.title) + '"/>')
     .replace(/<meta name="twitter:description"[^>]*>/, '<meta name="twitter:description" content="' + htmlTurva(meta.kuvaus) + '"/>')
+    // The share image exists in both languages. Until now every route got
+    // the English one, so a Finnish page pasted into a chat previewed with
+    // English copy on the card while the page under it was Finnish.
+    .replace(/<meta property="og:image" content="[^"]*"/, '<meta property="og:image" content="' + KOTISIVU + '/og-image-' + reitti.kieli + '.jpg"')
+    .replace(/<meta name="twitter:image" content="[^"]*"/, '<meta name="twitter:image" content="' + KOTISIVU + '/og-image-' + reitti.kieli + '.jpg"')
+    .replace(/<meta property="og:image:alt" content="[^"]*"/, '<meta property="og:image:alt" content="' + htmlTurva(OG_ALT[reitti.kieli] || OG_ALT.en) + '"')
     .replace(/<html lang="[^"]*"/, '<html lang="' + reitti.kieli + '"')
     // index.html carries one hardcoded set pointing at the two home
     // pages. Correct there, wrong everywhere else - on a legal page it
