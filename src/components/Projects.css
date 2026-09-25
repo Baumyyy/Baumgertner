@@ -523,8 +523,16 @@
      previous shots show in the margins instead of the space being
      wasted; on a phone those margins are 40px of a thumbnail nobody can
      make out, and the shot itself drops to 179px wide. Better to give
-     the width to the one being looked at. */
-  .wk-slide { flex: 0 0 88%; }
+     the width to the one being looked at.
+
+     Set through --slide-w, never by overriding flex directly. The track's
+     centring offset and its per-slide step are both derived from this one
+     number, so a width that bypasses it leaves the two disagreeing: at 88%
+     against a 58% transform the active shot sat 15% left of centre and
+     drifted another 30% with every step. That is the same bug the variable
+     was introduced to make impossible, and it survived here because this
+     rule set the width somewhere else. */
+  .wk-stage { --slide-w: 88%; }
 
   .wk-meta {
     grid-template-columns: 1fr;
