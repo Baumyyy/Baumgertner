@@ -10,7 +10,8 @@
     "prerender": "node scripts/prerender.js",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "vitest run"
+    "test": "vitest run",
+    "indexnow": "node scripts/indexnow.js"
   },
   "dependencies": {
     "@fontsource/inter": "^5.3.0",
