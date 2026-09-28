@@ -127,3 +127,49 @@ export const WordmarkKnockout = ({ className }) => (
     />
   </svg>
 );
+
+// The same trick for the mark, which is what the loading screen opens
+// through now. Its four strokes are much fatter than a letter stroke -
+// the widest hole in the wordmark fits a box 12 units across out of
+// 1927, the mark's fits 30 out of 588 - so the field has far less
+// distance to travel before it clears the screen.
+export const MarkKnockout = ({ className }) => (
+  <svg
+    className={className}
+    viewBox="0 0 588.082 260"
+    xmlns="http://www.w3.org/2000/svg"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <path
+      d={KNOCKOUT_FIELD + MARK_PATH}
+      fill="currentColor"
+      fillRule="evenodd"
+    />
+  </svg>
+);
+
+// The mark split into its four strokes so they can be animated
+// separately. Derived from MARK_PATH rather than restated, because a
+// second copy of the geometry is a second thing to keep in step with the
+// vector masters - and it is the copy nobody looks at that drifts.
+//
+// Z only ever terminates a subpath here; it appears in no number and the
+// paths use no lowercase z, so splitting on it is exact.
+const MARK_STROKES = MARK_PATH.split('Z')
+  .filter(function (osa) { return osa.trim(); })
+  .map(function (osa) { return osa + 'Z'; });
+
+export const MarkStrokes = ({ className }) => (
+  <svg
+    className={className}
+    viewBox="0 0 588.082 260"
+    xmlns="http://www.w3.org/2000/svg"
+    aria-hidden="true"
+    focusable="false"
+  >
+    {MARK_STROKES.map(function (d, i) {
+      return <path key={i} className={'loading-strk loading-strk-' + (i + 1)} d={d} />;
+    })}
+  </svg>
+);

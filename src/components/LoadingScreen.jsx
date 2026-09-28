@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './LoadingScreen.css';
-import { Wordmark, WordmarkKnockout } from './BrandMark';
+import { MarkKnockout, MarkStrokes } from './BrandMark';
 
 // Held for two things that genuinely cause a visible flash: the fonts,
 // because the claim reflows when Orbitron arrives, and the hero image,
@@ -9,15 +9,17 @@ import { Wordmark, WordmarkKnockout } from './BrandMark';
 // visitor about a second and a half, on a site whose own argument is
 // that people leave before the first paint.
 //
-// No progress bar. The mark draws itself in from the left while the page
+// No progress bar. The mark's four strokes rise into place while the page
 // loads, so the thing being watched and the thing being waited for are
 // one object.
 //
-// Bounded at both ends. The floor is one pass of the fill, so the mark is
-// never caught half-drawn when the page turns out to be ready
-// immediately - which on a warm cache it always is. The ceiling means a
-// slow connection can never hold anyone here.
-var MIN_MS = 820;
+// Bounded at both ends. The floor is one pass of the rise - 680ms of
+// travel behind a 240ms stagger - so the mark is never caught mid-lift
+// when the page turns out to be ready immediately, which on a warm cache
+// it always is. Change the timings in LoadingScreen.css and this moves
+// with them. The ceiling means a slow connection can never hold anyone
+// here.
+var MIN_MS = 920;
 var MAX_MS = 2500;
 
 // Matches the <picture> in the hero, so the file waited for is the file
@@ -98,13 +100,12 @@ var LoadingScreen = function({ onFinished }) {
       <div className="loading-inner">
         <span className="sr-only">Baumgertner</span>
 
-        {/* The knockout and the drawn mark share a box and a viewBox, so
-            the holes sit exactly on the letters. They scale together, and
-            the drawn one fades - the letters do not move aside, they open. */}
+        {/* The knockout and the drawn strokes share a box and a viewBox, so
+            the holes sit exactly on the strokes. They scale together, and
+            the drawn ones fade - the mark does not move aside, it opens. */}
         <div className="loading-mark" aria-hidden="true">
-          <WordmarkKnockout className="loading-veil" />
-          <Wordmark className="loading-wordmark loading-wordmark-dim" decorative />
-          <Wordmark className="loading-wordmark loading-wordmark-lit" decorative />
+          <MarkKnockout className="loading-veil" />
+          <MarkStrokes className="loading-strokes" />
         </div>
       </div>
     </div>

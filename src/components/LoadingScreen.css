@@ -17,27 +17,37 @@
 }
 
 /* How far the field has to travel before none of it is on screen any
-   more, and which stroke of which letter the viewer goes through on the
-   way. Both are measured rather than chosen: the wordmark was rasterised
-   and searched for the point with the largest screen-shaped rectangle of
-   letter around it, which is the point that needs the least travel. It
-   came out just above the middle of the mark, and the travel it needs is
-   223 at the tightest viewport tested.
+   more. Measured, not chosen: the field was coloured magenta, driven
+   straight to a candidate scale with no transition and with the fade
+   below disabled, and the screenshot searched for any magenta left. The
+   fade is insurance; if the geometry alone does not clear the screen,
+   this is broken.
 
-   The margin above that matters in one direction only. Too little and
-   the opening ends with black bars still across the top and bottom; too
-   much and the browser gives up rasterising a layer this large and
-   paints the field as a solid block, which is a black screen instead of
-   an opening. 620 does exactly that. */
+   Smallest scale that leaves nothing behind, per viewport:
+
+     2560x1440   70      768x1024    55
+     1920x1080   70      390x844     90
+     1440x900    55      844x390     40
+     1280x800    55      360x780     90
+
+   Narrow phones are the worst case at 90, so 140 carries about 1.5x
+   margin over the tightest viewport tested. One origin covers every
+   shape, which is why there is no longer an aspect-ratio rule here - the
+   v1 wordmark needed a second stroke for tall screens because a letter
+   stroke fits a box of only 12 units out of 1927. The mark's strokes fit
+   30 out of 588, a far wider hole to leave through, so the whole journey
+   is shorter. That also keeps the field well clear of the size where the
+   browser gives up rasterising a layer and paints it as a solid block -
+   the v1 mark hit that at 620. */
 .loading-screen {
-  --loading-zoom: 250;
+  --loading-zoom: 140;
 }
 
-/* Fills the letter-shaped holes in the knockout while the page loads, so
+/* Fills the mark-shaped holes in the knockout while the page loads, so
    the mark reads as a mark. It leaves the instant the opening starts and
    without a transition of its own: the holes are covered by the drawn
-   mark at that moment, so there is nothing to see until the drawn mark
-   goes - which is the beat the whole opening turns on. */
+   strokes at that moment, so there is nothing to see until those go -
+   which is the beat the whole opening turns on. */
 .loading-backdrop {
   position: absolute;
   inset: 0;
@@ -50,28 +60,38 @@
 
 /* ===== THE OPENING =====
    Everything the viewer is about to travel through is inside here, so
-   the knockout and the mark drawn on top of it scale as one object and
-   the holes never drift off the letters.
+   the knockout and the strokes drawn on top of it scale as one object
+   and the holes never drift off the strokes.
 
    Eased in rather than out. This is the one place on the site where the
    motion should accelerate: it is a camera pushing forward, and a camera
    that starts fast and settles reads as a panel sliding away instead. */
 .loading-inner {
   position: relative;
-  /* In rem, so the mark grows with the screen exactly as the page
-     does. It has to: the travel below is a ratio between the screen and
-     one stroke of one letter, so a mark that stays laptop-sized on a big
-     monitor needs a longer journey than the ceiling allows - measured,
-     that left 87 % of a 2560 screen still black when the opening ended.
-     Scaling both keeps the ratio, and the travel, constant. 55rem is the
-     880px it replaces at the default text size. */
-  width: min(55rem, 92vw);
+  /* In rem, so the mark grows with the screen exactly as the page does.
+     It has to: the travel below is a ratio between the screen and one
+     stroke of the mark, so a mark that stays laptop-sized on a big
+     monitor needs a longer journey than the ceiling allows. Scaling both
+     keeps the ratio, and the travel, constant.
+
+     Note the mark is 588x260 where the wordmark it replaced was
+     1927x100 - at the same width it stands about five times as tall, so
+     this is narrower than the 55rem the wordmark was given. */
+  width: min(34rem, 78vw);
   transform: scale(1);
-  /* Not the centre of the mark: the centre of the stroke the viewer goes
-     through. Which stroke is the best one to go through depends on the
-     shape of the screen, so it is set below. */
-  transform-origin: 50% 5%;
-  transition: transform 820ms cubic-bezier(.5, 0, .78, .38);
+  /* Not the centre of the mark: the mark has no centre to leave through.
+     At 50%/50% - and at the middle of its base - the knockout is solid,
+     because that is the gap between the two inner strokes rather than a
+     hole, and a camera starting there would spread black over black and
+     end on a black screen.
+
+     This is the measured point: the closest usable hole to the vertical
+     axis, where the inner strokes converge near the base. 34 units off
+     centre out of 588, which is 5.8% - near enough that the opening
+     reads as centred, and low enough that the camera rises into it,
+     which is the same direction the strokes themselves arrive from. */
+  transform-origin: 55.8% 96.2%;
+  transition: transform 860ms cubic-bezier(.5, 0, .78, .38);
 }
 
 .loading-screen.is-opening .loading-inner {
@@ -84,7 +104,7 @@
 }
 
 /* The black the viewer travels through. Its box is only as big as the
-   wordmark - that is what registers the holes with the letters - and the
+   mark - that is what registers the holes with the strokes - and the
    field that covers the screen overflows it, so the overflow has to be
    allowed through. */
 .loading-veil {
@@ -94,50 +114,56 @@
   overflow: visible;
 }
 
-/* Sized by width - the wordmark is ~19.3:1 and must never be given a
+/* Sized by width - the mark is 2.26:1 and must never be given a
    height. */
-.loading-wordmark {
+.loading-strokes {
   display: block;
   width: 100%;
   height: auto;
+  position: relative;
 }
 
-.loading-wordmark-dim {
-  color: var(--text-primary);
-  opacity: 0.07;
+/* ===== THE RISE =====
+   The four strokes lift into place from below, outermost first, and turn
+   from the signal red to white on the way up. Nothing is drawn or wiped:
+   each stroke is a whole object arriving, which is what lets them arrive
+   at different moments and still land as one mark.
+
+   Staggered outward-in, so the pair that carries the mark's full height
+   is already standing when the shorter pair joins it. The other order
+   reads as the mark being assembled; this one reads as it rising. */
+.loading-strk {
+  fill: var(--text-primary);
+  animation: loadingRise 680ms cubic-bezier(.2, .6, .2, 1) both;
 }
 
-/* ===== THE FILL =====
-   The mark starts as a ghost of itself and fills in from the left.
-   clip-path is the only thing that can wipe along an SVG's own shape - a
-   bar laid over the top would cross the letters instead of becoming
-   them. */
-.loading-wordmark-lit {
-  position: absolute;
-  inset: 0;
-  color: var(--text-primary);
-  clip-path: inset(0 100% 0 0);
-  animation: loadingFill 700ms cubic-bezier(.45, 0, .15, 1) 60ms forwards;
+/* Source order is inner-left, outer-left, inner-right, outer-right. */
+.loading-strk-2 { animation-delay: 0ms; }
+.loading-strk-1 { animation-delay: 80ms; }
+.loading-strk-3 { animation-delay: 160ms; }
+.loading-strk-4 { animation-delay: 240ms; }
+
+@keyframes loadingRise {
+  from {
+    opacity: 0;
+    transform: translateY(46%);
+    fill: var(--signal);
+  }
+  55% {
+    opacity: 1;
+    fill: var(--signal);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    fill: var(--text-primary);
+  }
 }
 
-@keyframes loadingFill {
-  to { clip-path: inset(0 0 0 0); }
-}
-
-/* A tall screen needs a tall hole. The stroke that clears a wide screen
-   at this zoom leaves a third of a phone still covered, and the stroke
-   that clears a phone leaves a quarter of a wide monitor covered - so
-   the two get different strokes rather than one compromise and a much
-   longer journey. Both were found by rendering the end of the opening
-   and counting the pixels the field still covered. */
-@media (max-aspect-ratio: 1 / 1) {
-  .loading-inner { transform-origin: 49% 11%; }
-}
-
-/* The white letters go and the same letters are suddenly openings onto
+/* The white strokes go and the same strokes are suddenly openings onto
    the page. Quick, because it is a change of state rather than a fade -
    linger on it and it reads as the logo dimming. */
-.loading-screen.is-opening .loading-wordmark {
+.loading-screen.is-opening .loading-strokes {
   opacity: 0;
   transition: opacity 200ms var(--ease);
 }
@@ -147,18 +173,22 @@
    viewport proportion nobody tested cannot leave a black edge behind. */
 .loading-screen.is-opening .loading-veil {
   opacity: 0;
-  transition: opacity 160ms linear 640ms;
+  transition: opacity 160ms linear 680ms;
 }
 
 /* Nothing moves, and the screen is gone within a frame of mounting. */
 @media (prefers-reduced-motion: reduce) {
   .loading-inner,
   .loading-veil,
-  .loading-wordmark,
-  .loading-wordmark-lit {
+  .loading-strokes,
+  .loading-strk {
     transition: none;
     animation: none;
   }
 
-  .loading-wordmark-lit { clip-path: none; }
+  .loading-strk {
+    opacity: 1;
+    transform: none;
+    fill: var(--text-primary);
+  }
 }
