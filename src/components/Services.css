@@ -1,3 +1,13 @@
+/* Services v3: a diagram of the six services around the mark, then a
+   bento grid where each service is shown rather than described.
+
+   The section wrapper classes below are unchanged from v2 on purpose.
+   Navigation, anchor links and the shared entrance animation all key off
+   .services, .section-tag, .section-claim, .section-lede,
+   .services-close and .services-proof, so those keep their names and
+   their rules; everything the cards used (.svc-grid, .svc-card, .ic-*)
+   is gone with them. */
+
 .services {
   padding: 6rem 4rem;
   max-width: min(114rem, 96vw);
@@ -16,133 +26,525 @@
   margin-bottom: var(--s-6);
 }
 
-/* ===== THE RANGE =====
-   Cut-corner cards on a three-wide grid. The chamfer is the same shape
-   the buttons use, so the geometry of the identity carries through to the
-   surfaces rather than living only on the controls.
-
-   Six cards side by side on a wide screen, and a scrolled stack on a
-   phone - the stack lives in the media query near the bottom of this
-   file, not here. On a screen this wide all six are legible at once and
-   there is nothing for a stack to reveal; it only earns its place where
-   the cards are already in one column and the reader is already moving
-   down through them.
-
-   clip-path clips a border along with everything else, so an outlined
-   chamfered card cannot simply be clipped - the line would vanish on the
-   two cut edges. The card's background IS the outline, and a ::before
-   inset by 1px supplies the fill. Both share the shape, so the hairline
-   follows the chamfer the whole way round. */
-.svc-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: auto auto auto;
-  gap: var(--s-4);
-  list-style: none;
-  margin: 0 0 var(--s-7) 0;
-  padding: 0;
+/* Local palette. Greys carry the whole section and the signal red is
+   spent in exactly two places - the mark in the hub, and the live dot on
+   the deployment card - so that when red appears it means something. */
+.sv {
+  /* One pulse, and the cycle in Services.jsx is two of these. Change
+     this and SV_PULSE_MS there has to move with it. */
+  --sv-pulse: 2600ms;
+  --sv-bg: #0c0c0e;          /* tile fill */
+  --sv-raise: #131316;       /* panels inside a tile */
+  --sv-bd: #1f1f23;          /* hairline */
+  --sv-bd-2: #2a2a2f;        /* stronger hairline */
+  --sv-dim: #6e6e74;
 }
 
-.svc-card {
-  --cut: 16px;
-  display: grid;
-  grid-row: span 3;
-  grid-template-rows: subgrid;
-  row-gap: 0;
-  position: relative;
-  isolation: isolate;
-  padding: var(--s-5);
-  background: var(--line);
-  clip-path: polygon(
-    var(--cut) 0,
-    100% 0,
-    100% calc(100% - var(--cut)),
-    calc(100% - var(--cut)) 100%,
-    0 100%,
-    0 var(--cut)
-  );
+/* The same chamfer the buttons and the old cards used, by the same
+   method: clip-path clips a border along with everything else, so the
+   outline cannot be a border. ::before is the outline and ::after inset
+   by 1px is the fill, both clipped to the same polygon, so the hairline
+   follows the cut corners the whole way round. */
+.sv-node, .sv-hub, .sv-tile { position: relative; isolation: isolate; }
+.sv-node::before, .sv-hub::before, .sv-tile::before,
+.sv-node::after, .sv-hub::after, .sv-tile::after { content: ""; position: absolute; pointer-events: none; z-index: -1; }
+.sv-node::before, .sv-hub::before, .sv-tile::before {
+  inset: 0; background: var(--bd, var(--sv-bd));
+  clip-path: polygon(var(--c) 0, 100% 0, 100% calc(100% - var(--c)), calc(100% - var(--c)) 100%, 0 100%, 0 var(--c));
+  transition: background var(--d-standard) var(--ease);
+}
+.sv-node::after, .sv-hub::after, .sv-tile::after {
+  inset: 1px; background: var(--bg, var(--sv-bg));
+  clip-path: polygon(calc(var(--c) - .5px) 0, 100% 0, 100% calc(100% - var(--c) + .5px), calc(100% - var(--c) + .5px) 100%, 0 100%, 0 calc(var(--c) - .5px));
 }
 
-/* The outline is the card's own background, so brightening it on hover
-   lights the whole chamfered edge at once. No glow and no colour shift -
-   a coloured halo is the thing this design system exists to avoid. */
-.svc-card {
-  transition: background var(--d-standard) var(--ease),
-              transform var(--d-standard) var(--ease);
+/* ============================================================ diagram */
+.sv-diagram { position: relative; max-width: 1180px; aspect-ratio: 1200 / 440; margin: var(--s-9) auto var(--s-8); }
+
+/* ===== THE DIAGRAM ARRIVING =====
+   Every other section reveals its parts one after another; this one came
+   in as a single flat block, which is why it read as the odd one out.
+
+   The container no longer carries .fade-in: it uses its own observer at
+   a higher threshold, because the shared one fires at a tenth visible
+   and the sequence was finishing before the diagram was on screen.
+
+   The order is the thing the picture is about: the hub is there first,
+   each wire draws outward from it, and each service appears as its own
+   wire arrives. Six connections being made, not six boxes fading in.
+
+   Durations and easing are the site's own - 720ms on the house curve -
+   so this reads as the same reveal, only with more parts. */
+.sv-diagram .sv-hub,
+.sv-diagram .sv-node { opacity: 0; }
+.sv-diagram .sv-wire { stroke-dasharray: 100; stroke-dashoffset: 100; }
+
+.sv-diagram.is-in .sv-hub {
+  animation: svHubIn 820ms cubic-bezier(.22, .61, .36, 1) both;
 }
 
-.svc-card:hover {
-  background: var(--line-strong);
-  transform: translateY(-2px);
+.sv-diagram.is-in .sv-wire {
+  animation: svWireIn 900ms cubic-bezier(.22, .61, .36, 1) both;
+  animation-delay: calc(320ms + var(--i, 0) * 130ms);
 }
+
+.sv-diagram.is-in .sv-node {
+  animation: svNodeIn 620ms cubic-bezier(.22, .61, .36, 1) both;
+  /* Lands as its own wire finishes drawing, not on a shared beat. */
+  animation-delay: calc(1020ms + var(--i, 0) * 130ms);
+}
+
+@keyframes svHubIn {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(.82); }
+  to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+@keyframes svWireIn {
+  from { stroke-dashoffset: 100; }
+  to   { stroke-dashoffset: 0; }
+}
+
+/* The node is positioned with translate(-50%, -50%); any transform here
+   has to carry that or it jumps to the corner of its own box. */
+@keyframes svNodeIn {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(.94); }
+  to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+/* Everything in place, nothing drawn. */
+@media (prefers-reduced-motion: reduce) {
+  .sv-diagram .sv-hub,
+  .sv-diagram .sv-node { opacity: 1; }
+  .sv-diagram .sv-wire { stroke-dashoffset: 0; }
+  .sv-diagram.is-in .sv-hub,
+  .sv-diagram.is-in .sv-wire,
+  .sv-diagram.is-in .sv-node { animation: none; }
+}
+/* The carousel indicator belongs to the phone layout; the wide one has
+   the whole bento on screen and nothing to indicate. */
+.sv-dots { display: none; }
+.sv-wires { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.sv-wire { fill: none; stroke: var(--sv-bd-2); stroke-width: 1; vector-effect: non-scaling-stroke; transition: stroke .4s var(--ease); }
+/* The live connection goes white and the thing travelling along it is
+   red: the line is the route, the dot is the signal moving through it.
+   That way the one moving object on the diagram is also the one piece of
+   colour, and the eye has somewhere to go. */
+/* The live wire is white and still. */
+.sv-wire.is-on { stroke: var(--text-primary); stroke-width: 2; }
+
+/* The signal travelling along it.
+   Not a <circle>: this svg is stretched with preserveAspectRatio="none"
+   so that the wires line up with the nodes, which are positioned in
+   percentages - and a non-uniform stretch turns any circle into an
+   ellipse. That is why the first attempt looked broken rather than just
+   small.
+
+   A zero-length dash with a round cap draws a perfect dot instead, and
+   vector-effect: non-scaling-stroke keeps its width in screen pixels, so
+   the stretch cannot touch it. pathLength="100" means every wire takes
+   the same time regardless of its real length.
+
+   Three copies at different widths make the halo: a wide faint one, a
+   middle one, and the dot itself. White, which is the one glow colour
+   the token file allows - a coloured one is what makes a page read as
+   generated. */
+.sv-dot {
+  fill: none;
+  stroke: var(--text-primary);
+  stroke-linecap: round;
+  stroke-dasharray: 0 100;
+  vector-effect: non-scaling-stroke;
+  animation: svDot var(--sv-pulse) cubic-bezier(.45, 0, .55, 1) 2 both;
+}
+
+.sv-dot-halo { --o: .10; stroke-width: 19; }
+.sv-dot-ring { --o: .24; stroke-width: 12; }
+.sv-dot-core { stroke-width: 6.5; }
+
+/* The node answers the impulse that reaches it: its outline breathes.
+   No red out here. The colour belongs to the mark in the middle, and a
+   box that turns red every few seconds is a warning light, not a
+   diagram.
+
+   One animation across the whole cycle rather than one per pass, so each
+   swell can rise before the dot lands and fall long after it. The dot
+   finishes its travel at 80% of a pass, which puts the two arrivals at
+   40% and 90% of the cycle - where the two peaks are. Between them the
+   outline returns to rest, which is what makes it read as breathing
+   rather than blinking. */
+.sv-diagram.is-armed .sv-node.is-on::before {
+  animation: svEdgeBreathe calc(var(--sv-pulse) * 2) ease-in-out 1 both;
+}
+
+@keyframes svEdgeBreathe {
+  0%, 26% { background: #4a4a50; }
+  40%     { background: #ffffff; }
+  60%     { background: #4a4a50; }
+  76%     { background: #4a4a50; }
+  90%     { background: #ffffff; }
+  100%    { background: #4a4a50; }
+}
+
+@keyframes svDot {
+  0%   { stroke-dashoffset: 100; opacity: 0; }
+  8%   { opacity: var(--o, 1); }
+  72%  { opacity: var(--o, 1); }
+  80%  { stroke-dashoffset: 0; opacity: 0; }
+  100% { stroke-dashoffset: 0; opacity: 0; }
+}
+
+.sv-port { position: absolute; top: 50%; width: 7px; height: 7px; background: #0c0c0e; box-shadow: inset 0 0 0 1px #3a3a40; z-index: 2; transition: box-shadow .4s var(--ease), background .4s var(--ease); }
+.sv-port.l { left: 0; transform: translate(-50%, -50%); }
+.sv-port.r { right: 0; transform: translate(50%, -50%); }
+
+.sv-hub {
+  --c: 16px; --bd: #34343a; --bg: linear-gradient(180deg, #151518, #0b0b0d);
+  position: absolute; left: var(--x); top: var(--y);
+  width: calc(140 / 1200 * 100%); aspect-ratio: 1; transform: translate(-50%, -50%);
+  display: grid; place-items: center;
+}
+.sv-hub .sv-port { box-shadow: inset 0 0 0 1px #4a4a50; }
+
+
+.sv-node {
+  --c: 8px;
+  position: absolute; left: var(--x); top: var(--y);
+  width: calc(240 / 1200 * 100%); height: 52px; transform: translate(-50%, -50%);
+  display: flex; align-items: center; gap: 12px; padding: 0 16px;
+  border: 0; background: none; cursor: pointer; text-align: left;
+  font: 500 .9rem/1.2 var(--font-body); letter-spacing: -.005em; color: var(--text-secondary);
+  transition: color .3s var(--ease);
+}
+/* The Finnish name for the search service is long enough to need two
+   lines in a 240-unit node; without this it is clipped rather than
+   wrapped, which reads as a rendering fault rather than a long word. */
+.sv-node > span { min-width: 0; }
+.sv-node .sv-icon { color: var(--sv-dim); transition: color .3s var(--ease); flex: none; }
+.sv-node:hover, .sv-node.is-on { --bd: #4a4a50; --bg: #111114; color: #fff; }
+.sv-node.is-on .sv-icon, .sv-node:hover .sv-icon { color: #fff; }
+.sv-node.is-on .sv-port { background: #fff; box-shadow: none; }
+.sv-node:focus-visible { outline: 1px solid #fff; outline-offset: 4px; }
+
+/* ============================================================== bento */
+.sv-bento { list-style: none; padding: 0; margin: 0 0 var(--s-8); display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+/* Bigger than the 12px the buttons use. The chamfer is a proportion of
+   the thing it is cutting, and a card this size needs more of it before
+   the corner reads as cut rather than as a rounding error. */
+/* A longer rise than the site's usual 26px, and slower, because this
+   one is read rather than glimpsed: the card now waits until it is
+   properly on screen before it moves.
+
+   Not clip-path. An element clipped to nothing reports an empty
+   intersection rect, so observing the same element that hides itself is
+   a deadlock - measured, the observer sat at ratio 0 on a card that was
+   fully in the viewport, is-run never landed, and nothing ever arrived.
+
+   Opacity carries the arrival, so the hover dim uses brightness instead.
+   Sharing one property would mean sharing one duration, and pointing at
+   a card would then take most of a second to answer. */
+.sv-tile {
+  --c: 20px;
+  display: flex; flex-direction: column;
+  opacity: 0; transform: translateY(34px) scale(.975);
+  transition: opacity .88s cubic-bezier(.22, .61, .36, 1) calc(var(--i, 0) * 120ms),
+              transform .88s cubic-bezier(.22, .61, .36, 1) calc(var(--i, 0) * 120ms),
+              filter .3s var(--ease);
+}
+
+.sv-tile.is-run { opacity: 1; transform: none; }
+.sv-t-web { grid-column: span 2; }
+.sv-t-pm { grid-column: span 2; }
+.sv-tile:hover, .sv-tile.is-on { --bd: #34343a; }
+
+/* Pointing at one card pushes the rest back, so the thing under the
+   pointer is the only thing in focus. Hover only: on a touch screen
+   :hover sticks after a tap and would leave the grid permanently dimmed. */
+@media (hover: hover) {
+  .sv-bento:hover .sv-tile { filter: brightness(.42); }
+  .sv-bento:hover .sv-tile:hover { filter: none; }
+}
+
+.sv-visual {
+  position: relative; height: 280px; margin: 1px 1px 0; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(180deg, #111114 0%, var(--sv-bg) 100%);
+  /* The tile's cut corner is drawn by its ::after, which this sits on
+     top of - so without the same cut here the preview's own rectangle
+     fills the notch back in and the card looks square. Only the top
+     corner: the bottom of this box is interior, the copy follows it. */
+  clip-path: polygon(calc(var(--c) - 1px) 0, 100% 0, 100% 100%, 0 100%, 0 calc(var(--c) - 1px));
+}
+.sv-copy { padding: 22px 26px 26px; }
+.sv-copy h3 {
+  display: flex; align-items: center; gap: 10px; margin: 0 0 8px;
+  font-family: var(--font-display); font-weight: var(--weight-display); font-size: 1rem; letter-spacing: var(--track-heading);
+  text-transform: uppercase; color: #fff;
+}
+.sv-copy h3 .sv-icon { color: var(--sv-dim); flex: none; }
+.sv-tile.is-on .sv-copy h3 .sv-icon { color: var(--signal); }
+.sv-copy p { margin: 0; font-size: var(--t-body-s); line-height: 1.6; color: var(--text-muted); max-width: 56ch; }
+
+/* The card arrives in three beats, the way the diagram does: the card
+   itself, then what is inside it, then what it says. One thing at a
+   time, on the house curve, slow enough to be read as a sequence rather
+   than a flicker.
+
+   A preview that keeps animating turns into an advertisement for
+   itself, so each beat runs once and stops. */
+.sv-visual > * {
+  opacity: 0; transform: translateY(12px);
+  transition: opacity .82s cubic-bezier(.22, .61, .36, 1) calc(.34s + var(--i, 0) * 120ms),
+              transform .82s cubic-bezier(.22, .61, .36, 1) calc(.34s + var(--i, 0) * 120ms);
+}
+.sv-tile.is-run .sv-visual > * { opacity: 1; transform: none; }
+
+.sv-copy h3, .sv-copy p {
+  opacity: 0; transform: translateY(10px);
+  transition: opacity .74s cubic-bezier(.22, .61, .36, 1),
+              transform .74s cubic-bezier(.22, .61, .36, 1);
+}
+.sv-copy h3 { transition-delay: calc(.56s + var(--i, 0) * 120ms); }
+.sv-copy p  { transition-delay: calc(.66s + var(--i, 0) * 120ms); }
+.sv-tile.is-run .sv-copy h3,
+.sv-tile.is-run .sv-copy p { opacity: 1; transform: none; }
+
+/* shared panel */
+.sv-panel { background: var(--sv-raise); border: 1px solid var(--sv-bd-2); border-radius: 6px; box-shadow: 0 18px 40px -12px rgba(0, 0, 0, .7); }
+.sv-panel-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 12px 14px; border-bottom: 1px solid var(--sv-bd); }
+.sv-panel-head span { font: 500 12.5px var(--font-body); color: #fff; }
+.sv-panel-head small { font-size: 11px; color: var(--sv-dim); }
+
+/* ---- websites: the same client site on desktop and phone */
+.sv-web { position: relative; width: 80%; max-width: 640px; height: 220px; }
+.sv-browser { position: absolute; left: 0; top: 0; width: 84%; background: #0e0e10; border: 1px solid var(--sv-bd-2); border-radius: 7px; overflow: hidden; box-shadow: 0 24px 50px -16px rgba(0, 0, 0, .8); }
+.sv-chrome { display: flex; align-items: center; gap: 5px; padding: 8px 10px; border-bottom: 1px solid var(--sv-bd); background: #121215; }
+.sv-chrome i { width: 7px; height: 7px; border-radius: 50%; background: #2c2c31; }
+/* The window's close button. Red because that one is red in a real
+   browser - the detail is borrowed from the thing being drawn rather
+   than added to it, which is why it can carry colour without the
+   client's site appearing to have a brand it was never given. */
+.sv-chrome i:first-child { background: var(--signal); }
+.sv-chrome span { margin: 0 auto; font: 10px var(--font-body); color: var(--sv-dim); padding: 2px 30px; border-radius: 4px; background: #19191d; }
+.sv-site { background: radial-gradient(120% 90% at 70% 0%, #1d1d21, #0c0c0e 70%); }
+.sv-site-nav { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; }
+.sv-site-nav b { font: 700 9px var(--font-body); letter-spacing: .14em; color: #fff; }
+.sv-site-nav span { display: flex; gap: 12px; }
+.sv-site-nav i { font: 9px var(--font-body); font-style: normal; color: #9a9aa0; }
+.sv-site-hero { padding: 18px 14px 16px; }
+.sv-site-hero h4 { margin: 0 0 5px; font: 600 17px/1.15 var(--font-body); letter-spacing: -.02em; color: #fff; }
+.sv-site-hero p { margin: 0 0 10px; font-size: 9.5px; color: #9a9aa0; }
+.sv-site-hero em { display: inline-block; font: 600 8.5px var(--font-body); font-style: normal; color: #0c0c0e; background: #fff; padding: 5px 9px; border-radius: 3px; }
+.sv-site-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; padding: 0 14px 14px; }
+.sv-site-row span { height: 34px; border-radius: 4px; background: #16161a; border: 1px solid var(--sv-bd); }
+.sv-phone { position: absolute; right: 0; bottom: -46px; width: 124px; height: 250px; padding: 6px; background: #0a0a0c; border: 1px solid #34343a; border-radius: 18px; box-shadow: -18px 20px 40px -10px rgba(0, 0, 0, .85); }
+.sv-phone .sv-site { height: 100%; border-radius: 13px; overflow: hidden; padding-top: 12px; }
+.sv-notch { position: absolute; top: 9px; left: 50%; transform: translateX(-50%); width: 30%; height: 6px; border-radius: 4px; background: #000; z-index: 1; }
+.sv-site.phone .sv-site-hero { padding: 16px 10px; }
+.sv-site.phone .sv-site-hero h4 { font-size: 13px; }
+.sv-site.phone .sv-site-nav { padding: 8px 10px; }
+/* Scoped. As a bare .burger this was a global rule claiming a name
+   nothing here owns - the site's own menu control is .hamburger, so
+   there is no collision today, and that is exactly the kind of thing
+   that stops being true later. */
+.sv-site-nav .burger { width: 12px; height: 7px; border-top: 1px solid #aaa; border-bottom: 1px solid #aaa; }
+.sv-tile.is-run .sv-phone { transition-delay: .49s; }
+
+/* ---- performance: Lighthouse targets */
+.sv-lh { width: 84%; }
+.sv-lh-row { display: grid; grid-template-columns: repeat(4, 1fr); padding: 18px 10px 16px; }
+.sv-lh-item { position: relative; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.sv-lh-item svg { width: 58px; height: 58px; transform: rotate(-90deg); }
+.sv-lh-item .trk { fill: none; stroke: #232327; stroke-width: 3; }
+.sv-lh-item .val { fill: none; stroke: #fff; stroke-width: 3; stroke-linecap: round; transition: stroke-dashoffset 1.3s var(--ease); }
+.sv-lh-item b { position: absolute; top: 0; height: 58px; display: grid; place-items: center; font: 600 13px var(--font-body); color: #fff; }
+.sv-lh-item span { font-size: 10.5px; color: var(--sv-dim); text-align: center; line-height: 1.3; }
+
+/* ---- search & AI: a result, and the structured data behind it */
+.sv-seo { width: 84%; display: flex; flex-direction: column; }
+.sv-serp { position: relative; width: 86%; padding: 14px 16px; }
+.sv-serp .site { display: flex; align-items: center; gap: 9px; margin-bottom: 8px; }
+.sv-serp .fav { width: 22px; height: 22px; border-radius: 50%; background: #fff; color: #000; display: grid; place-items: center; font: 700 10px var(--font-body); }
+.sv-serp .site b { display: block; font: 500 11px var(--font-body); color: #e6e6e6; }
+.sv-serp .site small { font-size: 10px; color: var(--sv-dim); }
+.sv-serp h5 { margin: 0 0 4px; font: 500 14px/1.3 var(--font-body); color: #fff; }
+.sv-serp p { margin: 0; font-size: 11px; line-height: 1.5; color: #8f8f95; }
+.sv-code { position: relative; align-self: flex-end; width: 60%; margin: -12px 0 0; padding: 12px 14px; font: 10.5px/1.6 var(--font-mono); color: #8f8f95; white-space: pre; background: #0e0e10; }
+.sv-tile.is-run .sv-code { transition-delay: .44s; }
+
+/* ---- branding: the logo in use, with the rest kept quiet ----
+   The mark where a client actually meets it - the browser tab, the app
+   icon, the avatar - and then one thin row for the palette and the two
+   faces. Earlier versions gave colour and type a panel each, which made
+   three equal things out of one subject and two footnotes. */
+.sv-brand { width: 86%; max-width: 400px; padding: 16px; display: flex; flex-direction: column; gap: 15px; }
+
+.sv-brand-tab {
+  display: flex; align-items: center; gap: 8px; min-width: 0;
+  padding: 8px 11px; background: #1a1a1f; border-radius: 7px 7px 0 0;
+}
+.sv-brand-tab i { width: 15px; height: 15px; flex: none; display: grid; place-items: center; background: var(--signal); border-radius: 3px; }
+.sv-brand-tab span { font-size: 10px; color: #c9c9d0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.sv-brand-marks { display: flex; align-items: center; justify-content: center; gap: 18px; }
+.sv-brand-icon {
+  width: 54px; height: 54px; flex: none; border-radius: 13px; display: grid; place-items: center;
+  background: var(--signal); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .18), 0 10px 22px -8px #000;
+}
+.sv-brand-avatar {
+  width: 48px; height: 48px; flex: none; border-radius: 50%; display: grid; place-items: center;
+  background: #0a0a0c; box-shadow: inset 0 0 0 1px var(--sv-bd-2), 0 10px 22px -8px #000;
+}
+
+/* One row, two halves, nothing labelled. */
+.sv-brand-foot {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding-top: 14px; border-top: 1px solid var(--sv-bd);
+}
+.sv-brand-dots { display: flex; gap: 7px; }
+.sv-brand-dots i { width: 15px; height: 15px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .18); }
+.sv-brand-faces { display: flex; align-items: baseline; gap: 14px; color: var(--text-primary); }
+.sv-brand-faces em { font-style: normal; line-height: 1; }
+.sv-brand-faces .is-display { font-family: var(--font-display); font-weight: var(--weight-display); font-size: 20px; letter-spacing: .01em; }
+.sv-brand-faces .is-body { font-family: var(--font-body); font-weight: 400; font-size: 19px; }
+
+/* Each application arrives on its own beat. */
+.sv-brand-tab, .sv-brand-marks > *, .sv-brand-foot {
+  opacity: 0; transform: translateY(8px);
+  transition: opacity .45s var(--ease), transform .5s var(--ease);
+}
+.sv-tile.is-run .sv-brand-tab,
+.sv-tile.is-run .sv-brand-marks > *,
+.sv-tile.is-run .sv-brand-foot { opacity: 1; transform: none; }
+.sv-tile.is-run .sv-brand-marks > *:nth-child(1) { transition-delay: .38s; }
+.sv-tile.is-run .sv-brand-marks > *:nth-child(2) { transition-delay: .48s; }
+.sv-tile.is-run .sv-brand-foot { transition-delay: .60s; }
+
+/* ---- launch: deployment card */
+.sv-deploy { width: 84%; }
+.sv-deploy em { display: inline-flex; align-items: center; gap: 7px; font: 500 11px var(--font-body); font-style: normal; color: var(--sv-dim); transition: color .4s var(--ease) 1.2s; }
+.sv-deploy em i { width: 7px; height: 7px; border-radius: 50%; background: #3a3a40; transition: background .4s var(--ease) 1.2s; }
+.sv-deploy em.on { color: #fff; }
+.sv-deploy em.on i { background: var(--signal); }
+.sv-deploy dl { margin: 0; padding: 6px 14px; }
+.sv-deploy dl div { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid var(--sv-bd); font-size: 11.5px; }
+.sv-deploy dl div:last-child { border-bottom: 0; }
+.sv-deploy dt { color: var(--sv-dim); }
+.sv-deploy dd { margin: 0; color: #e6e6e6; }
+.sv-deploy ol { list-style: none; margin: 0; padding: 10px 14px 12px; display: flex; gap: 6px; border-top: 1px solid var(--sv-bd); }
+.sv-deploy ol li { flex: 1; font-size: 10.5px; color: var(--sv-dim); padding-top: 8px; position: relative; }
+.sv-deploy ol li::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 2px; background: #232327; }
+.sv-deploy ol li::after { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 2px; background: #fff; transform: scaleX(0); transform-origin: left; transition: transform .5s var(--ease); transition-delay: inherit; }
+.sv-deploy ol.on li { color: #e6e6e6; transition: color .3s var(--ease); }
+.sv-deploy ol.on li::after { transform: scaleX(1); }
+
+/* ---- technology: the stack in orbit ----
+   Adapted from an orbit component written for shadcn and Tailwind. Its
+   icons were remote SVGs from a CDN and its example stack was React,
+   Next.js, Vercel, Redux and AWS - none of which this site runs. These
+   are the names in package.json and docker-compose.yml, set as monograms
+   in the site's own mono face rather than as eight borrowed trademarks.
+
+   Radii are spaced wider than a badge is across, so two rings can never
+   hide each other however their speeds drift apart. The original span
+   its icons with the ring, which leaves them upside down at the bottom
+   of every circle; each badge here counter-rotates on the same clock. */
+/* Sized from the column it sits in, not from guessed breakpoints: the
+   tile is one of three at 1440px and one of one on a phone, and the
+   orbit has to fit both. The outermost radius is inset by half a badge
+   so the badges land exactly on the box edge and never past it. */
+.sv-orb {
+  --orb: min(calc(100cqw - 30px), 252px);
+  --r3: calc((var(--orb) - 26px) / 2);
+  position: relative; width: var(--orb); height: var(--orb);
+}
+
+/* The mark, and nothing else. No plate, no ring, no light behind it -
+   every one of those made it look like a ninth badge instead of the
+   thing the other eight are in orbit around. */
+.sv-orb-core {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  display: grid; place-items: center;
+  pointer-events: none;
+}
+.sv-orb-core svg { width: calc(var(--orb) * .18); min-width: 42px; height: auto; display: block; }
+
+.sv-orb-ring {
+  position: absolute; left: 50%; top: 50%;
+  width: calc(var(--r) * 2); height: calc(var(--r) * 2);
+  margin: calc(var(--r) * -1) 0 0 calc(var(--r) * -1);
+  border: 1px dotted var(--sv-bd-2); border-radius: 50%;
+  animation: svOrb var(--dur) linear infinite;
+}
+/* 52px apart, with a 34px badge on each: 18px of clearance between
+   neighbouring rings. At 36px apart they nearly touched, which is
+   what made the orbit read as a pile rather than a system. */
+/* Three loaded rings of four. Each is offset a third of a step from the
+   one inside it, so no two badges ever share a spoke. */
+/* .40 rather than .33: at the tighter spacing the inner badges passed
+   1.3px from the mark, which reads as touching. */
+.sv-orb-ring-0 { --r: calc(var(--r3) * .40);  --dur: 36s; }
+.sv-orb-ring-1 { --r: calc(var(--r3) * .70);  --dur: 48s; animation-direction: reverse; }
+.sv-orb-ring-2 { --r: var(--r3); --dur: 62s; }
+
+/* Three rotations stacked on one point, and the point has to be the same
+   for all three or the badge leaves the ring.
+
+   Each of these is a zero-size box pinned to the orbit's anchor, so
+   transform-origin (50% 50% of nothing) is exactly that anchor. Give any
+   of them a size - a badge with negative margins inside an auto-sized
+   span, say - and its centre moves, so the counter-rotation starts
+   translating as well as turning. Measured, that pushed badges between
+   3px inside and 21px outside their own ring. */
+.sv-orb-chip {
+  position: absolute; left: 50%; top: 50%; width: 0; height: 0;
+  transform: rotate(var(--a)) translateY(calc(var(--r) * -1));
+}
+.sv-orb-undo {
+  position: absolute; left: 0; top: 0; width: 0; height: 0;
+  animation: svOrb var(--dur) linear infinite reverse;
+}
+.sv-orb-ring-1 .sv-orb-undo { animation-direction: normal; }
+
+.sv-orb-badge {
+  position: absolute; left: 0; top: 0;
+  display: grid; place-items: center;
+  width: 26px; height: 26px; margin: -13px 0 0 -13px;
+  /* Undoes the chip's own rotate(--a), which put it on the ring but
+     would otherwise tip the logo with it. The ring's travel is cancelled
+     separately, on .sv-orb-undo. */
+  transform: rotate(calc(var(--a) * -1));
+  border-radius: 50%;
+  background: var(--surface-1);
+  box-shadow: inset 0 0 0 1px var(--sv-bd-2), 0 6px 16px -6px #000;
+  color: var(--text-primary);
+}
+.sv-orb-badge svg { width: 13px; height: 13px; display: block; }
+
+@keyframes svOrb {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Same 280px as every other preview. The orbit is capped below that so
+   the card is one of six rather than the tall one. */
+.sv-t-tech .sv-visual { container-type: inline-size; }
+
 
 @media (prefers-reduced-motion: reduce) {
-  .svc-card,
-  .svc-card:hover {
-    transition: none;
-    transform: none;
-  }
+  .sv-orb-ring, .sv-orb-undo { animation: none; }
 }
 
-.svc-card::before {
-  content: '';
-  position: absolute;
-  inset: 1px;
-  z-index: -1;
-  background: var(--surface-1);
-  clip-path: polygon(
-    calc(var(--cut) - 1px) 0,
-    100% 0,
-    100% calc(100% - var(--cut) + 1px),
-    calc(100% - var(--cut) + 1px) 100%,
-    0 100%,
-    0 calc(var(--cut) - 1px)
-  );
-}
-
-.svc-icon {
-  width: 24px;
-  height: 24px;
-  display: block;
-  margin-bottom: var(--s-4);
-}
-
-/* Two tones by one rule: the structure is white, and exactly one element
-   is red - always the part that carries the meaning. Red never outlines
-   the whole shape, which would make it decoration instead of a mark. */
-.ic-base { stroke: var(--text-primary); }
-.ic-accent { stroke: var(--signal-text); }
-
-.svc-name {
-  font-family: var(--font-display);
-  font-weight: var(--weight-display);
-  font-size: var(--t-h4);
-  line-height: 1.2;
-  letter-spacing: var(--track-heading);
-  text-transform: uppercase;
-  color: var(--text-primary);
-  margin-bottom: var(--s-2);
-}
-
-/* Reserves two lines for every title so the body copy starts at the same
-   height right across a row. Without it the one title that wraps - the
-   Finnish "Haku- ja tekoälynäkyvyys" - drops its own paragraph a line below
-   the two cards beside it, and the row reads as misaligned rather than as
-   one title simply being longer.
-
-   Only from the width where the cards sit side by side. Stacked, there is
-   no neighbour to line up with and the reserved line is just a gap. */
-@media (min-width: 700px) {
-  .svc-name {
-    min-height: calc(2 * 1.2em);
-  }
-}
-
-.svc-line {
-  font-size: var(--t-body-s);
-  line-height: 1.55;
-  color: var(--text-secondary);
-}
+/* ---- project management: schedule */
+.sv-pm { width: 90%; }
+.sv-pm-grid { position: relative; padding: 16px 14px 18px; display: flex; flex-direction: column; gap: 12px; }
+.sv-pm-row { display: grid; grid-template-columns: 120px 1fr; align-items: center; }
+.sv-pm-row .lbl { font-size: 12px; color: #b8b8b8; }
+.sv-pm-row .track { position: relative; height: 10px; background: repeating-linear-gradient(90deg, #1b1b1f 0 1px, transparent 1px calc(100% / 8)); }
+.sv-pm-row .bar { position: absolute; top: 0; bottom: 0; background: #1e1e22; border-radius: 2px; overflow: hidden; }
+.sv-pm-row .fill { position: absolute; inset: 0; background: #d9d9dc; transform-origin: left; transition: transform 1s var(--ease); }
+.sv-now { position: absolute; top: 8px; bottom: 8px; left: calc(14px + 120px + (100% - 28px - 120px) * var(--now)); width: 1px; background: var(--signal); opacity: 0; transition: opacity .5s var(--ease) 1.4s; }
+.sv-now.on { opacity: 1; }
+.sv-now b { position: absolute; top: -2px; left: 6px; font: 500 10px var(--font-body); color: #fff; }
 
 /* ===== CLOSE ===== */
 .services-close {
@@ -163,81 +565,186 @@
   text-wrap: balance;
 }
 
-/* ===== THE STACK =====
-   Phone only. The cards are already in one column here and the reader is
-   already travelling down through them, so each one parks a step lower
-   than the last: a card reaching its offset stays put while the next
-   slides up over it and comes to rest just below its top edge. Six
-   cards, six resting positions, one growing pile. Going back up runs the
-   same thing in reverse for free, which is the half a scroll-driven
-   animation usually gets wrong.
+/* ========================================================= responsive */
+@media (max-width: 1100px) {
+  .sv-node { font-size: .78rem; gap: 8px; padding: 0 12px; }
+}
 
-   The mechanism is position: sticky and nothing else. No JavaScript, no
-   scroll listener, no transform per frame - the browser does it on the
-   compositor, which is the only reason it is affordable on a phone.
+/* The diagram needs its full width to stay legible: six nodes and a hub
+   across 1200 units do not survive being squeezed, and shrinking the
+   type far enough to fit makes the labels unreadable before it makes
+   them small. Below this it goes, and the bento grid - which says the
+   same thing in more detail - carries the section alone. */
+@media (max-width: 900px) {
+  /* No diagram here. It was redrawn for a phone twice - laid out
+     vertically, then as icons - and both readings had the same problem:
+     a picture of six things wired to one centre is an overview, and an
+     overview is what a phone has the least room for. The cards are the
+     offer; the tree was a way of seeing all of it at once, and the row
+     below does that in time instead of in space.
 
-   Two things this depends on, both easy to break later:
-   - no ancestor may have an overflow other than visible, or sticky stops
-     working and the cards just sit in a list;
-   - the fill has to be opaque, or the stack is see-through and every
-     card under the top one shows through. That is --surface-1, which is
-     #0B0B0D rather than a tint of white for exactly this reason. */
+     Hidden rather than unmounted: this markup is in the prerendered HTML
+     and dropping it at hydration would shift the whole section on every
+     phone load. */
+  .sv-diagram { display: none; }
+
+  /* The technology card leads. It is what the other six are built with,
+     so it reads as the opening statement rather than as a seventh
+     service - and it is the one card that is not in the cycle, which
+     makes it a better place to start than to end.
+
+     Visual order, not DOM order: the desktop grid places itself from the
+     source, so moving the element would cost the bento its layout. The
+     carousel counts what the eye counts by sorting on offsetLeft. */
+  .sv-t-tech { order: -1; }
+
+  /* Continuous rotation is for the card in front of you. Paused
+     elsewhere it is six off-screen animations the phone does not have to
+     composite.
+
+     Both layers or neither. The badge is held upright by two rotations
+     that cancel - the ring turning one way and .sv-orb-undo turning back
+     the other - so pausing only the ring leaves the counter-rotation
+     running alone and every logo tilts off true. */
+  .sv-tile:not(.is-on) .sv-orb-ring,
+  .sv-tile:not(.is-on) .sv-orb-undo { animation-play-state: paused; }
+
+  /* Seven full-width cards stacked vertically ran 3800px - four
+     screenfuls to read six services and the stack they are built on.
+     Sideways, the whole offer is one screen tall and the reading is a
+     flick instead of a scroll.
+
+     The row reaches past the text column and puts the distance back as
+     padding, so a card runs off the right edge while the first one still
+     starts on the text's left margin.
+
+     20px, not the full gutter: that gutter is not one number - it is
+     19.2px of section padding plus whatever .services-inner takes, which
+     measured 38px at 390 and 64px at 768. Reaching the exact screen edge
+     would mean calc(50% - 50vw), and vw counts a classic scrollbar that
+     clientWidth does not, which is the horizontal page scroll this is
+     avoiding. 20 is inside the narrowest real inset at every width. */
+  .sv-bento {
+    --sv-card: min(74vw, 460px);
+    --sv-bleed: 20px;
+
+    display: flex; grid-template-columns: none;
+    position: relative;
+    margin: var(--s-6) calc(var(--sv-bleed) * -1) 0;
+    gap: 12px;
+    overflow-x: auto; overflow-y: hidden;
+    /* Off until the cards have landed - see .sv-bento.is-ready below. */
+    scroll-snap-type: none;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+
+    /* Half the leftover on each side, which is what lets the first and
+       last card reach the middle at all - without it they would stop
+       against the ends and sit off to one side.
+
+       The percentage resolves against .services-inner, but the row is
+       wider than that by the bleed it takes at each edge, so the real
+       half-width is 50% + bleed. */
+    padding: 2px calc(50% + var(--sv-bleed) - var(--sv-card) / 2) 6px;
+  }
+  .sv-bento::-webkit-scrollbar { display: none; }
+
+  /* Not 100%: the sliver of the next card is what says the row moves.
+     Snapping to start rather than centre keeps that sliver on the right
+     where the next swipe is going. */
+  /* The row arrives as one move rather than seven. With one card and a
+     sliver of the next on screen, a stagger across all of them is a
+     stagger nobody sees - so the travel gets bigger and the two that are
+     actually visible lead it, coming in from the right the way the row
+     reads. */
+  /* Centred, not left-aligned. Snapping to the start put the card 27px
+     from one edge and 59px from the other, which does not read as a
+     deliberate offset - it reads as crooked. Centred, the two slivers
+     of the cards either side match, and the asymmetry disappears. */
+  .sv-tile {
+    flex: 0 0 var(--sv-card);
+    scroll-snap-align: center;
+    transform: translate3d(46px, 28px, 0) scale(.93);
+    transition: opacity .92s cubic-bezier(.22, .61, .36, 1) calc(var(--i, 0) * 150ms),
+                transform .92s cubic-bezier(.22, .61, .36, 1) calc(var(--i, 0) * 150ms);
+  }
+
+  /* --d is the distance from the snap centre in card widths, written by
+     the scroll handler every frame. The card being read is at full
+     brightness and the one alongside sits back, which is the hover dim
+     from the desktop translated into something a finger can do.
+
+     Deliberately not transitioned: it is already being driven per frame,
+     so easing it would only make the card lag behind the thumb. */
+  .sv-tile.is-run {
+    transform: none;
+    filter: brightness(calc(1 - var(--d, 0) * .38));
+  }
+  /* Snapping waits for the entrance to finish.
+
+     A snap area is the target's transformed border box, not its laid-out
+     one, and the cards arrive by transform - so a mandatory container
+     spends the whole animation re-snapping to a position that has not
+     stopped moving, and takes the row with it. It read as the cards
+     swaying as they loaded; measured, the row slid exactly the 46px the
+     entrance translates by. */
+  .sv-bento.is-ready { scroll-snap-type: x mandatory; }
+
+  /* And stands down again while the reader is pinched in. A mandatory
+     container has to land on a snap point after every scroll, and at a
+     scale the layout knows nothing about those points no longer line up
+     with what is on screen - so the browser keeps correcting a position
+     the finger keeps moving. Last, so it wins over is-ready. */
+  .sv-bento.is-zoom { scroll-snap-type: none; }
+
+  .sv-t-web, .sv-t-pm { grid-column: auto; }
+
+  /* Snapping cards have to be the same height, and the tallest preview
+     is 316px against the shortest at 224 - stretched, that difference
+     landed as 130px of nothing under the copy. flex: 1 hands it to the
+     preview box instead, which is already centring its contents, so the
+     short cards read as roomy rather than unfinished. */
+  .sv-visual { flex: 1 1 auto; height: auto; min-height: 230px; padding: 26px 0; }
+  .sv-t-web .sv-visual { padding: 0; }
+  .sv-copy { flex: 0 0 auto; }
+
+  /* The same indicator as the work scroller: a row of dim dots with the
+     current one drawn out into a red pill. Repeating it rather than
+     inventing a second one means a reader who has already scrolled the
+     work section knows what these are without being told. */
+  .sv-dots {
+    display: flex; justify-content: center; gap: var(--s-2);
+    margin: var(--s-4) 0 var(--s-6);
+  }
+  .sv-dot {
+    width: 6px; height: 6px; padding: 0;
+    border: none; border-radius: 50%;
+    background: rgba(255, 255, 255, .3);
+    cursor: pointer;
+    opacity: 0;
+    transition: background var(--d-micro) var(--ease),
+                width var(--d-micro) var(--ease);
+  }
+  .sv-dot.is-on { background: var(--signal); width: 18px; border-radius: 3px; }
+  .sv-dot:focus-visible { outline: 1px solid #fff; outline-offset: 3px; }
+
+  /* Held back until the row is on screen. The dots mount with the
+     component, which on a phone is most of a page above here - started
+     then, the stagger would be over before anyone had scrolled to it. */
+  .sv-dots.is-in .sv-dot {
+    animation: svDotsIn .5s var(--ease) forwards;
+    animation-delay: calc(700ms + var(--n, 0) * 55ms);
+  }
+  .sv-dot:nth-child(1) { --n: 0 } .sv-dot:nth-child(2) { --n: 1 }
+  .sv-dot:nth-child(3) { --n: 2 } .sv-dot:nth-child(4) { --n: 3 }
+  .sv-dot:nth-child(5) { --n: 4 } .sv-dot:nth-child(6) { --n: 5 }
+  .sv-dot:nth-child(7) { --n: 6 }
+  @keyframes svDotsIn { from { opacity: 0 } to { opacity: 1 } }
+  .sv-dots i.is-on { background: var(--text-primary); transform: scale(1.25); }
+}
+
 @media (max-width: 968px) {
   .services { padding: 4.5rem 2rem; }
-
-  .svc-grid {
-    --pino-alku: 5.5rem;
-    --pino-askel: 0.75rem;
-    display: flex;
-    flex-direction: column;
-    margin-inline: 0;
-  }
-
-  .svc-card {
-    grid-row: auto;
-    grid-template-rows: none;
-    grid-template-columns: 1fr;
-    position: sticky;
-    top: calc(var(--pino-alku) + var(--i, 0) * var(--pino-askel));
-  }
-
-  /* The reveal translates the card up into place, and a transform on a
-     sticky element is applied after it has been stuck - so a card caught
-     mid-reveal was drawn 26px from where it had parked. Once it has
-     arrived there is nothing left to fight over, so the fade alone does
-     the work here. */
-  .svc-card.fade-in,
-  .svc-card.fade-in[data-visible],
-  .svc-card:hover {
-    transform: none;
-  }
-
-  /* The room the finished stack stands in.
-
-     A sticky element cannot leave the box that contains it, so when the
-     list runs out the whole pile is dragged off the top at once - and
-     since the cards are the same size and the last one paints over the
-     rest, the finished stack was on screen for about ten pixels of
-     scrolling before it collapsed into a single card.
-
-     This has to be content and not padding. A flex item's sticky range
-     is bounded by its container's CONTENT box, so padding-bottom bought
-     nothing: with 405px of it the first card still came unstuck in
-     exactly the same place it did with none. An empty flex item is
-     inside the content box, so it counts.
-
-     Nothing is drawn here. It is scroll distance during which every card
-     has parked and none has been pushed out yet. */
-  .svc-grid::after {
-    content: '';
-    display: block;
-    flex: 0 0 26vh;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .svc-card { position: relative; top: auto; }
-    .svc-grid::after { display: none; }
-  }
 }
 
 /* Phone only, and vertical only - see the note in Problem.css. */
@@ -246,14 +753,31 @@
 }
 
 @media (max-width: 560px) {
+  .sv-web, .sv-seo, .sv-brand, .sv-lh, .sv-deploy, .sv-pm { width: 90%; }
+  .sv-lh-item svg { width: 46px; height: 46px; }
+  .sv-lh-item b { height: 46px; font-size: 11px; }
+  .sv-lh-item span { font-size: 9.5px; }
+  .sv-pm-row { grid-template-columns: 84px 1fr; }
+  .sv-now { left: calc(14px + 84px + (100% - 28px - 84px) * var(--now)); }
+  .sv-code { font-size: 9.5px; width: 76%; }
+  .sv-phone { width: 100px; height: 200px; }
+
   .services-close {
     flex-direction: column;
     align-items: flex-start;
   }
-
-  .services-close .btn-primary { width: 100%; }
 }
 
 @media (max-width: 480px) {
   .services { padding-inline: 1.2rem; }
+}
+
+/* Everything already arrived. The previews are static states, so with
+   motion turned off they simply show the finished state rather than
+   never appearing - which is the failure mode of building an entrance
+   out of opacity alone. */
+@media (prefers-reduced-motion: reduce) {
+  .sv *, .sv *::before, .sv *::after { transition: none !important; animation: none !important; }
+  .sv-visual > *, .sv-copy h3, .sv-copy p { opacity: 1; transform: none; }
+  .sv-tile { opacity: 1; transform: none; }
 }

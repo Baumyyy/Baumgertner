@@ -50,6 +50,8 @@ var fi = {
   services_6_title: 'Projektinhallinta',
   services_6_body: 'Yksi yhteyshenkilö, selkeä suunnitelma, eikä arvailua siitä, missä mennään.',
 
+  tech_title: 'Tekniikka',
+  tech_body: 'Nykyaikaiset työkalut, jokainen valittu tehtäväänsä — ei lisäosia, jotka tekevät melkein sen mitä tarvitset.',
   services_proof: 'Jokainen näistä on käytössä tällä sivulla juuri nyt.',
 
   // Projects

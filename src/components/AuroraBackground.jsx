@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useSmoothScroll } from '../hooks/useSmoothScroll';
+import { useZoomed } from '../hooks/useZoomed';
 import './AuroraBackground.css';
 import { useLang } from '../useLang';
 import { useContactPanel } from '../useContactPanel';
@@ -38,6 +39,7 @@ const AuroraBackground = ({ children }) => {
   useSmoothScroll();
   const [showCta, setShowCta] = useState(false);
   const [nearEnd, setNearEnd] = useState(false);
+  const zoomed = useZoomed();
   const { t } = useLang();
   const { open, isOpen } = useContactPanel();
 
@@ -72,16 +74,25 @@ const AuroraBackground = ({ children }) => {
       {/* The page does not stop at the bottom of the window, it softens
           into it. Below the sticky call to action and the navigation, so
           both of those stay sharp on top of it, and above the page so
-          there is something for it to blur. */}
-      <div
-        className={'page-blur' + (nearEnd ? ' is-clear' : '')}
-        aria-hidden="true"
-      >
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-      </div>
+          there is something for it to blur.
+
+          Unmounted while the reader is pinched in, which is the one state
+          where it is not worth what it costs. Four stacked backdrop
+          filters each read back everything painted behind them, and zoom
+          makes the browser redo that at the new scale - measured at 31 of
+          the page's composited layers for this one element. At scale 1 it
+          is exactly as it was; nothing about the normal view changes. */}
+      {!zoomed && (
+        <div
+          className={'page-blur' + (nearEnd ? ' is-clear' : '')}
+          aria-hidden="true"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      )}
 
       {/* An icon rather than the label, because this one follows the
           reader down the whole page and a word-wide button at that

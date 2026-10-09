@@ -50,6 +50,8 @@ var en = {
   services_6_title: 'Project management',
   services_6_body: 'One point of contact, a clear plan, and no guessing where things stand.',
 
+  tech_title: 'Technology',
+  tech_body: 'Modern tools, each picked for its job — not plugins that do almost what you need.',
   services_proof: 'Every one of these is running on this page right now.',
 
   // Projects
