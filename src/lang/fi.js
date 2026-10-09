@@ -51,7 +51,7 @@ var fi = {
   services_6_body: 'Yksi yhteyshenkilö, selkeä suunnitelma, eikä arvailua siitä, missä mennään.',
 
   tech_title: 'Tekniikka',
-  tech_body: 'Nykyaikaiset työkalut, jokainen valittu tehtäväänsä — ei lisäosia, jotka tekevät melkein sen mitä tarvitset.',
+  tech_body: 'Ei teemaa eikä kolmeakymmentä lisäosaa. Jokainen työkalu on valittu yhteen tehtävään, ja se tekee sen kunnolla.',
   services_proof: 'Jokainen näistä on käytössä tällä sivulla juuri nyt.',
 
   // Projects
