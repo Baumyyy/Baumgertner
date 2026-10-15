@@ -25,6 +25,7 @@ import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright';
 import { rakennaSkeema, skeemaTagiksi } from './schema.js';
 import { rakennaLlmsTxt } from './llms.js';
+import { rakennaSitemap } from './sitemap.js';
 
 const JUURI = join(dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = join(JUURI, 'dist');
@@ -293,6 +294,14 @@ async function aja() {
   const llms = rakennaLlmsTxt();
   await writeFile(join(DIST, 'llms.txt'), llms);
   console.log('  llms.txt      ' + llms.length + ' merkkia');
+
+  // Overwrites whatever vite copied from public/, which is nothing now -
+  // the hand-written file is gone, because its <lastmod> was four weeks
+  // stale and nobody was ever going to remember to touch it.
+  const sitemap = rakennaSitemap();
+  await writeFile(join(DIST, 'sitemap.xml'), sitemap);
+  const paivat = [...sitemap.matchAll(/<lastmod>([^<]+)<\/lastmod>/g)].map((m) => m[1]);
+  console.log('  sitemap.xml   ' + paivat.length + '/6 lastmod, uusin ' + (paivat.sort().at(-1) || 'ei yhtaan'));
 
   console.log('prerender valmis: ' + kirjoitettu + '/' + REITIT.length + ' reittia');
 }

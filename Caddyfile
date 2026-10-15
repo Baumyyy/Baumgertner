@@ -15,3 +15,19 @@
 	}
 	reverse_proxy frontend:80
 }
+
+# www answered 525 until this existed. Cloudflare has a www record pointed
+# at its edge, so it accepted the request and then opened a TLS connection
+# to this origin with SNI "www.<domain>" - a name no certificate here
+# covered, so the handshake failed and every visitor who typed www got a
+# Cloudflare error page.
+#
+# The DNS-01 challenge above covers subdomains as well, so this needs no
+# extra setup beyond the block itself. It serves nothing: one canonical
+# host, and www is a permanent redirect to it.
+www.{$DOMAIN} {
+	tls {
+		dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+	}
+	redir https://{$DOMAIN}{uri} permanent
+}

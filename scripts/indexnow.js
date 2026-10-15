@@ -20,12 +20,7 @@
  * hand-maintained copy of the same six addresses drifts, and the copy
  * nobody looks at drifts first.
  */
-import { readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
-import { dirname, join } from 'node:path';
-
-const TAMA = dirname(fileURLToPath(import.meta.url));
-const JUURI = join(TAMA, '..');
+import { rakennaSitemap } from './sitemap.js';
 
 const ISANTA = 'baumgertner.fi';
 const AVAIN = 'c872cc27850f411ea785445cd420cca0';
@@ -39,10 +34,16 @@ export function osoitteetSivustokartasta(xml) {
   });
 }
 
+/**
+ * Built rather than read off disk: the sitemap is generated at build time
+ * now (scripts/sitemap.js), so there is no file to open until something
+ * has been built - and reading a stale dist/ would submit yesterday's
+ * list. Parsing the generated XML rather than importing the route table
+ * keeps the original property that this script cannot disagree with the
+ * sitemap, because it is looking at the same bytes the crawler will.
+ */
 export function lueOsoitteet() {
-  return osoitteetSivustokartasta(
-    readFileSync(join(JUURI, 'public', 'sitemap.xml'), 'utf8')
-  );
+  return osoitteetSivustokartasta(rakennaSitemap());
 }
 
 /**
