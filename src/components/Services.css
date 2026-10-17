@@ -1,3 +1,18 @@
+/* The raw hex values still in this file are all inside the preview
+   mock-ups - the fake client website, the search result, the brand sheet,
+   the project rows - and they stay raw on purpose.
+
+   tokens.css is the single source of truth for *this* brand. A grey that
+   belongs to a pretend electrician's homepage is not a Baumgertner
+   colour, and promoting it to a token would say it is. These are content
+   that happens to be drawn in CSS, closer to the text in a screenshot
+   than to the design system.
+
+   The section's own ladder - surfaces, edges, dim chrome - is in
+   tokens.css where it belongs, and is referenced here by name. If you add
+   a colour below, that is the test: does it describe Baumgertner, or does
+   it describe the thing being shown to a visitor? */
+
 /* Services v3: a diagram of the six services around the mark, then a
    bento grid where each service is shown rather than described.
 
@@ -33,11 +48,11 @@
   /* One pulse, and the cycle in Services.jsx is two of these. Change
      this and SV_PULSE_MS there has to move with it. */
   --sv-pulse: 2600ms;
-  --sv-bg: #0c0c0e;          /* tile fill */
-  --sv-raise: #131316;       /* panels inside a tile */
-  --sv-bd: #1f1f23;          /* hairline */
-  --sv-bd-2: #2a2a2f;        /* stronger hairline */
-  --sv-dim: #6e6e74;
+  --sv-bg: var(--surface-1);          /* tile fill */
+  --sv-raise: var(--surface-2);       /* panels inside a tile */
+  --sv-bd: var(--edge-1);          /* hairline */
+  --sv-bd-2: var(--edge-2);        /* stronger hairline */
+  --sv-dim: var(--text-dim);
 }
 
 /* The same chamfer the buttons and the old cards used, by the same
@@ -177,12 +192,12 @@
 }
 
 @keyframes svEdgeBreathe {
-  0%, 26% { background: #4a4a50; }
-  40%     { background: #ffffff; }
-  60%     { background: #4a4a50; }
-  76%     { background: #4a4a50; }
-  90%     { background: #ffffff; }
-  100%    { background: #4a4a50; }
+  0%, 26% { background: var(--edge-live); }
+  40%     { background: var(--text-primary); }
+  60%     { background: var(--edge-live); }
+  76%     { background: var(--edge-live); }
+  90%     { background: var(--text-primary); }
+  100%    { background: var(--edge-live); }
 }
 
 @keyframes svDot {
@@ -193,17 +208,17 @@
   100% { stroke-dashoffset: 0; opacity: 0; }
 }
 
-.sv-port { position: absolute; top: 50%; width: 7px; height: 7px; background: #0c0c0e; box-shadow: inset 0 0 0 1px #3a3a40; z-index: 2; transition: box-shadow .4s var(--ease), background .4s var(--ease); }
+.sv-port { position: absolute; top: 50%; width: 7px; height: 7px; background: var(--surface-1); box-shadow: inset 0 0 0 1px var(--edge-4); z-index: 2; transition: box-shadow .4s var(--ease), background .4s var(--ease); }
 .sv-port.l { left: 0; transform: translate(-50%, -50%); }
 .sv-port.r { right: 0; transform: translate(50%, -50%); }
 
 .sv-hub {
-  --c: 16px; --bd: #34343a; --bg: linear-gradient(180deg, #151518, #0b0b0d);
+  --c: 16px; --bd: var(--edge-3); --bg: linear-gradient(180deg, var(--surface-2), var(--surface-1));
   position: absolute; left: var(--x); top: var(--y);
   width: calc(140 / 1200 * 100%); aspect-ratio: 1; transform: translate(-50%, -50%);
   display: grid; place-items: center;
 }
-.sv-hub .sv-port { box-shadow: inset 0 0 0 1px #4a4a50; }
+.sv-hub .sv-port { box-shadow: inset 0 0 0 1px var(--edge-live); }
 
 
 .sv-node {
@@ -220,10 +235,10 @@
    wrapped, which reads as a rendering fault rather than a long word. */
 .sv-node > span { min-width: 0; }
 .sv-node .sv-icon { color: var(--sv-dim); transition: color .3s var(--ease); flex: none; }
-.sv-node:hover, .sv-node.is-on { --bd: #4a4a50; --bg: #111114; color: #fff; }
-.sv-node.is-on .sv-icon, .sv-node:hover .sv-icon { color: #fff; }
-.sv-node.is-on .sv-port { background: #fff; box-shadow: none; }
-.sv-node:focus-visible { outline: 1px solid #fff; outline-offset: 4px; }
+.sv-node:hover, .sv-node.is-on { --bd: var(--edge-live); --bg: var(--surface-3); color: var(--text-primary); }
+.sv-node.is-on .sv-icon, .sv-node:hover .sv-icon { color: var(--text-primary); }
+.sv-node.is-on .sv-port { background: var(--text-primary); box-shadow: none; }
+.sv-node:focus-visible { outline: 1px solid var(--text-primary); outline-offset: 4px; }
 
 /* ============================================================== bento */
 .sv-bento { list-style: none; padding: 0; margin: 0 0 var(--s-8); display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
@@ -254,7 +269,7 @@
 .sv-tile.is-run { opacity: 1; transform: none; }
 .sv-t-web { grid-column: span 2; }
 .sv-t-pm { grid-column: span 2; }
-.sv-tile:hover, .sv-tile.is-on { --bd: #34343a; }
+.sv-tile:hover, .sv-tile.is-on { --bd: var(--edge-3); }
 
 /* Pointing at one card pushes the rest back, so the thing under the
    pointer is the only thing in focus. Hover only: on a touch screen
@@ -267,7 +282,7 @@
 .sv-visual {
   position: relative; height: 280px; margin: 1px 1px 0; overflow: hidden;
   display: flex; align-items: center; justify-content: center;
-  background: linear-gradient(180deg, #111114 0%, var(--sv-bg) 100%);
+  background: linear-gradient(180deg, var(--surface-3) 0%, var(--sv-bg) 100%);
   /* The tile's cut corner is drawn by its ::after, which this sits on
      top of - so without the same cut here the preview's own rectangle
      fills the notch back in and the card looks square. Only the top
@@ -278,7 +293,7 @@
 .sv-copy h3 {
   display: flex; align-items: center; gap: 10px; margin: 0 0 8px;
   font-family: var(--font-display); font-weight: var(--weight-display); font-size: 1rem; letter-spacing: var(--track-heading);
-  text-transform: uppercase; color: #fff;
+  text-transform: uppercase; color: var(--text-primary);
 }
 .sv-copy h3 .sv-icon { color: var(--sv-dim); flex: none; }
 .sv-tile.is-on .sv-copy h3 .sv-icon { color: var(--signal); }
@@ -311,13 +326,13 @@
 /* shared panel */
 .sv-panel { background: var(--sv-raise); border: 1px solid var(--sv-bd-2); border-radius: 6px; box-shadow: 0 18px 40px -12px rgba(0, 0, 0, .7); }
 .sv-panel-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 12px 14px; border-bottom: 1px solid var(--sv-bd); }
-.sv-panel-head span { font: 500 12.5px var(--font-body); color: #fff; }
+.sv-panel-head span { font: 500 12.5px var(--font-body); color: var(--text-primary); }
 .sv-panel-head small { font-size: 11px; color: var(--sv-dim); }
 
 /* ---- websites: the same client site on desktop and phone */
 .sv-web { position: relative; width: 80%; max-width: 640px; height: 220px; }
-.sv-browser { position: absolute; left: 0; top: 0; width: 84%; background: #0e0e10; border: 1px solid var(--sv-bd-2); border-radius: 7px; overflow: hidden; box-shadow: 0 24px 50px -16px rgba(0, 0, 0, .8); }
-.sv-chrome { display: flex; align-items: center; gap: 5px; padding: 8px 10px; border-bottom: 1px solid var(--sv-bd); background: #121215; }
+.sv-browser { position: absolute; left: 0; top: 0; width: 84%; background: var(--surface-1); border: 1px solid var(--sv-bd-2); border-radius: 7px; overflow: hidden; box-shadow: 0 24px 50px -16px rgba(0, 0, 0, .8); }
+.sv-chrome { display: flex; align-items: center; gap: 5px; padding: 8px 10px; border-bottom: 1px solid var(--sv-bd); background: var(--surface-2); }
 .sv-chrome i { width: 7px; height: 7px; border-radius: 50%; background: #2c2c31; }
 /* The window's close button. Red because that one is red in a real
    browser - the detail is borrowed from the thing being drawn rather
@@ -325,20 +340,20 @@
    client's site appearing to have a brand it was never given. */
 .sv-chrome i:first-child { background: var(--signal); }
 .sv-chrome span { margin: 0 auto; font: 10px var(--font-body); color: var(--sv-dim); padding: 2px 30px; border-radius: 4px; background: #19191d; }
-.sv-site { background: radial-gradient(120% 90% at 70% 0%, #1d1d21, #0c0c0e 70%); }
+.sv-site { background: radial-gradient(120% 90% at 70% 0%, #1d1d21, var(--surface-1) 70%); }
 .sv-site-nav { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; }
-.sv-site-nav b { font: 700 9px var(--font-body); letter-spacing: .14em; color: #fff; }
+.sv-site-nav b { font: 700 9px var(--font-body); letter-spacing: .14em; color: var(--text-primary); }
 .sv-site-nav span { display: flex; gap: 12px; }
 .sv-site-nav i { font: 9px var(--font-body); font-style: normal; color: #9a9aa0; }
 .sv-site-hero { padding: 18px 14px 16px; }
-.sv-site-hero h4 { margin: 0 0 5px; font: 600 17px/1.15 var(--font-body); letter-spacing: -.02em; color: #fff; }
+.sv-site-hero h4 { margin: 0 0 5px; font: 600 17px/1.15 var(--font-body); letter-spacing: -.02em; color: var(--text-primary); }
 .sv-site-hero p { margin: 0 0 10px; font-size: 9.5px; color: #9a9aa0; }
-.sv-site-hero em { display: inline-block; font: 600 8.5px var(--font-body); font-style: normal; color: #0c0c0e; background: #fff; padding: 5px 9px; border-radius: 3px; }
+.sv-site-hero em { display: inline-block; font: 600 8.5px var(--font-body); font-style: normal; color: var(--surface-1); background: var(--text-primary); padding: 5px 9px; border-radius: 3px; }
 .sv-site-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; padding: 0 14px 14px; }
 .sv-site-row span { height: 34px; border-radius: 4px; background: #16161a; border: 1px solid var(--sv-bd); }
-.sv-phone { position: absolute; right: 0; bottom: -46px; width: 124px; height: 250px; padding: 6px; background: #0a0a0c; border: 1px solid #34343a; border-radius: 18px; box-shadow: -18px 20px 40px -10px rgba(0, 0, 0, .85); }
+.sv-phone { position: absolute; right: 0; bottom: -46px; width: 124px; height: 250px; padding: 6px; background: var(--surface-1); border: 1px solid #34343a; border-radius: 18px; box-shadow: -18px 20px 40px -10px rgba(0, 0, 0, .85); }
 .sv-phone .sv-site { height: 100%; border-radius: 13px; overflow: hidden; padding-top: 12px; }
-.sv-notch { position: absolute; top: 9px; left: 50%; transform: translateX(-50%); width: 30%; height: 6px; border-radius: 4px; background: #000; z-index: 1; }
+.sv-notch { position: absolute; top: 9px; left: 50%; transform: translateX(-50%); width: 30%; height: 6px; border-radius: 4px; background: var(--canvas); z-index: 1; }
 .sv-site.phone .sv-site-hero { padding: 16px 10px; }
 .sv-site.phone .sv-site-hero h4 { font-size: 13px; }
 .sv-site.phone .sv-site-nav { padding: 8px 10px; }
@@ -355,20 +370,20 @@
 .sv-lh-item { position: relative; display: flex; flex-direction: column; align-items: center; gap: 8px; }
 .sv-lh-item svg { width: 58px; height: 58px; transform: rotate(-90deg); }
 .sv-lh-item .trk { fill: none; stroke: #232327; stroke-width: 3; }
-.sv-lh-item .val { fill: none; stroke: #fff; stroke-width: 3; stroke-linecap: round; transition: stroke-dashoffset 1.3s var(--ease); }
-.sv-lh-item b { position: absolute; top: 0; height: 58px; display: grid; place-items: center; font: 600 13px var(--font-body); color: #fff; }
+.sv-lh-item .val { fill: none; stroke: var(--text-primary); stroke-width: 3; stroke-linecap: round; transition: stroke-dashoffset 1.3s var(--ease); }
+.sv-lh-item b { position: absolute; top: 0; height: 58px; display: grid; place-items: center; font: 600 13px var(--font-body); color: var(--text-primary); }
 .sv-lh-item span { font-size: 10.5px; color: var(--sv-dim); text-align: center; line-height: 1.3; }
 
 /* ---- search & AI: a result, and the structured data behind it */
 .sv-seo { width: 84%; display: flex; flex-direction: column; }
 .sv-serp { position: relative; width: 86%; padding: 14px 16px; }
 .sv-serp .site { display: flex; align-items: center; gap: 9px; margin-bottom: 8px; }
-.sv-serp .fav { width: 22px; height: 22px; border-radius: 50%; background: #fff; color: #000; display: grid; place-items: center; font: 700 10px var(--font-body); }
+.sv-serp .fav { width: 22px; height: 22px; border-radius: 50%; background: var(--text-primary); color: var(--canvas); display: grid; place-items: center; font: 700 10px var(--font-body); }
 .sv-serp .site b { display: block; font: 500 11px var(--font-body); color: #e6e6e6; }
 .sv-serp .site small { font-size: 10px; color: var(--sv-dim); }
-.sv-serp h5 { margin: 0 0 4px; font: 500 14px/1.3 var(--font-body); color: #fff; }
+.sv-serp h5 { margin: 0 0 4px; font: 500 14px/1.3 var(--font-body); color: var(--text-primary); }
 .sv-serp p { margin: 0; font-size: 11px; line-height: 1.5; color: #8f8f95; }
-.sv-code { position: relative; align-self: flex-end; width: 60%; margin: -12px 0 0; padding: 12px 14px; font: 10.5px/1.6 var(--font-mono); color: #8f8f95; white-space: pre; background: #0e0e10; }
+.sv-code { position: relative; align-self: flex-end; width: 60%; margin: -12px 0 0; padding: 12px 14px; font: 10.5px/1.6 var(--font-mono); color: #8f8f95; white-space: pre; background: var(--surface-1); }
 .sv-tile.is-run .sv-code { transition-delay: .44s; }
 
 /* ---- branding: the logo in use, with the rest kept quiet ----
@@ -388,11 +403,11 @@
 .sv-brand-marks { display: flex; align-items: center; justify-content: center; gap: 18px; }
 .sv-brand-icon {
   width: 54px; height: 54px; flex: none; border-radius: 13px; display: grid; place-items: center;
-  background: var(--signal); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .18), 0 10px 22px -8px #000;
+  background: var(--signal); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .18), 0 10px 22px -8px var(--canvas);
 }
 .sv-brand-avatar {
   width: 48px; height: 48px; flex: none; border-radius: 50%; display: grid; place-items: center;
-  background: #0a0a0c; box-shadow: inset 0 0 0 1px var(--sv-bd-2), 0 10px 22px -8px #000;
+  background: var(--surface-1); box-shadow: inset 0 0 0 1px var(--sv-bd-2), 0 10px 22px -8px var(--canvas);
 }
 
 /* One row, two halves, nothing labelled. */
@@ -423,7 +438,7 @@
 .sv-deploy { width: 84%; }
 .sv-deploy em { display: inline-flex; align-items: center; gap: 7px; font: 500 11px var(--font-body); font-style: normal; color: var(--sv-dim); transition: color .4s var(--ease) 1.2s; }
 .sv-deploy em i { width: 7px; height: 7px; border-radius: 50%; background: #3a3a40; transition: background .4s var(--ease) 1.2s; }
-.sv-deploy em.on { color: #fff; }
+.sv-deploy em.on { color: var(--text-primary); }
 .sv-deploy em.on i { background: var(--signal); }
 .sv-deploy dl { margin: 0; padding: 6px 14px; }
 .sv-deploy dl div { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid var(--sv-bd); font-size: 11.5px; }
@@ -433,7 +448,7 @@
 .sv-deploy ol { list-style: none; margin: 0; padding: 10px 14px 12px; display: flex; gap: 6px; border-top: 1px solid var(--sv-bd); }
 .sv-deploy ol li { flex: 1; font-size: 10.5px; color: var(--sv-dim); padding-top: 8px; position: relative; }
 .sv-deploy ol li::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 2px; background: #232327; }
-.sv-deploy ol li::after { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 2px; background: #fff; transform: scaleX(0); transform-origin: left; transition: transform .5s var(--ease); transition-delay: inherit; }
+.sv-deploy ol li::after { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 2px; background: var(--text-primary); transform: scaleX(0); transform-origin: left; transition: transform .5s var(--ease); transition-delay: inherit; }
 .sv-deploy ol.on li { color: #e6e6e6; transition: color .3s var(--ease); }
 .sv-deploy ol.on li::after { transform: scaleX(1); }
 
@@ -515,7 +530,7 @@
   transform: rotate(calc(var(--a) * -1));
   border-radius: 50%;
   background: var(--surface-1);
-  box-shadow: inset 0 0 0 1px var(--sv-bd-2), 0 6px 16px -6px #000;
+  box-shadow: inset 0 0 0 1px var(--sv-bd-2), 0 6px 16px -6px var(--canvas);
   color: var(--text-primary);
 }
 .sv-orb-badge svg { width: 13px; height: 13px; display: block; }
@@ -538,13 +553,13 @@
 .sv-pm { width: 90%; }
 .sv-pm-grid { position: relative; padding: 16px 14px 18px; display: flex; flex-direction: column; gap: 12px; }
 .sv-pm-row { display: grid; grid-template-columns: 120px 1fr; align-items: center; }
-.sv-pm-row .lbl { font-size: 12px; color: #b8b8b8; }
+.sv-pm-row .lbl { font-size: 12px; color: var(--text-secondary); }
 .sv-pm-row .track { position: relative; height: 10px; background: repeating-linear-gradient(90deg, #1b1b1f 0 1px, transparent 1px calc(100% / 8)); }
 .sv-pm-row .bar { position: absolute; top: 0; bottom: 0; background: #1e1e22; border-radius: 2px; overflow: hidden; }
 .sv-pm-row .fill { position: absolute; inset: 0; background: #d9d9dc; transform-origin: left; transition: transform 1s var(--ease); }
 .sv-now { position: absolute; top: 8px; bottom: 8px; left: calc(14px + 120px + (100% - 28px - 120px) * var(--now)); width: 1px; background: var(--signal); opacity: 0; transition: opacity .5s var(--ease) 1.4s; }
 .sv-now.on { opacity: 1; }
-.sv-now b { position: absolute; top: -2px; left: 6px; font: 500 10px var(--font-body); color: #fff; }
+.sv-now b { position: absolute; top: -2px; left: 6px; font: 500 10px var(--font-body); color: var(--text-primary); }
 
 /* ===== CLOSE ===== */
 .services-close {
@@ -726,7 +741,7 @@
                 width var(--d-micro) var(--ease);
   }
   .sv-dot.is-on { background: var(--signal); width: 18px; border-radius: 3px; }
-  .sv-dot:focus-visible { outline: 1px solid #fff; outline-offset: 3px; }
+  .sv-dot:focus-visible { outline: 1px solid var(--text-primary); outline-offset: 3px; }
 
   /* Held back until the row is on screen. The dots mount with the
      component, which on a phone is most of a page above here - started

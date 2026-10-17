@@ -9,15 +9,29 @@
   --canvas:       #000000;
   --surface-1:    #0B0B0D;
   --surface-2:    #141416;
+  --surface-3:    #111114;  /* raised: a panel under the pointer */
 
   --line:         rgba(255, 255, 255, 0.12);
   --line-strong:  rgba(255, 255, 255, 0.24);
+
+  /* Edge ------------------------------------------------------------
+     Solid borders for panels that sit on top of other panels, where
+     --line's translucency would let the layer behind show through the
+     border and the edge would read as a different colour per surface.
+     The ladder is shallow on purpose: these are near-black, and the eye
+     resolves almost nothing below --edge-live. */
+  --edge-1:    #1F1F23;  /* hairline */
+  --edge-2:    #2A2A2F;  /* panel */
+  --edge-3:    #34343A;  /* raised panel */
+  --edge-4:    #3A3A40;  /* connector, port */
+  --edge-live: #4A4A50;  /* lit: hover, active, the pulse landing */
 
   /* Text ------------------------------------------------------------ */
   --text-primary:   #FFFFFF;  /* 21.0:1 */
   --text-secondary: #B8B8B8;  /* 10.6:1 */
   --text-muted:     #8C8C8C;  /*  6.3:1 - floor for body copy */
   --text-faint:     #616161;  /*  3.4:1 - large text and UI only */
+  --text-dim:       #6E6E74;  /*  4.0:1 - inactive icons and chrome, never body */
 
   /* Signal ----------------------------------------------------------
      Two tokens, deliberately not interchangeable. --signal is only
