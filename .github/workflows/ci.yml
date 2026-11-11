@@ -9,7 +9,10 @@ permissions:
 
 jobs:
   frontend:
-    runs-on: ubuntu-latest
+    # Pinned, not ubuntu-latest: that label moved to Ubuntu 26 on 19 October
+    # 2026, and `playwright install --with-deps` below fails there (two runs
+    # in a row, ~10 min each). Move off 24.04 once Playwright supports 26.
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
 
