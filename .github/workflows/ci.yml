@@ -9,9 +9,9 @@ permissions:
 
 jobs:
   frontend:
-    # Pinned, not ubuntu-latest: that label moved to Ubuntu 26 on 19 October
-    # 2026, and `playwright install --with-deps` below fails there (two runs
-    # in a row, ~10 min each). Move off 24.04 once Playwright supports 26.
+    # Pinned because the browser step below relies on this image already
+    # having Chromium's system libraries - confirmed for 24.04 from a run
+    # log, not yet for Ubuntu 26, which ubuntu-latest became on 19 Oct 2026.
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -26,7 +26,13 @@ jobs:
       - run: npm ci --legacy-peer-deps
 
       # npm run build ends with the prerender step, which needs a browser.
-      - run: npx playwright install --with-deps chromium
+      # No --with-deps: the runner image already has every library Chromium
+      # needs, and --with-deps only added CJK/Thai/Cyrillic fonts via apt -
+      # which failed CI three times on 11 Nov 2026 when the runner could not
+      # resolve azure.archive.ubuntu.com. The browser itself downloads from
+      # Playwright's CDN, not apt. If Chromium ever fails to launch with a
+      # missing .so error, the image dropped a library: add --with-deps back.
+      - run: npx playwright install chromium
 
       - run: npm run lint
       - run: npm run build
