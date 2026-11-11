@@ -1,6 +1,8 @@
 node_modules
 dist
-.env
+# .env* rather than .env: a hand-made copy like .env.bak-<date> holds the
+# same secrets and would otherwise ride into the build stage via COPY . .
+.env*
 .git
 .github
 .claude
