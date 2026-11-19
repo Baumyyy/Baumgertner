@@ -70,7 +70,10 @@ describe('rakennaSkeema', function () {
 describe('skeemaTagiksi', function () {
   it('tuottaa jasentyvan lohkon', function () {
     var tagi = skeemaTagiksi(rakennaSkeema(KOTI_EN, META));
-    var json = tagi.replace(/^<script[^>]*>/, '').replace(/<\/script>$/, '');
+    // Cut by position, not by a regex: this only has to take off the one
+    // tag skeemaTagiksi writes, and a regex shaped like an HTML filter is
+    // what code scanning flags as one that a variant tag would slip past.
+    var json = tagi.slice(tagi.indexOf('>') + 1, tagi.lastIndexOf('</script>'));
     expect(function () { JSON.parse(json); }).not.toThrow();
   });
 

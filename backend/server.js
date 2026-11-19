@@ -181,6 +181,23 @@ var pageviewLimiter = rateLimit({
   handler: rateLimitHandler
 });
 
+// The health check's own limit. It sits outside the shared API budget (see
+// the route), but it still runs a database query, so an open endpoint
+// with no limit at all let anyone make the backend hit Postgres as fast as
+// they could send requests. Docker's own polling is exempt: it runs inside
+// the backend container, so it arrives on the loopback socket - checked
+// on the socket itself, not req.ip, because req.ip comes from a header a
+// caller can write. Everything from outside reaches the backend through
+// nginx and never arrives on loopback.
+var LOOPBACK = ['127.0.0.1', '::1', '::ffff:127.0.0.1'];
+var healthLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 30,
+  skip: function(req) { return LOOPBACK.indexOf(req.socket.remoteAddress) !== -1; },
+  message: { status: 'busy' },
+  handler: rateLimitHandler
+});
+
 // Middleware
 app.use(cors({
   origin: process.env.FRONTEND_URL || 'http://localhost:5173',
@@ -188,9 +205,10 @@ app.use(cors({
 }));
 app.use(express.json({ limit: '1mb' }));
 
-// Deliberately above the rate limiter: Docker polls this every 15s, and a
-// health check that can be rate-limited reports the service as down at
-// exactly the moment the service is busiest.
+// Deliberately above the shared API limiter: Docker polls this every 15s,
+// and a health check that shares the visitors' budget reports the service
+// as down at exactly the moment the service is busiest. It has a limit of
+// its own instead, which Docker's polling never counts against.
 //
 // It checks the database rather than just answering, because this is what
 // docker-compose gates the frontend container on - a backend that is
@@ -200,7 +218,7 @@ app.use(express.json({ limit: '1mb' }));
 // with the profile routes. Nothing failed at the time because nothing
 // redeployed; the next deploy would have hung with the backend stuck
 // unhealthy and the frontend waiting on it forever.
-app.get('/api/health', async function(req, res) {
+app.get('/api/health', healthLimiter, async function(req, res) {
   try {
     await pool.query('SELECT 1');
     res.json({ status: 'ok' });
