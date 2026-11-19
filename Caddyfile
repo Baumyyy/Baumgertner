@@ -9,11 +9,35 @@
 # this keeps working regardless of whether Cloudflare proxying is on or
 # off for the domain - see Caddy.Dockerfile for why the plain caddy:2-alpine
 # image can't do this on its own.
+
+# Who the visitor is. Every request arrives from a Cloudflare edge server,
+# so the connection's own address says nothing about the visitor -
+# Cloudflare puts that in CF-Connecting-IP. The header is believed only on
+# requests that really come from Cloudflare's ranges: anyone reaching this
+# server directly could write it themselves, and for them {client_ip} stays
+# the address they connected from.
+#
+# The ranges are Cloudflare's published list (cloudflare.com/ips),
+# copied 19 November 2026. They change rarely; if Cloudflare adds one,
+# visitors through it are seen as that edge server's address until it is
+# added here - limited a little too broadly, never let through.
+{
+	servers {
+		trusted_proxies static 173.245.48.0/20 103.21.244.0/22 103.22.200.0/22 103.31.4.0/22 141.101.64.0/18 108.162.192.0/18 190.93.240.0/20 188.114.96.0/20 197.234.240.0/22 198.41.128.0/17 162.158.0.0/15 104.16.0.0/13 104.24.0.0/14 172.64.0.0/13 131.0.72.0/22 2400:cb00::/32 2606:4700::/32 2803:f800::/32 2405:b500::/32 2405:8100::/32 2a06:98c0::/29 2c0f:f248::/32
+		client_ip_headers CF-Connecting-IP
+	}
+}
+
 {$DOMAIN} {
 	tls {
 		dns cloudflare {env.CLOUDFLARE_API_TOKEN}
 	}
-	reverse_proxy frontend:80
+	# The visitor's address as the whole header, replacing whatever the
+	# request brought with it - nginx and the backend's rate limits key on
+	# this, and an appended chain would let a client prepend its own.
+	reverse_proxy frontend:80 {
+		header_up X-Forwarded-For {client_ip}
+	}
 }
 
 # www answered 525 until this existed. Cloudflare has a www record pointed
