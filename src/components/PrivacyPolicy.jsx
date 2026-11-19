@@ -21,6 +21,10 @@ import { usePageMeta } from '../hooks/usePageMeta';
 //   backend/server.js  sendDigestNotification what leaves the server
 //   src/components/ContactPanel.jsx  what the form asks for
 //   vite.config.js  cloudflareAnalytics     whether the beacon ships at all
+//   scripts/backup.sh  RETENTION_DAYS       backups, 7 days
+//   nginx.conf  access_log off / real_ip    no access log; error log has IPs
+//   Caddyfile  trusted_proxies              all traffic passes Cloudflare
+//   the VPS itself                          Hostinger, data centre in Germany
 //
 // Cloudflare Web Analytics is gated on VITE_CF_BEACON_TOKEN. With no token
 // no tag is emitted, and the two paragraphs describing it are then
@@ -32,7 +36,7 @@ var content = {
     title: 'Privacy Policy',
     metaTitle: 'Privacy Policy | Anthony Baumgertner',
     metaDescription: 'What personal data baumgertner.fi collects, why, how long it is kept and what rights you have.',
-    updated: 'Last updated: 18 September 2026',
+    updated: 'Last updated: 19 November 2026',
     intro: 'This page explains what personal data this website (baumgertner.fi) collects, why, and what rights you have. The data controller is Anthony Baumgertner, a private individual running this site as a personal portfolio.',
     sections: [
       {
@@ -42,6 +46,7 @@ var content = {
           'Basic page-view analytics: the page you visited and your browser’s user-agent string. This is first-party, uses no cookies and no tracking identifier, records no IP address, and is not linked to your name or email.',
           'Cloudflare Web Analytics: the page you opened, the site you arrived from, your browser and device type, and the country your connection resolves to. It sets no cookie and no persistent identifier, and it cannot follow you to another website. Your IP address is used to work out the country and is not stored.',
           'Security logs: if you trigger one of the rate limits — for example by sending an unusually high number of requests — your IP address and the requested route are logged.',
+          'Server error logs: if a request fails or is turned away by a rate limit, the web server writes a line to its technical error log with your IP address, the time and the address you requested. Ordinary visits are not logged this way.',
           'Nothing else is collected. There is no advertising and no profiling on this site, and nothing here builds a profile of you across visits or across other sites.'
         ]
       },
@@ -56,13 +61,16 @@ var content = {
       {
         heading: 'Where the data is kept',
         body: [
-          'The site and its database run on a server located in the EU. Your message, the first-party analytics rows and the security logs are stored there and nowhere else.',
+          'The site and its database run on a server in Germany, rented from Hostinger. Your message, the first-party analytics rows, the security logs and the error log are stored there and nowhere else.',
+          'The database is backed up every night to the same server, and each backup is kept for seven days. A message that has been deleted can therefore remain in a backup for up to seven more days before it is gone for good.',
           'Cloudflare Web Analytics is the exception: those counts are held by Cloudflare rather than on this server. They are aggregate figures with nothing in them that identifies you.'
         ]
       },
       {
         heading: 'Third parties',
         body: [
+          'Hostinger — provides the server the site runs on, in a data centre in Germany. It stores the data described above on the site owner’s behalf and does not use it for anything of its own.',
+          'Cloudflare — every request to this site passes through Cloudflare’s network, which protects the site against attacks and delivers it quickly. Cloudflare therefore handles your IP address and the technical details of each request (such as the page asked for and your browser) in order to pass it on. It sets no cookies on this site.',
           'Cloudflare Turnstile — the bot check on the contact form. When you load the form and when you send it, your IP address and browser signals are shared with Cloudflare to confirm you are not a bot. It does not track you across other websites.',
           'Cloudflare Web Analytics — the visitor counts described above. Cloudflare receives the request that carries them. It is the same company as the bot check, chosen partly for that reason: one processor rather than two.',
           'Resend — used to send one notification when new messages have arrived. That notification is deliberately generic: it says how many messages there are and nothing else. Your name, your email address and the contents of your message are never included in it and never leave the server this way.',
@@ -73,7 +81,7 @@ var content = {
         heading: 'International data transfers',
         body: [
           'The server is in the EU, so your message does not leave the EU by being stored.',
-          'Cloudflare (for the bot check) and Resend (for the notification described above) may process data outside the EU/EEA, including in the United States. Where that happens, the transfer is safeguarded under the EU-US Data Privacy Framework and/or the European Commission’s Standard Contractual Clauses.'
+          'Cloudflare (for the network, the bot check and the visitor counts) and Resend (for the notification described above) may process data outside the EU/EEA, including in the United States. Where that happens, the transfer is safeguarded under the EU-US Data Privacy Framework and/or the European Commission’s Standard Contractual Clauses.'
         ]
       },
       {
@@ -90,13 +98,15 @@ var content = {
           'Contact messages are deleted automatically six months after they are sent. This is not a policy someone has to remember — it is a scheduled job that runs once a day.',
           'Page-view rows are deleted automatically after 12 months.',
           'Security logs are deleted automatically after 30 days.',
+          'The server error log has a fixed maximum size: once it is full, the oldest entries are overwritten automatically.',
+          'Nightly database backups are deleted automatically after seven days.',
           'You can ask for your data to be deleted sooner at any time, using the address at the bottom of this page.'
         ]
       },
       {
         heading: 'How your data is protected',
         body: [
-          'All traffic to this site is encrypted with HTTPS. Admin access uses GitHub OAuth, so no password for this site exists anywhere to be stolen. The database role the site runs as is restricted to only what the site needs. Rate limits are in place on every public route, with automated alerts when they are hit repeatedly.',
+          'All traffic to this site is encrypted with HTTPS. Admin access uses GitHub OAuth, so no password for this site exists anywhere to be stolen, and the server itself accepts only key-based logins. The database role the site runs as is restricted to only what the site needs. Rate limits are in place on every public route, with automated alerts when they are hit repeatedly.',
           'No measure is perfect, but the amount of data held here is deliberately small — the less that is kept, the less there is to lose.'
         ]
       },
@@ -126,7 +136,7 @@ var content = {
     title: 'Tietosuojaseloste',
     metaTitle: 'Tietosuojaseloste | Anthony Baumgertner',
     metaDescription: 'Mitä henkilötietoja baumgertner.fi kerää, miksi, kuinka kauan niitä säilytetään ja mitkä ovat oikeutesi.',
-    updated: 'Päivitetty viimeksi: 18.9.2026',
+    updated: 'Päivitetty viimeksi: 19.11.2026',
     intro: 'Tämä sivu kertoo, mitä henkilötietoja tämä verkkosivusto (baumgertner.fi) kerää, miksi, ja mitä oikeuksia sinulla on. Rekisterinpitäjä on Anthony Baumgertner, yksityishenkilö, joka ylläpitää sivustoa henkilökohtaisena portfoliona.',
     sections: [
       {
@@ -136,6 +146,7 @@ var content = {
           'Perustason sivukäyntitilastot: käyttämäsi sivu ja selaimesi user-agent-tunniste. Tämä on ensimmäisen osapuolen tilastointia, ei käytä evästeitä eikä seurantatunnistetta, ei tallenna IP-osoitetta eikä sitä yhdistetä nimeesi tai sähköpostiisi.',
           'Cloudflare Web Analytics: avaamasi sivu, sivusto jolta saavuit, selaimesi ja laitetyyppisi sekä maa johon yhteytesi paikantuu. Se ei aseta evästettä eikä pysyvää tunnistetta, eikä se voi seurata sinua toiselle sivustolle. IP-osoitettasi käytetään maan päättelyyn eikä sitä tallenneta.',
           'Turvalokit: jos laukaiset jonkin pyyntörajoituksista — esimerkiksi lähettämällä poikkeuksellisen suuren määrän pyyntöjä — IP-osoitteesi ja pyydetty reitti tallennetaan.',
+          'Palvelimen virheloki: jos pyyntö epäonnistuu tai pyyntörajoitus torjuu sen, verkkopalvelin kirjoittaa tekniseen virhelokiinsa rivin, jossa on IP-osoitteesi, kellonaika ja pyytämäsi osoite. Tavallisia käyntejä ei kirjata näin.',
           'Muuta ei kerätä. Sivustolla ei ole mainontaa eikä profilointia, eikä mikään täällä rakenna sinusta profiilia käyntien välillä tai muiden sivustojen kanssa.'
         ]
       },
@@ -150,13 +161,16 @@ var content = {
       {
         heading: 'Missä tiedot säilytetään',
         body: [
-          'Sivusto ja sen tietokanta toimivat EU:ssa sijaitsevalla palvelimella. Viestisi, oman tilastoinnin rivit ja turvalokit säilytetään siellä eikä missään muualla.',
+          'Sivusto ja sen tietokanta toimivat Saksassa sijaitsevalla palvelimella, joka on vuokrattu Hostingerilta. Viestisi, oman tilastoinnin rivit, turvalokit ja virheloki säilytetään siellä eikä missään muualla.',
+          'Tietokannasta otetaan joka yö varmuuskopio samalle palvelimelle, ja kutakin varmuuskopiota säilytetään seitsemän päivää. Poistettu viesti voi siksi säilyä varmuuskopiossa vielä enintään seitsemän päivää ennen kuin se häviää lopullisesti.',
           'Cloudflare Web Analytics on poikkeus: ne luvut ovat Cloudflarella eivätkä tällä palvelimella. Kyse on koostetuista luvuista, joissa ei ole mitään sinua yksilöivää.'
         ]
       },
       {
         heading: 'Kolmannet osapuolet',
         body: [
+          'Hostinger — tarjoaa palvelimen, jolla sivusto toimii, Saksassa sijaitsevassa konesalissa. Se säilyttää edellä kuvatut tiedot sivuston ylläpitäjän puolesta eikä käytä niitä mihinkään omaan tarkoitukseensa.',
+          'Cloudflare — jokainen pyyntö tälle sivustolle kulkee Cloudflaren verkon kautta, joka suojaa sivustoa hyökkäyksiltä ja toimittaa sen nopeasti. Cloudflare käsittelee siksi IP-osoitteesi ja kunkin pyynnön tekniset tiedot (kuten pyydetyn sivun ja selaimesi) välittääkseen pyynnön perille. Se ei aseta evästeitä tällä sivustolla.',
           'Cloudflare Turnstile — yhteydenottolomakkeen bottitarkistus. Kun lataat lomakkeen ja kun lähetät sen, IP-osoitteesi ja selaimen tiedot välitetään Cloudflarelle sen varmistamiseksi, ettet ole botti. Se ei seuraa sinua muilla verkkosivustoilla.',
           'Cloudflare Web Analytics — edellä kuvatut kävijäluvut. Cloudflare vastaanottaa pyynnön joka ne kuljettaa. Kyse on samasta yhtiöstä kuin bottitarkistuksessa, mikä oli osasyy valintaan: yksi käsittelijä kahden sijaan.',
           'Resend — käytetään yhden ilmoituksen lähettämiseen, kun uusia viestejä on saapunut. Ilmoitus on tarkoituksella yleisluontoinen: se kertoo viestien määrän eikä mitään muuta. Nimesi, sähköpostiosoitteesi ja viestisi sisältö eivät koskaan sisälly siihen eivätkä poistu palvelimelta tätä kautta.',
@@ -167,7 +181,7 @@ var content = {
         heading: 'Kansainväliset tiedonsiirrot',
         body: [
           'Palvelin sijaitsee EU:ssa, joten viestisi ei poistu EU:sta sen säilyttämisen vuoksi.',
-          'Cloudflare (bottitarkistus) ja Resend (edellä kuvattu ilmoitus) voivat käsitellä tietoja EU:n ja ETA:n ulkopuolella, myös Yhdysvalloissa. Näissä tapauksissa siirto perustuu EU:n ja Yhdysvaltojen väliseen tietosuojakehykseen (Data Privacy Framework) ja/tai Euroopan komission vakiosopimuslausekkeisiin.'
+          'Cloudflare (verkko, bottitarkistus ja kävijäluvut) ja Resend (edellä kuvattu ilmoitus) voivat käsitellä tietoja EU:n ja ETA:n ulkopuolella, myös Yhdysvalloissa. Näissä tapauksissa siirto perustuu EU:n ja Yhdysvaltojen väliseen tietosuojakehykseen (Data Privacy Framework) ja/tai Euroopan komission vakiosopimuslausekkeisiin.'
         ]
       },
       {
@@ -184,13 +198,15 @@ var content = {
           'Yhteydenottoviestit poistetaan automaattisesti kuuden kuukauden kuluttua lähettämisestä. Tämä ei ole käytäntö, joka jonkun pitää muistaa — se on ajastettu tehtävä, joka ajetaan kerran vuorokaudessa.',
           'Sivukäyntirivit poistetaan automaattisesti 12 kuukauden kuluttua.',
           'Turvalokit poistetaan automaattisesti 30 päivän kuluttua.',
+          'Palvelimen virhelokilla on kiinteä enimmäiskoko: kun se täyttyy, vanhimmat merkinnät korvautuvat automaattisesti uusilla.',
+          'Tietokannan yölliset varmuuskopiot poistetaan automaattisesti seitsemän päivän kuluttua.',
           'Voit milloin tahansa pyytää tietojesi poistamista aikaisemmin tämän sivun lopussa olevaan osoitteeseen.'
         ]
       },
       {
         heading: 'Miten tietosi suojataan',
         body: [
-          'Kaikki liikenne sivustolle on salattu HTTPS-yhteydellä. Hallintakirjautuminen käyttää GitHub OAuthia, joten tälle sivustolle ei ole olemassa salasanaa, joka voitaisiin varastaa. Tietokantarooli, jolla sivusto toimii, on rajattu vain siihen, mitä sivusto tarvitsee. Jokaisella julkisella reitillä on pyyntörajoitus ja automaattinen hälytys, jos niihin törmätään toistuvasti.',
+          'Kaikki liikenne sivustolle on salattu HTTPS-yhteydellä. Hallintakirjautuminen käyttää GitHub OAuthia, joten tälle sivustolle ei ole olemassa salasanaa, joka voitaisiin varastaa, ja itse palvelimelle pääsee kirjautumaan vain avaimella. Tietokantarooli, jolla sivusto toimii, on rajattu vain siihen, mitä sivusto tarvitsee. Jokaisella julkisella reitillä on pyyntörajoitus ja automaattinen hälytys, jos niihin törmätään toistuvasti.',
           'Mikään suojaus ei ole täydellinen, mutta tänne kertyvän tiedon määrä on tarkoituksella pieni — mitä vähemmän säilytetään, sitä vähemmän on menetettävää.'
         ]
       },
