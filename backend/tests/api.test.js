@@ -40,6 +40,21 @@ describe('Message retention', function() {
 // Placed before 'Public API Endpoints' for the same reason as the block
 // above: that describe's afterAll closes the pool, and /api/health queries
 // it.
+// The pool emits 'error' when Postgres closes an idle connection - on every
+// database restart or server reboot. An EventEmitter with no 'error'
+// listener throws, which crashed the whole backend on the 21 November 2026
+// reboot.
+describe('Database pool', function() {
+  it('survives Postgres closing an idle connection', function() {
+    var spy = jest.spyOn(console, 'error').mockImplementation(function() {});
+    expect(function() {
+      pool.emit('error', new Error('terminating connection due to administrator command'));
+    }).not.toThrow();
+    expect(spy).toHaveBeenCalled();
+    spy.mockRestore();
+  });
+});
+
 describe('Health check', function() {
   it('answers 200 when the database is reachable', async function() {
     var res = await request(app).get('/api/health');
