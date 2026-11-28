@@ -55,6 +55,31 @@ describe('Database pool', function() {
   });
 });
 
+// The admin is matched on GitHub's numeric id, never on the username - a
+// username can be given up and registered by someone else.
+describe('Admin sign-in', function() {
+  var saved = process.env.GITHUB_ALLOWED_ID;
+  beforeAll(function() { process.env.GITHUB_ALLOWED_ID = '210757296'; });
+  afterAll(function() { process.env.GITHUB_ALLOWED_ID = saved; });
+
+  it('lets the admin account in by its id', function() {
+    expect(app.isAllowedGitHubUser({ id: 210757296, username: 'Baumyyy' })).toBe(true);
+  });
+
+  it('lets the admin in under a new username', function() {
+    expect(app.isAllowedGitHubUser({ id: 210757296, username: 'renamed' })).toBe(true);
+  });
+
+  it('keeps out another account that takes the admin\'s old username', function() {
+    expect(app.isAllowedGitHubUser({ id: 999, username: 'Baumyyy' })).toBe(false);
+  });
+
+  it('keeps out a profile with no id', function() {
+    expect(app.isAllowedGitHubUser({ username: 'Baumyyy' })).toBe(false);
+    expect(app.isAllowedGitHubUser(null)).toBe(false);
+  });
+});
+
 describe('Health check', function() {
   it('answers 200 when the database is reachable', async function() {
     var res = await request(app).get('/api/health');
