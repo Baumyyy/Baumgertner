@@ -13,7 +13,7 @@ require('dotenv').config();
 var REQUIRED_ENV_VARS = [
   'DB_HOST', 'DB_PORT', 'DB_USER', 'DB_PASSWORD', 'DB_NAME',
   'SESSION_SECRET',
-  'GITHUB_CLIENT_ID', 'GITHUB_CLIENT_SECRET', 'GITHUB_ALLOWED_USER',
+  'GITHUB_CLIENT_ID', 'GITHUB_CLIENT_SECRET', 'GITHUB_ALLOWED_ID',
   'FRONTEND_URL'
 ];
 var missingEnvVars = REQUIRED_ENV_VARS.filter(function(name) { return !process.env[name]; });
@@ -272,12 +272,23 @@ passport.use(new GitHubStrategy({
   clientSecret: process.env.GITHUB_CLIENT_SECRET,
   callbackURL: process.env.GITHUB_CALLBACK_URL || 'http://localhost:3001/api/auth/github/callback'
 }, function(accessToken, refreshToken, profile, done) {
-  if (profile.username === process.env.GITHUB_ALLOWED_USER) {
-    return done(null, { username: profile.username, avatar: profile.photos[0].value });
+  if (isAllowedGitHubUser(profile)) {
+    var photo = profile.photos && profile.photos[0] ? profile.photos[0].value : '';
+    return done(null, { username: profile.username, avatar: photo });
   } else {
     return done(null, false, { message: 'Not authorized' });
   }
 }));
+
+// The admin is recognised by GitHub's numeric account id, not by username.
+// A username is only borrowed: rename the account and the old name is free
+// for anyone to register - and with a username check, whoever took it would
+// sign straight into the admin. The id is given once, when the account is
+// made, and never changes or passes to anyone else.
+function isAllowedGitHubUser(profile) {
+  return !!profile && profile.id !== undefined && profile.id !== null &&
+    String(profile.id) === String(process.env.GITHUB_ALLOWED_ID);
+}
 
 // ===== AUTH MIDDLEWARE =====
 var auth = function(req, res, next) {
@@ -288,7 +299,11 @@ var auth = function(req, res, next) {
 };
 
 // ===== GITHUB AUTH ROUTES =====
-app.get('/api/auth/github', authLimiter, passport.authenticate('github', { scope: ['user:email'] }));
+// No scope: the public profile, which every sign-in gets anyway, carries
+// the id and the avatar, and nothing here reads an email address. It used
+// to ask for 'user:email' - access to the account's private addresses,
+// granted for nothing.
+app.get('/api/auth/github', authLimiter, passport.authenticate('github', { scope: [] }));
 
 var FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
 
@@ -612,5 +627,6 @@ if (require.main === module) {
 // test database, instead of re-implementing (and possibly drifting from) the
 // same SQL in the test file.
 app.cleanupOldMessages = cleanupOldMessages;
+app.isAllowedGitHubUser = isAllowedGitHubUser;
 
 module.exports = app;

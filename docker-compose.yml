@@ -34,7 +34,7 @@ services:
       DB_NAME: portfolio
       GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
       GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
-      GITHUB_ALLOWED_USER: ${GITHUB_ALLOWED_USER}
+      GITHUB_ALLOWED_ID: ${GITHUB_ALLOWED_ID:?GITHUB_ALLOWED_ID must be set in .env - the admin's numeric GitHub account id}
       GITHUB_CALLBACK_URL: ${GITHUB_CALLBACK_URL}
       FRONTEND_URL: ${FRONTEND_URL}
     ports:

@@ -20,7 +20,12 @@ BACKUP_DIR="${BACKUP_DIR:-/opt/backups/baumgertner}"
 RETENTION_DAYS="${RETENTION_DAYS:-7}"
 TIMESTAMP=$(date +%Y-%m-%d_%H-%M-%S)
 
+# The dumps hold every contact message, so only root may read them. Without
+# this they came out world-readable (644 in a 755 directory) under the
+# default umask - any other account on the server could have copied them.
+umask 077
 mkdir -p "$BACKUP_DIR"
+chmod 700 "$BACKUP_DIR"
 cd "$PROJECT_DIR"
 
 echo "[$TIMESTAMP] Starting backup..."
